@@ -4,6 +4,7 @@ from contextlib import contextmanager
 import io
 import json
 import os
+from subprocess import check_call
 from tempfile import NamedTemporaryFile as _NamedTemporaryFile
 
 # Third-party imports
@@ -183,8 +184,8 @@ def plot_allsky(filecontents):
     from lalinference.scripts.bayestar_plot_allsky import main
     with NamedTemporaryFile(content=filecontents) as fitsfile, \
          NamedTemporaryFile(mode='rb', suffix='.png') as pngfile:
-        main([fitsfile.name, '-o', pngfile.name, '--annotate',
-              '--contour', '50', '90'])
+        check_call(['bayestar_plot_allsky', fitsfile.name, '-o', pngfile.name,
+                    '--annotate', '--contour', '50', '90'])
         return pngfile.read()
 
 
@@ -201,8 +202,8 @@ def is_3d_fits_file(filecontents):
 @app.task(queue='openmp')
 def plot_volume(filecontents):
     """Plot a Mollweide projection of a sky map."""
-    from lalinference.scripts.bayestar_plot_volume import main
     with NamedTemporaryFile(content=filecontents) as fitsfile, \
          NamedTemporaryFile(mode='rb', suffix='.png') as pngfile:
-        main([fitsfile.name, '-o', pngfile.name, '--annotate'])
+        check_call(['bayestar_plot_volume', fitsfile.name, '-o', pngfile.name,
+                    '--annotate'])
         return pngfile.read()
