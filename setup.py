@@ -27,7 +27,7 @@ setup(
     license='GPL-2+',
     install_requires=[
         'celery[redis]',
-        'celery_singleton == 0.0.2+subclass_apply_async',
+        'celery_singleton=0.0.2+subclass_apply_async',
         'ligo-gracedb',
         'ligo-lvalert'
     ],
