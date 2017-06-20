@@ -2,6 +2,13 @@
 
 Hipster pipeline for annotating LIGO events.
 
+## Features
+
+ - Lightning fast distributed task queue powered by
+   [Celery](http://celeryproject.org) and Redis (https://redis.io).
+ - Easy installation with `pip`
+ - Browser-based monitoring console (see below)
+
 ## Instructions
 
 ### To install
