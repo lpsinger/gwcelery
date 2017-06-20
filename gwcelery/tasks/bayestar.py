@@ -3,8 +3,6 @@ import os
 
 from ..celery import app
 
-__all__ = ('bayestar',)
-
 
 @app.task(queue='openmp')
 def bayestar(coinc_psd, graceid, service):

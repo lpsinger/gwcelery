@@ -5,8 +5,6 @@ from ..celery import app
 from .gracedb import download, upload
 from .skymaps import annotate_fits
 
-__all__ = ('dispatch',)
-
 
 @app.task(ignore_result=True)
 def dispatch(payload):

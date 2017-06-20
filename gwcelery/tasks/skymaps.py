@@ -9,9 +9,6 @@ from .gracedb import download, upload
 from ..celery import app
 from ..util import NamedTemporaryFile
 
-__all__ = ('annotate_fits', 'fits_header', 'plot_allsky', 'is_3d_fits_file',
-           'plot_volume')
-
 
 def annotate_fits(versioned_filename, filebase, graceid, service, tags):
     """Perform various annotations on a sky map."""

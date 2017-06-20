@@ -2,8 +2,6 @@ from ligo.gracedb.rest import GraceDb
 
 from ..celery import app
 
-__all__ = ('download', 'upload')
-
 
 @app.task
 def download(filename, graceid, service):

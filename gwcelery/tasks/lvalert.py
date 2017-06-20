@@ -15,8 +15,6 @@ from pyxmpp.interfaces import IMessageHandlersProvider
 from ..celery import app
 from .dispatch import dispatch
 
-__all__ = ('lvalert_listen',)
-
 # Logging
 log = get_task_logger(__name__)
 
