@@ -26,6 +26,7 @@ def lvalert_listen():
     # Locate .ini file for lvalert_listen
     inifile = pkg_resources.resource_filename(__name__, 'lvalert.ini')
 
+    # Start lvalert_listen, and restart it if it dies
     while True:
         try:
             args = ['lvalert_listen', '-c', inifile, '-s', args.server]
@@ -39,9 +40,11 @@ def lvalert_listen():
 def lvalert_answer():
     """Ingest an lvalert payload in the task queue."""
     payload = sys.stdin.read()
-    log.debug('dispatching LVAlert payload: %s', payload)
+    log.info('dispatching LVAlert payload: %s', payload)
     dispatch.delay(payload)
 
 
 def worker():
-    os.execlpe('celery', 'celery', '-A', 'gwcelery.tasks', '--loglevel=info')
+    """Start up celery worker with some default arguments."""
+    os.execlp('celery',
+              'celery', 'worker', '-A', 'gwcelery.tasks', '--loglevel=info')
