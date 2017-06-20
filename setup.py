@@ -40,7 +40,4 @@ setup(
         'git+https://github.com/lpsinger/celery-singleton@subclass_apply_async#celery_singleton-0.0.2.1'
     ],
     packages=find_packages(),
-    package_data={
-        '': ['*.ini']
-    }
 )
