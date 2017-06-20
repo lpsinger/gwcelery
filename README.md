@@ -4,13 +4,13 @@ Hipster pipeline for annotating LIGO events.
 
 ## Instructions
 
-## To install
+### To install
 
 With `pip`:
 
 	$ pip install --user git+https://git.ligo.org/leo-singer/gwcelery
 
-## To start
+### To start
 
 You need to start two workers:
 
@@ -19,6 +19,6 @@ You need to start two workers:
 
 The `condor` directory provides some example condor submit files.
 
-## To monitor in a browser
+### To monitor in a browser
 
 	$ gwcelery flower
