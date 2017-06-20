@@ -84,7 +84,7 @@ def plot_allsky(filecontents):
         return pngfile.read()
 
 
-@app.task(raises=ValueError)
+@app.task(throws=ValueError)
 def is_3d_fits_file(filecontents):
     try:
         with NamedTemporaryFile(content=filecontents) as fitsfile:
