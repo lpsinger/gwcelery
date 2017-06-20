@@ -34,7 +34,7 @@ setup(
     dependency_links=[
         # FIXME: remove this if the following PR is accepted:
         # https://github.com/steinitzu/celery-singleton/pull/1
-        'git+https://github.com/lpsinger/celery-singleton@subclass_apply_async#egg=celery_singleton-0.0.2+subclass_apply_async'
+        'git+https://github.com/lpsinger/celery-singleton#egg=celery_singleton-0.0.2+subclass_apply_async'
     ],
     packages=find_packages(),
     entry_points={
