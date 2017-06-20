@@ -60,9 +60,9 @@ def annotate_fits(versioned_filename, filebase, graceid, service, tags):
         'Volume rendering of <a href="/apiweb/events/{graceid}/files/'
         '{versioned_filename}">{versioned_filename}</a>').format(
             graceid=graceid, versioned_filename=versioned_filename)
-    content = download(versioned_filename, graceid, service)
-    (plot_allsky.s(content) |  upload.s(filebase + '.png', graceid, service, plot_allsky_message, tags)).delay()
-    (plot_volume.s(content) |  upload.s(filebase + '.volume.png', graceid, service, plot_volume_message, tags)).delay()
+    download(versioned_filename, graceid, service)
+    (plot_allsky.s(content) | upload.s(filebase + '.png', graceid, service, plot_allsky_message, tags)).delay()
+    (plot_volume.s(content) | upload.s(filebase + '.volume.png', graceid, service, plot_volume_message, tags)).delay()
 
 
 
