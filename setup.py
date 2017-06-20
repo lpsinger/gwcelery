@@ -35,6 +35,8 @@ setup(
         'ligo-lvalert'
     ],
     dependency_links=[
+        # FIXME: remove this if the following PR is accepted:
+        # https://github.com/steinitzu/celery-singleton/pull/1
         'git+https://github.com/lpsinger/celery-singleton@subclass_apply_async#celery_singleton-0.0.2.1'
     ],
     packages=find_packages(),
