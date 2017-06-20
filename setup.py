@@ -29,20 +29,13 @@ setup(
     ],
     license='GPL-2+',
     install_requires=[
-        'celery',
+        'celery[redis]',
+        'celery_singleton',
         'ligo-gracedb',
         'ligo-lvalert'
     ],
     packages=find_packages(),
     package_data={
         '': ['*.ini']
-    },
-    entry_points={
-        'console_scripts': [
-            'gwcelery-lvalert-listen = gwcelery.commands:lvalert_listen',
-            'gwcelery-lvalert-answer = gwcelery.commands:lvalert_answer',
-            'gwcelery-worker = gwcelery.commands:worker'
-        ]
-    },
-    
+    }
 )

@@ -2,26 +2,37 @@
 from __future__ import print_function
 from contextlib import contextmanager
 import io
+import netrc
 import json
 import os
 from subprocess import check_call
 from tempfile import NamedTemporaryFile as _NamedTemporaryFile
+import uuid
 
 # Third-party imports
 import astropy.io.fits
-from celery import Celery, group
+from celery import Celery, group, signals
+from celery_singleton import clear_locks, Singleton
 from celery.utils.log import get_task_logger
 from ligo.gracedb.rest import GraceDb
+# pubsub import must come first because it overloads part of the
+# StanzaProcessor class
+import ligo.lvalert.pubsub
+from pyxmpp.all import JID, TLSSettings
+from pyxmpp.jabber.all import Client
+from pyxmpp.interface import implements
+from pyxmpp.interfaces import IMessageHandlersProvider
 import six
 
 
 # Celery application object.
 # Use pickle serializer, because it supports byte values.
-app = Celery('tasks', backend='redis://', broker='redis://', config_source=dict(
+app = Celery(backend='redis://', broker='redis://', config_source=dict(
     accept_content=['json', 'pickle'],
     event_serializer='json',
     result_serializer='pickle',
-    task_serializer='pickle'
+    task_serializer='pickle',
+    worker_log_format='[%(asctime)s: %(levelname)s/%(processName)s %(pathname)s:%(funcName)s:%(lineno)s] %(message)s'
 ))
 
 # Logging
@@ -48,6 +59,66 @@ def NamedTemporaryFile(**kwargs):
             f.flush()
             f.seek(0)
         yield f
+
+
+@app.on_after_configure.connect
+def setup_periodic_tasks(sender, **kwargs):
+    """Schedule periodic tasks."""
+    # Every second, make sure that lvalert_listen is running.
+    sender.add_periodic_task(1.0, lvalert_listen.s('lvalert-test.cgca.uwm.edu'))
+
+
+@signals.beat_init.connect
+def setup_beat(sender, **kwargs):
+    clear_locks(app)
+
+
+class LVAlertHandler(object):
+    """Provides the actions taken when an event arrives."""
+    implements(IMessageHandlersProvider)
+
+    def get_message_handlers(self):
+        return [(None, self.message)]
+
+    def message(self, stanza):
+        log.info('got message')
+        e = self.get_entry(stanza)
+        if e:
+            log.info('dispatching')
+            dispatch.s(e).delay()
+        return True
+
+    def get_entry(self, stanza):
+        c = stanza.xmlnode.children
+        while c:
+            try:
+                if c.name=="event":
+                    return c.getContent()
+            except libxml2.treeError:
+                pass
+            c = c.next
+        return None
+
+
+@app.task(base=Singleton, ignore_result=True)
+def lvalert_listen(server):
+    """LVAlert listener."""
+    resource = uuid.uuid4().hex
+    username, _, password = netrc.netrc().authenticators(server)
+    jid = JID(username + '@' + server + '/' + resource)
+    log.info('lvalert_listen connecting: %r', jid)
+    tls_settings = TLSSettings(require=True, verify_peer=False)
+    client = Client(jid, password,
+                    auth_methods=['sasl:GSSAPI', 'sasl:PLAIN'], keepalive=30,
+                    tls_settings=tls_settings)
+    client.interface_providers = [LVAlertHandler()]
+    client.connect()
+    try:
+        client.loop(1)
+    except KeyboardInterrupt:
+        client.disconnect()
+    else:
+        raise RuntimeError('lvalert_listen exited early!')
 
 
 @app.task(ignore_result=True)
