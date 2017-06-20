@@ -1,7 +1,7 @@
 #!/usr/bin/env condor_submit
 # Celery worker for normal tasks.
 
-accounting_group = ligo.prod.o2.cbc.pe.bayestar
+accounting_group = ligo.dev.o2.cbc.pe.bayestar
 accounting_group_user = leo.singer
 
 universe = local
