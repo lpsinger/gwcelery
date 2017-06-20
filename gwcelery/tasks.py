@@ -31,8 +31,7 @@ app = Celery(backend='redis://', broker='redis://', config_source=dict(
     accept_content=['json', 'pickle'],
     event_serializer='json',
     result_serializer='pickle',
-    task_serializer='pickle',
-    worker_log_format='[%(asctime)s: %(levelname)s/%(processName)s %(pathname)s:%(funcName)s:%(lineno)s] %(message)s'
+    task_serializer='pickle'
 ))
 
 # Logging
