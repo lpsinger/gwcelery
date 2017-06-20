@@ -7,7 +7,7 @@ accounting_group_user = leo.singer
 universe = local
 getenv = true
 executable = /usr/bin/env
-arguments = "gwcelery worker --queues celery --hostname gwcelery-celery-worker --beat --loglevel=info"
+arguments = "gwcelery worker -Q celery -n gwcelery-worker -B -l info"
 
 error = gwcelery-celery-worker.err
 log = gwcelery-celery-worker.log
