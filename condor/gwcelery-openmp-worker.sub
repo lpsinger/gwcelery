@@ -8,7 +8,7 @@ accounting_group_user = leo.singer
 universe = local
 getenv = true
 executable = /usr/bin/env
-arguments = "celery worker --app gwcelery.tasks --concurrency 1 --queues openmp --hostname gwcelery-openmp-worker --loglevel=info"
+arguments = "gwcelery worker --concurrency 1 --queues openmp --hostname gwcelery-openmp-worker --loglevel=info"
 
 error = gwcelery-openmp-worker.err
 log = gwcelery-openmp-worker.log

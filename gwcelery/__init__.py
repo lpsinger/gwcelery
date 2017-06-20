@@ -1,4 +1,3 @@
-"""Celery-based automated processing of LIGO sky maps
-
-TODO: write docstring"""
-__version__ = '0.0.1'
+from .celery import app
+from . import tasks
+start = app.start
