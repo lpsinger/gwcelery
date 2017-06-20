@@ -207,7 +207,7 @@ def upload(filecontents, filename, graceid, service, message, tags):
 
 @app.task
 def fits_header(filename, filecontents):
-    """Plot a Mollweide projection of a sky map."""
+    """Dump FITS header to HTML."""
     with NamedTemporaryFile(content=filecontents) as fitsfile, \
          astropy.io.fits.open(fitsfile.name) as hdus:
         out = six.StringIO()
