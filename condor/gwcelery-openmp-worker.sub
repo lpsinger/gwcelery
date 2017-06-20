@@ -1,0 +1,18 @@
+#!/usr/bin/env condor_submit
+# Celery worker for OpenMP tasks.
+# There should typically be just one OpenMP task running at a time.
+
+accounting_group = ligo.prod.o2.cbc.pe.bayestar
+accounting_group_user = leo.singer
+
+universe = local
+getenv = true
+executable = /usr/bin/env
+arguments = "celery worker --app gwcelery.tasks --concurrency 1 --queues openmp --hostname gwcelery-openmp-worker --loglevel=info"
+
+error = gwcelery-openmp-worker.err
+log = gwcelery-openmp-worker.log
+output = gwcelery-openmp-worker.out
+
+on_exit_remove = false
+queue

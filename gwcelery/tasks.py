@@ -12,15 +12,14 @@ from lalinference.scripts import bayestar_plot_volume
 from ligo.gracedb.rest import GraceDb
 
 
-# Celery application object
-app = Celery('tasks', backend='rpc://', broker='pyamqp://')
-
-# Use pickle serializer, because it supports byte values
-app.conf.update(
-    accept_content=['pickle'],
-    event_serializer='pickle',
+# Celery application object.
+# Use pickle serializer, because it supports byte values.
+app = Celery('tasks', backend='rpc://', broker='pyamqp://', config_source=dict(
+    accept_content=['json', 'pickle'],
+    event_serializer='json',
     result_serializer='pickle',
-    task_serializer='pickle')
+    task_serializer='pickle'
+))
 
 # Logging
 log = get_task_logger(__name__)
@@ -50,6 +49,8 @@ def dispatch(payload):
         tags = alert['object']['tag_names']
         if fitsext:
             annotate_fits(versioned_filename, filebase, graceid, service, tags)
+        elif filename == 'psd.xml.gz':
+            (bayestar.s(graceid, service) | upload('bayestar.fits.gz', graceid, service, 'sky localization complete', 'sky_loc')).delay()
 
 
 def annotate_fits(versioned_filename, filebase, graceid, service, tags):
@@ -65,6 +66,12 @@ def annotate_fits(versioned_filename, filebase, graceid, service, tags):
     content = download(versioned_filename, graceid, service)
     (plot_allsky.s(content) |  upload.s(filebase + '.png', graceid, service, plot_allsky_message, tags)).delay()
     (plot_volume.s(content) |  upload.s(filebase + '.volume.png', graceid, service, plot_volume_message, tags)).delay()
+
+
+
+@app.task(queue='openmp')
+def bayestar(graceid, service):
+    pass
 
 
 @app.task
@@ -104,7 +111,7 @@ def is_3d_fits_file(f):
     return False
 
 
-@app.task
+@app.task(queue='openmp')
 def plot_volume(filecontents):
     """Plot a Mollweide projection of a sky map."""
     with NamedTemporaryFile(mode='wb') as fitsfile, \

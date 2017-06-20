@@ -1,0 +1,17 @@
+#!/usr/bin/env condor_submit
+# LVAlert listener.
+
+accounting_group = ligo.prod.o2.cbc.pe.bayestar
+accounting_group_user = leo.singer
+
+universe = local
+getenv = true
+executable = /usr/bin/env
+arguments = "gwcelery-lvalert-listen -s lvalert-test.cgca.uwm.edu"
+
+error = gwcelery-openmp-worker.err
+log = gwcelery-openmp-worker.log
+output = gwcelery-openmp-worker.out
+
+on_exit_remove = false
+queue
