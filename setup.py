@@ -7,15 +7,13 @@ except:
     use_setuptools()
 
 from setuptools import setup, find_packages
-import gwcelery
 
 setup(
     name='gwcelery',
-    version=gwcelery.__version__,
+    version='0.0.1',
     author='Leo Singer',
     author_email='leo.singer@ligo.org',
-    description=gwcelery.__doc__.splitlines()[1],
-    long_description=gwcelery.__doc__,
+    description='Hipster pipeline for annotating LIGO events',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
@@ -23,7 +21,6 @@ setup(
         'License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)',
         'Operating System :: POSIX',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.6',
         'Topic :: Internet',
         'Topic :: Scientific/Engineering :: Astronomy'
     ],
