@@ -116,9 +116,8 @@ def plot_allsky(filecontents):
          NamedTemporaryFile(mode='rb', suffix='.png') as pngfile:
         fitsfile.write(filecontents)
         fitsfile.flush()
-        main([
-            fitsfile.name, '-o', pngfile.name, '--annotate',
-            '--contour', '50', '90'])
+        main([fitsfile.name, '-o', pngfile.name, '--annotate',
+              '--contour', '50', '90'])
         return pngfile.read()
 
 
@@ -135,13 +134,12 @@ def is_3d_fits_file(f):
 @app.task(queue='openmp')
 def plot_volume(filecontents):
     """Plot a Mollweide projection of a sky map."""
-    from lalinference.scripts import bayestar_plot_volume
+    from lalinference.scripts.bayestar_plot_volume import main
     with NamedTemporaryFile(mode='wb') as fitsfile, \
          NamedTemporaryFile(mode='rb', suffix='.png') as pngfile:
         fitsfile.write(filecontents)
         fitsfile.flush()
         if not is_3d_fits_file(fitsfile.name):
             return None
-        lalinference.scripts.bayestar_plot_volume.main([
-            fitsfile.name, '-o', pngfile.name, '--annotate'])
+        main([fitsfile.name, '-o', pngfile.name, '--annotate'])
         return pngfile.read()
