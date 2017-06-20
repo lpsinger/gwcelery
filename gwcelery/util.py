@@ -1,6 +1,8 @@
 from contextlib import contextmanager
 import tempfile
 
+import six
+
 
 @contextmanager
 def NamedTemporaryFile(**kwargs):
