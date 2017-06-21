@@ -88,7 +88,7 @@ def plot_allsky(filecontents):
 def is_3d_fits_file(filecontents):
     try:
         with NamedTemporaryFile(content=filecontents) as fitsfile:
-            if astropy.io.fits.getval(fitsfile.name, 'TUNIT4', 1) == 'Mpc-2':
+            if astropy.io.fits.getval(fitsfile.name, 'TTYPE4', 1) == 'DISTNORM':
                 return filecontents
     except (KeyError, IndexError):
         raise ValueError('Not a 3D FITS file')
