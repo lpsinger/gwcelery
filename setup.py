@@ -1,3 +1,5 @@
+import sys
+
 # Bootstrap setuptools installation.
 try:
     import pkg_resources
@@ -7,6 +9,14 @@ except:
     use_setuptools()
 
 from setuptools import setup, find_packages
+
+tests_require = ['pytest']
+try:
+    from unittest import mock
+except ImportError:
+    tests_require += ['mock']
+
+needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
 
 setup(
     name='gwcelery',
@@ -37,5 +47,7 @@ setup(
         'console_scripts': [
             'gwcelery = gwcelery:start'
         ]
-    }
+    },
+    setup_requires=['pytest-runner'] if needs_pytest else [],
+    tests_require=tests_require
 )
