@@ -35,7 +35,7 @@ GWCelery itself consists of two workers:
 	$ gwcelery worker -Q celery -n gwcelery-worker -B -l info
 	$ gwcelery worker -c 1 -Q openmp -n gwcelery-openmp-worker -l info
 
-The `condor` directory provides some example condor submit files.
+For an example HTCondor submit file, see the file `etc/gwcelery.sub`.
 
 ### To monitor in a browser
 
