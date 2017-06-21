@@ -1,13 +1,16 @@
 #!/usr/bin/env condor_submit
-# Celery worker for normal tasks.
-
 accounting_group = ligo.dev.o2.cbc.pe.bayestar
 accounting_group_user = leo.singer
-
 universe = local
 getenv = true
 executable = /usr/bin/env
 on_exit_remove = false
+
+arguments = "redis-server"
+error = gwcelery-redis-server.err
+log = gwcelery-redis-server.log
+output = gwcelery-redis-server.out
+queue
 
 arguments = "gwcelery worker -Q celery -n gwcelery-worker -B -l info"
 error = gwcelery-worker.err
@@ -19,10 +22,4 @@ arguments = "gwcelery worker -c 1 -Q openmp -n gwcelery-openmp-worker -l info"
 error = gwcelery-openmp-worker.err
 log = gwcelery-openmp-worker.log
 output = gwcelery-openmp-worker.out
-queue
-
-arguments = "redis-server"
-error = gwcelery-redis-server.err
-log = gwcelery-redis-server.log
-output = gwcelery-redis-server.out
 queue
