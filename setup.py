@@ -27,14 +27,10 @@ setup(
     license='GPL-2+',
     install_requires=[
         'celery[redis]',
-        'celery_singleton==0.0.2.1',
+        # See https://github.com/steinitzu/celery-singleton/pull/1
+        # 'celery_singleton',
         'ligo-gracedb',
         'ligo-lvalert'
-    ],
-    dependency_links=[
-        # FIXME: remove this if the following PR is accepted:
-        # https://github.com/steinitzu/celery-singleton/pull/1
-        'https://github.com/lpsinger/celery-singleton/tarball/subclass_apply_async#egg=celery_singleton-0.0.2.1'
     ],
     packages=find_packages(),
     entry_points={

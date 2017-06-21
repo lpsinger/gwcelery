@@ -2,7 +2,7 @@ import netrc
 import uuid
 
 from celery import signals
-from celery_singleton import clear_locks, Singleton
+from ..celery_singleton import clear_locks, Singleton
 from celery.utils.log import get_task_logger
 # pubsub import must come first because it overloads part of the
 # StanzaProcessor class
