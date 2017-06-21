@@ -6,7 +6,6 @@ getenv = true
 executable = /usr/bin/env
 on_exit_remove = false
 JobBatchName = gwcelery
-job_max_vacate_time = 10
 
 +JobDescription = gwcelery-redis-server
 arguments = "redis-server"
