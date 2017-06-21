@@ -15,7 +15,7 @@ def test_annotate_fits():
     pass # TODO
 
 
-def test_fits_header(tmpdir):
+def test_fits_header():
     # Construct example FITS file
     filename = 'test.fits'
     bytesio = io.BytesIO()
