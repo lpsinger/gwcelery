@@ -8,7 +8,7 @@ Hipster pipeline for annotating LIGO events.
  - Lightning fast distributed task queue powered by
    [Celery](http://celeryproject.org) and Redis (https://redis.io).
  - Lightweight test suite using mocks of external services
- - One line of code to swith from test to production GraceDB server
+ - One line of code to switch from test to production GraceDB server
  - Browser-based monitoring console (see below)
 
 ## Instructions
