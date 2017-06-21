@@ -17,6 +17,12 @@ With `pip`:
 
 	$ pip install --user git+https://git.ligo.org/leo-singer/gwcelery
 
+### To test
+
+With `setup.py`:
+
+	$ python setup.py test
+
 ### To start
 
 **NOTE** that GWCelery requires redis. Your package manager (apt, yum, macports)
