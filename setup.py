@@ -43,6 +43,9 @@ setup(
         'ligo-lvalert'
     ],
     packages=find_packages(),
+    package_data={
+        '': ['*.html']
+    },
     entry_points={
         'console_scripts': [
             'gwcelery = gwcelery:start'
