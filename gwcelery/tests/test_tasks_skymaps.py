@@ -44,8 +44,17 @@ def test_fits_header(toy_fits_filecontents):
         __name__, 'data/fits_header_result.html')
 
 
-def test_plot_allsky():
-    pass # TODO
+@patch('gwcelery.tasks.skymaps.check_call')
+def test_plot_allsky(mock_check_call):
+    # Run function under test
+    skymaps.plot_allsky('')
+
+    # Check that the script would have been run once
+    # with the correct arguments
+    mock_check_call.assert_called_once()
+    cmdline, = mock_check_call.call_args[0]
+    assert cmdline[0] == 'bayestar_plot_allsky'
+    assert cmdline[3].endswith('.png')
 
 
 def test_is_3d_fits_file(toy_fits_filecontents, toy_3d_fits_filecontents):
@@ -56,5 +65,14 @@ def test_is_3d_fits_file(toy_fits_filecontents, toy_3d_fits_filecontents):
     skymaps.is_3d_fits_file(toy_3d_fits_filecontents)
 
 
-def test_plot_volume():
-    pass # TODO
+@patch('gwcelery.tasks.skymaps.check_call')
+def test_plot_volume(mock_check_call):
+    # Run function under test
+    skymaps.plot_volume('')
+
+    # Check that the script would have been run once
+    # with the correct arguments
+    mock_check_call.assert_called_once()
+    cmdline, = mock_check_call.call_args[0]
+    assert cmdline[0] == 'bayestar_plot_volume'
+    assert cmdline[-2].endswith('.png')
