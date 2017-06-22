@@ -39,7 +39,6 @@ setup(
         'celery[redis]',
         # See https://github.com/steinitzu/celery-singleton/pull/1
         # 'celery_singleton',
-        'ligo-common',
         'ligo-gracedb',
         'ligo-lvalert'
     ],
