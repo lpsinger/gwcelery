@@ -47,7 +47,7 @@ GWCelery itself consists of two workers:
 	$ gwcelery worker -Q celery -n gwcelery-worker -B -l info
 	$ gwcelery worker -c 1 -Q openmp -n gwcelery-openmp-worker -l info
 
-For an example HTCondor submit file, see the file `etc/gwcelery.sub`.
+For an example HTCondor submit file, see the file [`etc/gwcelery.sub`](https://git.ligo.org/leo-singer/gwcelery/blob/master/etc/gwcelery.sub).
 
 ### To monitor in a browser
 
