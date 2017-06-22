@@ -2,6 +2,7 @@ image: ligo/builder:el7
 
 before_script:
   - yum install -y python-pip
+  - pip install --upgrade setuptools
 
 test:
   script:
