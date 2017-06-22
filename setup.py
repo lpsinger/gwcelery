@@ -41,7 +41,8 @@ setup(
         # See https://github.com/steinitzu/celery-singleton/pull/1
         # 'celery_singleton',
         'ligo-gracedb',
-        'ligo-lvalert'
+        'ligo-lvalert',
+        'pyxmpp'
     ],
     packages=find_packages(),
     package_data={
