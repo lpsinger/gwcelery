@@ -2,13 +2,27 @@ import io
 import logging
 import os
 
+from celery import group
+
 from ..celery import app
+from .gracedb import download, upload
 
 log = logging.getLogger('BAYESTAR')
 
 
+def bayestar(graceid, service):
+    return (
+        group(
+            download.s('coinc.xml', graceid, service),
+            download.s('psd.xml.gz', graceid, service))
+        | bayestar_localize.s(graceid, service)
+        | upload.s(
+            'bayestar.fits.gz', graceid, service,
+            'sky localization complete', 'sky_loc'))
+
+
 @app.task(queue='openmp')
-def bayestar(coinc_psd, graceid, service):
+def bayestar_localize(coinc_psd, graceid, service):
     from lalinference.io.events import ligolw
     from lalinference.io import fits
     from lalinference.bayestar.command import TemporaryDirectory

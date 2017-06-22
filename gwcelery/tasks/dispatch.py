@@ -5,7 +5,6 @@ from celery import group
 
 from ..celery import app
 from .bayestar import bayestar
-from .gracedb import download, upload
 from .skymaps import annotate_fits
 
 
@@ -32,6 +31,7 @@ def dispatch(payload):
         filebase, fitsext, _ = filename.rpartition('.fits')
         tags = alert['object']['tag_names']
         if fitsext:
-            annotate_fits(versioned_filename, filebase, graceid, service, tags)
+            annotate_fits(
+                versioned_filename, filebase, graceid, service, tags).delay()
         elif filename == 'psd.xml.gz':
-            (group(download.s('coinc.xml', graceid, service), download.s('psd.xml.gz', graceid, service)) | bayestar.s(graceid, service) | upload.s('bayestar.fits.gz', graceid, service, 'sky localization complete', 'sky_loc')).delay()
+            bayestar(graceid, service).delay()

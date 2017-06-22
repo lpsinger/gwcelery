@@ -25,9 +25,11 @@ def annotate_fits(versioned_filename, filebase, graceid, service, tags):
         '{versioned_filename}">{versioned_filename}</a>').format(
             graceid=graceid, versioned_filename=versioned_filename)
     content = download(versioned_filename, graceid, service)
-    (fits_header.s(versioned_filename, content) | upload.s(filebase + '.html', graceid, service, fits_header_message, tags)).delay()
-    (plot_allsky.s(content) | upload.s(filebase + '.png', graceid, service, plot_allsky_message, tags)).delay()
-    (is_3d_fits_file.s(content) | plot_volume.s() | upload.s(filebase + '.volume.png', graceid, service, plot_volume_message, tags)).delay()
+    return group(
+        fits_header.s(versioned_filename, content) | upload.s(filebase + '.html', graceid, service, fits_header_message, tags),
+        plot_allsky.s(content) | upload.s(filebase + '.png', graceid, service, plot_allsky_message, tags),
+        is_3d_fits_file.s(content) | plot_volume.s() | upload.s(filebase + '.volume.png', graceid, service, plot_volume_message, tags)
+    )
 
 
 @app.task
