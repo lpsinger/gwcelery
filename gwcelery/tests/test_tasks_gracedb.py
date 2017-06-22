@@ -20,7 +20,7 @@ def test_download(mock_gracedb):
 
 
 @patch('gwcelery.tasks.gracedb.GraceDb', autospec=True)
-def test_download(mock_gracedb):
+def test_upload(mock_gracedb):
     # Run function under test.
     gracedb.upload(
         'filecontents', 'filename', 'graceid', 'service', 'message', 'tags')
