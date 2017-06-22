@@ -7,7 +7,7 @@ import six
 
 from .gracedb import download, upload
 from ..celery import app
-from ..util import NamedTemporaryFile
+from ..util.tempfile import NamedTemporaryFile
 
 
 def annotate_fits(versioned_filename, filebase, graceid, service, tags):

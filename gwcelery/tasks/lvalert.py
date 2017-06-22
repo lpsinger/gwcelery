@@ -1,8 +1,6 @@
 import netrc
 import uuid
 
-from celery import signals
-from ..celery_singleton import clear_locks, Singleton
 from celery.utils.log import get_task_logger
 # pubsub import must come first because it overloads part of the
 # StanzaProcessor class
@@ -13,22 +11,11 @@ from pyxmpp.interface import implements
 from pyxmpp.interfaces import IMessageHandlersProvider
 
 from ..celery import app
+from ..util.eternal import EternalTask
 from .dispatch import dispatch
 
 # Logging
 log = get_task_logger(__name__)
-
-
-@app.on_after_configure.connect
-def setup_periodic_tasks(sender, **kwargs):
-    """Schedule periodic tasks."""
-    # Every second, make sure that lvalert_listen is running.
-    sender.add_periodic_task(1.0, lvalert_listen.s('lvalert-test.cgca.uwm.edu'))
-
-
-@signals.beat_init.connect
-def setup_beat(sender, **kwargs):
-    clear_locks(app)
 
 
 class LVAlertHandler(object):
@@ -58,22 +45,30 @@ class LVAlertHandler(object):
         return None
 
 
-@app.task(base=Singleton, ignore_result=True)
-def lvalert_listen(server):
+class LVAlertClient(Client):
+
+    def __init__(self, task, server):
+        self.__task = task
+        resource = uuid.uuid4().hex
+        username, _, password = netrc.netrc().authenticators(server)
+        jid = JID(username + '@' + server + '/' + resource)
+        log.info('lvalert_listen connecting: %r', jid)
+        tls_settings = TLSSettings(require=True, verify_peer=False)
+        Client.__init__(self, jid, password,
+                        auth_methods=['sasl:GSSAPI', 'sasl:PLAIN'],
+                        tls_settings=tls_settings, keepalive=30)
+        self.interface_providers = [LVAlertHandler()]
+
+    def idle(self):
+        Client.idle(self)
+        if self.__task.is_aborted():
+            self.disconnect()
+
+
+@app.task(base=EternalTask, bind=True, ignore_result=True)
+def lvalert_listen(self):
     """LVAlert listener."""
-    resource = uuid.uuid4().hex
-    username, _, password = netrc.netrc().authenticators(server)
-    jid = JID(username + '@' + server + '/' + resource)
-    log.info('lvalert_listen connecting: %r', jid)
-    tls_settings = TLSSettings(require=True, verify_peer=False)
-    client = Client(jid, password,
-                    auth_methods=['sasl:GSSAPI', 'sasl:PLAIN'], keepalive=30,
-                    tls_settings=tls_settings)
-    client.interface_providers = [LVAlertHandler()]
+    server = 'lvalert-test.cgca.uwm.edu'
+    client = LVAlertClient(self, server)
     client.connect()
-    try:
-        client.loop(1)
-    except KeyboardInterrupt:
-        client.disconnect()
-    else:
-        raise RuntimeError('lvalert_listen exited early!')
+    client.loop(1)
