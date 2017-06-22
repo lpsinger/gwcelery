@@ -16,7 +16,7 @@ test:
     - mkdir -p "$PIP_CACHE"
     - pip install --cache-dir="$PIP_CACHE" --upgrade pip setuptools pytest-cov
     - pip install --cache-dir="$PIP_CACHE" .
-    - python setup.py test --addopts='--cov=gwcelery --cov-report=html --cov-report=term'
+    - python setup.py test --addopts='--cov --cov-report=html --cov-report=term'
   artifacts:
     paths:
       - htmlcov/
