@@ -12,4 +12,20 @@ test:
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   script:
     - pip install .
-    - python setup.py test --addopts='-vv --cov'
+    - python setup.py test --addopts=''--cov --cov-report=html --cov-report=term'
+  artifacts:
+    paths:
+      - htmlcov/
+
+pages:
+  stage: deploy
+  dependencies:
+    - test
+  script:
+    - mv coverage/ public/
+  artifacts:
+    paths:
+      - public
+    expire_in: 30 days
+  only:
+    - master
