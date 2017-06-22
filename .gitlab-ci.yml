@@ -5,10 +5,12 @@ test-jessie:
   image: ligo/builder:jessie
   stage: test
   script:
+    - pip install .
     - python setup.py test
 
 test-el7:
   image: ligo/builder:el7
   stage: test
   script:
+    - pip install .
     - python setup.py test
