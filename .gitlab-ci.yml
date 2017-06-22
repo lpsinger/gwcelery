@@ -5,7 +5,7 @@ cache:
     - ~/.cache/pip
 
 before_script:
-  - yum install -y python-pip
+  - yum install -y python-pip python-pyxmpp
   - pip install --upgrade pip setuptools
 
 test:
