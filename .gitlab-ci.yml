@@ -11,8 +11,9 @@ cache:
 test:
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   script:
-    - mkdir -p "$PIP_CACHE"
+    - echo keepcache = 1 >> /etc/yum.conf
     - yum install -y python-pip pyxmpp
+    - mkdir -p "$PIP_CACHE"
     - pip install --cache-dir="$PIP_CACHE" --upgrade pip setuptools pytest-cov
     - pip install --cache-dir="$PIP_CACHE" .
     - python setup.py test --addopts='--cov --cov-report=html --cov-report=term'
