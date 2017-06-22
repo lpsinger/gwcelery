@@ -1,5 +1,7 @@
 # GWCelery
 
+[![build status](https://git.ligo.org/leo-singer/gwcelery/badges/master/build.svg)](https://git.ligo.org/leo-singer/gwcelery/commits/master)
+
 Hipster pipeline for annotating LIGO events.
 
 ## Features
