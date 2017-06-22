@@ -36,6 +36,7 @@ setup(
     ],
     license='GPL-2+',
     install_requires=[
+        'astropy',
         'celery[redis]',
         # See https://github.com/steinitzu/celery-singleton/pull/1
         # 'celery_singleton',
