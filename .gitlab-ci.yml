@@ -5,6 +5,7 @@ variables:
 
 cache:
   paths:
+    - /var/cache/yum
     - $PIP_CACHE
 
 test:
