@@ -52,3 +52,5 @@ For an example HTCondor submit file, see the file `etc/gwcelery.sub`.
 ### To monitor in a browser
 
 	$ gwcelery flower
+
+![monitoring screenshot](https://git.ligo.org/leo-singer/gwcelery/raw/master/etc/screenshot.png)
