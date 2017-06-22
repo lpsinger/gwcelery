@@ -38,8 +38,7 @@ setup(
     install_requires=[
         'astropy',
         'celery[redis]',
-        # See https://github.com/steinitzu/celery-singleton/pull/1
-        # 'celery_singleton',
+        'celery_singleton >= 0.1.1',
         'ligo-gracedb',
         'ligo-lvalert',
         'pyxmpp'

@@ -1,7 +1,7 @@
 from celery import bootsteps, signals
 from celery.contrib import abortable
 from celery.utils.log import get_task_logger
-from ..celery_singleton import clear_locks, Singleton
+from celery_singleton import clear_locks, Singleton
 
 # Logging
 log = get_task_logger(__name__)
