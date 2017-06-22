@@ -1,3 +1,6 @@
+before_script:
+  - apt-get update -qq && apt-get install -y -qq python-pip
+
 test:
   script:
     - python setup.py test
