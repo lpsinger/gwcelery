@@ -1,7 +1,7 @@
 image: ligo/builder:el7
 
 before_script:
-  - yum install python-pip
+  - yum install -y python-pip
 
 test:
   script:
