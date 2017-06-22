@@ -1,5 +1,9 @@
 image: ligo/builder:el7
 
+cache:
+  paths:
+    - ~/.cache/pip
+
 before_script:
   - yum install -y python-pip
   - pip install --upgrade pip setuptools
