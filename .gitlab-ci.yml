@@ -1,5 +1,18 @@
+# Cache package downloads
+cache:
+  paths:
+    - apt-cache/
+    - pip-cache/
+    - docs/_build/
+
 before_script:
-  - apt-get update -qq && apt-get install -y -qq python-pip
+  - export APT_CACHE_DIR=`pwd`/apt-cache
+  - export PIP_CACHE_DIR=`pwd`/pip-cache
+  - mkdir -pv $APT_CACHE_DIR $PIP_CACHE_DIR
+  - apt-get -o Dir::Cache::Archives="$APT_CACHE_DIR" -yq update
+  - >
+    apt-get -o Dir::Cache::Archives="$APT_CACHE_DIR" -yq install
+    python-pip
 
 test:
   script:
