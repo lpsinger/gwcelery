@@ -1,16 +1,9 @@
-stages:
-  - test
+image: ligo/builder:el7
 
-test-jessie:
-  image: ligo/builder:jessie
-  stage: test
-  script:
-    - pip install .
-    - python setup.py test
+before_script:
+  - yum install python-pip
 
-test-el7:
-  image: ligo/builder:el7
-  stage: test
+test:
   script:
     - pip install .
     - python setup.py test
