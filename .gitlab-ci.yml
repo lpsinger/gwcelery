@@ -1,15 +1,18 @@
 image: ligo/builder:el7
 
+variables:
+  PIP_CACHE: "pip-cache"
+
 cache:
   paths:
-    - /.cache/pip
+    - $PIP_CACHE
 
 test:
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   script:
     - yum install -y python-pip pyxmpp
-    - pip install --verbose --upgrade pip setuptools pytest-cov
-    - pip install .
+    - pip install --cache-dir="$PIP_CACHE" --upgrade pip setuptools pytest-cov
+    - pip install --cache-dir="$PIP_CACHE" .
     - python setup.py test --addopts='--cov --cov-report=html --cov-report=term'
   artifacts:
     paths:
