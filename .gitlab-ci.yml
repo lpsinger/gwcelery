@@ -1,19 +1,14 @@
-# Cache package downloads
-cache:
-  paths:
-    - apt-cache/
-    - pip-cache/
-    - docs/_build/
+stages:
+  - test
 
-before_script:
-  - export APT_CACHE_DIR=`pwd`/apt-cache
-  - export PIP_CACHE_DIR=`pwd`/pip-cache
-  - mkdir -pv $APT_CACHE_DIR $PIP_CACHE_DIR
-  - apt-get -o Dir::Cache::Archives="$APT_CACHE_DIR" -yq update
-  - >
-    apt-get -o Dir::Cache::Archives="$APT_CACHE_DIR" -yq install
-    python-pip
-
-test:
+test-jessie:
+  image: ligo/builder:jessie
+  stage: test
   script:
-    - python setup.py test
+    - test
+
+test-el7:
+  image: ligo/builder:el7
+  stage: test
+  script:
+    - test
