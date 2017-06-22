@@ -2,7 +2,7 @@ image: ligo/builder:el7
 
 cache:
   paths:
-    - ~/.cache/pip
+    - /.cache/pip
 
 before_script:
   - yum install -y python-pip pyxmpp
