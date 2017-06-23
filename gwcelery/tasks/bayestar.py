@@ -54,6 +54,10 @@ def bayestar_localize(coinc_psd, graceid, service):
             fitspath = os.path.join(tmpdir, 'bayestar.fits.gz')
             fits.write_sky_map(fitspath, skymap, nest=True)
             return open(fitspath, 'rb').read()
+    except:
+        # Produce log message for any otherwise uncaught exception
+        log.exception("sky localization failed")
+        raise
     finally:
         log.removeHandler(handler)
         del handler
