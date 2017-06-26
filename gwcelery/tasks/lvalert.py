@@ -68,7 +68,6 @@ class LVAlertClient(Client):
 @app.task(base=EternalTask, bind=True, ignore_result=True)
 def lvalert_listen(self):
     """LVAlert listener."""
-    server = 'lvalert-test.cgca.uwm.edu'
-    client = LVAlertClient(self, server)
+    client = LVAlertClient(self, app.conf['lvalert_host'])
     client.connect()
     client.loop(1)

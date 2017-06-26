@@ -10,6 +10,7 @@ app = Celery('gwcelery', backend='redis://', broker='redis://',
         accept_content=['json', 'pickle'],
         event_serializer='json',
         result_serializer='pickle',
-        task_serializer='pickle'
+        task_serializer='pickle',
+        lvalert_host='lvalert-test.cgca.uwm.edu'
     )
 )
