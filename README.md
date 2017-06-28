@@ -13,7 +13,7 @@ Hipster pipeline for annotating LIGO events.
  - Tasks are defined by [small, self-contained Python functions](https://git.ligo.org/leo-singer/gwcelery/tree/master/gwcelery/tasks)
  - [Lightweight test suite](https://git.ligo.org/leo-singer/gwcelery/tree/master/gwcelery/tests) using mocks of external services
  - [Continuous integration](https://git.ligo.org/leo-singer/gwcelery/pipelines)
- - One line of code to switch from test to production GraceDB server
+ - [One line of code to switch from test to production GraceDB server](https://git.ligo.org/leo-singer/gwcelery/blob/master/gwcelery/celery.py)
  - Browser-based monitoring console (see below)
 
 ## Instructions
