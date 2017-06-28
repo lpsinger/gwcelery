@@ -1,7 +1,7 @@
 # GWCelery
 
 [![build status](https://git.ligo.org/leo-singer/gwcelery/badges/master/build.svg)](https://git.ligo.org/leo-singer/gwcelery/commits/master)
-[![coverage report](https://git.ligo.org/leo-singer/gwcelery/badges/master/coverage.svg)](https://git.ligo.org/leo-singer/gwcelery/commits/master)
+[![coverage report](https://git.ligo.org/leo-singer/gwcelery/badges/master/coverage.svg)](https://leo-singer.docs.ligo.org/gwcelery)
 
 Hipster pipeline for annotating LIGO events.
 
