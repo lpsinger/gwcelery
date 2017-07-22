@@ -24,7 +24,7 @@ def test_dispatch_psd(mock_bayestar):
 
 
 @patch('gwcelery.tasks.dispatch.annotate_fits')
-def test_dispatch_psd(mock_annotate_fits):
+def test_dispatch_fits(mock_annotate_fits):
     """Test dispatch of an LVAlert message for a PSD upload."""
     # Test LVAlert payload.
     payload = pkg_resources.resource_string(__name__, 'data/lvalert_fits.json')
