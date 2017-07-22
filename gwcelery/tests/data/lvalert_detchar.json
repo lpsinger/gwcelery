@@ -1,0 +1,26 @@
+{
+    "object": {
+        "comment": "V1 detchar analysis finished",
+        "file_version": null,
+        "tag_names": [
+            "data_quality"
+        ],
+        "file": null,
+        "created": "2017-07-22T16:04:09+00:00",
+        "self": "https://gracedb-test.ligo.org/api/events/T250822/log/107",
+        "issuer": {
+            "username": "virgo_detchar",
+            "display_name": " Virgo Detchar"
+        },
+        "filename": "",
+        "tags": "https://gracedb-test.ligo.org/api/events/T250822/log/107/tag/",
+        "N": 107
+    },
+    "uid": "T250822",
+    "labels": [
+
+    ],
+    "alert_type": "update",
+    "file": "",
+    "description": "LOG: V1 detchar analysis finished"
+}

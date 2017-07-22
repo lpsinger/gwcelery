@@ -9,6 +9,22 @@ import pytest
 from ..tasks.dispatch import dispatch
 
 
+@patch('gwcelery.tasks.dispatch.annotate_fits')
+@patch('gwcelery.tasks.dispatch.bayestar')
+def test_dispatch_ignored(mock_bayestar, mock_annotate_fits):
+    """Test dispatch of a detchar status message that should be ignored."""
+    # Test LVAlert payload.
+    payload = pkg_resources.resource_string(
+        __name__, 'data/lvalert_detchar.json')
+
+    # Run function under test
+    dispatch(payload)
+
+    # Check that no tasks were dispatched.
+    mock_annotate_fits.assert_not_called()
+    mock_bayestar.assert_not_called()
+
+
 @patch('gwcelery.tasks.dispatch.bayestar')
 def test_dispatch_psd(mock_bayestar):
     """Test dispatch of an LVAlert message for a PSD upload."""
