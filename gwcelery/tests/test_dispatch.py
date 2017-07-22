@@ -34,7 +34,7 @@ def test_dispatch_psd(mock_bayestar):
     # Run function under test
     dispatch(payload)
 
-    # Check that the correct actions were dispatched.
+    # Check that the correct tasks were dispatched.
     mock_bayestar.assert_called_once_with(
         'T250822', 'https://gracedb-test.ligo.org/api/')
 
@@ -48,7 +48,7 @@ def test_dispatch_fits(mock_annotate_fits):
     # Run function under test
     dispatch(payload)
 
-    # Check that the correct actions were dispatched.
+    # Check that the correct tasks were dispatched.
     mock_annotate_fits.assert_called_once_with(
         'bayestar.fits.gz,2', 'bayestar', 'T250822',
         'https://gracedb-test.ligo.org/api/', ['sky_loc'])
