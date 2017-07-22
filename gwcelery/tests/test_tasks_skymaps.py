@@ -17,6 +17,8 @@ def toy_fits_filecontents():
     """Generate the binary contents of a toy FITS file."""
     bytesio = io.BytesIO()
     table = Table(data=[[1, 2, 3], [4, 5, 6]], names=['foo', 'bar'])
+    table.meta['comment'] = 'This is a comment.'
+    table.meta['history'] = 'This is a history line.'
     table.write(bytesio, format='fits')
     return bytesio.getvalue()
 
@@ -27,6 +29,8 @@ def toy_3d_fits_filecontents():
     bytesio = io.BytesIO()
     table = Table(
         data=[[0] * 12] * 4, names=['PROB', 'DISTMU', 'DISTSIGMA', 'DISTNORM'])
+    table.meta['comment'] = 'This is a comment.'
+    table.meta['history'] = 'This is a history line.'
     table.write(bytesio, format='fits')
     return bytesio.getvalue()
 
