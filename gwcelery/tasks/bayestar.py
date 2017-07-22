@@ -3,7 +3,6 @@ import logging
 import os
 
 from celery import group
-from lalinference.io import events
 
 from ..celery import app
 from .gracedb import download, upload
@@ -26,9 +25,10 @@ def bayestar(graceid, service):
                    'sky localization complete', 'sky_loc'))
 
 
-@app.task(queue='openmp', throws=events.DetectorDisabledError)
+@app.task(queue='openmp', throws=ValueError)
 def bayestar_localize(coinc_psd, graceid, service, filename='bayestar.fits.gz',
                       disabled_detectors=None):
+    from lalinference.io import events
     from lalinference.io import fits
     from lalinference.bayestar.command import TemporaryDirectory
     from lalinference.bayestar.sky_map import localize, rasterize
