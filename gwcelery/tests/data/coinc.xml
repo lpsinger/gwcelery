@@ -1,0 +1,219 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE LIGO_LW SYSTEM "http://ldas-sw.ligo.caltech.edu/doc/ligolwAPI/html/ligolw_dtd.txt">
+<LIGO_LW>
+	<Table Name="process:table">
+		<Column Type="lstring" Name="process:comment"/>
+		<Column Type="lstring" Name="process:node"/>
+		<Column Type="lstring" Name="process:domain"/>
+		<Column Type="int_4s" Name="process:unix_procid"/>
+		<Column Type="int_4s" Name="process:start_time"/>
+		<Column Type="ilwd:char" Name="process:process_id"/>
+		<Column Type="int_4s" Name="process:is_online"/>
+		<Column Type="lstring" Name="process:ifos"/>
+		<Column Type="int_4s" Name="process:jobid"/>
+		<Column Type="lstring" Name="process:username"/>
+		<Column Type="lstring" Name="process:program"/>
+		<Column Type="int_4s" Name="process:end_time"/>
+		<Column Type="lstring" Name="process:version"/>
+		<Column Type="lstring" Name="process:cvs_repository"/>
+		<Column Type="int_4s" Name="process:cvs_entry_time"/>
+		<Stream Delimiter="," Type="Local" Name="process:table">
+			,"node590",,24754,1135132071,"process:process_id:2000",0,"H1,L1",0,"gstlalcbctest","gstlal_inspiral",,,,,
+		</Stream>
+	</Table>
+	<Table Name="process_params:table">
+		<Column Type="ilwd:char" Name="process_params:process_id"/>
+		<Column Type="lstring" Name="process_params:program"/>
+		<Column Type="lstring" Name="process_params:type"/>
+		<Column Type="lstring" Name="process_params:value"/>
+		<Column Type="lstring" Name="process_params:param"/>
+		<Stream Delimiter="," Type="Local" Name="process_params:table">
+			"process:process_id:2000","gstlal_inspiral","int_8s","8","--psd-fft-length",
+			"process:process_id:2000","gstlal_inspiral","real_8","14400.0","--likelihood-snapshot-interval",
+			"process:process_id:2000","gstlal_inspiral","lstring","HighMass","--gracedb-search",
+			"process:process_id:2000","gstlal_inspiral","real_8","8.0","--singles-threshold",
+			"process:process_id:2000","gstlal_inspiral","int_8s","67108864","--block-size",
+			"process:process_id:2000","gstlal_inspiral",,,"--track-psd",
+			"process:process_id:2000","gstlal_inspiral","real_8","0.0001","--gracedb-far-threshold",
+			"process:process_id:2000","gstlal_inspiral","lstring","https://gracedb.ligo.org/api/","--gracedb-service-url",
+			"process:process_id:2000","gstlal_inspiral","lstring","H1=451","--state-vector-on-bits",
+			"process:process_id:2000","gstlal_inspiral","lstring","L1=451","--state-vector-on-bits",
+			"process:process_id:2000","gstlal_inspiral","lstring","online","--nds-channel-type",
+			"process:process_id:2000","gstlal_inspiral","lstring","/mnt/qfs6/gstlalcbctest/observing/1/trigs/0109_prior.xml.gz","--likelihood-file",
+			"process:process_id:2000","gstlal_inspiral","lstring","10.14.0.1","--framexmit-iface",
+			"process:process_id:2000","gstlal_inspiral","lstring","autochisq","--chisq-type",
+			"process:process_id:2000","gstlal_inspiral","real_8","50.0","--ht-gate-threshold",
+			"process:process_id:2000","gstlal_inspiral","lstring","vetoes","--veto-segments-name",
+			"process:process_id:2000","gstlal_inspiral","int_8s","1","--fir-stride",
+			"process:process_id:2000","gstlal_inspiral","lstring","H1=0","--state-vector-off-bits",
+			"process:process_id:2000","gstlal_inspiral","lstring","L1=0","--state-vector-off-bits",
+			"process:process_id:2000","gstlal_inspiral","lstring","CBC","--gracedb-group",
+			"process:process_id:2000","gstlal_inspiral","real_8","0.005","--coincidence-threshold",
+			"process:process_id:2000","gstlal_inspiral","int_8s","0","--control-peak-time",
+			"process:process_id:2000","gstlal_inspiral","lstring","H1:/mnt/qfs6/gstlalcbctest/observing/1/bank_fixed/gstlal_svd_bank_H1/H1-GSTLAL_SVD_BANK_109-0-0.xml.gz,L1:/mnt/qfs6/gstlalcbctest/observing/1/bank_fixed/gstlal_svd_bank_L1/L1-GSTLAL_SVD_BANK_109-0-0.xml.gz","--svd-bank",
+			"process:process_id:2000","gstlal_inspiral","lstring","/mnt/qfs6/gstlalcbctest/observing/1/trigs/0109_zerolag_prior.xml.gz","--zero-lag-ranking-stat-file",
+			"process:process_id:2000","gstlal_inspiral","lstring","gstlal","--gracedb-pipeline",
+			"process:process_id:2000","gstlal_inspiral","lstring","H1=GDS-CALIB_STATE_VECTOR","--dq-channel-name",
+			"process:process_id:2000","gstlal_inspiral","lstring","L1=GDS-CALIB_STATE_VECTOR","--dq-channel-name",
+			"process:process_id:2000","gstlal_inspiral","lstring","framexmit","--data-source",
+			"process:process_id:2000","gstlal_inspiral","int_8s","31200","--nds-port",
+			"process:process_id:2000","gstlal_inspiral","lstring","marginalized_likelihood.xml.gz","--marginalized-likelihood-file",
+			"process:process_id:2000","gstlal_inspiral","real_8","1.0","--thinca-interval",
+			"process:process_id:2000","gstlal_inspiral","lstring","_CONDOR_SCRATCH_DIR","--tmp-space",
+			"process:process_id:2000","gstlal_inspiral","lstring","H1=GDS-CALIB_STRAIN","--channel-name",
+			"process:process_id:2000","gstlal_inspiral","lstring","L1=GDS-CALIB_STRAIN","--channel-name",
+			"process:process_id:2000","gstlal_inspiral","lstring","0109","--job-tag",
+			"process:process_id:2000","gstlal_inspiral","lstring",":","--nxydump-segment",
+			"process:process_id:2000","gstlal_inspiral","lstring","not_used.xml.gz","--output",
+			"process:process_id:2000","gstlal_inspiral","lstring","V1=224.3.2.3:7098","--framexmit-addr",
+			"process:process_id:2000","gstlal_inspiral","lstring","H1=224.3.2.1:7096","--framexmit-addr",
+			"process:process_id:2000","gstlal_inspiral","lstring","L1=224.3.2.2:7097","--framexmit-addr"
+		</Stream>
+	</Table>
+	<Table Name="search_summary:table">
+		<Column Type="lstring" Name="search_summary:comment"/>
+		<Column Type="int_4s" Name="search_summary:nevents"/>
+		<Column Type="lstring" Name="search_summary:lal_cvs_tag"/>
+		<Column Type="int_4s" Name="search_summary:out_start_time"/>
+		<Column Type="lstring" Name="search_summary:shared_object"/>
+		<Column Type="int_4s" Name="search_summary:in_start_time"/>
+		<Column Type="int_4s" Name="search_summary:nnodes"/>
+		<Column Type="int_4s" Name="search_summary:out_start_time_ns"/>
+		<Column Type="ilwd:char" Name="search_summary:process_id"/>
+		<Column Type="int_4s" Name="search_summary:in_end_time"/>
+		<Column Type="int_4s" Name="search_summary:out_end_time_ns"/>
+		<Column Type="lstring" Name="search_summary:lalwrapper_cvs_tag"/>
+		<Column Type="int_4s" Name="search_summary:in_start_time_ns"/>
+		<Column Type="int_4s" Name="search_summary:in_end_time_ns"/>
+		<Column Type="int_4s" Name="search_summary:out_end_time"/>
+		<Column Type="lstring" Name="search_summary:ifos"/>
+		<Stream Delimiter="," Type="Local" Name="search_summary:table">
+			,0,,1135131969,"standalone",0,1,831542979,"process:process_id:2000",2000000000,831542979,,0,0,1135136352,"H1,L1"
+		</Stream>
+	</Table>
+	<Table Name="sngl_inspiral:table">
+		<Column Type="ilwd:char" Name="sngl_inspiral:process_id"/>
+		<Column Type="lstring" Name="sngl_inspiral:ifo"/>
+		<Column Type="int_4s" Name="sngl_inspiral:end_time"/>
+		<Column Type="int_4s" Name="sngl_inspiral:end_time_ns"/>
+		<Column Type="real_4" Name="sngl_inspiral:eff_distance"/>
+		<Column Type="real_4" Name="sngl_inspiral:coa_phase"/>
+		<Column Type="real_4" Name="sngl_inspiral:mass1"/>
+		<Column Type="real_4" Name="sngl_inspiral:mass2"/>
+		<Column Type="real_4" Name="sngl_inspiral:snr"/>
+		<Column Type="real_4" Name="sngl_inspiral:chisq"/>
+		<Column Type="int_4s" Name="sngl_inspiral:chisq_dof"/>
+		<Column Type="real_4" Name="sngl_inspiral:bank_chisq"/>
+		<Column Type="int_4s" Name="sngl_inspiral:bank_chisq_dof"/>
+		<Column Type="real_8" Name="sngl_inspiral:sigmasq"/>
+		<Column Type="real_4" Name="sngl_inspiral:spin1x"/>
+		<Column Type="real_4" Name="sngl_inspiral:spin1y"/>
+		<Column Type="real_4" Name="sngl_inspiral:spin1z"/>
+		<Column Type="real_4" Name="sngl_inspiral:spin2x"/>
+		<Column Type="real_4" Name="sngl_inspiral:spin2y"/>
+		<Column Type="real_4" Name="sngl_inspiral:spin2z"/>
+		<Column Type="ilwd:char" Name="sngl_inspiral:event_id"/>
+		<Column Type="lstring" Name="sngl_inspiral:search"/>
+		<Column Type="lstring" Name="sngl_inspiral:channel"/>
+		<Column Type="real_8" Name="sngl_inspiral:end_time_gmst"/>
+		<Column Type="int_4s" Name="sngl_inspiral:impulse_time"/>
+		<Column Type="int_4s" Name="sngl_inspiral:impulse_time_ns"/>
+		<Column Type="real_8" Name="sngl_inspiral:template_duration"/>
+		<Column Type="real_8" Name="sngl_inspiral:event_duration"/>
+		<Column Type="real_4" Name="sngl_inspiral:amplitude"/>
+		<Column Type="real_4" Name="sngl_inspiral:mchirp"/>
+		<Column Type="real_4" Name="sngl_inspiral:mtotal"/>
+		<Column Type="real_4" Name="sngl_inspiral:eta"/>
+		<Column Type="real_4" Name="sngl_inspiral:kappa"/>
+		<Column Type="real_4" Name="sngl_inspiral:chi"/>
+		<Column Type="real_4" Name="sngl_inspiral:tau0"/>
+		<Column Type="real_4" Name="sngl_inspiral:tau2"/>
+		<Column Type="real_4" Name="sngl_inspiral:tau3"/>
+		<Column Type="real_4" Name="sngl_inspiral:tau4"/>
+		<Column Type="real_4" Name="sngl_inspiral:tau5"/>
+		<Column Type="real_4" Name="sngl_inspiral:ttotal"/>
+		<Column Type="real_4" Name="sngl_inspiral:psi0"/>
+		<Column Type="real_4" Name="sngl_inspiral:psi3"/>
+		<Column Type="real_4" Name="sngl_inspiral:alpha"/>
+		<Column Type="real_4" Name="sngl_inspiral:alpha1"/>
+		<Column Type="real_4" Name="sngl_inspiral:alpha2"/>
+		<Column Type="real_4" Name="sngl_inspiral:alpha3"/>
+		<Column Type="real_4" Name="sngl_inspiral:alpha4"/>
+		<Column Type="real_4" Name="sngl_inspiral:alpha5"/>
+		<Column Type="real_4" Name="sngl_inspiral:alpha6"/>
+		<Column Type="real_4" Name="sngl_inspiral:beta"/>
+		<Column Type="real_4" Name="sngl_inspiral:f_final"/>
+		<Column Type="real_4" Name="sngl_inspiral:cont_chisq"/>
+		<Column Type="int_4s" Name="sngl_inspiral:cont_chisq_dof"/>
+		<Column Type="real_4" Name="sngl_inspiral:rsqveto_duration"/>
+		<Column Type="real_4" Name="sngl_inspiral:Gamma0"/>
+		<Column Type="real_4" Name="sngl_inspiral:Gamma1"/>
+		<Column Type="real_4" Name="sngl_inspiral:Gamma2"/>
+		<Column Type="real_4" Name="sngl_inspiral:Gamma3"/>
+		<Column Type="real_4" Name="sngl_inspiral:Gamma4"/>
+		<Column Type="real_4" Name="sngl_inspiral:Gamma5"/>
+		<Column Type="real_4" Name="sngl_inspiral:Gamma6"/>
+		<Column Type="real_4" Name="sngl_inspiral:Gamma7"/>
+		<Column Type="real_4" Name="sngl_inspiral:Gamma8"/>
+		<Column Type="real_4" Name="sngl_inspiral:Gamma9"/>
+		<Stream Delimiter="," Type="Local" Name="sngl_inspiral:table">
+			"process:process_id:2000","H1",1135136350,647757924,461.88879,0.13969257,19.924686,6.4254546,9.0802174,1.0069774,1,0,0,17590061.36265015,0,0,0.33962944,0,0,-0.1238557,"sngl_inspiral:event_id:117393473","","GDS-CALIB_STRAIN",36784.36821002203,0,0,2.253227705539698,0,0,9.5547781,26.350142,0.18438664,0,0,1.7307066,0,0.42565417,0,0,0,0,0,0,0,0,0,0,0,0,0,1024,0,0,0,246611.3,-6030.7861,10570.858,425.32635,-565.4422,813.47168,0,0,0,0,
+			"process:process_id:2000","L1",1135136350,646883043,472.93436,2.7356486,19.924686,6.4254546,7.3947201,1.0857431,1,0,0,12230527.26250952,0,0,0.33962944,0,0,-0.1238557,"sngl_inspiral:event_id:117393335","","GDS-CALIB_STRAIN",36784.36820995822,0,0,2.253227705539698,0,0,9.5547781,26.350142,0.18438664,0,0,1.7307066,0,0.42565417,0,0,0,0,0,0,0,0,0,0,0,0,0,1024,0,0,0,246611.3,-6030.7861,10570.858,425.32635,-565.4422,813.47168,0,0,0,0
+		</Stream>
+	</Table>
+	<Table Name="coinc_definer:table">
+		<Column Type="lstring" Name="coinc_definer:search"/>
+		<Column Type="lstring" Name="coinc_definer:description"/>
+		<Column Type="ilwd:char" Name="coinc_definer:coinc_def_id"/>
+		<Column Type="int_4u" Name="coinc_definer:search_coinc_type"/>
+		<Stream Delimiter="," Type="Local" Name="coinc_definer:table">
+			"inspiral","sngl_inspiral&lt;--&gt;sngl_inspiral coincidences","coinc_definer:coinc_def_id:13",0
+		</Stream>
+	</Table>
+	<Table Name="coinc_event:table">
+		<Column Type="ilwd:char" Name="coinc_event:coinc_event_id"/>
+		<Column Type="lstring" Name="coinc_event:instruments"/>
+		<Column Type="int_4u" Name="coinc_event:nevents"/>
+		<Column Type="ilwd:char" Name="coinc_event:process_id"/>
+		<Column Type="ilwd:char" Name="coinc_event:coinc_def_id"/>
+		<Column Type="ilwd:char" Name="coinc_event:time_slide_id"/>
+		<Column Type="real_8" Name="coinc_event:likelihood"/>
+		<Stream Delimiter="," Type="Local" Name="coinc_event:table">
+			"coinc_event:coinc_event_id:282036","H1,L1",2,"process:process_id:2000","coinc_definer:coinc_def_id:13","time_slide:time_slide_id:13",22.59958173984415
+		</Stream>
+	</Table>
+	<Table Name="coinc_inspiral:table">
+		<Column Type="real_8" Name="coinc_inspiral:false_alarm_rate"/>
+		<Column Type="real_8" Name="coinc_inspiral:mchirp"/>
+		<Column Type="real_8" Name="coinc_inspiral:minimum_duration"/>
+		<Column Type="real_8" Name="coinc_inspiral:mass"/>
+		<Column Type="int_4s" Name="coinc_inspiral:end_time"/>
+		<Column Type="ilwd:char" Name="coinc_inspiral:coinc_event_id"/>
+		<Column Type="real_8" Name="coinc_inspiral:snr"/>
+		<Column Type="int_4s" Name="coinc_inspiral:end_time_ns"/>
+		<Column Type="real_8" Name="coinc_inspiral:combined_far"/>
+		<Column Type="lstring" Name="coinc_inspiral:ifos"/>
+		<Stream Delimiter="," Type="Local" Name="coinc_inspiral:table">
+			0.0001120007617148929,9.554778099060059,24.35224199295044,26.3501410484314,1135136350,"coinc_event:coinc_event_id:282036",11.71034723464594,647757924,3.332628572265315e-11,"H1,L1"
+		</Stream>
+	</Table>
+	<Table Name="coinc_event_map:table">
+		<Column Type="ilwd:char" Name="coinc_event_map:event_id"/>
+		<Column Type="char_v" Name="coinc_event_map:table_name"/>
+		<Column Type="ilwd:char" Name="coinc_event_map:coinc_event_id"/>
+		<Stream Delimiter="," Type="Local" Name="coinc_event_map:table">
+			"sngl_inspiral:event_id:117393473","sngl_inspiral","coinc_event:coinc_event_id:282036",
+			"sngl_inspiral:event_id:117393335","sngl_inspiral","coinc_event:coinc_event_id:282036"
+		</Stream>
+	</Table>
+	<Table Name="time_slide:table">
+		<Column Type="lstring" Name="time_slide:instrument"/>
+		<Column Type="ilwd:char" Name="time_slide:time_slide_id"/>
+		<Column Type="ilwd:char" Name="time_slide:process_id"/>
+		<Column Type="real_8" Name="time_slide:offset"/>
+		<Stream Delimiter="," Type="Local" Name="time_slide:table">
+			"H1","time_slide:time_slide_id:13","process:process_id:2000",0,
+			"L1","time_slide:time_slide_id:13","process:process_id:2000",0
+		</Stream>
+	</Table>
+</LIGO_LW>

@@ -45,7 +45,7 @@ setup(
     ],
     packages=find_packages(),
     package_data={
-        '': ['*.html', '*.json']
+        '': ['*.html', '*.json', '*.xml', '*.xml.gz']
     },
     entry_points={
         'console_scripts': [
