@@ -1,0 +1,26 @@
+{
+    "object": {
+        "comment": "",
+        "file_version": 1,
+        "tag_names": [
+            "psd"
+        ],
+        "file": "https://gracedb-test.ligo.org/api/events/T250822/files/psd.xml.gz,1",
+        "created": "2017-07-22T16:31:33+00:00",
+        "self": "https://gracedb-test.ligo.org/api/events/T250822/log/109",
+        "issuer": {
+            "username": "leo.singer@LIGO.ORG",
+            "display_name": "Leo Singer"
+        },
+        "filename": "psd.xml.gz",
+        "tags": "https://gracedb-test.ligo.org/api/events/T250822/log/109/tag/",
+        "N": 109
+    },
+    "uid": "T250822",
+    "labels": [
+
+    ],
+    "alert_type": "update",
+    "file": "psd.xml.gz",
+    "description": "UPLOAD: 'psd.xml.gz' "
+}
