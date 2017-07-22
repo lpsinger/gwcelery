@@ -1,0 +1,26 @@
+{
+    "object": {
+        "comment": "sky localization complete",
+        "file_version": 2,
+        "tag_names": [
+            "sky_loc"
+        ],
+        "file": "https://gracedb-test.ligo.org/api/events/T250822/files/bayestar.fits.gz,2",
+        "created": "2017-07-22T16:31:49+00:00",
+        "self": "https://gracedb-test.ligo.org/api/events/T250822/log/127",
+        "issuer": {
+            "username": "gracedb.processor",
+            "display_name": " GraceDB Processor"
+        },
+        "filename": "bayestar.fits.gz",
+        "tags": "https://gracedb-test.ligo.org/api/events/T250822/log/127/tag/",
+        "N": 127
+    },
+    "uid": "T250822",
+    "labels": [
+
+    ],
+    "alert_type": "update",
+    "file": "bayestar.fits.gz",
+    "description": "UPLOAD: 'bayestar.fits.gz' sky localization complete"
+}
