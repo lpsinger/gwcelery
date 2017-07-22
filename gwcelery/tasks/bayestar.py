@@ -25,6 +25,8 @@ def bayestar(graceid, service):
                    'sky localization complete', 'sky_loc'))
 
 
+# FIXME: should be `throws=events.DetectorDisabledError, but that would add
+# a real on lalinference.
 @app.task(queue='openmp', throws=ValueError)
 def bayestar_localize(coinc_psd, graceid, service, filename='bayestar.fits.gz',
                       disabled_detectors=None):
