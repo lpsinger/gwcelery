@@ -3,6 +3,8 @@ from celery.contrib import abortable
 from celery.utils.log import get_task_logger
 from celery_singleton import clear_locks, Singleton
 
+__all__ = ('EternalTask',)
+
 # Logging
 log = get_task_logger(__name__)
 
