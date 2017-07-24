@@ -4,6 +4,8 @@ import tempfile
 
 import six
 
+__all__ = ('NamedTemporaryFile',)
+
 
 @contextmanager
 def NamedTemporaryFile(**kwargs):
