@@ -29,7 +29,8 @@ test:
 mirror:
   script:
     - mkdir -p ~/.ssh
-    - echo $GITHUB_DEPLOY_KEY > ~/.ssh/id_rsa
+    - echo $GITHUB_DEPLOY_ID_RSA > ~/.ssh/id_rsa
+    - echo $GITHUB_DEPLOY_ID_RSA_PUB > ~/.ssh/id_rsa.pub
     - git remote add github https://github.com/lpsinger/gwcelery
     - git push github master
 
