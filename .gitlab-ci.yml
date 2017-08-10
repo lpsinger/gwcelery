@@ -18,7 +18,6 @@ test:
   script:
     - echo keepcache = 1 >> /etc/yum.conf
     - yum install -y python-pip pyxmpp lalinference-python yum-plugin-priorities
-    - rpm -Uvh http://software.ligo.org/lscsoft/scientific/7/x86_64/production/lscsoft-production-config-1.3-1.el7.noarch.rpm
     - yum install -y osg-oasis ldg-client
     - echo /cvmfs /etc/auto.cvmfs >> /etc/auto.master
     - systemctl restart autofs
