@@ -17,13 +17,7 @@ test:
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   script:
     - echo keepcache = 1 >> /etc/yum.conf
-    - yum install -y python-pip pyxmpp lalinference-python yum-plugin-priorities
-    - yum install -y osg-oasis ldg-client
-    - echo /cvmfs /etc/auto.cvmfs >> /etc/auto.master
-    - sed -i 's/#[[:space:]]*user_allow_other/user_allow_other/' /etc/fuse.conf
-    - service autofs restart
-    - cvmfs_config reload
-    - ls -lh /cvmfs/oasis.opensciencegrid.org/ligo/sw
+    - yum install -y python-pip pyxmpp
     - mkdir -p "$PIP_CACHE"
     - pip install --cache-dir="$PIP_CACHE" --upgrade pip setuptools pytest-cov pytest-runner mock
     - pip install --cache-dir="$PIP_CACHE" .
