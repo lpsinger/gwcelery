@@ -9,7 +9,7 @@ cache:
     - $PIP_CACHE
 
 stages:
-  -test
+  - test
   - deploy
   - mirror
 
