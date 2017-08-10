@@ -38,7 +38,7 @@ mirror:
     - echo -e "$GITHUB_DEPLOY_ID_RSA" > ~/.ssh/id_rsa && chmod 0600 ~/.ssh/id_rsa
     - echo -e "$GITHUB_DEPLOY_ID_RSA_PUB" > ~/.ssh/id_rsa.pub && chmod 0600 ~/.ssh/id_rsa.pub
     - git remote set-url github git@github.com:lpsinger/gwcelery.git || git remote add github git@github.com:lpsinger/gwcelery.git
-    - git push --mirror github master
+    - git push --mirror github
 
 pages:
   stage: deploy
