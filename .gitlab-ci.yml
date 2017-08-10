@@ -21,7 +21,7 @@ test:
     - mkdir -p "$PIP_CACHE"
     - pip install --cache-dir="$PIP_CACHE" --upgrade pip setuptools pytest-cov pytest-runner mock
     - pip install --cache-dir="$PIP_CACHE" .
-    - python setup.py test --addopts='--cov --cov-report=html --cov-report=term'
+    - python setup.py test --addopts='-vv --cov --cov-report=html --cov-report=term'
   artifacts:
     paths:
       - htmlcov/
