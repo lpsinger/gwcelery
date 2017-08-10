@@ -17,6 +17,7 @@ test:
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   script:
     - ulimit -a
+    - top -cb -n 1
     - "false"
     - echo keepcache = 1 >> /etc/yum.conf
     - yum install -y python-pip pyxmpp lalinference-python
