@@ -8,6 +8,11 @@ cache:
     - /var/cache/yum
     - $PIP_CACHE
 
+stages:
+  -test
+  - deploy
+  - mirror
+
 test:
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   script:
@@ -20,6 +25,11 @@ test:
   artifacts:
     paths:
       - htmlcov/
+
+mirror:
+  - echo $GITHUB_DEPLOY_KEY > ~/.ssh/id_rsa
+  - git remote add github https://github.com/lpsinger/gwcelery
+  - git push github master
 
 pages:
   stage: deploy
