@@ -16,9 +16,13 @@ def dispatch(payload):
 
     # Determine GraceDB service URL
     try:
-        self_link = alert['object']['links']['self']
+        try:
+            self_link = alert['object']['links']['self']
+        except KeyError:
+            self_link = alert['object']['self']
     except KeyError:
-        self_link = alert['object']['self']
+        # Cannot deduce API link
+        return
     base, api, _ = self_link.partition('/api/')
     service = base + api
 
