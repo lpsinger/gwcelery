@@ -25,7 +25,7 @@ test:
     - echo /cvmfs /etc/auto.cvmfs >> /etc/auto.master
     - systemctl restart autofs
     - sed -i 's/#[[:space:]]*user_allow_other/user_allow_other/' /etc/fuse.conf
-cat /etc/fuse.conf
+    - cat /etc/fuse.conf
     - ls -lh /cvmfs/oasis.opensciencegrid.org/ligo/sw
     - mkdir -p "$PIP_CACHE"
     - pip install --cache-dir="$PIP_CACHE" --upgrade pip setuptools pytest-cov pytest-runner mock
