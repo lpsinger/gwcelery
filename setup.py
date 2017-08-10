@@ -37,7 +37,7 @@ setup(
     license='GPL-2+',
     install_requires=[
         'astropy',
-        'celery[redis]',
+        'celery[redis] >= 4.1.0',
         'celery_singleton >= 0.1.1',
         'ligo-gracedb',
         'ligo-lvalert',
