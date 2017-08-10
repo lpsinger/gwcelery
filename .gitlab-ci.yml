@@ -31,7 +31,7 @@ mirror:
     - mkdir -p ~/.ssh
     - echo -e $GITHUB_DEPLOY_ID_RSA > ~/.ssh/id_rsa
     - echo -e $GITHUB_DEPLOY_ID_RSA_PUB > ~/.ssh/id_rsa.pub
-    - git remote add github git@github.com:lpsinger/gwcelery.git || git remote set-url github git@github.com:lpsinger/gwcelery.git
+    - git remote set-url github git@github.com:lpsinger/gwcelery.git
     - git push github master
 
 pages:
