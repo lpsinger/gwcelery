@@ -18,7 +18,15 @@
 		<Column Type="lstring" Name="process:cvs_repository"/>
 		<Column Type="int_4s" Name="process:cvs_entry_time"/>
 		<Stream Delimiter="," Type="Local" Name="process:table">
-			,"node590",,24754,1135132071,"process:process_id:2000",0,"H1,L1",0,"gstlalcbctest","gstlal_inspiral",,,,,
+			,"nemo-slave3007",,16409,1070887424,"process:process_id:120",0,"H1,L1,V1",0,"lsinger","gstlal_inspiral",1070902704,,,,
+			,"nemo-slave2006",,25829,1070925061,"process:process_id:308",0,"H1,L1,V1",0,"lsinger","gstlal_inspiral",1070933574,,,,
+			,"nemo-slave1010",,25228,1070857852,"process:process_id:496",0,"H1,L1,V1",0,"lsinger","gstlal_inspiral",1070867765,,,,
+			,"nemo-slave1003",,9649,1070959808,"process:process_id:684",0,"H1,L1,V1",0,"lsinger","gstlal_inspiral",1070966638,,,,
+			,"nemo-slave2044",,1343,1071136303,"process:process_id:872",0,"H1,L1,V1",0,"lsinger","gstlal_inspiral",1071144989,,,,
+			,"nemo-slave1040",,18905,1070997783,"process:process_id:1060",0,"H1,L1,V1",0,"lsinger","gstlal_inspiral",1071007330,,,,
+			,"nemo-slave2004",,5805,1071027752,"process:process_id:1248",0,"H1,L1,V1",0,"lsinger","gstlal_inspiral",1071036154,,,,
+			,"nemo-slave2002",,7075,1071099308,"process:process_id:1436",0,"H1,L1,V1",0,"lsinger","gstlal_inspiral",1071107688,,,,
+			,"nemo-slave2043",,16764,1071081776,"process:process_id:1624",0,"H1,L1,V1",0,"lsinger","gstlal_inspiral",1071088039,,,,
 		</Stream>
 	</Table>
 	<Table Name="process_params:table">
@@ -28,46 +36,249 @@
 		<Column Type="lstring" Name="process_params:value"/>
 		<Column Type="lstring" Name="process_params:param"/>
 		<Stream Delimiter="," Type="Local" Name="process_params:table">
-			"process:process_id:2000","gstlal_inspiral","int_8s","8","--psd-fft-length",
-			"process:process_id:2000","gstlal_inspiral","real_8","14400.0","--likelihood-snapshot-interval",
-			"process:process_id:2000","gstlal_inspiral","lstring","HighMass","--gracedb-search",
-			"process:process_id:2000","gstlal_inspiral","real_8","8.0","--singles-threshold",
-			"process:process_id:2000","gstlal_inspiral","int_8s","67108864","--block-size",
-			"process:process_id:2000","gstlal_inspiral",,,"--track-psd",
-			"process:process_id:2000","gstlal_inspiral","real_8","0.0001","--gracedb-far-threshold",
-			"process:process_id:2000","gstlal_inspiral","lstring","https://gracedb.ligo.org/api/","--gracedb-service-url",
-			"process:process_id:2000","gstlal_inspiral","lstring","H1=451","--state-vector-on-bits",
-			"process:process_id:2000","gstlal_inspiral","lstring","L1=451","--state-vector-on-bits",
-			"process:process_id:2000","gstlal_inspiral","lstring","online","--nds-channel-type",
-			"process:process_id:2000","gstlal_inspiral","lstring","/mnt/qfs6/gstlalcbctest/observing/1/trigs/0109_prior.xml.gz","--likelihood-file",
-			"process:process_id:2000","gstlal_inspiral","lstring","10.14.0.1","--framexmit-iface",
-			"process:process_id:2000","gstlal_inspiral","lstring","autochisq","--chisq-type",
-			"process:process_id:2000","gstlal_inspiral","real_8","50.0","--ht-gate-threshold",
-			"process:process_id:2000","gstlal_inspiral","lstring","vetoes","--veto-segments-name",
-			"process:process_id:2000","gstlal_inspiral","int_8s","1","--fir-stride",
-			"process:process_id:2000","gstlal_inspiral","lstring","H1=0","--state-vector-off-bits",
-			"process:process_id:2000","gstlal_inspiral","lstring","L1=0","--state-vector-off-bits",
-			"process:process_id:2000","gstlal_inspiral","lstring","CBC","--gracedb-group",
-			"process:process_id:2000","gstlal_inspiral","real_8","0.005","--coincidence-threshold",
-			"process:process_id:2000","gstlal_inspiral","int_8s","0","--control-peak-time",
-			"process:process_id:2000","gstlal_inspiral","lstring","H1:/mnt/qfs6/gstlalcbctest/observing/1/bank_fixed/gstlal_svd_bank_H1/H1-GSTLAL_SVD_BANK_109-0-0.xml.gz,L1:/mnt/qfs6/gstlalcbctest/observing/1/bank_fixed/gstlal_svd_bank_L1/L1-GSTLAL_SVD_BANK_109-0-0.xml.gz","--svd-bank",
-			"process:process_id:2000","gstlal_inspiral","lstring","/mnt/qfs6/gstlalcbctest/observing/1/trigs/0109_zerolag_prior.xml.gz","--zero-lag-ranking-stat-file",
-			"process:process_id:2000","gstlal_inspiral","lstring","gstlal","--gracedb-pipeline",
-			"process:process_id:2000","gstlal_inspiral","lstring","H1=GDS-CALIB_STATE_VECTOR","--dq-channel-name",
-			"process:process_id:2000","gstlal_inspiral","lstring","L1=GDS-CALIB_STATE_VECTOR","--dq-channel-name",
-			"process:process_id:2000","gstlal_inspiral","lstring","framexmit","--data-source",
-			"process:process_id:2000","gstlal_inspiral","int_8s","31200","--nds-port",
-			"process:process_id:2000","gstlal_inspiral","lstring","marginalized_likelihood.xml.gz","--marginalized-likelihood-file",
-			"process:process_id:2000","gstlal_inspiral","real_8","1.0","--thinca-interval",
-			"process:process_id:2000","gstlal_inspiral","lstring","_CONDOR_SCRATCH_DIR","--tmp-space",
-			"process:process_id:2000","gstlal_inspiral","lstring","H1=GDS-CALIB_STRAIN","--channel-name",
-			"process:process_id:2000","gstlal_inspiral","lstring","L1=GDS-CALIB_STRAIN","--channel-name",
-			"process:process_id:2000","gstlal_inspiral","lstring","0109","--job-tag",
-			"process:process_id:2000","gstlal_inspiral","lstring",":","--nxydump-segment",
-			"process:process_id:2000","gstlal_inspiral","lstring","not_used.xml.gz","--output",
-			"process:process_id:2000","gstlal_inspiral","lstring","V1=224.3.2.3:7098","--framexmit-addr",
-			"process:process_id:2000","gstlal_inspiral","lstring","H1=224.3.2.1:7096","--framexmit-addr",
-			"process:process_id:2000","gstlal_inspiral","lstring","L1=224.3.2.2:7097","--framexmit-addr"
+			"process:process_id:120","gstlal_inspiral","int_8s","16","--psd-fft-length",
+			"process:process_id:120","gstlal_inspiral","lstring","frame_with_injections.cache","--frame-cache",
+			"process:process_id:120","gstlal_inspiral","lstring","969718645","--gps-start-time",
+			"process:process_id:120","gstlal_inspiral","lstring","vetoes","--veto-segments-name",
+			"process:process_id:120","gstlal_inspiral","int_8s","67108864","--block-size",
+			"process:process_id:120","gstlal_inspiral",,,"--track-psd",
+			"process:process_id:120","gstlal_inspiral","lstring","online","--nds-channel-type",
+			"process:process_id:120","gstlal_inspiral","lstring","autochisq","--chisq-type",
+			"process:process_id:120","gstlal_inspiral","lstring","969748608","--gps-end-time",
+			"process:process_id:120","gstlal_inspiral","lstring","datasegments","--frame-segments-name",
+			"process:process_id:120","gstlal_inspiral","int_8s","4","--fir-stride",
+			"process:process_id:120","gstlal_inspiral","lstring","Test","--gracedb-group",
+			"process:process_id:120","gstlal_inspiral","lstring","segments.xml","--frame-segments-file",
+			"process:process_id:120","gstlal_inspiral","real_8","0.005","--coincidence-threshold",
+			"process:process_id:120","gstlal_inspiral","int_8s","4","--control-peak-time",
+			"process:process_id:120","gstlal_inspiral","lstring","V1:gstlal_svd_bank/V1-0_0_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-0_1_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-0_2_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-0_3_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-0_4_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-0_5_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-0_6_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-0_7_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-0_8_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-0_9_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-0_0_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-0_1_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-0_2_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-0_3_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-0_4_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-0_5_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-0_6_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-0_7_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-0_8_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-0_9_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-0_0_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-0_1_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-0_2_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-0_3_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-0_4_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-0_5_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-0_6_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-0_7_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-0_8_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-0_9_SVD-967210998-3530034.xml.gz","--svd-bank",
+			"process:process_id:120","gstlal_inspiral","lstring","LowMass","--gracedb-type",
+			"process:process_id:120","gstlal_inspiral","lstring","frames","--data-source",
+			"process:process_id:120","gstlal_inspiral","int_8s","31200","--nds-port",
+			"process:process_id:120","gstlal_inspiral","real_8","30.0","--thinca-interval",
+			"process:process_id:120","gstlal_inspiral","lstring","gstlal_reference_psd/H1L1V1-REFERENCE_PSD-967234210-29963.xml.gz","--reference-psd",
+			"process:process_id:120","gstlal_inspiral","lstring","V1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:120","gstlal_inspiral","lstring","H1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:120","gstlal_inspiral","lstring","L1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:120","gstlal_inspiral","lstring",":","--nxydump-segment",
+			"process:process_id:120","gstlal_inspiral","lstring","gstlal_inspiral_inj/H1L1V1-0000_LLOID-969718645-29963.sqlite","--output",
+			"process:process_id:120","gstlal_inspiral","lstring","/localscratch/lsinger","--tmp-space",
+			"process:process_id:308","gstlal_inspiral","int_8s","16","--psd-fft-length",
+			"process:process_id:308","gstlal_inspiral","lstring","frame_with_injections.cache","--frame-cache",
+			"process:process_id:308","gstlal_inspiral","lstring","969718645","--gps-start-time",
+			"process:process_id:308","gstlal_inspiral","lstring","vetoes","--veto-segments-name",
+			"process:process_id:308","gstlal_inspiral","int_8s","67108864","--block-size",
+			"process:process_id:308","gstlal_inspiral",,,"--track-psd",
+			"process:process_id:308","gstlal_inspiral","lstring","online","--nds-channel-type",
+			"process:process_id:308","gstlal_inspiral","lstring","autochisq","--chisq-type",
+			"process:process_id:308","gstlal_inspiral","lstring","969748608","--gps-end-time",
+			"process:process_id:308","gstlal_inspiral","lstring","datasegments","--frame-segments-name",
+			"process:process_id:308","gstlal_inspiral","int_8s","4","--fir-stride",
+			"process:process_id:308","gstlal_inspiral","lstring","Test","--gracedb-group",
+			"process:process_id:308","gstlal_inspiral","lstring","segments.xml","--frame-segments-file",
+			"process:process_id:308","gstlal_inspiral","real_8","0.005","--coincidence-threshold",
+			"process:process_id:308","gstlal_inspiral","int_8s","4","--control-peak-time",
+			"process:process_id:308","gstlal_inspiral","lstring","V1:gstlal_svd_bank/V1-1_0_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-1_1_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-1_2_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-1_3_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-1_4_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-1_5_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-1_6_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-1_7_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-1_8_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-1_9_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-1_0_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-1_1_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-1_2_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-1_3_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-1_4_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-1_5_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-1_6_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-1_7_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-1_8_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-1_9_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-1_0_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-1_1_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-1_2_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-1_3_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-1_4_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-1_5_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-1_6_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-1_7_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-1_8_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-1_9_SVD-967210998-3530034.xml.gz","--svd-bank",
+			"process:process_id:308","gstlal_inspiral","lstring","LowMass","--gracedb-type",
+			"process:process_id:308","gstlal_inspiral","lstring","frames","--data-source",
+			"process:process_id:308","gstlal_inspiral","int_8s","31200","--nds-port",
+			"process:process_id:308","gstlal_inspiral","real_8","30.0","--thinca-interval",
+			"process:process_id:308","gstlal_inspiral","lstring","gstlal_reference_psd/H1L1V1-REFERENCE_PSD-967234210-29963.xml.gz","--reference-psd",
+			"process:process_id:308","gstlal_inspiral","lstring","V1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:308","gstlal_inspiral","lstring","H1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:308","gstlal_inspiral","lstring","L1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:308","gstlal_inspiral","lstring",":","--nxydump-segment",
+			"process:process_id:308","gstlal_inspiral","lstring","gstlal_inspiral_inj/H1L1V1-0001_LLOID-969718645-29963.sqlite","--output",
+			"process:process_id:308","gstlal_inspiral","lstring","/localscratch/lsinger","--tmp-space",
+			"process:process_id:496","gstlal_inspiral","int_8s","16","--psd-fft-length",
+			"process:process_id:496","gstlal_inspiral","lstring","frame_with_injections.cache","--frame-cache",
+			"process:process_id:496","gstlal_inspiral","lstring","969718645","--gps-start-time",
+			"process:process_id:496","gstlal_inspiral","lstring","vetoes","--veto-segments-name",
+			"process:process_id:496","gstlal_inspiral","int_8s","67108864","--block-size",
+			"process:process_id:496","gstlal_inspiral",,,"--track-psd",
+			"process:process_id:496","gstlal_inspiral","lstring","online","--nds-channel-type",
+			"process:process_id:496","gstlal_inspiral","lstring","autochisq","--chisq-type",
+			"process:process_id:496","gstlal_inspiral","lstring","969748608","--gps-end-time",
+			"process:process_id:496","gstlal_inspiral","lstring","datasegments","--frame-segments-name",
+			"process:process_id:496","gstlal_inspiral","int_8s","4","--fir-stride",
+			"process:process_id:496","gstlal_inspiral","lstring","Test","--gracedb-group",
+			"process:process_id:496","gstlal_inspiral","lstring","segments.xml","--frame-segments-file",
+			"process:process_id:496","gstlal_inspiral","real_8","0.005","--coincidence-threshold",
+			"process:process_id:496","gstlal_inspiral","int_8s","4","--control-peak-time",
+			"process:process_id:496","gstlal_inspiral","lstring","V1:gstlal_svd_bank/V1-2_0_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-2_1_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-2_2_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-2_3_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-2_4_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-2_5_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-2_6_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-2_7_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-2_8_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-2_9_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-2_0_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-2_1_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-2_2_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-2_3_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-2_4_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-2_5_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-2_6_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-2_7_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-2_8_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-2_9_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-2_0_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-2_1_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-2_2_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-2_3_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-2_4_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-2_5_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-2_6_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-2_7_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-2_8_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-2_9_SVD-967210998-3530034.xml.gz","--svd-bank",
+			"process:process_id:496","gstlal_inspiral","lstring","LowMass","--gracedb-type",
+			"process:process_id:496","gstlal_inspiral","lstring","frames","--data-source",
+			"process:process_id:496","gstlal_inspiral","int_8s","31200","--nds-port",
+			"process:process_id:496","gstlal_inspiral","real_8","30.0","--thinca-interval",
+			"process:process_id:496","gstlal_inspiral","lstring","gstlal_reference_psd/H1L1V1-REFERENCE_PSD-967234210-29963.xml.gz","--reference-psd",
+			"process:process_id:496","gstlal_inspiral","lstring","V1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:496","gstlal_inspiral","lstring","H1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:496","gstlal_inspiral","lstring","L1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:496","gstlal_inspiral","lstring",":","--nxydump-segment",
+			"process:process_id:496","gstlal_inspiral","lstring","gstlal_inspiral_inj/H1L1V1-0002_LLOID-969718645-29963.sqlite","--output",
+			"process:process_id:496","gstlal_inspiral","lstring","/localscratch/lsinger","--tmp-space",
+			"process:process_id:684","gstlal_inspiral","int_8s","16","--psd-fft-length",
+			"process:process_id:684","gstlal_inspiral","lstring","frame_with_injections.cache","--frame-cache",
+			"process:process_id:684","gstlal_inspiral","lstring","969718645","--gps-start-time",
+			"process:process_id:684","gstlal_inspiral","lstring","vetoes","--veto-segments-name",
+			"process:process_id:684","gstlal_inspiral","int_8s","67108864","--block-size",
+			"process:process_id:684","gstlal_inspiral",,,"--track-psd",
+			"process:process_id:684","gstlal_inspiral","lstring","online","--nds-channel-type",
+			"process:process_id:684","gstlal_inspiral","lstring","autochisq","--chisq-type",
+			"process:process_id:684","gstlal_inspiral","lstring","969748608","--gps-end-time",
+			"process:process_id:684","gstlal_inspiral","lstring","datasegments","--frame-segments-name",
+			"process:process_id:684","gstlal_inspiral","int_8s","4","--fir-stride",
+			"process:process_id:684","gstlal_inspiral","lstring","Test","--gracedb-group",
+			"process:process_id:684","gstlal_inspiral","lstring","segments.xml","--frame-segments-file",
+			"process:process_id:684","gstlal_inspiral","real_8","0.005","--coincidence-threshold",
+			"process:process_id:684","gstlal_inspiral","int_8s","4","--control-peak-time",
+			"process:process_id:684","gstlal_inspiral","lstring","V1:gstlal_svd_bank/V1-3_0_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-3_1_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-3_2_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-3_3_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-3_4_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-3_5_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-3_6_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-3_7_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-3_8_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-3_9_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-3_0_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-3_1_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-3_2_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-3_3_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-3_4_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-3_5_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-3_6_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-3_7_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-3_8_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-3_9_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-3_0_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-3_1_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-3_2_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-3_3_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-3_4_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-3_5_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-3_6_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-3_7_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-3_8_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-3_9_SVD-967210998-3530034.xml.gz","--svd-bank",
+			"process:process_id:684","gstlal_inspiral","lstring","LowMass","--gracedb-type",
+			"process:process_id:684","gstlal_inspiral","lstring","frames","--data-source",
+			"process:process_id:684","gstlal_inspiral","int_8s","31200","--nds-port",
+			"process:process_id:684","gstlal_inspiral","real_8","30.0","--thinca-interval",
+			"process:process_id:684","gstlal_inspiral","lstring","gstlal_reference_psd/H1L1V1-REFERENCE_PSD-967234210-29963.xml.gz","--reference-psd",
+			"process:process_id:684","gstlal_inspiral","lstring","V1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:684","gstlal_inspiral","lstring","H1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:684","gstlal_inspiral","lstring","L1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:684","gstlal_inspiral","lstring",":","--nxydump-segment",
+			"process:process_id:684","gstlal_inspiral","lstring","gstlal_inspiral_inj/H1L1V1-0003_LLOID-969718645-29963.sqlite","--output",
+			"process:process_id:684","gstlal_inspiral","lstring","/localscratch/lsinger","--tmp-space",
+			"process:process_id:872","gstlal_inspiral","int_8s","16","--psd-fft-length",
+			"process:process_id:872","gstlal_inspiral","lstring","frame_with_injections.cache","--frame-cache",
+			"process:process_id:872","gstlal_inspiral","lstring","969718645","--gps-start-time",
+			"process:process_id:872","gstlal_inspiral","lstring","vetoes","--veto-segments-name",
+			"process:process_id:872","gstlal_inspiral","int_8s","67108864","--block-size",
+			"process:process_id:872","gstlal_inspiral",,,"--track-psd",
+			"process:process_id:872","gstlal_inspiral","lstring","online","--nds-channel-type",
+			"process:process_id:872","gstlal_inspiral","lstring","autochisq","--chisq-type",
+			"process:process_id:872","gstlal_inspiral","lstring","969748608","--gps-end-time",
+			"process:process_id:872","gstlal_inspiral","lstring","datasegments","--frame-segments-name",
+			"process:process_id:872","gstlal_inspiral","int_8s","4","--fir-stride",
+			"process:process_id:872","gstlal_inspiral","lstring","Test","--gracedb-group",
+			"process:process_id:872","gstlal_inspiral","lstring","segments.xml","--frame-segments-file",
+			"process:process_id:872","gstlal_inspiral","real_8","0.005","--coincidence-threshold",
+			"process:process_id:872","gstlal_inspiral","int_8s","4","--control-peak-time",
+			"process:process_id:872","gstlal_inspiral","lstring","V1:gstlal_svd_bank/V1-4_0_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-4_1_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-4_2_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-4_3_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-4_4_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-4_5_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-4_6_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-4_7_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-4_8_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-4_9_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-4_0_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-4_1_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-4_2_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-4_3_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-4_4_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-4_5_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-4_6_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-4_7_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-4_8_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-4_9_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-4_0_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-4_1_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-4_2_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-4_3_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-4_4_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-4_5_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-4_6_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-4_7_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-4_8_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-4_9_SVD-967210998-3530034.xml.gz","--svd-bank",
+			"process:process_id:872","gstlal_inspiral","lstring","LowMass","--gracedb-type",
+			"process:process_id:872","gstlal_inspiral","lstring","frames","--data-source",
+			"process:process_id:872","gstlal_inspiral","int_8s","31200","--nds-port",
+			"process:process_id:872","gstlal_inspiral","real_8","30.0","--thinca-interval",
+			"process:process_id:872","gstlal_inspiral","lstring","gstlal_reference_psd/H1L1V1-REFERENCE_PSD-967234210-29963.xml.gz","--reference-psd",
+			"process:process_id:872","gstlal_inspiral","lstring","V1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:872","gstlal_inspiral","lstring","H1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:872","gstlal_inspiral","lstring","L1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:872","gstlal_inspiral","lstring",":","--nxydump-segment",
+			"process:process_id:872","gstlal_inspiral","lstring","gstlal_inspiral_inj/H1L1V1-0004_LLOID-969718645-29963.sqlite","--output",
+			"process:process_id:872","gstlal_inspiral","lstring","/localscratch/lsinger","--tmp-space",
+			"process:process_id:1060","gstlal_inspiral","int_8s","16","--psd-fft-length",
+			"process:process_id:1060","gstlal_inspiral","lstring","frame_with_injections.cache","--frame-cache",
+			"process:process_id:1060","gstlal_inspiral","lstring","969718645","--gps-start-time",
+			"process:process_id:1060","gstlal_inspiral","lstring","vetoes","--veto-segments-name",
+			"process:process_id:1060","gstlal_inspiral","int_8s","67108864","--block-size",
+			"process:process_id:1060","gstlal_inspiral",,,"--track-psd",
+			"process:process_id:1060","gstlal_inspiral","lstring","online","--nds-channel-type",
+			"process:process_id:1060","gstlal_inspiral","lstring","autochisq","--chisq-type",
+			"process:process_id:1060","gstlal_inspiral","lstring","969748608","--gps-end-time",
+			"process:process_id:1060","gstlal_inspiral","lstring","datasegments","--frame-segments-name",
+			"process:process_id:1060","gstlal_inspiral","int_8s","4","--fir-stride",
+			"process:process_id:1060","gstlal_inspiral","lstring","Test","--gracedb-group",
+			"process:process_id:1060","gstlal_inspiral","lstring","segments.xml","--frame-segments-file",
+			"process:process_id:1060","gstlal_inspiral","real_8","0.005","--coincidence-threshold",
+			"process:process_id:1060","gstlal_inspiral","int_8s","4","--control-peak-time",
+			"process:process_id:1060","gstlal_inspiral","lstring","V1:gstlal_svd_bank/V1-5_0_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-5_1_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-5_2_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-5_3_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-5_4_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-5_5_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-5_6_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-5_7_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-5_8_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-5_9_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-5_0_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-5_1_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-5_2_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-5_3_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-5_4_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-5_5_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-5_6_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-5_7_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-5_8_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-5_9_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-5_0_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-5_1_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-5_2_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-5_3_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-5_4_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-5_5_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-5_6_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-5_7_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-5_8_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-5_9_SVD-967210998-3530034.xml.gz","--svd-bank",
+			"process:process_id:1060","gstlal_inspiral","lstring","LowMass","--gracedb-type",
+			"process:process_id:1060","gstlal_inspiral","lstring","frames","--data-source",
+			"process:process_id:1060","gstlal_inspiral","int_8s","31200","--nds-port",
+			"process:process_id:1060","gstlal_inspiral","real_8","30.0","--thinca-interval",
+			"process:process_id:1060","gstlal_inspiral","lstring","gstlal_reference_psd/H1L1V1-REFERENCE_PSD-967234210-29963.xml.gz","--reference-psd",
+			"process:process_id:1060","gstlal_inspiral","lstring","V1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:1060","gstlal_inspiral","lstring","H1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:1060","gstlal_inspiral","lstring","L1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:1060","gstlal_inspiral","lstring",":","--nxydump-segment",
+			"process:process_id:1060","gstlal_inspiral","lstring","gstlal_inspiral_inj/H1L1V1-0005_LLOID-969718645-29963.sqlite","--output",
+			"process:process_id:1060","gstlal_inspiral","lstring","/localscratch/lsinger","--tmp-space",
+			"process:process_id:1248","gstlal_inspiral","int_8s","16","--psd-fft-length",
+			"process:process_id:1248","gstlal_inspiral","lstring","frame_with_injections.cache","--frame-cache",
+			"process:process_id:1248","gstlal_inspiral","lstring","969718645","--gps-start-time",
+			"process:process_id:1248","gstlal_inspiral","lstring","vetoes","--veto-segments-name",
+			"process:process_id:1248","gstlal_inspiral","int_8s","67108864","--block-size",
+			"process:process_id:1248","gstlal_inspiral",,,"--track-psd",
+			"process:process_id:1248","gstlal_inspiral","lstring","online","--nds-channel-type",
+			"process:process_id:1248","gstlal_inspiral","lstring","autochisq","--chisq-type",
+			"process:process_id:1248","gstlal_inspiral","lstring","969748608","--gps-end-time",
+			"process:process_id:1248","gstlal_inspiral","lstring","datasegments","--frame-segments-name",
+			"process:process_id:1248","gstlal_inspiral","int_8s","4","--fir-stride",
+			"process:process_id:1248","gstlal_inspiral","lstring","Test","--gracedb-group",
+			"process:process_id:1248","gstlal_inspiral","lstring","segments.xml","--frame-segments-file",
+			"process:process_id:1248","gstlal_inspiral","real_8","0.005","--coincidence-threshold",
+			"process:process_id:1248","gstlal_inspiral","int_8s","4","--control-peak-time",
+			"process:process_id:1248","gstlal_inspiral","lstring","V1:gstlal_svd_bank/V1-6_0_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-6_1_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-6_2_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-6_3_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-6_4_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-6_5_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-6_6_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-6_7_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-6_8_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-6_9_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-6_0_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-6_1_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-6_2_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-6_3_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-6_4_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-6_5_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-6_6_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-6_7_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-6_8_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-6_9_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-6_0_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-6_1_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-6_2_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-6_3_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-6_4_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-6_5_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-6_6_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-6_7_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-6_8_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-6_9_SVD-967210998-3530034.xml.gz","--svd-bank",
+			"process:process_id:1248","gstlal_inspiral","lstring","LowMass","--gracedb-type",
+			"process:process_id:1248","gstlal_inspiral","lstring","frames","--data-source",
+			"process:process_id:1248","gstlal_inspiral","int_8s","31200","--nds-port",
+			"process:process_id:1248","gstlal_inspiral","real_8","30.0","--thinca-interval",
+			"process:process_id:1248","gstlal_inspiral","lstring","gstlal_reference_psd/H1L1V1-REFERENCE_PSD-967234210-29963.xml.gz","--reference-psd",
+			"process:process_id:1248","gstlal_inspiral","lstring","V1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:1248","gstlal_inspiral","lstring","H1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:1248","gstlal_inspiral","lstring","L1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:1248","gstlal_inspiral","lstring",":","--nxydump-segment",
+			"process:process_id:1248","gstlal_inspiral","lstring","gstlal_inspiral_inj/H1L1V1-0006_LLOID-969718645-29963.sqlite","--output",
+			"process:process_id:1248","gstlal_inspiral","lstring","/localscratch/lsinger","--tmp-space",
+			"process:process_id:1436","gstlal_inspiral","int_8s","16","--psd-fft-length",
+			"process:process_id:1436","gstlal_inspiral","lstring","frame_with_injections.cache","--frame-cache",
+			"process:process_id:1436","gstlal_inspiral","lstring","969718645","--gps-start-time",
+			"process:process_id:1436","gstlal_inspiral","lstring","vetoes","--veto-segments-name",
+			"process:process_id:1436","gstlal_inspiral","int_8s","67108864","--block-size",
+			"process:process_id:1436","gstlal_inspiral",,,"--track-psd",
+			"process:process_id:1436","gstlal_inspiral","lstring","online","--nds-channel-type",
+			"process:process_id:1436","gstlal_inspiral","lstring","autochisq","--chisq-type",
+			"process:process_id:1436","gstlal_inspiral","lstring","969748608","--gps-end-time",
+			"process:process_id:1436","gstlal_inspiral","lstring","datasegments","--frame-segments-name",
+			"process:process_id:1436","gstlal_inspiral","int_8s","4","--fir-stride",
+			"process:process_id:1436","gstlal_inspiral","lstring","Test","--gracedb-group",
+			"process:process_id:1436","gstlal_inspiral","lstring","segments.xml","--frame-segments-file",
+			"process:process_id:1436","gstlal_inspiral","real_8","0.005","--coincidence-threshold",
+			"process:process_id:1436","gstlal_inspiral","int_8s","4","--control-peak-time",
+			"process:process_id:1436","gstlal_inspiral","lstring","V1:gstlal_svd_bank/V1-7_0_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-7_1_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-7_2_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-7_3_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-7_4_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-7_5_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-7_6_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-7_7_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-7_8_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-7_9_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-7_0_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-7_1_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-7_2_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-7_3_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-7_4_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-7_5_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-7_6_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-7_7_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-7_8_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-7_9_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-7_0_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-7_1_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-7_2_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-7_3_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-7_4_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-7_5_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-7_6_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-7_7_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-7_8_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-7_9_SVD-967210998-3530034.xml.gz","--svd-bank",
+			"process:process_id:1436","gstlal_inspiral","lstring","LowMass","--gracedb-type",
+			"process:process_id:1436","gstlal_inspiral","lstring","frames","--data-source",
+			"process:process_id:1436","gstlal_inspiral","int_8s","31200","--nds-port",
+			"process:process_id:1436","gstlal_inspiral","real_8","30.0","--thinca-interval",
+			"process:process_id:1436","gstlal_inspiral","lstring","gstlal_reference_psd/H1L1V1-REFERENCE_PSD-967234210-29963.xml.gz","--reference-psd",
+			"process:process_id:1436","gstlal_inspiral","lstring","V1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:1436","gstlal_inspiral","lstring","H1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:1436","gstlal_inspiral","lstring","L1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:1436","gstlal_inspiral","lstring",":","--nxydump-segment",
+			"process:process_id:1436","gstlal_inspiral","lstring","gstlal_inspiral_inj/H1L1V1-0007_LLOID-969718645-29963.sqlite","--output",
+			"process:process_id:1436","gstlal_inspiral","lstring","/localscratch/lsinger","--tmp-space",
+			"process:process_id:1624","gstlal_inspiral","int_8s","16","--psd-fft-length",
+			"process:process_id:1624","gstlal_inspiral","lstring","frame_with_injections.cache","--frame-cache",
+			"process:process_id:1624","gstlal_inspiral","lstring","969718645","--gps-start-time",
+			"process:process_id:1624","gstlal_inspiral","lstring","vetoes","--veto-segments-name",
+			"process:process_id:1624","gstlal_inspiral","int_8s","67108864","--block-size",
+			"process:process_id:1624","gstlal_inspiral",,,"--track-psd",
+			"process:process_id:1624","gstlal_inspiral","lstring","online","--nds-channel-type",
+			"process:process_id:1624","gstlal_inspiral","lstring","autochisq","--chisq-type",
+			"process:process_id:1624","gstlal_inspiral","lstring","969748608","--gps-end-time",
+			"process:process_id:1624","gstlal_inspiral","lstring","datasegments","--frame-segments-name",
+			"process:process_id:1624","gstlal_inspiral","int_8s","4","--fir-stride",
+			"process:process_id:1624","gstlal_inspiral","lstring","Test","--gracedb-group",
+			"process:process_id:1624","gstlal_inspiral","lstring","segments.xml","--frame-segments-file",
+			"process:process_id:1624","gstlal_inspiral","real_8","0.005","--coincidence-threshold",
+			"process:process_id:1624","gstlal_inspiral","int_8s","4","--control-peak-time",
+			"process:process_id:1624","gstlal_inspiral","lstring","V1:gstlal_svd_bank/V1-8_0_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-8_1_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-8_2_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-8_3_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-8_4_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-8_5_SVD-967210998-3530034.xml.gz,V1:gstlal_svd_bank/V1-8_6_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-8_0_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-8_1_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-8_2_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-8_3_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-8_4_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-8_5_SVD-967210998-3530034.xml.gz,H1:gstlal_svd_bank/H1-8_6_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-8_0_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-8_1_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-8_2_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-8_3_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-8_4_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-8_5_SVD-967210998-3530034.xml.gz,L1:gstlal_svd_bank/L1-8_6_SVD-967210998-3530034.xml.gz","--svd-bank",
+			"process:process_id:1624","gstlal_inspiral","lstring","LowMass","--gracedb-type",
+			"process:process_id:1624","gstlal_inspiral","lstring","frames","--data-source",
+			"process:process_id:1624","gstlal_inspiral","int_8s","31200","--nds-port",
+			"process:process_id:1624","gstlal_inspiral","real_8","30.0","--thinca-interval",
+			"process:process_id:1624","gstlal_inspiral","lstring","gstlal_reference_psd/H1L1V1-REFERENCE_PSD-967234210-29963.xml.gz","--reference-psd",
+			"process:process_id:1624","gstlal_inspiral","lstring","V1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:1624","gstlal_inspiral","lstring","H1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:1624","gstlal_inspiral","lstring","L1=GAUSSIAN_PLUS_INJECTIONS","--channel-name",
+			"process:process_id:1624","gstlal_inspiral","lstring",":","--nxydump-segment",
+			"process:process_id:1624","gstlal_inspiral","lstring","gstlal_inspiral_inj/H1L1V1-0008_LLOID-969718645-29963.sqlite","--output",
+			"process:process_id:1624","gstlal_inspiral","lstring","/localscratch/lsinger","--tmp-space"
 		</Stream>
 	</Table>
 	<Table Name="search_summary:table">
@@ -88,39 +299,34 @@
 		<Column Type="int_4s" Name="search_summary:out_end_time"/>
 		<Column Type="lstring" Name="search_summary:ifos"/>
 		<Stream Delimiter="," Type="Local" Name="search_summary:table">
-			,0,,1135131969,"standalone",0,1,831542979,"process:process_id:2000",2000000000,831542979,,0,0,1135136352,"H1,L1"
+			,115063,,969718770,,969718645,1,250000000,"process:process_id:120",969748608,124992855,,0,0,969748704,"H1,L1,V1",
+			,115484,,969718750,,969718645,1,250000000,"process:process_id:308",969748608,54680301,,0,0,969748670,"H1,L1,V1",
+			,117280,,969718742,,969718645,1,250000000,"process:process_id:496",969748608,7805326,,0,0,969748650,"H1,L1,V1",
+			,122081,,969718732,,969718645,1,250000000,"process:process_id:684",969748608,152580708,,0,0,969748642,"H1,L1,V1",
+			,121153,,969718728,,969718645,1,250000000,"process:process_id:872",969748608,148430326,,0,0,969748632,"H1,L1,V1",
+			,111521,,969718720,,969718645,1,250000000,"process:process_id:1060",969748608,257805346,,0,0,969748620,"H1,L1,V1",
+			,114682,,969718712,,969718645,1,250000000,"process:process_id:1248",969748608,874992804,,0,0,969748619,"H1,L1,V1",
+			,121622,,969718708,,969718645,1,250000000,"process:process_id:1436",969748608,796867831,,0,0,969748619,"H1,L1,V1",
+			,67550,,969718700,,969718645,1,250000000,"process:process_id:1624",969748608,906242779,,0,0,969748615,"H1,L1,V1"
 		</Stream>
 	</Table>
 	<Table Name="sngl_inspiral:table">
 		<Column Type="ilwd:char" Name="sngl_inspiral:process_id"/>
 		<Column Type="lstring" Name="sngl_inspiral:ifo"/>
-		<Column Type="int_4s" Name="sngl_inspiral:end_time"/>
-		<Column Type="int_4s" Name="sngl_inspiral:end_time_ns"/>
-		<Column Type="real_4" Name="sngl_inspiral:eff_distance"/>
-		<Column Type="real_4" Name="sngl_inspiral:coa_phase"/>
-		<Column Type="real_4" Name="sngl_inspiral:mass1"/>
-		<Column Type="real_4" Name="sngl_inspiral:mass2"/>
-		<Column Type="real_4" Name="sngl_inspiral:snr"/>
-		<Column Type="real_4" Name="sngl_inspiral:chisq"/>
-		<Column Type="int_4s" Name="sngl_inspiral:chisq_dof"/>
-		<Column Type="real_4" Name="sngl_inspiral:bank_chisq"/>
-		<Column Type="int_4s" Name="sngl_inspiral:bank_chisq_dof"/>
-		<Column Type="real_8" Name="sngl_inspiral:sigmasq"/>
-		<Column Type="real_4" Name="sngl_inspiral:spin1x"/>
-		<Column Type="real_4" Name="sngl_inspiral:spin1y"/>
-		<Column Type="real_4" Name="sngl_inspiral:spin1z"/>
-		<Column Type="real_4" Name="sngl_inspiral:spin2x"/>
-		<Column Type="real_4" Name="sngl_inspiral:spin2y"/>
-		<Column Type="real_4" Name="sngl_inspiral:spin2z"/>
-		<Column Type="ilwd:char" Name="sngl_inspiral:event_id"/>
 		<Column Type="lstring" Name="sngl_inspiral:search"/>
 		<Column Type="lstring" Name="sngl_inspiral:channel"/>
+		<Column Type="int_4s" Name="sngl_inspiral:end_time"/>
+		<Column Type="int_4s" Name="sngl_inspiral:end_time_ns"/>
 		<Column Type="real_8" Name="sngl_inspiral:end_time_gmst"/>
 		<Column Type="int_4s" Name="sngl_inspiral:impulse_time"/>
 		<Column Type="int_4s" Name="sngl_inspiral:impulse_time_ns"/>
 		<Column Type="real_8" Name="sngl_inspiral:template_duration"/>
 		<Column Type="real_8" Name="sngl_inspiral:event_duration"/>
 		<Column Type="real_4" Name="sngl_inspiral:amplitude"/>
+		<Column Type="real_4" Name="sngl_inspiral:eff_distance"/>
+		<Column Type="real_4" Name="sngl_inspiral:coa_phase"/>
+		<Column Type="real_4" Name="sngl_inspiral:mass1"/>
+		<Column Type="real_4" Name="sngl_inspiral:mass2"/>
 		<Column Type="real_4" Name="sngl_inspiral:mchirp"/>
 		<Column Type="real_4" Name="sngl_inspiral:mtotal"/>
 		<Column Type="real_4" Name="sngl_inspiral:eta"/>
@@ -143,8 +349,14 @@
 		<Column Type="real_4" Name="sngl_inspiral:alpha6"/>
 		<Column Type="real_4" Name="sngl_inspiral:beta"/>
 		<Column Type="real_4" Name="sngl_inspiral:f_final"/>
+		<Column Type="real_4" Name="sngl_inspiral:snr"/>
+		<Column Type="real_4" Name="sngl_inspiral:chisq"/>
+		<Column Type="int_4s" Name="sngl_inspiral:chisq_dof"/>
+		<Column Type="real_4" Name="sngl_inspiral:bank_chisq"/>
+		<Column Type="int_4s" Name="sngl_inspiral:bank_chisq_dof"/>
 		<Column Type="real_4" Name="sngl_inspiral:cont_chisq"/>
 		<Column Type="int_4s" Name="sngl_inspiral:cont_chisq_dof"/>
+		<Column Type="real_8" Name="sngl_inspiral:sigmasq"/>
 		<Column Type="real_4" Name="sngl_inspiral:rsqveto_duration"/>
 		<Column Type="real_4" Name="sngl_inspiral:Gamma0"/>
 		<Column Type="real_4" Name="sngl_inspiral:Gamma1"/>
@@ -156,9 +368,17 @@
 		<Column Type="real_4" Name="sngl_inspiral:Gamma7"/>
 		<Column Type="real_4" Name="sngl_inspiral:Gamma8"/>
 		<Column Type="real_4" Name="sngl_inspiral:Gamma9"/>
+		<Column Type="real_4" Name="sngl_inspiral:spin1x"/>
+		<Column Type="real_4" Name="sngl_inspiral:spin1y"/>
+		<Column Type="real_4" Name="sngl_inspiral:spin1z"/>
+		<Column Type="real_4" Name="sngl_inspiral:spin2x"/>
+		<Column Type="real_4" Name="sngl_inspiral:spin2y"/>
+		<Column Type="real_4" Name="sngl_inspiral:spin2z"/>
+		<Column Type="ilwd:char" Name="sngl_inspiral:event_id"/>
 		<Stream Delimiter="," Type="Local" Name="sngl_inspiral:table">
-			"process:process_id:2000","H1",1135136350,647757924,461.88879,0.13969257,19.924686,6.4254546,9.0802174,1.0069774,1,0,0,17590061.36265015,0,0,0.33962944,0,0,-0.1238557,"sngl_inspiral:event_id:117393473","","GDS-CALIB_STRAIN",36784.36821002203,0,0,2.253227705539698,0,0,9.5547781,26.350142,0.18438664,0,0,1.7307066,0,0.42565417,0,0,0,0,0,0,0,0,0,0,0,0,0,1024,0,0,0,246611.3,-6030.7861,10570.858,425.32635,-565.4422,813.47168,0,0,0,0,
-			"process:process_id:2000","L1",1135136350,646883043,472.93436,2.7356486,19.924686,6.4254546,7.3947201,1.0857431,1,0,0,12230527.26250952,0,0,0.33962944,0,0,-0.1238557,"sngl_inspiral:event_id:117393335","","GDS-CALIB_STRAIN",36784.36820995822,0,0,2.253227705539698,0,0,9.5547781,26.350142,0.18438664,0,0,1.7307066,0,0.42565417,0,0,0,0,0,0,0,0,0,0,0,0,0,1024,0,0,0,246611.3,-6030.7861,10570.858,425.32635,-565.4422,813.47168,0,0,0,0
+			"process:process_id:496","H1","tmpltbank","GAUSSIAN_PLUS_INJECTIONS",1186436412,173834723,40525.22805746227,0,0,98.31435745430869,0,0,215.86469,-1.217644,1.355607,1.279483,1.1464151,2.6350899,0.24979137,0,0,96.420883,3.7739849,1.976223,0.091461852,0,98.310097,1942416,-3981.136,0,0,0,0,0,0,0,0,2047,9.7139359,1.2697451,1,0,0,0,0,4396971.414352626,0,246044.5,-3253.1963,6718.7881,154.59576,-210.27695,332.23148,0,0,0,0,0,0,0,0,0,0,"sngl_inspiral:event_id:1231111",
+			"process:process_id:496","L1","tmpltbank","GAUSSIAN_PLUS_INJECTIONS",1186436412,175055364,40525.22805755128,0,0,98.31435745430869,0,0,184.29398,1.685452,1.355607,1.279483,1.1464151,2.6350899,0.24979137,0,0,96.420883,3.7739849,1.976223,0.091461852,0,98.310097,1942416,-3981.136,0,0,0,0,0,0,0,0,2047,11.382494,1.2148033,1,0,0,0,0,4400450.240980347,0,246044.5,-3253.1963,6718.7881,154.59576,-210.27695,332.23148,0,0,0,0,0,0,0,0,0,0,"sngl_inspiral:event_id:1231118",
+			"process:process_id:496","V1","tmpltbank","GAUSSIAN_PLUS_INJECTIONS",1186436412,177214640,40525.22805770874,0,0,98.31435745430869,0,0,160.24825,-2.2431672,1.355607,1.279483,1.1464151,2.6350899,0.24979137,0,0,96.420883,3.7739849,1.976223,0.091461852,0,98.310097,1942416,-3981.136,0,0,0,0,0,0,0,0,2047,4.4717216,0.73020869,1,0,0,0,0,513494.8827145097,0,246044.5,-3253.1963,6718.7881,154.59576,-210.27695,332.23148,0,0,0,0,0,0,0,0,0,0,"sngl_inspiral:event_id:1231119"
 		</Stream>
 	</Table>
 	<Table Name="coinc_definer:table">
@@ -167,7 +387,10 @@
 		<Column Type="ilwd:char" Name="coinc_definer:coinc_def_id"/>
 		<Column Type="int_4u" Name="coinc_definer:search_coinc_type"/>
 		<Stream Delimiter="," Type="Local" Name="coinc_definer:table">
-			"inspiral","sngl_inspiral&lt;--&gt;sngl_inspiral coincidences","coinc_definer:coinc_def_id:13",0
+			"inspiral","sngl_inspiral&lt;--&gt;sngl_inspiral coincidences","coinc_definer:coinc_def_id:0",0,
+			"inspiral","sim_inspiral&lt;--&gt;sngl_inspiral coincidences","coinc_definer:coinc_def_id:1",1,
+			"inspiral","sim_inspiral&lt;--&gt;coinc_event coincidences (exact)","coinc_definer:coinc_def_id:2",3,
+			"inspiral","sim_inspiral&lt;--&gt;coinc_event coincidences (nearby)","coinc_definer:coinc_def_id:3",2
 		</Stream>
 	</Table>
 	<Table Name="coinc_event:table">
@@ -179,7 +402,34 @@
 		<Column Type="ilwd:char" Name="coinc_event:time_slide_id"/>
 		<Column Type="real_8" Name="coinc_event:likelihood"/>
 		<Stream Delimiter="," Type="Local" Name="coinc_event:table">
-			"coinc_event:coinc_event_id:282036","H1,L1",2,"process:process_id:2000","coinc_definer:coinc_def_id:13","time_slide:time_slide_id:13",22.59958173984415
+			"coinc_event:coinc_event_id:612854","H1,L1,V1",3,"process:process_id:496","coinc_definer:coinc_def_id:0","time_slide:time_slide_id:1",1.772450465900933e+24
+		</Stream>
+	</Table>
+	<Table Name="coinc_event_map:table">
+		<Column Type="ilwd:char" Name="coinc_event_map:event_id"/>
+		<Column Type="char_v" Name="coinc_event_map:table_name"/>
+		<Column Type="ilwd:char" Name="coinc_event_map:coinc_event_id"/>
+		<Stream Delimiter="," Type="Local" Name="coinc_event_map:table">
+			"sngl_inspiral:event_id:1231111","sngl_inspiral","coinc_event:coinc_event_id:612854",
+			"sngl_inspiral:event_id:1231118","sngl_inspiral","coinc_event:coinc_event_id:612854",
+			"sngl_inspiral:event_id:1231119","sngl_inspiral","coinc_event:coinc_event_id:612854"
+		</Stream>
+	</Table>
+	<Table Name="time_slide:table">
+		<Column Type="lstring" Name="time_slide:instrument"/>
+		<Column Type="ilwd:char" Name="time_slide:time_slide_id"/>
+		<Column Type="ilwd:char" Name="time_slide:process_id"/>
+		<Column Type="real_8" Name="time_slide:offset"/>
+		<Stream Delimiter="," Type="Local" Name="time_slide:table">
+			"V1","time_slide:time_slide_id:0","process:process_id:0",0,
+			"H1","time_slide:time_slide_id:0","process:process_id:0",0,
+			"V1","time_slide:time_slide_id:1","process:process_id:100",0,
+			"H1","time_slide:time_slide_id:1","process:process_id:100",0,
+			"L1","time_slide:time_slide_id:1","process:process_id:100",0,
+			"H1","time_slide:time_slide_id:2","process:process_id:510",0,
+			"L1","time_slide:time_slide_id:2","process:process_id:510",0,
+			"V1","time_slide:time_slide_id:3","process:process_id:537",0,
+			"L1","time_slide:time_slide_id:3","process:process_id:537",0
 		</Stream>
 	</Table>
 	<Table Name="coinc_inspiral:table">
@@ -194,26 +444,7 @@
 		<Column Type="real_8" Name="coinc_inspiral:combined_far"/>
 		<Column Type="lstring" Name="coinc_inspiral:ifos"/>
 		<Stream Delimiter="," Type="Local" Name="coinc_inspiral:table">
-			0.0001120007617148929,9.554778099060059,24.35224199295044,26.3501410484314,1135136350,"coinc_event:coinc_event_id:282036",11.71034723464594,647757924,3.332628572265315e-11,"H1,L1"
-		</Stream>
-	</Table>
-	<Table Name="coinc_event_map:table">
-		<Column Type="ilwd:char" Name="coinc_event_map:event_id"/>
-		<Column Type="char_v" Name="coinc_event_map:table_name"/>
-		<Column Type="ilwd:char" Name="coinc_event_map:coinc_event_id"/>
-		<Stream Delimiter="," Type="Local" Name="coinc_event_map:table">
-			"sngl_inspiral:event_id:117393473","sngl_inspiral","coinc_event:coinc_event_id:282036",
-			"sngl_inspiral:event_id:117393335","sngl_inspiral","coinc_event:coinc_event_id:282036"
-		</Stream>
-	</Table>
-	<Table Name="time_slide:table">
-		<Column Type="lstring" Name="time_slide:instrument"/>
-		<Column Type="ilwd:char" Name="time_slide:time_slide_id"/>
-		<Column Type="ilwd:char" Name="time_slide:process_id"/>
-		<Column Type="real_8" Name="time_slide:offset"/>
-		<Stream Delimiter="," Type="Local" Name="time_slide:table">
-			"H1","time_slide:time_slide_id:13","process:process_id:2000",0,
-			"L1","time_slide:time_slide_id:13","process:process_id:2000",0
+			2.403368058692212e-09,1.146415114402771,,2.635089993476868,1186436412,"coinc_event:coinc_event_id:612854",15.61787480055296,173834723,5.176954877338635e-16,"H1,L1,V1"
 		</Stream>
 	</Table>
 </LIGO_LW>
