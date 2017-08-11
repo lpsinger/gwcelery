@@ -7,6 +7,12 @@ from celery import group
 from ..celery import app
 from .gracedb import download, upload
 
+# Workaround for testing in an environment that lacks LALInference
+try:
+    from lalinference.io.events import DetectorDisabledError
+except ImportError:
+    DetectorDisabledError = ValueError
+
 log = logging.getLogger('BAYESTAR')
 
 
@@ -27,7 +33,7 @@ def bayestar(graceid, service):
 
 # FIXME: should be `throws=events.DetectorDisabledError, but that would add
 # a real on lalinference.
-@app.task(queue='openmp', throws=ValueError)
+@app.task(queue='openmp', throws=DetectorDisabledError)
 def bayestar_localize(coinc_psd, graceid, service, filename='bayestar.fits.gz',
                       disabled_detectors=None):
     from lalinference.io import events
