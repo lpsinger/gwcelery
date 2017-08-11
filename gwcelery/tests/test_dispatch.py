@@ -11,6 +11,22 @@ from ..tasks.dispatch import dispatch
 
 @patch('gwcelery.tasks.dispatch.annotate_fits')
 @patch('gwcelery.tasks.dispatch.bayestar')
+def test_dispatch_voevent(mock_bayestar, mock_annotate_fits):
+    """Test dispatch of a VOEvent message that should be ignored."""
+    # Test LVAlert payload.
+    payload = pkg_resources.resource_string(
+        __name__, 'data/lvalert_voevent.json')
+
+    # Run function under test
+    dispatch(payload)
+
+    # Check that no tasks were dispatched.
+    mock_annotate_fits.assert_not_called()
+    mock_bayestar.assert_not_called()
+
+
+@patch('gwcelery.tasks.dispatch.annotate_fits')
+@patch('gwcelery.tasks.dispatch.bayestar')
 def test_dispatch_label(mock_bayestar, mock_annotate_fits):
     """Test dispatch of a label message that should be ignored."""
     # Test LVAlert payload.
