@@ -7,6 +7,7 @@ except ImportError:
 
 from astropy.io import fits
 from astropy.table import Table
+import numpy as np
 import pytest
 
 from ..tasks import skymaps
@@ -16,9 +17,10 @@ from ..tasks import skymaps
 def toy_fits_filecontents():
     """Generate the binary contents of a toy FITS file."""
     bytesio = io.BytesIO()
-    table = Table(data=[[1, 2, 3], [4, 5, 6]], names=['foo', 'bar'])
+    table = Table([[1, 2, 3], [4, 5, 6]], names=['foo', 'bar'])
     table.meta['comment'] = 'This is a comment.'
     table.meta['history'] = 'This is a history line.'
+    table.meta['ORDERING'] = 'NESTED'
     table.write(bytesio, format='fits')
     return bytesio.getvalue()
 
@@ -28,15 +30,26 @@ def toy_3d_fits_filecontents():
     """Generate the binary contents of a toy FITS file."""
     bytesio = io.BytesIO()
     table = Table(
-        data=[[0] * 12] * 4, names=['PROB', 'DISTMU', 'DISTSIGMA', 'DISTNORM'])
+        [np.arange(12)] * 4, names=['PROB', 'DISTMU', 'DISTSIGMA', 'DISTNORM'])
     table.meta['comment'] = 'This is a comment.'
     table.meta['history'] = 'This is a history line.'
+    table.meta['ORDERING'] = 'NESTED'
     table.write(bytesio, format='fits')
     return bytesio.getvalue()
 
 
-def test_annotate_fits():
-    pass # TODO
+def mock_download(filename, graceid, service):
+    if filename == 'test.fits,0' and graceid == 'T12345' and service == 'https://example.edu/api/':
+        return toy_3d_fits_filecontents()
+    else:
+        raise RuntimeError('Asked for unexpected FITS file')
+
+
+@patch('gwcelery.tasks.skymaps.download', mock_download)
+@patch('gwcelery.tasks.skymaps.check_call')
+@patch('gwcelery.tasks.gracedb.GraceDb', autospec=True)
+def test_annotate_fits(mock_gracedb, check_call):
+    skymaps.annotate_fits('test.fits,0', 'test', 'T12345', 'https://example.edu/api/', ['tag1']).apply().get()
 
 
 def test_fits_header(toy_fits_filecontents):
