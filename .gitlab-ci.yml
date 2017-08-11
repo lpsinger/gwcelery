@@ -2,6 +2,7 @@ image: ligo/builder:el7
 
 variables:
   PIP_CACHE: "pip-cache"
+  GIT_STRATEGY: clone
 
 cache:
   paths:
