@@ -35,8 +35,6 @@ mirror:
     - git push --mirror git@github.com:lpsinger/gwcelery.git
 
 pages:
-  variabes:
-    GIT_STRATEGY: none
   stage: deploy
   dependencies:
     - test
