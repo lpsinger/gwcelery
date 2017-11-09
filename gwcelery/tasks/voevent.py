@@ -46,6 +46,7 @@ def send(payload):
                     'Connection denied to remote host {}'.format(addr))
             send.conn = conn
 
+        payload = payload.encode('utf-8')
         nbytes = len(payload)
         log.info('sending payload of %d bytes', nbytes)
         send.conn.sendall(_size_struct.pack(nbytes) + payload)
