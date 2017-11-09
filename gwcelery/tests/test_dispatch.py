@@ -1,3 +1,5 @@
+import json
+
 import pkg_resources
 try:
     from unittest.mock import patch
@@ -11,18 +13,22 @@ from ..tasks.dispatch import dispatch
 
 @patch('gwcelery.tasks.dispatch.annotate_fits')
 @patch('gwcelery.tasks.dispatch.bayestar')
-def test_dispatch_voevent(mock_bayestar, mock_annotate_fits):
-    """Test dispatch of a VOEvent message that should be ignored."""
+@patch('gwcelery.tasks.voevent.send')
+def test_dispatch_voevent(mock_send, mock_bayestar, mock_annotate_fits):
+    """Test dispatch of a VOEvent message."""
     # Test LVAlert payload.
     payload = pkg_resources.resource_string(
         __name__, 'data/lvalert_voevent.json')
 
+    text = json.loads(payload)['object']['text']
+
     # Run function under test
     dispatch(payload)
 
-    # Check that no tasks were dispatched.
+    # Check that the correct tasks were dispatched.
     mock_annotate_fits.assert_not_called()
     mock_bayestar.assert_not_called()
+    # mock_send.delay.assert_called_once_with(text)
 
 
 @patch('gwcelery.tasks.dispatch.annotate_fits')
