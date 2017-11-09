@@ -6,6 +6,7 @@ from celery import group
 from ..celery import app
 from .bayestar import bayestar
 from .skymaps import annotate_fits
+from .voevent import send
 
 
 @app.task(ignore_result=True)
@@ -29,6 +30,8 @@ def dispatch(payload):
     # Determine GraceDB ID
     graceid = alert['uid']
 
+    if alert['alert_type'] == 'update' and 'voevent_type' in alert['object']:
+        send.delay(alert['object']['text'])
     if alert['alert_type'] == 'update' and alert.get('file'):
         _, versioned_filename = os.path.split(alert['object']['file'])
         filename, _, _ = versioned_filename.rpartition(',')

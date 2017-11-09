@@ -1,1 +1,1 @@
-from . import bayestar, dispatch, gracedb, lvalert, skymaps
+from . import bayestar, dispatch, gracedb, lvalert, skymaps, voevent

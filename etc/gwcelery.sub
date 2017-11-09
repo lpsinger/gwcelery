@@ -24,3 +24,9 @@ error = gwcelery-openmp-worker.err
 log = gwcelery-openmp-worker.log
 output = gwcelery-openmp-worker.out
 queue
+
+arguments = "gwcelery worker -c 1 -Q voevent -n gwcelery-voevent-worker -l info"
+error = gwcelery-voevent-worker.err
+log = gwcelery-voevent-worker.log
+output = gwcelery-voevent-worker.out
+queue
