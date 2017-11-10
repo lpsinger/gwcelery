@@ -13,7 +13,7 @@ from ..tasks.dispatch import dispatch
 
 @patch('gwcelery.tasks.dispatch.annotate_fits')
 @patch('gwcelery.tasks.dispatch.bayestar')
-@patch('gwcelery.tasks.voevent.send')
+@patch('gwcelery.tasks.voevent.send.delay')
 def test_dispatch_voevent(mock_send, mock_bayestar, mock_annotate_fits):
     """Test dispatch of a VOEvent message."""
     # Test LVAlert payload.
@@ -28,7 +28,7 @@ def test_dispatch_voevent(mock_send, mock_bayestar, mock_annotate_fits):
     # Check that the correct tasks were dispatched.
     mock_annotate_fits.assert_not_called()
     mock_bayestar.assert_not_called()
-    # mock_send.delay.assert_called_once_with(text)
+    mock_send.assert_called_once_with(text)
 
 
 @patch('gwcelery.tasks.dispatch.annotate_fits')
