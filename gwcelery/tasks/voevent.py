@@ -9,9 +9,6 @@ from ..celery import app
 # Logging
 log = get_task_logger(__name__)
 
-HOST = ''
-PORT = 5341
-REMOTE = '128.183.96.236' # capella2.gsfc.nasa.gov
 _size_struct = struct.Struct("!I")
 
 
@@ -26,38 +23,42 @@ class SendTask(Task):
           retry_backoff=True, retry_kwargs=dict(max_retries=None))
 def send(payload):
     """Task to send VOEvents. Supports only a single client."""
-    try:
-        if send.conn is None:
-            log.info('creating new socket')
-            sock = socket.socket(socket.AF_INET)
-            try:
-                log.info('binding to %s:%d', HOST, PORT)
-                sock.bind((HOST, PORT))
-                log.info('listening for inbound connections')
-                sock.listen(0)
-                log.info('accepting connection')
-                conn, (addr, port) = sock.accept()
-                conn.setsockopt(socket.SOL_SOCKET, socket.SO_LINGER,
-                    struct.pack('ii', 1, 0))
-                conn.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 1)
-            finally:
-                sock.close()
-            if addr != REMOTE:
-                raise socket.error(
-                    'Connection denied to remote host {}'.format(addr))
-            send.conn = conn
+    payload = payload.encode('utf-8')
+    nbytes = len(payload)
 
-        payload = payload.encode('utf-8')
-        nbytes = len(payload)
-        log.info('sending payload of %d bytes', nbytes)
-        send.conn.sendall(_size_struct.pack(nbytes) + payload)
+    conn = send.conn
+    send.conn = None
+
+    if conn is None:
+        log.info('creating new socket')
+        sock = socket.socket(socket.AF_INET)
+        try:
+            sock.bind((app.conf['gcn_bind_address'],
+                       app.conf['gcn_bind_port']))
+            sock.listen(0)
+            while True:
+                conn, (addr, _) = sock.accept()
+                if addr == app.conf['gcn_remote_address']:
+                    break
+                else:
+                    log.error('connection denied to remote host %s', addr)
+        finally:
+            sock.close()
+        conn.setsockopt(socket.SOL_SOCKET, socket.SO_LINGER,
+            struct.pack('ii', 1, 0))
+        conn.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 1)
+
+    log.info('sending payload of %d bytes', nbytes)
+    try:
+        conn.sendall(_size_struct.pack(nbytes) + payload)
     except:
-        if send.conn is not None:
-            try:
-                try:
-                    send.conn.shutdown(socket.SHUT_RDWR)
-                finally:
-                    send.conn.close()
-            finally:
-                send.conn = None
+        try:
+            conn.shutdown(socket.SHUT_RDWR)
+        except:
+            log.exception('failed to shut down socket')
+        try:
+            conn.close()
+        except:
+            log.exception('failed to close socket')
         raise
+    send.conn = conn

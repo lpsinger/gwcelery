@@ -11,6 +11,9 @@ app = Celery('gwcelery', backend='redis://', broker='redis://',
         event_serializer='json',
         result_serializer='pickle',
         task_serializer='pickle',
-        lvalert_host='lvalert-test.cgca.uwm.edu'
+        lvalert_host='lvalert-test.cgca.uwm.edu',
+        gcn_bind_address='',
+        gcn_bind_port=5341,
+        gcn_remote_address='128.183.96.236' # capella2.gsfc.nasa.gov
     )
 )
