@@ -11,7 +11,7 @@ except ImportError:
 from gcn.voeventclient import _recv_packet
 import pytest
 
-from ..celery import app
+from .. import app
 from ..tasks.voevent import send
 
 
