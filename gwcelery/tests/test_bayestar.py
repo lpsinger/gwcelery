@@ -1,7 +1,25 @@
-from ..tasks.bayestar import bayestar_localize
+from ..tasks.bayestar import bayestar, bayestar_localize
 from . import *
 
 pytest.importorskip('lalinference.bayestar.sky_map')
+
+
+def mock_download(filename, graceid, service):
+    assert graceid == 'T12345'
+    assert service == 'https://gracedb.invalid/api/'
+    if filename == 'coinc.xml':
+        return pkg_resources.resource_string(__name__, 'coinc.xml')
+    elif filename == 'psd.xml.gz':
+        return pkg_resources.resource_string(__name__, 'psd.xml.gz')
+    else:
+        raise ValueError
+
+
+@patch('gwcelery.tasks.gracedb.download', mock_download)
+@patch('gwcelery.tasks.gracedb.GraceDb', autospec=True)
+def test_bayestar(mock_gracedb):
+    # Run function under test
+    bayestar('T12345', 'https://gracedb.invalid/api/')
 
 
 @patch('ligo.gracedb.rest.GraceDb', autospec=True)
