@@ -1,4 +1,5 @@
 import netrc
+import os
 import uuid
 
 from celery.utils.log import get_task_logger
@@ -50,7 +51,11 @@ class LVAlertClient(Client):
     def __init__(self, task, server):
         self.__task = task
         resource = uuid.uuid4().hex
-        username, _, password = netrc.netrc().authenticators(server)
+        netrcfile = os.environ.get('NETRC')
+        auth = netrc.netrc(netrcfile).authenticators(server)
+        if auth is None:
+            raise RuntimeError('No matching netrc entry found')
+        username, _, password = auth
         jid = JID(username + '@' + server + '/' + resource)
         log.info('lvalert_listen connecting: %r', jid)
         tls_settings = TLSSettings(require=True, verify_peer=False)
