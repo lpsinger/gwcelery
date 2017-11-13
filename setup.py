@@ -42,7 +42,8 @@ setup(
         'ligo-gracedb',
         'ligo-lvalert',
         'pygcn',
-        'pyxmpp'
+        'pyxmpp',
+        'six'
     ],
     packages=find_packages(),
     package_data={
