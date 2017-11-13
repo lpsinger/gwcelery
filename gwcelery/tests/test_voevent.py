@@ -3,32 +3,13 @@ import socket
 import threading
 import time
 
-import pkg_resources
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
 from gcn.voeventclient import _recv_packet
-import pytest
 
-from .. import app
 from ..tasks.voevent import send
+from . import *
 
 
-@pytest.fixture
-def conf():
-    tmp = (app.conf['gcn_bind_address'],
-           app.conf['gcn_bind_port'],
-           app.conf['gcn_remote_address'])
-    app.conf['gcn_bind_address'] = app.conf['gcn_remote_address'] = '127.0.0.1'
-    app.conf['gcn_bind_port'] = 53410
-    yield
-    (app.conf['gcn_bind_address'],
-     app.conf['gcn_bind_port'],
-     app.conf['gcn_remote_address']) = tmp
-
-
-def test_send(conf):
+def test_send():
     """Test sending a VOEvent over loopback"""
     # Test data
     with pkg_resources.resource_stream(

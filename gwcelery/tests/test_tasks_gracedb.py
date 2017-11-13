@@ -1,9 +1,5 @@
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
-
 from ..tasks import gracedb
+from . import *
 
 
 @patch('gwcelery.tasks.gracedb.GraceDb', autospec=True)

@@ -1,13 +1,7 @@
 import json
 
-import pkg_resources
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
-import pytest
-
 from ..tasks.dispatch import dispatch
+from . import *
 
 
 @patch('gwcelery.tasks.dispatch.annotate_fits')

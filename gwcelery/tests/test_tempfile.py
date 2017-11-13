@@ -1,8 +1,7 @@
 import os
 
-import pytest
-
 from ..util import NamedTemporaryFile
+from . import *
 
 
 def test_named_temporary_file(tmpdir):

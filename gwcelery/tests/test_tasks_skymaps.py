@@ -1,16 +1,11 @@
 import io
-import pkg_resources
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
 
 from astropy.io import fits
 from astropy.table import Table
 import numpy as np
-import pytest
 
 from ..tasks import skymaps
+from . import *
 
 
 @pytest.fixture

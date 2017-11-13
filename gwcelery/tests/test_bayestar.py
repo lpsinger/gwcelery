@@ -1,12 +1,5 @@
-import pkg_resources
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
-
-import pytest
-
 from ..tasks.bayestar import bayestar_localize
+from . import *
 
 pytest.importorskip('lalinference.bayestar.sky_map')
 
