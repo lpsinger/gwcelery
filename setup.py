@@ -10,7 +10,7 @@ except:
 
 from setuptools import setup, find_packages
 
-tests_require = ['pytest']
+tests_require = ['pytest >= 3.0']
 try:
     from unittest import mock
 except ImportError:
