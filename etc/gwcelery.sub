@@ -30,3 +30,9 @@ error = gwcelery-voevent-worker.err
 log = gwcelery-voevent-worker.log
 output = gwcelery-voevent-worker.out
 queue
+
+arguments = "gwcelery flower --url-prefix=~$ENV(USER)/gwcelery"
+error = gwcelery-flower.err
+log = gwcelery-flower.log
+output = gwcelery-flower.out
+queue
