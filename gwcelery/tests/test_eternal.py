@@ -41,4 +41,3 @@ def test_eternal(tmpdir):
     sleep(10)
     p.terminate()
     p.join()
-    assert p.exitcode == 1
