@@ -23,6 +23,12 @@ def send_thread():
     sleep(1)
     yield thread
     thread.join()
+    if send.conn is not None:
+        try:
+            send.conn.close()
+        except socket.error:
+            pass
+        send.conn = None
 
 
 def test_send_connection_closed(send_thread):
