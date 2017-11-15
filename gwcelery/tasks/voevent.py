@@ -19,7 +19,7 @@ class SendTask(Task):
 
 
 @app.task(queue='voevent', base=SendTask, ignore_result=True,
-          autoretry_for=(socket.error,), default_retry_delay=0.001,
+          autoretry_for=(socket.error, OSError), default_retry_delay=0.001,
           retry_backoff=True, retry_kwargs=dict(max_retries=None))
 def send(payload):
     """Task to send VOEvents. Supports only a single client."""
