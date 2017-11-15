@@ -19,7 +19,7 @@ app = Celery('gwcelery.tests.test_eternal',
 try:
     app.connection().ensure_connection(max_retries=1)
 except OperationalError:
-    pytest.mark.skip('No Redis server is running.')
+    pytestmark = pytest.mark.skip('No Redis server is running.')
 
 
 
