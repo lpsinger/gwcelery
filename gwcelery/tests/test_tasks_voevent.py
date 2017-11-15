@@ -17,12 +17,12 @@ voevent = lvalert['object']['text']
 
 @pytest.fixture
 def send_thread():
-    send_thread = Thread(target=send, args=(voevent,))
-    send_thread.daemon = True
-    send_thread.start()
+    thread = Thread(target=send, args=(voevent,))
+    thread.daemon = True
+    thread.start()
     sleep(0.1)
-    yield
-    send_thread.join()
+    yield thread
+    thread.join()
 
 
 def test_send_connection_closed(send_thread):
