@@ -18,7 +18,7 @@ class SendTask(Task):
         self.conn = None
 
 
-@app.task(queue='voevent', base=SendTask, ignore_result=True,
+@app.task(queue='voevent', base=SendTask, ignore_result=True, bind=True,
           autoretry_for=(socket.error,), default_retry_delay=0.001,
           retry_backoff=True, retry_kwargs=dict(max_retries=None))
 def send(payload):
@@ -26,8 +26,8 @@ def send(payload):
     payload = payload.encode('utf-8')
     nbytes = len(payload)
 
-    conn = send.conn
-    send.conn = None
+    conn = self.conn
+    self.conn = None
 
     if conn is None:
         log.info('creating new socket')
@@ -58,4 +58,4 @@ def send(payload):
             log.exception('failed to shut down socket')
         conn.close()
         raise
-    send.conn = conn
+    self.conn = conn
