@@ -38,7 +38,7 @@ def test_eternal(tmpdir):
             '-l', 'info']
     p = Process(target=app.start, args=(argv,))
     p.start()
-    sleep(3)
+    sleep(10)
     p.terminate()
     p.join()
     assert p.exitcode == 1
