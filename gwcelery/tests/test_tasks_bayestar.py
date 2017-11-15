@@ -1,7 +1,7 @@
 from ..tasks.bayestar import bayestar, bayestar_localize
 from . import *
 
-pytest.importorskip('lalinference.bayestar.sky_mapf')
+pytest.importorskip('lalinference.bayestar.sky_map')
 
 
 def mock_download(filename, graceid, service):
