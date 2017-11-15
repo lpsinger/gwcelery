@@ -36,10 +36,7 @@ def dispatch(payload):
         _, versioned_filename = os.path.split(alert['object']['file'])
         filename, _, _ = versioned_filename.rpartition(',')
         filebase, fitsext, _ = filename.rpartition('.fits')
-        try:
-            tags = alert['object']['tag_names']
-        except KeyError:
-            tags = []
+        tags = alert['object']['tag_names']
         if fitsext:
             annotate_fits(
                 versioned_filename, filebase, graceid, service, tags).delay()
