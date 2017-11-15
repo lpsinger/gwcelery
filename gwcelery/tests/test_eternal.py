@@ -4,6 +4,7 @@ from time import sleep
 
 from celery import Celery
 from celery.signals import worker_process_shutdown
+from kombu import OperationalError
 from pytest_cov.embed import multiprocessing_finish
 
 from ..util import EternalTask
@@ -12,6 +13,13 @@ from ..util import EternalTask
 # Use redis backend, because it supports locks (and thus singleton tasks).
 app = Celery('gwcelery.tests.test_eternal',
              backend='redis://', broker='redis://')
+
+# Only run these tests if a Redis server is running.
+try:
+    app.connection().ensure_connection(max_retries=1)
+except OperationalError:
+    pytest.skip(reason='No Redis server is running.')
+
 
 
 @app.task(base=EternalTask, ignore_result=True)
