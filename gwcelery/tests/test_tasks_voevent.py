@@ -30,6 +30,7 @@ def test_send_connection_closed(send_thread):
     is immediately closed."""
     sock = socket.socket(socket.AF_INET)
     sock.connect(('127.0.0.1', 53410))
+    sock.shutdown(socket.SHUT_RDWR)
     sock.close()
 
 
@@ -45,7 +46,10 @@ def test_send(send_thread):
         with pytest.raises(socket.error):
             packet = _recv_packet(sock)
     finally:
-        sock.shutdown(socket.SHUT_RDWR)
+        try:
+            sock.shutdown(socket.SHUT_RDWR)
+        except socket.error:
+            pass
         sock.close()
 
     # Now, simulate connecting from the allowed IP address.
@@ -57,6 +61,9 @@ def test_send(send_thread):
         sock.connect(('127.0.0.1', 53410))
         packet = _recv_packet(sock)
     finally:
-        sock.shutdown(socket.SHUT_RDWR)
+        try:
+            sock.shutdown(socket.SHUT_RDWR)
+        except socket.error:
+            pass
         sock.close()
     assert packet == voevent.encode('utf-8')
