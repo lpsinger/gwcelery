@@ -43,7 +43,7 @@ def test_send(send_thread):
     try:
         sock.settimeout(0.1)
         sock.connect(('127.0.0.1', 53410))
-        with pytest.raises(socket.error):
+        with pytest.raises(OSError):
             packet = _recv_packet(sock)
     finally:
         try:
