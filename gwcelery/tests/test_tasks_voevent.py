@@ -42,8 +42,8 @@ def test_send(send_thread):
     sock = socket.socket(socket.AF_INET)
     try:
         sock.settimeout(0.1)
-        sock.connect(('127.0.0.1', 53410))
         with pytest.raises(OSError):
+            sock.connect(('127.0.0.1', 53410))
             packet = _recv_packet(sock)
     finally:
         try:
