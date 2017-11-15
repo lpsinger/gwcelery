@@ -38,6 +38,6 @@ def test_eternal(tmpdir):
             '-l', 'info']
     p = Process(target=app.start, args=(argv,))
     p.start()
-    sleep(10)
+    sleep(2)
     p.terminate()
     p.join()

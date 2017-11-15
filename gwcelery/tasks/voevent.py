@@ -56,9 +56,6 @@ def send(payload):
             conn.shutdown(socket.SHUT_RDWR)
         except:
             log.exception('failed to shut down socket')
-        try:
-            conn.close()
-        except:
-            log.exception('failed to close socket')
+        conn.close()
         raise
     send.conn = conn
