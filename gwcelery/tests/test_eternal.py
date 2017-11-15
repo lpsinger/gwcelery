@@ -6,6 +6,7 @@ from celery import Celery
 from celery.signals import worker_process_shutdown
 from kombu.exceptions import OperationalError
 from pytest_cov.embed import multiprocessing_finish
+import pytest
 
 from ..util import EternalTask
 
@@ -18,7 +19,7 @@ app = Celery('gwcelery.tests.test_eternal',
 try:
     app.connection().ensure_connection(max_retries=1)
 except OperationalError:
-    pytest.skip(reason='No Redis server is running.')
+    pytest.mark.skip('No Redis server is running.')
 
 
 
