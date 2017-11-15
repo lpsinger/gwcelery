@@ -20,7 +20,7 @@ def send_thread():
     thread = Thread(target=send, args=(voevent,))
     thread.daemon = True
     thread.start()
-    sleep(0.1)
+    sleep(1)
     yield thread
     thread.join()
 
