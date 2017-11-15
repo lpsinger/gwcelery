@@ -4,7 +4,7 @@ from time import sleep
 
 from celery import Celery
 from celery.signals import worker_process_shutdown
-from kombu import OperationalError
+from kombu.exceptions import OperationalError
 from pytest_cov.embed import multiprocessing_finish
 
 from ..util import EternalTask
