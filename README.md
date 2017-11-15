@@ -32,8 +32,9 @@ With `setup.py`:
 
 ### To start
 
-**NOTE** that GWCelery requires redis. Your package manager (apt, yum, macports)
-should be able to install, configure, and automatically launch a suitable redis server, but otherwise you can use the
+**NOTE** that GWCelery requires [redis](https://redis.io). Your package manager
+(apt, yum, macports) should be able to install, configure, and automatically
+launch a suitable redis server, but otherwise you can use the
 [Redis Quick Start](https://redis.io/topics/quickstart) instructions to build
 redis and start a server:
 
