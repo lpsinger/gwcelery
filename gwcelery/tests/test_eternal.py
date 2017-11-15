@@ -25,6 +25,14 @@ def example_task_always_fails():
     raise RuntimeError('Expected to fail!')
 
 
+@app.task
+def example_task_canary():
+    """A simple task that, when finished, will tell us that the server
+    has been running for a while."""
+    sleep(1)
+    return True
+
+
 @worker_process_shutdown.connect
 def worker_process_shutdown(*args, **kwargs):
     multiprocessing_finish()
@@ -38,6 +46,6 @@ def test_eternal(tmpdir):
             '-l', 'info']
     p = Process(target=app.start, args=(argv,))
     p.start()
-    sleep(10)
+    assert example_task_canary.delay().get()
     p.terminate()
     p.join()
