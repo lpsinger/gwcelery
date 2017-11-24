@@ -20,5 +20,5 @@ def test_lvalert_constructor():
     """We don't have a local test LVAlert server,
     so all we can test is the client initialization."""
     with pytest.raises(RuntimeError, message='No matching netrc entry found'):
-        lvalert.LVAlertClient(None, 'lvalert2.invalid')
-    lvalert.LVAlertClient(None, 'lvalert.invalid')
+        lvalert.LVAlertClient('lvalert2.invalid', None)
+    lvalert.LVAlertClient('lvalert.invalid', None)

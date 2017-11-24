@@ -3,13 +3,14 @@ import os
 import uuid
 
 from celery.utils.log import get_task_logger
-# pubsub import must come first because it overloads part of the
-# StanzaProcessor class
-import ligo.lvalert.pubsub
-from pyxmpp.all import JID, TLSSettings
-from pyxmpp.jabber.all import Client
-from pyxmpp.interface import implements
-from pyxmpp.interfaces import IMessageHandlersProvider
+from pyxmpp2.client import Client
+from pyxmpp2.interfaces import (EventHandler, event_handler,
+                                message_stanza_handler, QUIT,
+                                XMPPFeatureHandler)
+from pyxmpp2.jid import JID
+from pyxmpp2.mainloop.interfaces import TimeoutHandler, timeout_handler
+from pyxmpp2.settings import XMPPSettings
+from pyxmpp2.streamevents import DisconnectedEvent
 
 from ..celery import app
 from ..util.eternal import EternalTask
@@ -19,60 +20,56 @@ from .dispatch import dispatch
 log = get_task_logger(__name__)
 
 
-class LVAlertHandler(object):
-    """Provides the actions taken when an event arrives."""
-    implements(IMessageHandlersProvider)
+class LVAlertClient(EventHandler, TimeoutHandler, XMPPFeatureHandler):
 
-    def get_message_handlers(self):
-        return [(None, self.message)]
-
-    def message(self, stanza):
-        log.info('got message')
-        e = self.get_entry(stanza)
-        if e:
-            log.info('dispatching')
-            dispatch.s(e).delay()
-        return True
-
-    def get_entry(self, stanza):
-        c = stanza.xmlnode.children
-        while c:
-            try:
-                if c.name=="event":
-                    return c.getContent()
-            except libxml2.treeError:
-                pass
-            c = c.next
-        return None
-
-
-class LVAlertClient(Client):
-
-    def __init__(self, task, server):
-        self.__task = task
-        resource = uuid.uuid4().hex
+    def __init__(self, server, task=None):
+        # Look up username and password from the netrc file.
         netrcfile = os.environ.get('NETRC')
         auth = netrc.netrc(netrcfile).authenticators(server)
         if auth is None:
             raise RuntimeError('No matching netrc entry found')
         username, _, password = auth
-        jid = JID(username + '@' + server + '/' + resource)
-        log.info('lvalert_listen connecting: %r', jid)
-        tls_settings = TLSSettings(require=True, verify_peer=False)
-        Client.__init__(self, jid, password,
-                        auth_methods=['sasl:GSSAPI', 'sasl:PLAIN'],
-                        tls_settings=tls_settings, keepalive=30)
-        self.interface_providers = [LVAlertHandler()]
 
-    def idle(self):
-        Client.idle(self)
-        if self.__task.is_aborted():
-            self.disconnect()
+        # Create a JID with a unique resource name.
+        resource = uuid.uuid4().hex
+        jid = JID(username + '@' + server + '/' + resource)
+
+        settings = XMPPSettings(dict(
+            starttls=True, tls_verify_peer=False, password=password))
+
+        self.__task = task
+        self.__client = Client(jid, [self], settings)
+        self.__client.main_loop.add_handler(self)
+
+    @event_handler(DisconnectedEvent)
+    def __handle_disconnected(self, *args, **kwargs):
+        return QUIT
+
+    @message_stanza_handler()
+    def __handle_message(self, stanza):
+        log.info('Got message')
+        xpath = '{http://jabber.org/protocol/pubsub}entry'
+        for e in stanza.as_xml().iter(xpath):
+            text = e.text
+            log.debug('Dispatching: %s', text)
+            dispatch.s(text).delay()
+        return True
+
+    @timeout_handler(1, recurring=True)
+    def __handle_timeout(self, *args, **kargs):
+        if self.__task is not None and self.__task.is_aborted():
+            log.info('Task aborted, quitting event loop')
+            self.__client.disconnect()
+        return True
+
+    def run(self):
+        log.info('Connecting to %r', str(client.jid))
+        client.connect()
+        client.run()
+        log.info('Reached end of main loop')
 
 
 @app.task(base=EternalTask, bind=True, ignore_result=True)
 def lvalert_listen(self):
     """LVAlert listener."""
-    client = LVAlertClient(self, app.conf['lvalert_host'])
-    client.connect()
-    client.loop(1)
+    LVAlertClient(app.conf['lvalert_host'], self).run()

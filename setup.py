@@ -40,9 +40,8 @@ setup(
         'celery[redis] >= 4.1.0',
         'celery_singleton >= 0.1.1',
         'ligo-gracedb',
-        'ligo-lvalert',
         'pygcn',
-        'pyxmpp',
+        'pyxmpp2',
         'six'
     ],
     packages=find_packages(),
