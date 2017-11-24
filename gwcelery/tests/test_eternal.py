@@ -22,6 +22,12 @@ except OperationalError:
 
 
 
+@app.task(base=EternalTask, bind=True, ignore_result=True)
+def example_task_aborts_gracefully(self):
+    while not self.is_aborted():
+        sleep(0.1)
+
+
 @app.task(base=EternalTask, ignore_result=True)
 def example_task_always_succeeds():
     sleep(0.1)
@@ -55,7 +61,7 @@ else:
 def test_eternal(tmpdir):
     """Test worker with two eternal tasks: one that always succeeds,
     and one that always fails."""
-    argv = ['celery', 'worker', '-B',
+    argv = ['celery', 'worker', '-B', '-c', '5',
             '-s', str(tmpdir / 'celerybeat-schedule'),
             '-l', 'info']
     p = Process(target=app.start, args=(argv,))
