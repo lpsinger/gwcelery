@@ -8,6 +8,11 @@ from ..tasks import skymaps
 from . import *
 
 
+def resource_unicode(*args, **kwargs):
+    with open(pkg_resources.resource_filename(*args, **kwargs), 'r') as f:
+        return f.read()
+
+
 @pytest.fixture
 def toy_fits_filecontents():
     """Generate the binary contents of a toy FITS file."""
@@ -52,8 +57,7 @@ def test_fits_header(toy_fits_filecontents):
     html = skymaps.fits_header('test.fits', toy_fits_filecontents)
 
     # Check output
-    assert html == pkg_resources.resource_string(
-        __name__, 'data/fits_header_result.html').decode()
+    assert html == resource_unicode(__name__, 'data/fits_header_result.html')
 
 
 @patch('gwcelery.tasks.skymaps.check_call')
