@@ -30,9 +30,13 @@ setup(
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)',
         'Operating System :: POSIX',
+        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.6',
         'Topic :: Internet',
-        'Topic :: Scientific/Engineering :: Astronomy'
+        'Topic :: Scientific/Engineering :: Astronomy',
+        'Topic :: Scientific/Engineering :: Physics'
     ],
     dependency_links=[
         'git+https://github.com/lpsinger/pyxmpp2@setuptools#egg=pyxmpp2-2.0.0+setuptools'
