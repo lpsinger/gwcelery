@@ -34,6 +34,9 @@ setup(
         'Topic :: Internet',
         'Topic :: Scientific/Engineering :: Astronomy'
     ],
+    dependency_links=[
+        'git+https://github.com/lpsinger/pyxmpp2@setuptools#egg=pyxmpp2-2.0.0+setuptools'
+    ],
     license='GPL-2+',
     install_requires=[
         'astropy',
@@ -41,7 +44,7 @@ setup(
         'celery_singleton >= 0.1.1',
         'ligo-gracedb',
         'pygcn',
-        'pyxmpp2',
+        'pyxmpp2 == 2.0.0+setuptools',
         'six'
     ],
     packages=find_packages(),
