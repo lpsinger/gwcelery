@@ -5,7 +5,6 @@ from time import sleep
 from celery import Celery
 from celery.signals import worker_process_shutdown
 from kombu.exceptions import OperationalError
-from pytest_cov.embed import multiprocessing_finish
 import pytest
 
 from ..util import EternalTask
@@ -42,9 +41,15 @@ def example_task_canary():
     return True
 
 
-@worker_process_shutdown.connect
-def worker_process_shutdown(*args, **kwargs):
-    multiprocessing_finish()
+# Only needed if we are measuring test coverage
+try:
+    from pytest_cov.embed import multiprocessing_finish
+except ImportError:
+    pass
+else:
+    @worker_process_shutdown.connect
+    def worker_process_shutdown(*args, **kwargs):
+        multiprocessing_finish()
 
 
 def test_eternal(tmpdir):
