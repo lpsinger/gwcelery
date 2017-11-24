@@ -44,7 +44,7 @@ setup(
         'celery_singleton >= 0.1.1',
         'ligo-gracedb',
         'pygcn',
-        'pyxmpp2 == 2.0.0+setuptools',
+        'pyxmpp2',
         'six'
     ],
     packages=find_packages(),
