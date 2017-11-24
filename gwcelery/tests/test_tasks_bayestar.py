@@ -29,7 +29,7 @@ def test_bayestar_localize_bad_psd(mock_gracedb):
 
     # Test data
     coinc = pkg_resources.resource_string(__name__, 'data/coinc.xml')
-    psd = ''
+    psd = b''
 
     # Run function under test
     with pytest.raises(SAXParseException):
