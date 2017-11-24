@@ -37,7 +37,7 @@ def example_task_always_fails():
 def example_task_canary():
     """A simple task that, when finished, will tell us that the server
     has been running for a while."""
-    sleep(3)
+    sleep(1)
     return True
 
 
