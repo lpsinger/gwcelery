@@ -53,7 +53,7 @@ def test_fits_header(toy_fits_filecontents):
 
     # Check output
     assert html == pkg_resources.resource_string(
-        __name__, 'data/fits_header_result.html')
+        __name__, 'data/fits_header_result.html').decode()
 
 
 @patch('gwcelery.tasks.skymaps.check_call')
