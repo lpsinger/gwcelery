@@ -3,11 +3,13 @@ image: ligo/builder:el7
 variables:
   PIP_CACHE: "pip-cache"
   GIT_STRATEGY: clone
+  REDIS_VERSION: 4.0.2
 
 cache:
   paths:
     - /var/cache/yum
     - $PIP_CACHE
+    - redis-${REDIS_VERSION}/src/redis-server
 
 stages:
   - test
@@ -19,12 +21,21 @@ test:
     - highmem
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   before_script:
+    # Install yum dependencies
     - echo keepcache = 1 >> /etc/yum.conf
-    - yum install -y python-pip lalinference-python redis
+    - yum install -y python-pip lalinference-python
+    # Build and start redis
+    - echo 'b1a0915dbc91b979d06df1977fe594c3fa9b189f1f3d38743a2948c9f7634813  -' > checksum
+    - test ! -e redis-${REDIS_VERSION}.tar.gz &&
+      curl -O http://download.redis.io/releases/redis-4.0.2.tar.gz &&
+      shasum -a 256 -c checksum < redis-${REDIS_VERSION}.tar.gz &&
+      tar xzf redis-${REDIS_VERSION}.tar.gz &&
+      make -C redis-${REDIS_VERSION} -j
+    - redis-${REDIS_VERSION}/src/redis-server --daemonize yes
+    # Install pip dependencies
     - mkdir -p "$PIP_CACHE"
     - pip install --cache-dir="$PIP_CACHE" --upgrade pip setuptools pytest-cov pytest-runner mock
     - pip install --cache-dir="$PIP_CACHE" .
-    - redis-server --daemonize yes
   script:
     - python setup.py test --addopts='-vv --cov --cov-report=html --cov-report=term'
   artifacts:
