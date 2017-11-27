@@ -21,7 +21,6 @@ except OperationalError:
     pytestmark = pytest.mark.skip('No Redis server is running.')
 
 
-
 @app.task(base=EternalTask, bind=True, ignore_result=True)
 def example_task_aborts_gracefully(self):
     while not self.is_aborted():
