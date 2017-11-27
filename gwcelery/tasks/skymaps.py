@@ -32,7 +32,7 @@ def annotate_fits(versioned_filename, filebase, graceid, service, tags):
     )
 
 
-@app.task
+@app.task(shared=False)
 def fits_header(filename, filecontents):
     """Dump FITS header to HTML."""
     with NamedTemporaryFile(content=filecontents) as fitsfile, \
@@ -76,7 +76,7 @@ def fits_header(filename, filecontents):
     return out.getvalue()
 
 
-@app.task
+@app.task(shared=False)
 def plot_allsky(filecontents):
     """Plot a Mollweide projection of a sky map."""
     with NamedTemporaryFile(content=filecontents) as fitsfile, \
@@ -86,7 +86,7 @@ def plot_allsky(filecontents):
         return pngfile.read()
 
 
-@app.task(throws=ValueError)
+@app.task(shared=False, throws=ValueError)
 def is_3d_fits_file(filecontents):
     try:
         with NamedTemporaryFile(content=filecontents) as fitsfile:
@@ -96,7 +96,7 @@ def is_3d_fits_file(filecontents):
         raise ValueError('Not a 3D FITS file')
 
 
-@app.task(queue='openmp')
+@app.task(queue='openmp', shared=False)
 def plot_volume(filecontents):
     """Plot a Mollweide projection of a sky map."""
     with NamedTemporaryFile(content=filecontents) as fitsfile, \

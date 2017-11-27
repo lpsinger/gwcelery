@@ -21,25 +21,25 @@ except OperationalError:
     pytestmark = pytest.mark.skip('No Redis server is running.')
 
 
-@app.task(base=EternalTask, bind=True, ignore_result=True)
+@app.task(base=EternalTask, bind=True, ignore_result=True, shared=False)
 def example_task_aborts_gracefully(self):
     while not self.is_aborted():
         sleep(0.1)
 
 
-@app.task(base=EternalTask, ignore_result=True)
+@app.task(base=EternalTask, ignore_result=True, shared=False)
 def example_task_always_succeeds():
     sleep(0.1)
 
 
-@app.task(base=EternalTask, ignore_result=True)
+@app.task(base=EternalTask, ignore_result=True, shared=False)
 def example_task_always_fails():
     sleep(0.1)
     raise RuntimeError('Expected to fail!')
 
 
 @app.task
-def example_task_canary():
+def example_task_canary(shared=False):
     """A simple task that, when finished, will tell us that the server
     has been running for a while."""
     sleep(1)

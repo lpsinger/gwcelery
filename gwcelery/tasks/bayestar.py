@@ -33,7 +33,7 @@ def bayestar(graceid, service):
 
 # FIXME: should be `throws=events.DetectorDisabledError, but that would add
 # a real on lalinference.
-@app.task(queue='openmp', throws=DetectorDisabledError)
+@app.task(queue='openmp', shared=False, throws=DetectorDisabledError)
 def bayestar_localize(coinc_psd, graceid, service, filename='bayestar.fits.gz',
                       disabled_detectors=None):
     from lalinference.io import events

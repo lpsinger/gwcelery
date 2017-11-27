@@ -69,7 +69,7 @@ class LVAlertClient(EventHandler, TimeoutHandler, XMPPFeatureHandler):
         log.info('Reached end of main loop')
 
 
-@app.task(base=EternalTask, bind=True, ignore_result=True)
+@app.task(base=EternalTask, bind=True, ignore_result=True, shared=False)
 def lvalert_listen(self):
     """LVAlert listener."""
     LVAlertClient(app.conf['lvalert_host'], self).run()

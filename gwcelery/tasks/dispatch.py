@@ -9,7 +9,7 @@ from .skymaps import annotate_fits
 from .voevent import send
 
 
-@app.task(ignore_result=True)
+@app.task(ignore_result=True, shared=False)
 def dispatch(payload):
     """Parse an LVAlert message and dispatch it to other tasks."""
     # Parse JSON payload
