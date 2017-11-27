@@ -23,7 +23,7 @@ test:
     - yum install -y python-pip lalinference-python redis
     - mkdir -p "$PIP_CACHE"
     - pip install --cache-dir="$PIP_CACHE" --upgrade pip setuptools pytest-cov pytest-runner mock
-    - pip install --process-dependency-links --cache-dir="$PIP_CACHE" .
+    - pip install --cache-dir="$PIP_CACHE" .
     - redis-server --daemonize yes
   script:
     - python setup.py test --addopts='-vv --cov --cov-report=html --cov-report=term'
