@@ -11,8 +11,7 @@ from ..util import EternalTask
 
 # Celery application object.
 # Use redis backend, because it supports locks (and thus singleton tasks).
-app = Celery('gwcelery.tests.test_eternal',
-             backend='redis://', broker='redis://')
+app = Celery(__name__, backend='redis://', broker='redis://')
 
 # Only run these tests if a Redis server is running.
 try:
