@@ -22,7 +22,7 @@ Hipster pipeline for annotating LIGO events.
 
 With `pip`:
 
-	$ pip install --user --process-dependency-links git+https://git.ligo.org/leo-singer/gwcelery
+	$ pip install --user git+https://git.ligo.org/leo-singer/gwcelery
 
 ### To test
 

@@ -38,9 +38,6 @@ setup(
         'Topic :: Scientific/Engineering :: Astronomy',
         'Topic :: Scientific/Engineering :: Physics'
     ],
-    dependency_links=[
-        'git+https://github.com/lpsinger/pyxmpp2@setuptools#egg=pyxmpp2-2.0.0+setuptools'
-    ],
     license='GPL-2+',
     install_requires=[
         'astropy',
