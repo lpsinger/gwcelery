@@ -61,7 +61,7 @@ def start_test_app_worker(tmpdir):
     """Start up a worker for the test app."""
     argv = ['celery', 'worker', '-B', '-c', '5',
             '-s', str(tmpdir / 'celerybeat-schedule'),
-            '-l', 'info']
+            '-l', 'debug']
     p = Process(target=app.start, args=(argv,))
     p.start()
     yield
