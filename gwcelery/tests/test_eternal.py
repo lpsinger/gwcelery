@@ -68,5 +68,3 @@ def test_eternal(tmpdir):
     assert example_task_canary.delay().get()
     p.terminate()
     p.join()
-    # Deliberately fail: just to see output in GitLab CI
-    assert False
