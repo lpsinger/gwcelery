@@ -1,14 +1,13 @@
 image: ligo/builder:el7
 
 variables:
-  PIP_CACHE: "pip-cache"
   GIT_STRATEGY: clone
   REDIS_VERSION: 4.0.2
 
 cache:
   paths:
     - yum-cache
-    - $PIP_CACHE
+    - pip-cache
     - redis-${REDIS_VERSION}/src/redis-server
 
 stages:
@@ -37,8 +36,8 @@ test:
     - redis-${REDIS_VERSION}/src/redis-server --daemonize yes
     # Install pip dependencies
     - mkdir -p "$PIP_CACHE"
-    - pip install --cache-dir="$PIP_CACHE" --upgrade pip setuptools pytest-cov pytest-runner mock
-    - pip install --cache-dir="$PIP_CACHE" .
+    - pip install --cache-dir=pip-cache --upgrade pip setuptools pytest-cov pytest-runner mock
+    - pip install --cache-dir=pip-cache .
   script:
     - python setup.py test --addopts='-s -vv --cov --cov-report=html --cov-report=term'
   artifacts:
