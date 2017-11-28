@@ -6,6 +6,7 @@ variables:
 
 cache:
   paths:
+    - .eggs
     - yum-cache
     - pip-cache
     - redis-${REDIS_VERSION}/src/redis-server
