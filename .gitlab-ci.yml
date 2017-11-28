@@ -7,7 +7,7 @@ variables:
 
 cache:
   paths:
-    - /var/cache/yum
+    - yum-cache
     - $PIP_CACHE
     - redis-${REDIS_VERSION}/src/redis-server
 
@@ -23,6 +23,8 @@ test:
   before_script:
     # Install yum dependencies
     - sed -i 's/keepcache=0/keepcache=1/' /etc/yum.conf
+    - sed -i 's/cachedir=.*/cachedir='$(pwd)'/yum-cache' /etc/yum.conf
+    - mkdir -p yum-cache
     - yum install -y python-pip lalinference-python
     # Build and start redis
     - echo 'b1a0915dbc91b979d06df1977fe594c3fa9b189f1f3d38743a2948c9f7634813  -' > checksum
