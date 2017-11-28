@@ -23,6 +23,7 @@ test:
   before_script:
     # Install yum dependencies
     - echo keepcache = 1 >> /etc/yum.conf
+    - cat /etc/yum.conf
     - yum install -y python-pip lalinference-python
     # Build and start redis
     - echo 'b1a0915dbc91b979d06df1977fe594c3fa9b189f1f3d38743a2948c9f7634813  -' > checksum
