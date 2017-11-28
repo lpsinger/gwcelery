@@ -26,7 +26,7 @@ test:
     - yum install -y python-pip lalinference-python
     # Build and start redis
     - echo 'b1a0915dbc91b979d06df1977fe594c3fa9b189f1f3d38743a2948c9f7634813  -' > checksum
-    - test ! -e redis-${REDIS_VERSION}.tar.gz &&
+    - test ! -e redis-${REDIS_VERSION}/src/redis-server &&
       curl -O http://download.redis.io/releases/redis-4.0.2.tar.gz &&
       yum install -y perl-Digest-SHA &&
       shasum -a 256 -c checksum < redis-${REDIS_VERSION}.tar.gz &&
