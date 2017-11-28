@@ -22,7 +22,7 @@ test:
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   before_script:
     # Install yum dependencies
-    - echo keepcache = 1 >> /etc/yum.conf
+    - sed -i 's/keepcache=0/keepcache=1/' /etc/yum.conf
     - cat /etc/yum.conf
     - yum install -y python-pip lalinference-python
     # Build and start redis
