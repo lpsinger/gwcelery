@@ -31,6 +31,7 @@ class EternalTask(abortable.AbortableTask, Singleton):
 
     @classmethod
     def on_bound(cls, app):
+        log.info('registering periodic task')
         app.add_periodic_task(1.0, cls)
         app.steps['worker'].add(AbortStep)
 
