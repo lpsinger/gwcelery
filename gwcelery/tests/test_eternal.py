@@ -37,8 +37,8 @@ def example_task_always_fails():
     raise RuntimeError('Expected to fail!')
 
 
-@app.task
-def example_task_canary(shared=False):
+@app.task(shared=False)
+def example_task_canary():
     """A simple task that, when finished, will tell us that the server
     has been running for a while."""
     sleep(1)
