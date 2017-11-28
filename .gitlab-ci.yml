@@ -23,7 +23,7 @@ test:
   before_script:
     # Install yum dependencies
     - sed -i 's/keepcache=0/keepcache=1/' /etc/yum.conf
-    - sed -i 's/cachedir=.*/cachedir='$(pwd)'/yum-cache/' /etc/yum.conf
+    - sed -i 's|cachedir=.*|cachedir='$(pwd)'/yum-cache|' /etc/yum.conf
     - mkdir -p yum-cache
     - yum install -y python-pip lalinference-python
     # Build and start redis
