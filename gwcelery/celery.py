@@ -4,8 +4,8 @@ from celery import Celery
 
 # Celery application object.
 # Use pickle serializer, because it supports byte values.
-# Use redis backend, because it supports locks (and thus singleton tasks).
-app = Celery('gwcelery', backend='redis://', broker='redis://',
+# Use redis broker, because it supports locks (and thus singleton tasks).
+app = Celery('gwcelery', broker='redis://',
     config_source=dict(
         accept_content=['json', 'pickle'],
         event_serializer='json',
@@ -17,3 +17,6 @@ app = Celery('gwcelery', backend='redis://', broker='redis://',
         gcn_remote_address='128.183.96.236' # capella2.gsfc.nasa.gov
     )
 )
+
+# Use the same URL for both the result backend and the broker.
+app.conf['result_backend'] = app.conf['broker_url']
