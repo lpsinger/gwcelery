@@ -1,6 +1,7 @@
 image: ligo/builder:el7
 
 variables:
+  C_FORCE_ROOT: true
   GIT_STRATEGY: clone
   REDIS_VERSION: 4.0.2
 
