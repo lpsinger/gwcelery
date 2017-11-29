@@ -1,5 +1,3 @@
-image: ligo/builder:el7
-
 variables:
   GIT_STRATEGY: clone
   REDIS_VERSION: 4.0.2
@@ -10,6 +8,7 @@ stages:
   - mirror
 
 test:
+  image: ligo/builder:el7
   cache:
     paths:
       - yum-cache
