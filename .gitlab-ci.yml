@@ -15,6 +15,8 @@ test:
       - yum-cache
       - pip-cache
       - redis-${REDIS_VERSION}/src/redis-server
+  services:
+    - redis:latest
   tags:
     - highmem
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
