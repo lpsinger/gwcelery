@@ -29,7 +29,7 @@ test:
     - pip install --cache-dir=pip-cache --upgrade pip setuptools pytest-cov pytest-runner mock
     - pip install --cache-dir=pip-cache .
     # Customize celery configuration
-    - echo 'redis_url = "redis"' > celeryconfig.py
+    - echo 'redis_url = "redis"' > gwcelery/tests/celeryconfig.py
   script:
     - python setup.py test --addopts='-vv --cov --cov-report=html --cov-report=term'
   artifacts:
