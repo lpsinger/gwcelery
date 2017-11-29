@@ -5,18 +5,17 @@ variables:
   GIT_STRATEGY: clone
   REDIS_VERSION: 4.0.2
 
-cache:
-  paths:
-    - yum-cache
-    - pip-cache
-    - redis-${REDIS_VERSION}/src/redis-server
-
 stages:
   - test
   - deploy
   - mirror
 
 test:
+  cache:
+    paths:
+      - yum-cache
+      - pip-cache
+      - redis-${REDIS_VERSION}/src/redis-server
   tags:
     - highmem
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
