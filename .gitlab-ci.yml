@@ -31,7 +31,7 @@ test:
     - pip install --cache-dir=pip-cache .
     # Customize celery configuration
     - mkdir config
-    - echo 'redis_url = "redis"' > config/celeryconfig.py
+    - echo 'redis_host = "redis"' > config/celeryconfig.py
     - export PYTHONPATH=$(pwd)/config
   script:
     - python setup.py test --addopts='-vv --cov --cov-report=html --cov-report=term'
