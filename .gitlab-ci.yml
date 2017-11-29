@@ -1,7 +1,7 @@
 image: ligo/builder:el7
 
 variables:
-  CELERY_LOADER: celery.loaders.default:Loader
+  CELERY_BROKER_URL: redis://redis
   GIT_STRATEGY: clone
 
 stages:
@@ -29,11 +29,6 @@ test:
     - mkdir -p pip-cache
     - pip install --cache-dir=pip-cache --upgrade pip setuptools pytest-cov pytest-runner mock
     - pip install --cache-dir=pip-cache .
-    # Customize celery configuration
-    - mkdir config
-    - pwd
-    - echo 'redis_host = "redis"' > config/celeryconfig.py
-    - export PYTHONPATH=$(pwd)/config
   script:
     - python setup.py test --addopts='-vv --cov --cov-report=html --cov-report=term'
   artifacts:
