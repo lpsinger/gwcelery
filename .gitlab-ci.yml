@@ -2,7 +2,6 @@ image: ligo/builder:el7
 
 variables:
   GIT_STRATEGY: clone
-  REDIS_VERSION: 4.0.2
 
 stages:
   - test
@@ -14,7 +13,6 @@ test:
     paths:
       - yum-cache
       - pip-cache
-      - redis-${REDIS_VERSION}/src/redis-server
   services:
     - redis:latest
   tags:
@@ -26,19 +24,12 @@ test:
     - sed -i 's|cachedir=.*|cachedir='$(pwd)'/yum-cache|' /etc/yum.conf
     - mkdir -p yum-cache
     - yum install -y python-pip lalinference-python
-    # Build and start redis
-    - echo 'b1a0915dbc91b979d06df1977fe594c3fa9b189f1f3d38743a2948c9f7634813  -' > checksum
-    - test ! -e redis-${REDIS_VERSION}/src/redis-server &&
-      curl -O http://download.redis.io/releases/redis-4.0.2.tar.gz &&
-      yum install -y perl-Digest-SHA &&
-      shasum -a 256 -c checksum < redis-${REDIS_VERSION}.tar.gz &&
-      tar xzf redis-${REDIS_VERSION}.tar.gz &&
-      make -C redis-${REDIS_VERSION} -j
-    - redis-${REDIS_VERSION}/src/redis-server --daemonize yes
     # Install pip dependencies
     - mkdir -p pip-cache
     - pip install --cache-dir=pip-cache --upgrade pip setuptools pytest-cov pytest-runner mock
     - pip install --cache-dir=pip-cache .
+    # Customize celery configuration
+    - echo 'redis_url = "redis"' > celeryconfig.py
   script:
     - python setup.py test --addopts='-vv --cov --cov-report=html --cov-report=term'
   artifacts:
