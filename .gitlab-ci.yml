@@ -39,7 +39,7 @@ test:
     - pip install --cache-dir=pip-cache --upgrade pip setuptools pytest-cov pytest-runner mock
     - pip install --cache-dir=pip-cache .
   script:
-    - python setup.py test --addopts='-s -vv --cov --cov-report=html --cov-report=term'
+    - python setup.py test --addopts='-vv --cov --cov-report=html --cov-report=term'
   artifacts:
     paths:
       - htmlcov/
