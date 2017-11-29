@@ -31,6 +31,7 @@ test:
     - pip install --cache-dir=pip-cache .
     # Customize celery configuration
     - mkdir config
+    - pwd
     - echo 'redis_host = "redis"' > config/celeryconfig.py
     - export PYTHONPATH=$(pwd)/config
   script:
