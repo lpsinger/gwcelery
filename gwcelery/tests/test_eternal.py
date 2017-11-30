@@ -60,18 +60,16 @@ else:
 @pytest.fixture
 def start_test_app_worker(tmpdir):
     """Start up a worker for the test app."""
-    argv = ['worker', '-B', '-c', '5',
-            '-s', str(tmpdir / 'celerybeat-schedule'),
-            '-l', 'debug']
+    argv = ['worker', '-B', '-l', 'info']
     p = Process(target=app.worker_main, args=(argv,))
     p.start()
     yield
     p.terminate()
     p.join()
-    assert False
 
 
 def test_eternal(start_test_app_worker):
     """Test worker with two eternal tasks: one that always succeeds,
     and one that always fails."""
     assert example_task_canary.delay().get()
+    assert False
