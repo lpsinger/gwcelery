@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 from multiprocessing import Process
+import os
 from time import sleep
 
 from celery import Celery
@@ -21,29 +22,30 @@ except OperationalError:
     pytestmark = pytest.mark.skip('No Redis server is running.')
 
 
+def touch(path):
+    """Touch a file."""
+    with open(path, 'w'):
+        pass
+
+
 @app.task(base=EternalTask, bind=True, ignore_result=True, shared=False)
 def example_task_aborts_gracefully(self):
     while not self.is_aborted():
         sleep(0.1)
+        touch('example_task_aborts_gracefully')
 
 
 @app.task(base=EternalTask, ignore_result=True, shared=False)
 def example_task_always_succeeds():
     sleep(0.1)
+    touch('example_task_always_succeeds')
 
 
 @app.task(base=EternalTask, ignore_result=True, shared=False)
 def example_task_always_fails():
     sleep(0.1)
+    touch('example_task_always_fails')
     raise RuntimeError('Expected to fail!')
-
-
-@app.task(shared=False)
-def example_task_canary():
-    """A simple task that, when finished, will tell us that the server
-    has been running for a while."""
-    sleep(1)
-    return True
 
 
 # Only needed if we are measuring test coverage
@@ -60,18 +62,22 @@ else:
 @pytest.fixture
 def start_test_app_worker(tmpdir):
     """Start up a worker for the test app."""
-    argv = ['worker', '-B', '-c', '5',
-            '-s', str(tmpdir / 'celerybeat-schedule'),
-            '-l', 'info']
+    argv = ['worker', '-B', '-c', '5', '--workdir', str(tmpdir), '-l', 'info']
     p = Process(target=app.worker_main, args=(argv,))
     p.start()
-    sleep(20)
     yield
     p.terminate()
     p.join()
 
 
-def test_eternal(start_test_app_worker):
+def test_eternal(start_test_app_worker, tmpdir):
     """Test worker with two eternal tasks: one that always succeeds,
     and one that always fails."""
-    assert example_task_canary.delay().get()
+    filenames = ['example_task_aborts_gracefully',
+                 'example_task_always_succeeds',
+                 'example_task_always_fails']
+    for i in range(100):
+        if all(os.path.exists(str(tmpdir / _)) for _ in filenames):
+            break
+        sleep(0.1)
+    assert all(os.path.exists(str(tmpdir / _)) for _ in filenames)
