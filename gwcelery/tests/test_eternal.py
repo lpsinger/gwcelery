@@ -74,4 +74,3 @@ def test_eternal(start_test_app_worker):
     """Test worker with two eternal tasks: one that always succeeds,
     and one that always fails."""
     assert example_task_canary.delay().get()
-    assert False
