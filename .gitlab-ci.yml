@@ -1,7 +1,6 @@
 image: ligo/builder:el7
 
 variables:
-  C_FORCE_ROOT: 'true'
   CELERY_BROKER_URL: redis://redis
   GIT_STRATEGY: clone
 
