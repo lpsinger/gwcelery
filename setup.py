@@ -57,6 +57,6 @@ setup(
             'gwcelery = gwcelery:start'
         ]
     },
-    setup_requires=['pytest-runner', 'pytest-cov'] if needs_pytest else [],
+    setup_requires=['pytest-runner'] if needs_pytest else [],
     tests_require=tests_require
 )
