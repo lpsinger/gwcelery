@@ -77,7 +77,8 @@ def test_eternal(start_test_app_worker, tmpdir):
                  'example_task_always_succeeds',
                  'example_task_always_fails']
     for i in range(100):
-        if all(os.path.exists(str(tmpdir / _)) for _ in filenames):
+        finished = all(os.path.exists(str(tmpdir / _)) for _ in filenames)
+        if finished:
             break
         sleep(0.1)
-    assert all(os.path.exists(str(tmpdir / _)) for _ in filenames)
+    assert finished
