@@ -32,19 +32,20 @@ def touch(path):
 def example_task_aborts_gracefully(self):
     while not self.is_aborted():
         sleep(0.1)
-        touch('example_task_aborts_gracefully')
+        touch(os.path.join(os.environ['COV_TMP'],
+                           'example_task_aborts_gracefully'))
 
 
 @app.task(base=EternalTask, ignore_result=True, shared=False)
 def example_task_always_succeeds():
     sleep(0.1)
-    touch('example_task_always_succeeds')
+    touch(os.path.join(os.environ['COV_TMP'], 'example_task_always_succeeds'))
 
 
 @app.task(base=EternalTask, ignore_result=True, shared=False)
 def example_task_always_fails():
     sleep(0.1)
-    touch('example_task_always_fails')
+    touch(os.path.join(os.environ['COV_TMP'], 'example_task_always_fails'))
     raise RuntimeError('Expected to fail!')
 
 
@@ -62,12 +63,15 @@ else:
 @pytest.fixture
 def start_test_app_worker(tmpdir):
     """Start up a worker for the test app."""
-    argv = ['worker', '-B', '-c', '5', '--workdir', str(tmpdir), '-l', 'info']
+    os.environ['COV_TMP'] = str(tmpdir)
+    argv = ['worker', '-B', '-c', '5', '-l', 'info',
+            '-s', str(tmpdir / 'celerybeat-schedule')]
     p = Process(target=app.worker_main, args=(argv,))
     p.start()
     yield
     p.terminate()
     p.join()
+    del os.environ['COV_TMP']
 
 
 def test_eternal(start_test_app_worker, tmpdir):
