@@ -67,6 +67,7 @@ def start_test_app_worker(tmpdir):
     argv = ['worker', '-B', '-c', '5', '-l', 'info',
             '-s', str(tmpdir / 'celerybeat-schedule')]
     p = Process(target=app.worker_main, args=(argv,))
+    p.daemon = True
     p.start()
     yield
     p.terminate()
