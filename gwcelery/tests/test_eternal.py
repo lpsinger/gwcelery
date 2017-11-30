@@ -68,6 +68,7 @@ def start_test_app_worker(tmpdir):
     yield
     p.terminate()
     p.join()
+    assert False
 
 
 def test_eternal(start_test_app_worker):
