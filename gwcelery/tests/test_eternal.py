@@ -53,7 +53,7 @@ except ImportError:
     pass
 else:
     @worker_process_shutdown.connect
-    def worker_process_shutdown(*args, **kwargs):
+    def on_worker_process_shutdown(*args, **kwargs):
         multiprocessing_finish()
 
 
