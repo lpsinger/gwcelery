@@ -11,7 +11,7 @@ from ..util import EternalTask
 
 # Celery application object.
 # Use redis backend, because it supports locks (and thus singleton tasks).
-app = Celery(__name__, broker='redis://')
+app = Celery(__name__, backend='redis://redis', broker='redis://redis')
 app.conf['result_backend'] = app.conf['broker_url']
 
 # Only run these tests if a Redis server is running.
