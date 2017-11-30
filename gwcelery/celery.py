@@ -19,4 +19,4 @@ app = Celery('gwcelery', broker='redis://',
 )
 
 # Use the same URL for both the result backend and the broker.
-app.conf['result_backend'] = app.conf['broker_url']
+app.conf['result_backend'] = app.conf.broker_url
