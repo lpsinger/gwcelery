@@ -65,6 +65,7 @@ def start_test_app_worker(tmpdir):
             '-l', 'info']
     p = Process(target=app.worker_main, args=(argv,))
     p.start()
+    sleep(20)
     yield
     p.terminate()
     p.join()
