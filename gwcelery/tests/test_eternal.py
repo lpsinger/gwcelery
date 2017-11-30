@@ -60,7 +60,9 @@ else:
 @pytest.fixture
 def start_test_app_worker(tmpdir):
     """Start up a worker for the test app."""
-    argv = ['worker', '-B', '-l', 'info']
+    argv = ['worker', '-B', '-c', '5',
+            '-s', str(tmpdir / 'celerybeat-schedule'),
+            '-l', 'info']
     p = Process(target=app.worker_main, args=(argv,))
     p.start()
     yield
