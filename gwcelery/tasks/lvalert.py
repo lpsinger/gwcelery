@@ -63,9 +63,9 @@ class LVAlertClient(EventHandler, TimeoutHandler, XMPPFeatureHandler):
         return True
 
     def run(self):
-        log.info('Connecting to %r', str(client.jid))
-        client.connect()
-        client.run()
+        log.info('Connecting to %r', str(self.__client.jid))
+        self.__client.connect()
+        self.__client.run()
         log.info('Reached end of main loop')
 
 
