@@ -19,6 +19,17 @@ from .dispatch import dispatch
 # Logging
 log = get_task_logger(__name__)
 
+ns = {'ns1': 'http://jabber.org/protocol/pubsub#event',
+      'ns2': 'http://jabber.org/protocol/pubsub'}
+
+
+def filter_messages(xml):
+    for node in xml.iterfind('.//ns1:items[@node]', ns):
+        print('***', node.attrib['node'])
+        if node.attrib['node'] in app.conf['lvalert_node_whitelist']:
+            for entry in node.iterfind('.//ns2:entry', ns):
+                yield entry.text
+
 
 class LVAlertClient(EventHandler, TimeoutHandler, XMPPFeatureHandler):
 
@@ -48,9 +59,7 @@ class LVAlertClient(EventHandler, TimeoutHandler, XMPPFeatureHandler):
     @message_stanza_handler()
     def __handle_message(self, stanza):
         log.info('Got message')
-        xpath = '{http://jabber.org/protocol/pubsub}entry'
-        for e in stanza.as_xml().iter(xpath):
-            text = e.text
+        for text in filter_messages(stanza.as_xml()):
             log.debug('Dispatching: %s', text)
             dispatch.s(text).delay()
         return True

@@ -12,6 +12,7 @@ app = Celery('gwcelery', broker='redis://',
         result_serializer='pickle',
         task_serializer='pickle',
         lvalert_host='lvalert-test.cgca.uwm.edu',
+        lvalert_node_whitelist={'cbc_gstlal', 'cbc_pycbc', 'cbc_mbtaonline'},
         gcn_bind_address='',
         gcn_bind_port=5341,
         gcn_remote_address='128.183.96.236' # capella2.gsfc.nasa.gov

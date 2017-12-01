@@ -1,10 +1,34 @@
 from __future__ import print_function
 import os
+from xml.etree.ElementTree import XML
 
 from pyxmpp2.exceptions import DNSError
 
 from ..tasks import lvalert
 from . import *
+
+
+def test_filter_messages():
+    xml = XML(pkg_resources.resource_string(__name__, 'data/lvalert_xmpp.xml'))
+    messages = list(lvalert.filter_messages(xml))
+    assert len(messages) == 0
+
+
+@pytest.fixture
+def whitelist_cbc_gstlal_mdc():
+    new_conf = dict(
+        lvalert_node_whitelist={'cbc_gstlal_mdc'}
+    )
+    tmp = {key: app.conf[key] for key in new_conf.keys()}
+    app.conf.update(new_conf)
+    yield
+    app.conf.update(tmp)
+
+
+def test_filter_messages(whitelist_cbc_gstlal_mdc):
+    xml = XML(pkg_resources.resource_string(__name__, 'data/lvalert_xmpp.xml'))
+    messages = list(lvalert.filter_messages(xml))
+    assert len(messages) == 1
 
 
 @pytest.fixture
