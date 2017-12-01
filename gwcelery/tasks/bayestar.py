@@ -10,7 +10,7 @@ from .gracedb import download, upload
 # Workaround for testing in an environment that lacks LALInference
 try:
     from lalinference.io.events import DetectorDisabledError
-except ImportError:
+except ImportError:  # pragma: no cover
     DetectorDisabledError = ValueError
 
 log = logging.getLogger('BAYESTAR')
