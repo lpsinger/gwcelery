@@ -19,7 +19,7 @@ except ImportError:
 needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
 
 setup(
-    name='gwcelery',
+    name='GWCelery',
     version='0.0.1',
     author='Leo Singer',
     author_email='leo.singer@ligo.org',
