@@ -73,7 +73,7 @@ Some additional firewall configuration may be required.
 
 ![monitoring screenshot](https://git.ligo.org/emfollow/gwcelery/raw/master/etc/screenshot.png)
 
-### Recommended procedure for starting and starting with HTCondor
+### Recommended procedure for starting and stopping with HTCondor
 
 The recommended way to start and stop GWCelery on the LIGO Data Grid cluster is
 using [HTCondor](https://research.cs.wisc.edu/htcondor/). See the example
