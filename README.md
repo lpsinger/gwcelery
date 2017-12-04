@@ -73,7 +73,7 @@ add the following lines to the file `~/public_html/.htaccess`:
 
 Some additional firewall configuration may be required.
 
-![monitoring screenshot](https://git.ligo.org/emfollow/gwcelery/raw/master/etc/screenshot.png)
+![monitoring screenshot](etc/screenshot.png)
 
 ### Recommended procedure for starting and stopping with HTCondor
 
