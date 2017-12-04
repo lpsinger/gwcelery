@@ -1,3 +1,5 @@
+![GWCelery logo](etc/logo.png)
+
 # GWCelery
 
 [![build status](https://git.ligo.org/emfollow/gwcelery/badges/master/build.svg)](https://git.ligo.org/emfollow/gwcelery/pipelines)
