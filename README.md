@@ -1,7 +1,7 @@
 # GWCelery
 
-[![build status](https://git.ligo.org/leo-singer/gwcelery/badges/master/build.svg)](https://git.ligo.org/leo-singer/gwcelery/pipelines)
-[![coverage report](https://git.ligo.org/leo-singer/gwcelery/badges/master/coverage.svg)](https://leo-singer.docs.ligo.org/gwcelery)
+[![build status](https://git.ligo.org/emfollow/gwcelery/badges/master/build.svg)](https://git.ligo.org/emfollow/gwcelery/pipelines)
+[![coverage report](https://git.ligo.org/emfollow/gwcelery/badges/master/coverage.svg)](https://emfollow.docs.ligo.org/gwcelery)
 
 Hipster pipeline for annotating LIGO events.
 
@@ -10,10 +10,10 @@ Hipster pipeline for annotating LIGO events.
  - Easy installation with `pip`
  - Lightning fast distributed task queue powered by
    [Celery](http://celeryproject.org) and Redis (https://redis.io)
- - Tasks are defined by [small, self-contained Python functions](https://git.ligo.org/leo-singer/gwcelery/tree/master/gwcelery/tasks)
- - [Lightweight test suite](https://git.ligo.org/leo-singer/gwcelery/tree/master/gwcelery/tests) using mocks of external services
- - [Continuous integration](https://git.ligo.org/leo-singer/gwcelery/pipelines)
- - [One line of code to switch from test to production GraceDB server](https://git.ligo.org/leo-singer/gwcelery/blob/master/gwcelery/celery.py)
+ - Tasks are defined by [small, self-contained Python functions](https://git.ligo.org/emfollow/gwcelery/tree/master/gwcelery/tasks)
+ - [Lightweight test suite](https://git.ligo.org/emfollow/gwcelery/tree/master/gwcelery/tests) using mocks of external services
+ - [Continuous integration](https://git.ligo.org/emfollow/gwcelery/pipelines)
+ - [One line of code to switch from test to production GraceDB server](https://git.ligo.org/emfollow/gwcelery/blob/master/gwcelery/celery.py)
  - Browser-based monitoring console (see below)
 
 ## Instructions
@@ -22,7 +22,7 @@ Hipster pipeline for annotating LIGO events.
 
 With `pip`:
 
-	$ pip install --user git+https://git.ligo.org/leo-singer/gwcelery
+	$ pip install --user git+https://git.ligo.org/emfollow/gwcelery
 
 ### To test
 
@@ -71,14 +71,14 @@ add the following lines to the file `~/public_html/.htaccess`:
 
 Some additional firewall configuration may be required.
 
-![monitoring screenshot](https://git.ligo.org/leo-singer/gwcelery/raw/master/etc/screenshot.png)
+![monitoring screenshot](https://git.ligo.org/emfollow/gwcelery/raw/master/etc/screenshot.png)
 
 ### Recommended procedure for starting and starting with HTCondor
 
 The recommended way to start and stop GWCelery on the LIGO Data Grid cluster is
 using [HTCondor](https://research.cs.wisc.edu/htcondor/). See the example
 HTCondor submit file
-[`etc/gwcelery.sub`](https://git.ligo.org/leo-singer/gwcelery/blob/master/etc/gwcelery.sub).
+[`etc/gwcelery.sub`](https://git.ligo.org/emfollow/gwcelery/blob/master/etc/gwcelery.sub).
 This submit file will start up Redis, the three worker processes, and Flower.
 To start, go into the `etc/` directory in the source tree and run
 `condor_submit` as follows:
