@@ -1,11 +1,11 @@
+![GWCelery logo](etc/logo-0.5x.png)
+
 # GWCelery
 
 [![build status](https://git.ligo.org/emfollow/gwcelery/badges/master/build.svg)](https://git.ligo.org/emfollow/gwcelery/pipelines)
 [![coverage report](https://git.ligo.org/emfollow/gwcelery/badges/master/coverage.svg)](https://emfollow.docs.ligo.org/gwcelery)
 
 Hipster pipeline for annotating LIGO events.
-
-![GWCelery logo](etc/logo-0.5x.png)
 
 ## Features
 
