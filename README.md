@@ -5,7 +5,7 @@
 
 Hipster pipeline for annotating LIGO events.
 
-![GWCelery logo](etc/logo.png)
+![GWCelery logo](etc/logo-0.5x.png)
 
 ## Features
 
