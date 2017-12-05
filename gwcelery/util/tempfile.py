@@ -8,17 +8,24 @@ __all__ = ('NamedTemporaryFile',)
 
 
 @contextmanager
-def NamedTemporaryFile(**kwargs):
-    """Convenience wrapper for NamedTemporaryFile that writes some data to
-    the file before handing it to the calling code."""
-    # Make a copy so that we don't modify kwargs
-    kwargs = dict(kwargs)
+def NamedTemporaryFile(content=None, **kwargs):
+    """Convenience wrapper for :func:`tempfile.NamedTemporaryFile` that writes
+    some data to the file before handing it to the calling code.
 
-    content = kwargs.pop('content', None)
+    Parameters
+    ----------
+
+    content : str, bytes, None
+        Initial contents of the file.
+
+    \**kwargs
+        Additional keyword arguments to pass to
+        :func:`tempfile.NamedTemporaryFile`.
+    """
     if isinstance(content, six.binary_type):
-        kwargs['mode'] = 'w+b'
+        kwargs = dict(kwargs, mode='w+b')
     elif isinstance(content, six.text_type):
-        kwargs['mode'] = 'w+'
+        kwargs = dict(kwargs, mode='w+')
     elif content is not None:
         raise TypeError('content is of unknown type')
     with tempfile.NamedTemporaryFile(**kwargs) as f:
