@@ -25,9 +25,33 @@ class AbortStep(bootsteps.StartStopStep):
 
 class EternalTask(abortable.AbortableTask, Singleton):
     """Base class for a task that should run forever, and should be restarted
-    if it ever exits. The task should periodically check `self.is_aborted()`
+    if it ever exits. The task should periodically check
+    :meth:`~celery.contrib.abortable.AbortableTask.is_aborted`
     and exit gracefully if it is set. During a warm shutdown, we will attempt
-    to abort the task."""
+    to abort the task.
+
+    Example
+    -------
+
+    To create an abortable task, call the :meth:`~celery.Celery.task` decorator
+    with the keyword argument ``base=EternalTask``.
+
+    Generally, you should also pass ``bind=True`` so that your task function has
+    access to the :class:`~celery.app.task.Task` instance and can call
+    ``self.is_aborted()``.
+
+    Finally, you should also pass ``ignore_result=True``, because if the task
+    runs until aborted, the return value is irrelevant.
+
+    Here is an example eternal task that calls a fictional function
+    `do_some_work()` in a loop::
+
+        @app.task(base=EternalTask, bind=True, ignore_result=True)
+        def long_running_task(self):
+            while not self.is_aborted():
+                do_some_work()
+
+    """
 
     @classmethod
     def on_bound(cls, app):
