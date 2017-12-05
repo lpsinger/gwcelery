@@ -8,38 +8,53 @@ stages:
   - test
   - deploy
 
+cache:
+  paths:
+    - yum-cache
+    - pip-cache
+
+before_script:
+  # Configure yum cache
+  - sed -i 's/keepcache=0/keepcache=1/' /etc/yum.conf
+  - sed -i 's|cachedir=.*|cachedir='$(pwd)'/yum-cache|' /etc/yum.conf
+  - mkdir -p yum-cache
+  # Configure pip cache
+  - echo [global] >> /etc/pip.conf
+  - echo cache-dir = $(pwd)/pip-cache >> /etc/pip.conf
+  - mkdir -p pip-cache
+
 test:
-  cache:
-    paths:
-      - yum-cache
-      - pip-cache
   services:
     - redis:3.2.11
   tags:
     - highmem
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
-  before_script:
-    # Install yum dependencies
-    - sed -i 's/keepcache=0/keepcache=1/' /etc/yum.conf
-    - sed -i 's|cachedir=.*|cachedir='$(pwd)'/yum-cache|' /etc/yum.conf
-    - mkdir -p yum-cache
-    - yum install -y python-pip lalinference-python
-    # Install pip dependencies
-    - mkdir -p pip-cache
-    - pip install --cache-dir=pip-cache --upgrade pytest-cov pytest-runner mock
-    - pip install --cache-dir=pip-cache .
   script:
+    # Install dependencies
+    - yum install -y python-pip lalinference-python
+    - pip install --upgrade pytest-cov pytest-runner mock
+    - pip install .
+    # Run tests
     - python setup.py test --addopts='-vv --cov --cov-report=html --cov-report=term'
   artifacts:
     paths:
       - htmlcov/
 
+doc:
+  script:
+    - yum install -y python-pip
+    - pip install sphinx
+    - pip install .
+    - python setup.py build_sphinx
+  artifacts:
+    paths:
+      - build/sphinx/html
+
 pages:
   stage: deploy
-  dependencies:
-    - test
   script:
-    - mv htmlcov/ public/
+    - mv build/sphinx/html/* public/
+    - mv htmlcov/ public/htmlcov/
   artifacts:
     paths:
       - public

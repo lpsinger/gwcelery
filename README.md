@@ -3,7 +3,7 @@
 # GWCelery
 
 [![build status](https://git.ligo.org/emfollow/gwcelery/badges/master/build.svg)](https://git.ligo.org/emfollow/gwcelery/pipelines)
-[![coverage report](https://git.ligo.org/emfollow/gwcelery/badges/master/coverage.svg)](https://emfollow.docs.ligo.org/gwcelery)
+[![coverage report](https://git.ligo.org/emfollow/gwcelery/badges/master/coverage.svg)](https://emfollow.docs.ligo.org/gwcelery/htmlcov)
 
 Hipster pipeline for annotating LIGO events.
 
