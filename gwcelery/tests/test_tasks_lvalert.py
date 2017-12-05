@@ -46,7 +46,7 @@ def test_lvalert_netrc_does_not_match(netrc_lvalert2):
     """Test that we get the correct error message when the lvalert host is
     not in the netrc file."""
     with pytest.raises(RuntimeError, match='No matching netrc entry found'):
-        lvalert.lvalert_listen()
+        lvalert.listen()
 
 
 @pytest.fixture
@@ -63,4 +63,4 @@ def netrc_lvalert(tmpdir):
 def test_lvalert_constructor(netrc_lvalert):
     """Test that we at least attempt to connect to a non-existent URL."""
     with pytest.raises(DNSError):
-        lvalert.lvalert_listen()
+        lvalert.listen()

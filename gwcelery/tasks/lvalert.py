@@ -79,6 +79,6 @@ class LVAlertClient(EventHandler, TimeoutHandler, XMPPFeatureHandler):
 
 
 @app.task(base=EternalTask, bind=True, ignore_result=True, shared=False)
-def lvalert_listen(self):
+def listen(self):
     """LVAlert listener."""
     LVAlertClient(app.conf['lvalert_host'], self).run()
