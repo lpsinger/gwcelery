@@ -17,6 +17,7 @@ log = logging.getLogger('BAYESTAR')
 
 
 def bayestar(graceid, service):
+    """Peform rapid sky localization with BAYESTAR."""
     coinc = download('coinc.xml', graceid, service)
     psd = download('psd.xml.gz', graceid, service)
     coinc_psd = (coinc, psd)
