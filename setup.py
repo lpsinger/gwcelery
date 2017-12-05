@@ -54,7 +54,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'gwcelery = gwcelery:start'
+            'gwcelery = gwcelery:app.start'
         ]
     },
     setup_requires=['pytest-runner'] if needs_pytest else [],
