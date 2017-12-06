@@ -72,6 +72,7 @@ def start_test_app_worker(tmpdir):
     yield
     p.terminate()
     p.join()
+    app.control.purge()
     del os.environ['COV_TMP']
 
 
