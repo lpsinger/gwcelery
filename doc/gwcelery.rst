@@ -1,16 +1,10 @@
 API Reference
 =============
 
-Subpackages
------------
-
 .. toctree::
 
     gwcelery.tasks
     gwcelery.util
-
-Module contents
----------------
 
 .. automodule:: gwcelery
     :members:

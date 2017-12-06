@@ -1,3 +1,4 @@
+"""Rapid sky localization with BAYESTAR."""
 import io
 import logging
 import os

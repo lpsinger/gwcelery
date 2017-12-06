@@ -1,3 +1,4 @@
+"""Communication with GraceDB."""
 from ligo.gracedb.rest import GraceDb
 
 from ..celery import app

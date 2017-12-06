@@ -1,3 +1,4 @@
+"""Annotations for sky maps."""
 from __future__ import print_function
 from subprocess import check_call
 

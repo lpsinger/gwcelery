@@ -1,3 +1,4 @@
+"""Basic single-endpoint VOEvent broker."""
 import socket
 import struct
 

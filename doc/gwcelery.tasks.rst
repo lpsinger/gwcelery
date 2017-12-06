@@ -1,7 +1,7 @@
 gwcelery\.tasks package
 =======================
 
-All of the Celery tasks are declared in submodules of this package.
+.. automodule:: gwcelery.tasks
 
 gwcelery\.tasks\.bayestar module
 --------------------------------

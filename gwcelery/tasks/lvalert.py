@@ -1,3 +1,4 @@
+"""LVAlert client."""
 import netrc
 import os
 import uuid

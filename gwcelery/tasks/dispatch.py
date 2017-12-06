@@ -1,3 +1,4 @@
+"""Routing of LVAlert messages to other tasks."""
 import json
 import os
 
