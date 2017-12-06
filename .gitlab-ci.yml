@@ -43,7 +43,7 @@ test:
 doc:
   script:
     - yum install -y python-pip
-    - pip install sphinx
+    - pip install sphinx recommonmark
     - pip install .
     - python setup.py build_sphinx
   artifacts:
