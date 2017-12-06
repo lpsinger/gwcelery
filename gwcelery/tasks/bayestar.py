@@ -36,7 +36,7 @@ def bayestar(graceid, service):
 # a real on lalinference.
 @app.task(queue='openmp', shared=False, throws=DetectorDisabledError)
 def localize(coinc_psd, graceid, service, filename='bayestar.fits.gz',
-                      disabled_detectors=None):
+             disabled_detectors=None):
     from lalinference.io import events
     from lalinference.io import fits
     from lalinference.bayestar.command import TemporaryDirectory
