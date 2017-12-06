@@ -26,7 +26,6 @@ ns = {'ns1': 'http://jabber.org/protocol/pubsub#event',
 
 def filter_messages(xml):
     for node in xml.iterfind('.//ns1:items[@node]', ns):
-        print('***', node.attrib['node'])
         if node.attrib['node'] in app.conf['lvalert_node_whitelist']:
             for entry in node.iterfind('.//ns2:entry', ns):
                 yield entry.text
