@@ -7,8 +7,8 @@ will start up Redis, the three worker processes, and Flower. To start, go into
 the `etc/` directory in the source tree and run `condor_submit` as follows:
 
 	$ condor_submit gwcelery.sub
-	Submitting job(s).....
-	5 job(s) submitted to cluster 293497.
+	Submitting job(s)......
+	6 job(s) submitted to cluster 293497.
 
 Make note of the cluster number on the last line. To stop GWCelery, run the
 `condor_hold` command:
