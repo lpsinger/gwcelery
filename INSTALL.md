@@ -28,6 +28,6 @@ redis and start a server:
 
 GWCelery itself consists of three workers:
 
-	$ gwcelery worker -Q celery -n gwcelery-worker -B -l info
-	$ gwcelery worker -c 1 -Q openmp -n gwcelery-openmp-worker -l info
-	$ gwcelery worker -c 1 -Q voevent -n gwcelery-voevent-worker -l info
+	$ gwcelery worker -l info -n gwcelery-worker -Q celery -B
+	$ gwcelery worker -l info -n gwcelery-openmp-worker -Q openmp -c 1
+	$ gwcelery worker -l info -n gwcelery-voevent-worker -Q voevent -c 1

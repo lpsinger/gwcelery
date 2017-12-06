@@ -13,19 +13,19 @@ log = gwcelery-redis-server.log
 output = gwcelery-redis-server.out
 queue
 
-arguments = "gwcelery worker -Q celery -n gwcelery-worker -B -l info"
+arguments = "gwcelery worker -l info -n gwcelery-worker -Q celery -B"
 error = gwcelery-worker.err
 log = gwcelery-worker.log
 output = gwcelery-worker.out
 queue
 
-arguments = "gwcelery worker -c 1 -Q openmp -n gwcelery-openmp-worker -l info"
+arguments = "gwcelery worker -l info -n gwcelery-openmp-worker -Q openmp -c 1"
 error = gwcelery-openmp-worker.err
 log = gwcelery-openmp-worker.log
 output = gwcelery-openmp-worker.out
 queue
 
-arguments = "gwcelery worker -c 1 -Q voevent -n gwcelery-voevent-worker -l info"
+arguments = "gwcelery worker -l info -n gwcelery-voevent-worker -Q voevent -c 1"
 error = gwcelery-voevent-worker.err
 log = gwcelery-voevent-worker.log
 output = gwcelery-voevent-worker.out
