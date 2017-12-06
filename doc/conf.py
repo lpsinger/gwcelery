@@ -18,6 +18,7 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import os
+import importlib
 from subprocess import check_output
 import sys
 
@@ -89,8 +90,12 @@ pygments_style = 'sphinx'
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
 
-
-autodoc_mock_imports = ['astropy', 'ligo', 'pyxmpp2']
+autodoc_mock_imports = []
+for mod in ['astropy', 'ligo', 'pyxmpp2']:
+    try:
+        importlib.import_module(mod)
+    except ImportError:
+        autodoc_mock_imports.append(mod)
 autodoc_default_flags = ['members', 'show-inheritance']
 autosummary_generate = True
 
