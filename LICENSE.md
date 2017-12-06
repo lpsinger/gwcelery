@@ -1,3 +1,5 @@
+# License
+
 The [GWCelery Logo](etc/logo.png) is a composite of
 [Celery2](https://commons.wikimedia.org/wiki/File:Celery2.png)
 by Tiia Monto and

@@ -18,6 +18,11 @@ GWCelery is a simple and reliable package for annotating and orchestrating LIGO/
    contributing
    gwcelery
 
+.. toctree::
+   :maxdepth: 1
+
+   license
+
 Indices and tables
 ------------------
 
