@@ -15,6 +15,7 @@ GWCelery is a simple and reliable package for annotating and orchestrating LIGO/
    quickstart
    monitoring
    htcondor
+   contributing
    gwcelery
 
 Indices and tables
