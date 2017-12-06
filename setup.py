@@ -43,6 +43,7 @@ setup(
         'astropy',
         'celery[redis] >= 4.1.0',
         'celery_singleton >= 0.1.1',
+        'dnspython',
         'ligo-gracedb',
         'pygcn',
         'pyxmpp2',
