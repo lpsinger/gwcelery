@@ -105,7 +105,12 @@ html_theme = 'alabaster'
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-html_theme_options = {'github_button': False, 'logo': 'logo.png'}
+html_theme_options = {
+    'description': get_setup_output('--description'),
+    'github_button': False,
+    'logo': 'logo.png',
+    'logo_name': True
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -118,9 +123,13 @@ html_static_path = ['_static']
 # This is required for the alabaster theme
 # refs: http://alabaster.readthedocs.io/en/latest/installation.html#sidebars
 html_sidebars = {
+    'index': [
+        'about.html',
+        'searchbox.html',
+    ],
     '**': [
         'about.html',
-        'relations.html',  # needs 'show_related': True theme option to display
+        'navigation.html',
         'searchbox.html',
     ]
 }
