@@ -80,5 +80,6 @@ class LVAlertClient(EventHandler, TimeoutHandler, XMPPFeatureHandler):
 
 @app.task(base=EternalTask, bind=True, ignore_result=True, shared=False)
 def listen(self):
-    """LVAlert listener."""
+    """Listen for LVAlert messages forever. Each message is processed by
+    passing it to :func:`~gwcelery.tasks.dispatch.dispatch`."""
     LVAlertClient(app.conf['lvalert_host'], self).run()
