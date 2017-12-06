@@ -1,13 +1,5 @@
 import sys
 
-# Bootstrap setuptools installation.
-try:
-    import pkg_resources
-    pkg_resources.require("setuptools >= 0.7")
-except:
-    from ez_setup import use_setuptools
-    use_setuptools()
-
 from setuptools import setup, find_packages
 
 tests_require = ['pytest >= 3.0']
