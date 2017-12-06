@@ -8,36 +8,42 @@ on_exit_remove = false
 JobBatchName = gwcelery
 
 arguments = "redis-server"
+description = redis-server
 error = gwcelery-redis-server.err
 log = gwcelery-redis-server.log
 output = gwcelery-redis-server.out
 queue
 
 arguments = "gwcelery beat"
+description = gwcelery-beat
 error = gwcelery-beat.err
 log = gwcelery-beat.log
 output = gwcelery-beat.out
 queue
 
 arguments = "gwcelery worker -l info -n gwcelery-worker -Q celery"
+description = gwcelery-worker
 error = gwcelery-worker.err
 log = gwcelery-worker.log
 output = gwcelery-worker.out
 queue
 
 arguments = "gwcelery worker -l info -n gwcelery-openmp-worker -Q openmp -c 1"
+description = gwcelery-openmp-worker
 error = gwcelery-openmp-worker.err
 log = gwcelery-openmp-worker.log
 output = gwcelery-openmp-worker.out
 queue
 
 arguments = "gwcelery worker -l info -n gwcelery-voevent-worker -Q voevent -c 1"
+description = gwcelery-voevent-worker
 error = gwcelery-voevent-worker.err
 log = gwcelery-voevent-worker.log
 output = gwcelery-voevent-worker.out
 queue
 
 arguments = "gwcelery flower --url-prefix=~$ENV(USER)/gwcelery"
+description = gwcelery-flower
 error = gwcelery-flower.err
 log = gwcelery-flower.log
 output = gwcelery-flower.out
