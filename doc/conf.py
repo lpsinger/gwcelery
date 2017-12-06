@@ -90,6 +90,7 @@ pygments_style = 'sphinx'
 todo_include_todos = False
 
 
+autodoc_mock_imports = ['astropy', 'ligo', 'pyxmpp2']
 autodoc_default_flags = ['members', 'show-inheritance']
 autosummary_generate = True
 

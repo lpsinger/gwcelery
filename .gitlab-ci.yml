@@ -8,6 +8,7 @@ cache:
   paths:
     - yum-cache
     - pip-cache
+    - .eggs
 
 before_script:
   # Configure yum cache
@@ -30,8 +31,8 @@ test:
   script:
     # Install dependencies
     - yum install -y python-pip lalinference-python
-    - pip install --upgrade pytest-cov pytest-runner mock
-    - pip install .
+    - pip install --upgrade setuptools
+    - pip install pytest-cov
     # Run tests
     - python setup.py test --addopts='-vv --cov --cov-report=html --cov-report=term'
   artifacts:
@@ -40,9 +41,7 @@ test:
 
 doc:
   script:
-    - yum install -y python36u-pip
-    - pip3.6 install sphinx recommonmark
-    - pip3.6 install .
+    - yum install -y python36u-setuptools
     - python3.6 setup.py build_sphinx
   artifacts:
     paths:
