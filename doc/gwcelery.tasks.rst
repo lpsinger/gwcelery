@@ -47,6 +47,11 @@ gwcelery\.tasks\.skymaps module
     :members:
     :show-inheritance:
 
+.. autotask:: gwcelery.tasks.skymaps.fits_header
+.. autotask:: gwcelery.tasks.skymaps.is_3d_fits_file
+.. autotask:: gwcelery.tasks.skymaps.plot_allsky
+.. autotask:: gwcelery.tasks.skymaps.plot_volume
+
 gwcelery\.tasks\.voevent module
 -------------------------------
 

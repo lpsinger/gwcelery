@@ -17,7 +17,15 @@ log = logging.getLogger('BAYESTAR')
 
 
 def bayestar(graceid, service):
-    """Peform rapid sky localization with BAYESTAR."""
+    """Peform end-to-end rapid sky localization with BAYESTAR, including
+    GraceDB downloads and uploads.
+
+    This function downloads all of the required inputs for BAYESTAR,
+    runs rapid sky localization with a few different detector settings,
+    and uploads the resulting sky map FITS files to GraceDB.
+
+    Internally, all of the heavy lifting is done by :meth:`localize`.
+    """
     coinc = download('coinc.xml', graceid, service)
     psd = download('psd.xml.gz', graceid, service)
     coinc_psd = (coinc, psd)
@@ -37,6 +45,15 @@ def bayestar(graceid, service):
 @app.task(queue='openmp', shared=False, throws=DetectorDisabledError)
 def localize(coinc_psd, graceid, service, filename='bayestar.fits.gz',
              disabled_detectors=None):
+    """Do the heavy lifting of generating a rapid localization using BAYESTAR.
+
+    This function runs the computationally-intensive part of BAYESTAR.
+    The `coinc.xml` and `psd.xml.gz` files should already have been downloaded
+    by :func:`bayestar`.
+
+    This task should execute in a special queue for computationally intensive
+    OpenMP parallel tasks.
+    """
     from lalinference.io import events
     from lalinference.io import fits
     from lalinference.bayestar.command import TemporaryDirectory

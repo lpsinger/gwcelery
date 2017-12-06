@@ -11,7 +11,11 @@ from ..util.tempfile import NamedTemporaryFile
 
 
 def annotate_fits(versioned_filename, filebase, graceid, service, tags):
-    """Perform various annotations on a sky map."""
+    """Perform annotations on a sky map.
+
+    This function downloads a FITS file and then generates and uploads all
+    derived images as well as an HTML dump of the FITS header.
+    """
     fits_header_message = (
         'FITS headers for <a href="/apiweb/events/{graceid}/files/'
         '{versioned_filename}">{versioned_filename}</a>').format(
@@ -88,6 +92,9 @@ def plot_allsky(filecontents):
 
 @app.task(shared=False, throws=ValueError)
 def is_3d_fits_file(filecontents):
+    """Determine if a FITS file has distance information. If it does, then
+    the file contents are returned. If it does not, then a :obj:`ValueError` is
+    raised."""
     try:
         with NamedTemporaryFile(content=filecontents) as fitsfile:
             if astropy.io.fits.getval(fitsfile.name, 'TTYPE4', 1) == 'DISTNORM':
