@@ -54,6 +54,21 @@ test:
     paths:
       - htmlcov/
 
+test:python36:
+  services:
+    - redis:3.2.11
+  variables:
+    GIT_STRATEGY: none
+    CELERY_BROKER_URL: redis://redis
+  script:
+    # Install dependencies
+    - yum install -y python36u-pip
+    - pip3.6 install pytest-runner
+    # Run tests
+    - tar --strip-components 1 -xf *.tar.*
+    - pip3.6 install .
+    - python3.6 setup.py test --addopts='-vv'
+
 doc:
   stage: test
   variables:
