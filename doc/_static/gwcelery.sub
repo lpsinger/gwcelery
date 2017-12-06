@@ -13,7 +13,13 @@ log = gwcelery-redis-server.log
 output = gwcelery-redis-server.out
 queue
 
-arguments = "gwcelery worker -l info -n gwcelery-worker -Q celery -B"
+arguments = "gwcelery beat"
+error = gwcelery-beat.err
+log = gwcelery-beat.log
+output = gwcelery-beat.out
+queue
+
+arguments = "gwcelery worker -l info -n gwcelery-worker -Q celery"
 error = gwcelery-worker.err
 log = gwcelery-worker.log
 output = gwcelery-worker.out
