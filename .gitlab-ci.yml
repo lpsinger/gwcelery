@@ -40,10 +40,10 @@ test:
 
 doc:
   script:
-    - yum install -y python-pip
-    - pip install sphinx recommonmark
-    - pip install .
-    - python setup.py build_sphinx
+    - yum install -y python36u-pip
+    - pip3.6 install sphinx recommonmark
+    - pip3.6 install .
+    - python3.6 setup.py build_sphinx
   artifacts:
     paths:
       - build/sphinx/html
