@@ -1,8 +1,5 @@
 image: ligo/builder:el7
 
-variables:
-  CELERY_BROKER_URL: redis://redis
-
 stages:
   - test
   - deploy
@@ -25,6 +22,8 @@ before_script:
 test:
   services:
     - redis:3.2.11
+  variables:
+    CELERY_BROKER_URL: redis://redis
   tags:
     - highmem
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
