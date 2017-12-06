@@ -18,11 +18,11 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import os
-import sys
-sys.path.insert(0, os.path.abspath('..'))
-
 from subprocess import check_output
 import sys
+
+sys.path.insert(0, os.path.abspath('..'))
+
 
 def get_setup_output(*args):
     return check_output((sys.executable, 'setup.py') + args, cwd='..').decode()
