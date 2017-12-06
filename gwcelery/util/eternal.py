@@ -9,11 +9,6 @@ __all__ = ('EternalTask',)
 log = get_task_logger(__name__)
 
 
-@signals.beat_init.connect
-def beat_init(sender, **kwargs):
-    clear_locks(sender.app)
-
-
 class AbortStep(bootsteps.StartStopStep):
     """Boot step to abort all tasks on shutdown."""
     requires = {'celery.worker.components:Pool'}
