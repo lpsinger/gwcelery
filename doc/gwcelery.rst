@@ -1,5 +1,5 @@
-gwcelery package
-================
+API Reference
+=============
 
 Subpackages
 -----------
