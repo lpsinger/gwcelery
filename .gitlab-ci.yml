@@ -53,7 +53,8 @@ doc:
 pages:
   stage: deploy
   script:
-    - mv build/sphinx/html/* htmlcov public/
+    - mv build/sphinx/html public/
+    - mv htmlcov public/
   artifacts:
     paths:
       - public
