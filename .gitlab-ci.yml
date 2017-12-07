@@ -25,6 +25,8 @@ test:
     - redis:3.2.11
   variables:
     CELERY_BROKER_URL: redis://redis
+  tags:
+    - highmem
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   script:
     # Install dependencies
