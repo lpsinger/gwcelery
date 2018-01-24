@@ -3,6 +3,7 @@ import netrc
 import os
 import uuid
 
+from celery_eternal import EternalTask
 from celery.utils.log import get_task_logger
 from pyxmpp2.client import Client
 from pyxmpp2.interfaces import (EventHandler, event_handler,
@@ -14,7 +15,6 @@ from pyxmpp2.settings import XMPPSettings
 from pyxmpp2.streamevents import DisconnectedEvent
 
 from ..celery import app
-from ..util.eternal import EternalTask
 from .dispatch import dispatch
 
 # Logging
