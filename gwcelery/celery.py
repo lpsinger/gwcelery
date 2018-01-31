@@ -5,7 +5,8 @@ from celery import Celery
 # Celery application object.
 # Use pickle serializer, because it supports byte values.
 # Use redis broker, because it supports locks (and thus singleton tasks).
-app = Celery('gwcelery', broker='redis://',
+app = Celery(
+    'gwcelery', broker='redis://',
     config_source=dict(
         accept_content=['json', 'pickle'],
         event_serializer='json',
@@ -15,7 +16,7 @@ app = Celery('gwcelery', broker='redis://',
         lvalert_node_whitelist={'cbc_gstlal', 'cbc_pycbc', 'cbc_mbtaonline'},
         gcn_bind_address='',
         gcn_bind_port=5341,
-        gcn_remote_address='128.183.96.236' # capella2.gsfc.nasa.gov
+        gcn_remote_address='128.183.96.236'  # capella2.gsfc.nasa.gov
     )
 )
 

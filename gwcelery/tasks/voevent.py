@@ -47,7 +47,7 @@ def send(self, payload):
         finally:
             sock.close()
         conn.setsockopt(socket.SOL_SOCKET, socket.SO_LINGER,
-            struct.pack('ii', 1, 0))
+                        struct.pack('ii', 1, 0))
         conn.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 1)
 
     log.info('sending payload of %d bytes', nbytes)

@@ -19,6 +19,8 @@ introduction).
 Unit tests and code coverage measurement are run automatically for every branch
 and for every merge request. New code contributions must have 100% test
 coverage. Modifications to existing code must not decrease test coverage.
+Code should be written in the
+[PEP 8 style](https://www.python.org/dev/peps/pep-0008/).
 
 To contribute to GWCelery development, follow these steps:
 

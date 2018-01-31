@@ -31,14 +31,14 @@ def bayestar(graceid, service):
     psd = download('psd.xml.gz', graceid, service)
     coinc_psd = (coinc, psd)
     return group(
-        localize.s(coinc_psd, graceid, service)
-        | upload.s('bayestar.fits.gz', graceid, service,
-                   'sky localization complete', 'sky_loc'),
+        localize.s(coinc_psd, graceid, service) |
+        upload.s('bayestar.fits.gz', graceid, service,
+                 'sky localization complete', 'sky_loc'),
         localize.s(coinc_psd, graceid, service,
-                            disabled_detectors=['V1'],
-                            filename='bayestar_no_virgo.fits.gz')
-        | upload.s('bayestar_no_virgo.fits.gz', graceid, service,
-                   'sky localization complete', 'sky_loc'))
+                   disabled_detectors=['V1'],
+                   filename='bayestar_no_virgo.fits.gz') |
+        upload.s('bayestar_no_virgo.fits.gz', graceid, service,
+                 'sky localization complete', 'sky_loc'))
 
 
 # FIXME: should be `throws=events.DetectorDisabledError, but that would add

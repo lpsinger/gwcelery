@@ -39,7 +39,9 @@ def toy_3d_fits_filecontents():
 
 
 def mock_download(filename, graceid, service):
-    if filename == 'test.fits,0' and graceid == 'T12345' and service == 'https://gracedb.invalid/api/':
+    if (
+            filename == 'test.fits,0' and graceid == 'T12345' and
+            service == 'https://gracedb.invalid/api/'):
         return toy_3d_fits_filecontents()
     else:
         raise RuntimeError('Asked for unexpected FITS file')
@@ -49,7 +51,9 @@ def mock_download(filename, graceid, service):
 @patch('gwcelery.tasks.skymaps.check_call')
 @patch('gwcelery.tasks.gracedb.GraceDb', autospec=True)
 def test_annotate_fits(mock_gracedb, check_call):
-    skymaps.annotate_fits('test.fits,0', 'test', 'T12345', 'https://gracedb.invalid/api/', ['tag1']).apply().get()
+    skymaps.annotate_fits('test.fits,0', 'test', 'T12345',
+                          'https://gracedb.invalid/api/',
+                          ['tag1']).apply().get()
 
 
 def test_fits_header(toy_fits_filecontents):

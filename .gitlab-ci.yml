@@ -32,9 +32,9 @@ test:
     # Install dependencies
     - yum install -y python-pip lalinference-python
     - pip install --upgrade setuptools
-    - pip install pytest-cov
+    - pip install pytest-cov pytest-pep8
     # Run tests
-    - python setup.py test --addopts='-vv --cov --cov-report=html --cov-report=term'
+    - python setup.py test --addopts='-vv --cov --cov-report=html --cov-report=term --pep8'
   artifacts:
     paths:
       - htmlcov/

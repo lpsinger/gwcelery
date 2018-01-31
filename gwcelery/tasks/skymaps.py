@@ -17,23 +17,31 @@ def annotate_fits(versioned_filename, filebase, graceid, service, tags):
     This function downloads a FITS file and then generates and uploads all
     derived images as well as an HTML dump of the FITS header.
     """
-    fits_header_message = (
+    header_msg = (
         'FITS headers for <a href="/apiweb/events/{graceid}/files/'
         '{versioned_filename}">{versioned_filename}</a>').format(
             graceid=graceid, versioned_filename=versioned_filename)
-    plot_allsky_message = (
+    allsky_msg = (
         'Mollweide projection of <a href="/apiweb/events/{graceid}/files/'
         '{versioned_filename}">{versioned_filename}</a>').format(
             graceid=graceid, versioned_filename=versioned_filename)
-    plot_volume_message = (
+    volume_msg = (
         'Volume rendering of <a href="/apiweb/events/{graceid}/files/'
         '{versioned_filename}">{versioned_filename}</a>').format(
             graceid=graceid, versioned_filename=versioned_filename)
+
     content = download(versioned_filename, graceid, service)
+
     return group(
-        fits_header.s(versioned_filename, content) | upload.s(filebase + '.html', graceid, service, fits_header_message, tags),
-        plot_allsky.s(content) | upload.s(filebase + '.png', graceid, service, plot_allsky_message, tags),
-        is_3d_fits_file.s(content) | plot_volume.s() | upload.s(filebase + '.volume.png', graceid, service, plot_volume_message, tags)
+        fits_header.s(versioned_filename, content) |
+        upload.s(filebase + '.html', graceid, service, header_msg, tags),
+
+        plot_allsky.s(content) |
+        upload.s(filebase + '.png', graceid, service, allsky_msg, tags),
+
+        is_3d_fits_file.s(content) |
+        plot_volume.s() |
+        upload.s(filebase + '.volume.png', graceid, service, volume_msg, tags)
     )
 
 
@@ -45,7 +53,10 @@ def fits_header(filename, filecontents):
     print('<!DOCTYPE html>', file=out)
     print('<html lang="en">', file=out)
     print('<head>', file=out)
-    print('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">', file=out)
+    print('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/'
+          'bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-'
+          'BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" '
+          'crossorigin="anonymous">', file=out)
     print('<title>FITS headers for ', filename, '</title>', sep='', file=out)
     print('</head>', file=out)
     print('<body>', file=out)
@@ -65,11 +76,13 @@ def fits_header(filename, filecontents):
               filename, '</strong></td></tr>', sep='', file=out)
         for card in hdu.header.cards:
             print('<tr>', file=out)
-            print('<td style="font-family: monospace">', card.keyword, '</td>', sep='', file=out)
+            print('<td style="font-family: monospace">', card.keyword, '</td>',
+                  sep='', file=out)
             if card.keyword in ('COMMENT', 'HISTORY'):
                 print('<td colspan=2>', card.value, '</td>', sep='', file=out)
             else:
-                print('<td style="font-family: monospace">', card.value, '</td>', sep='', file=out)
+                print('<td style="font-family: monospace">', card.value,
+                      '</td>', sep='', file=out)
                 print('<td>', card.comment, '</td>', sep='', file=out)
             print('</tr>', file=out)
     print('</tbody>', file=out)
@@ -83,10 +96,10 @@ def fits_header(filename, filecontents):
 @app.task(shared=False)
 def plot_allsky(filecontents):
     """Plot a Mollweide projection of a sky map."""
-    with NamedTemporaryFile(content=filecontents) as fitsfile, \
-         NamedTemporaryFile(mode='rb', suffix='.png') as pngfile:
-        check_call(['bayestar_plot_allsky', fitsfile.name, '-o', pngfile.name,
-                    '--annotate', '--contour', '50', '90'])
+    with NamedTemporaryFile(mode='rb', suffix='.png') as pngfile:
+        with NamedTemporaryFile(content=filecontents) as fitsfile:
+            check_call(['bayestar_plot_allsky', fitsfile.name, '-o',
+                        pngfile.name, '--annotate', '--contour', '50', '90'])
         return pngfile.read()
 
 
@@ -106,8 +119,8 @@ def is_3d_fits_file(filecontents):
 @app.task(queue='openmp', shared=False)
 def plot_volume(filecontents):
     """Plot a Mollweide projection of a sky map."""
-    with NamedTemporaryFile(content=filecontents) as fitsfile, \
-         NamedTemporaryFile(mode='rb', suffix='.png') as pngfile:
-        check_call(['bayestar_plot_volume', fitsfile.name, '-o', pngfile.name,
-                    '--annotate'])
+    with NamedTemporaryFile(mode='rb', suffix='.png') as pngfile:
+        with NamedTemporaryFile(content=filecontents) as fitsfile:
+            check_call(['bayestar_plot_volume', fitsfile.name, '-o',
+                        pngfile.name, '--annotate'])
         return pngfile.read()
