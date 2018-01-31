@@ -8,6 +8,7 @@ import pkgutil
 modules = vars()
 for _, module, _ in pkgutil.iter_modules([os.path.dirname(__file__)]):
     modules[module] = importlib.import_module('.' + module, __name__)
+    del module
 
 # Clean up
-del importlib, module, modules, os, pkgutil
+del importlib, modules, os, pkgutil
