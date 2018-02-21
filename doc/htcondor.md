@@ -3,10 +3,15 @@
 The recommended way to start and stop GWCelery on the LIGO Data Grid cluster is
 using [HTCondor](https://research.cs.wisc.edu/htcondor/). See the example
 HTCondor submit file [`gwcelery.sub`](_static/gwcelery.sub). This submit file
-will start up Redis, the worker processes, and Flower. To start, go into the
-`etc/` directory in the source tree and run `condor_submit` as follows:
+will start up Redis, the worker processes, and Flower. It will create some log
+files and a Unix domain socket, so you should first navigate to a directory
+where you want these files to go. For example:
 
-	$ condor_submit gwcelery.sub
+    $ mkdir -p ~/var/gwcelery && cd ~/var/gwcelery
+
+Then run the submit file as follows:
+
+	$ ~/src/gwcelery/doc/_static/gwcelery.sub
 	Submitting job(s)......
 	6 job(s) submitted to cluster 293497.
 
