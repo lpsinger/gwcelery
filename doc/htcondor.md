@@ -11,7 +11,7 @@ where you want these files to go. For example:
 
 Then run the submit file as follows:
 
-	$ ~/src/gwcelery/doc/_static/gwcelery.sub
+	$ gwcelery.sub
 	Submitting job(s)......
 	6 job(s) submitted to cluster 293497.
 
