@@ -12,10 +12,10 @@ a new submodule.
 
 ## Guidelines for tasks
 
--  Celery tasks should delegate as much functionality as possible to external
-   packages. Ideally, a new Celery task should simply call a function that is
-   provided by an external package such as lalsuite, pycbc, or a new
-   self-contained software project.
+-  Tasks should delegate as much functionality as possible to externa packages.
+   Ideally, a new task should simply call a function that is provided by an
+   external package such as lalsuite, pycbc, or a new self-contained software
+   project.
 
 -  Dependencies of tasks should be listed in the `install_requires` section in
    [`setup.cfg`](https://git.ligo.org/emfollow/gwcelery/blob/master/setup.cfg)
