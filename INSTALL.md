@@ -2,17 +2,11 @@
 
 ## To install
 
-With `pip`:
+With `virtualenv` and `pip`:
 
-	$ pip install --user git+https://git.ligo.org/emfollow/gwcelery
-
-**NOTE** You will need a fairly recent version of Setuptools to install
-GWCelery, and the version that is on most of the LIGO Data Grid computing
-clusters is too old. If the above command fails, run the following command:
-
-	$ pip install --upgrade setuptools
-
-and then try again.
+	$ virtualenv --system-site-packages ~/gwcelery
+	$ source ~/gwcelery/bin/activate
+	$ pip install git+https://git.ligo.org/emfollow/gwcelery
 
 ## To test
 
