@@ -10,6 +10,18 @@ Tasks are organized by functionality into submodules of `gwcelery.tasks`. If
 your new task does not match with one of the existing submodules, please create
 a new submodule.
 
+## Guidelines for tasks
+
+-  Celery tasks should delegate as much functionality as possible to external
+   packages. Ideally, a new Celery task should simply call a function that is
+   provided by an external package such as lalsuite, pycbc, or a new
+   self-contained software project.
+
+-  Dependencies of tasks should be listed in the `install_requires` section in
+   [`setup.cfg`](https://git.ligo.org/emfollow/gwcelery/blob/master/setup.cfg)
+   so that they are installed automatically when GWCelery is installed with
+   [`pip`](https://pip.pypa.io/).
+
 ## Development model
 
 GWCelery operates on a fork-and-merge development model (see
