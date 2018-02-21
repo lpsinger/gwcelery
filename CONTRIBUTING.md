@@ -17,6 +17,10 @@ a new submodule.
    external package such as lalsuite, pycbc, or a new self-contained software
    project.
 
+-  Tasks should avoid saving files to disk. Output should be placed directly in
+   GraceDb. Temporary files that are written in `/tmp` are OK but should be
+   cleaned up promptly.
+
 -  Dependencies of tasks should be listed in the `install_requires` section in
    [`setup.cfg`](https://git.ligo.org/emfollow/gwcelery/blob/master/setup.cfg)
    so that they are installed automatically when GWCelery is installed with
