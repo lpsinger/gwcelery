@@ -3,11 +3,12 @@ accounting_group = ligo.dev.o2.cbc.pe.bayestar
 accounting_group_user = leo.singer
 universe = local
 getenv = true
+environment = "CELERY_BROKER_URL=redis+socket://$ENV(PWD)/redis.sock"
 executable = /usr/bin/env
 on_exit_remove = false
 JobBatchName = gwcelery
 
-arguments = "redis-server"
+arguments = "redis-server --port 0 --unixsocket redis.sock --unixsocketperm 700"
 description = redis-server
 error = gwcelery-redis-server.err
 log = gwcelery-redis-server.log
