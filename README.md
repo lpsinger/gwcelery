@@ -2,8 +2,9 @@
 
 # GWCelery
 
-[![build status](https://git.ligo.org/emfollow/gwcelery/badges/master/build.svg)](https://git.ligo.org/emfollow/gwcelery/pipelines)
-[![coverage report](https://git.ligo.org/emfollow/gwcelery/badges/master/coverage.svg)](https://emfollow.docs.ligo.org/gwcelery/htmlcov)
+| **Build** | **Test** | **Docs** |
+| :-: | :-: | :-: |
+| [![build status](https://git.ligo.org/emfollow/gwcelery/badges/master/build.svg)](https://git.ligo.org/emfollow/gwcelery/pipelines) | [![coverage report](https://git.ligo.org/emfollow/gwcelery/badges/master/coverage.svg)](https://emfollow.docs.ligo.org/gwcelery/htmlcov) | [Latest](https://emfollow.docs.ligo.org/gwcelery/) |
 
 GWCelery is a simple and reliable package for annotating and orchestrating LIGO/Virgo alerts, built from widely used open source components.
 
