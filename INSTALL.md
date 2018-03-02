@@ -8,6 +8,14 @@ With `virtualenv` and `pip`:
 	$ source ~/gwcelery/bin/activate
 	$ pip install git+https://git.ligo.org/emfollow/gwcelery
 
+*  **Note:** GWCelery requires a fairly new version of `setuptools`. If you get
+   an error message that looks like this:
+
+       pkg_resources.VersionConflict: (setuptools 0.9.8 (gwcelery/lib/python2.7/site-packages), Requirement.parse('setuptools>=30.3.0'))
+
+   then run `pip install --upgrade setuptools` and try again.
+
+
 ## To test
 
 With `setup.py`:
