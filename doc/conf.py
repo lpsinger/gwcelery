@@ -203,3 +203,10 @@ intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'celery': ('http://celery.readthedocs.org/en/latest/', None)
 }
+
+
+# -- Options for viewcode extension ---------------------------------------
+
+# celery.contrib.sphinx does not show source links for tasks if this is set
+# to the default value of True
+viewcode_import = False
