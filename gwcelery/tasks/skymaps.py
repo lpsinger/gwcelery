@@ -50,16 +50,15 @@ def fits_header(filename, filecontents):
     """Dump FITS header to HTML."""
     hdus = HDUList.fromstring(filecontents)
     out = six.StringIO()
-    print('<!DOCTYPE html>', file=out)
-    print('<html lang="en">', file=out)
-    print('<head>', file=out)
+    print('<!doctype html>', file=out)
+    print('<meta charset="utf-8">', file=out)
+    print('<meta name="viewport" content="width=device-width, '
+          'initial-scale=1, shrink-to-fit=no">', file=out)
     print('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/'
-          'bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-'
-          'BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" '
+          'bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-'
+          'Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" '
           'crossorigin="anonymous">', file=out)
     print('<title>FITS headers for ', filename, '</title>', sep='', file=out)
-    print('</head>', file=out)
-    print('<body>', file=out)
     print('<div class=container>', file=out)
     print('<h1>FITS headers for ', filename, '</h1>', sep='', file=out)
     print('<table class="table table-condensed table-striped">', file=out)
@@ -88,8 +87,6 @@ def fits_header(filename, filecontents):
     print('</tbody>', file=out)
     print('</table>', file=out)
     print('</div>', file=out)
-    print('</body>', file=out)
-    print('</html>', file=out)
     return out.getvalue()
 
 
