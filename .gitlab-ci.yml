@@ -56,8 +56,11 @@ test:
 
 doc:
   stage: test
+  variables:
+    GIT_STRATEGY: none
   script:
     - yum install -y python36u-setuptools
+    - tar --strip-components 1 -xf *.tar.*
     - python3.6 setup.py build_sphinx -W
   artifacts:
     paths:
