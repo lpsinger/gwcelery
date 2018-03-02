@@ -1,6 +1,7 @@
 image: ligo/builder:el7
 
 stages:
+  - build
   - test
   - deploy
 
@@ -20,13 +21,26 @@ before_script:
   - echo cache-dir = $(pwd)/pip-cache >> /etc/pip.conf
   - mkdir -p pip-cache
 
+build:
+  stage: build
+  script:
+    - yum install -y python-pip
+    - pip install --upgrade setuptools wheel
+    - python setup.py sdist -d . bdist_wheel -d .
+  artifacts:
+    paths:
+      - '*.tar.*'
+      - '*.whl'
+
 test:
   services:
     - redis:3.2.11
   variables:
+    GIT_STRATEGY: none
     CELERY_BROKER_URL: redis://redis
   tags:
     - highmem
+  stage: test
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   script:
     # Install dependencies
@@ -34,12 +48,14 @@ test:
     - pip install --upgrade setuptools
     - pip install pytest-cov pytest-pep8
     # Run tests
+    - tar --strip-components 1 -xf *.tar.*
     - python setup.py test --addopts='-vv --cov --cov-report=html --cov-report=term --pep8'
   artifacts:
     paths:
       - htmlcov/
 
 doc:
+  stage: test
   script:
     - yum install -y python36u-setuptools
     - python3.6 setup.py build_sphinx -W
