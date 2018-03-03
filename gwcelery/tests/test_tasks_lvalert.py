@@ -1,5 +1,6 @@
 from __future__ import print_function
 import os
+import socket
 from xml.etree.ElementTree import XML
 
 from pyxmpp2.exceptions import DNSError
@@ -60,6 +61,18 @@ def netrc_lvalert(tmpdir):
         yield
 
 
+try:
+    socket.gethostbyname('lvalert.invalid')
+except socket.error:
+    resolves_invalid_urls = False
+else:
+    resolves_invalid_urls = True
+
+
+@pytest.mark.skipif(
+    resolves_invalid_urls, reason='your DNS server is resolving invalid '
+    'hostnames (maybe a home internet provider that provides a default '
+    'landing page?)')
 def test_lvalert_constructor(netrc_lvalert):
     """Test that we at least attempt to connect to a non-existent URL."""
     with pytest.raises(DNSError):
