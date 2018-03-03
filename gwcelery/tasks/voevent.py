@@ -4,6 +4,8 @@ import struct
 
 from celery import Task
 from celery.utils.log import get_task_logger
+from celery_eternal import EternalProcessTask
+import gcn
 
 from ..celery import app
 
@@ -61,3 +63,12 @@ def send(self, payload):
         conn.close()
         raise
     self.conn = conn
+
+
+def handle(root, payload):
+    pass
+
+
+@app.task(base=EternalProcessTask, ignore_result=True, shared=False)
+def listen():
+    gcn.listen(handler=handle)
