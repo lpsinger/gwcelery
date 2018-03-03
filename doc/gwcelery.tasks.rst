@@ -41,4 +41,6 @@ gwcelery\.tasks\.voevent module
 -------------------------------
 
 .. automodule:: gwcelery.tasks.voevent
+.. autotask:: gwcelery.tasks.voevent.listen
 .. autotask:: gwcelery.tasks.voevent.send
+.. autotask:: gwcelery.tasks.voevent.validate

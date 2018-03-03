@@ -4,10 +4,20 @@ from ligo.gracedb.rest import GraceDb
 from ..celery import app
 
 
+@app.task(ignore_result=True, shared=False)
+def create_tag(tag, n, graceid, service):
+    GraceDb(service).createTag(graceid, n, tag)
+
+
 @app.task(shared=False)
 def download(filename, graceid, service):
     """Download a file from GraceDB."""
     return GraceDb(service).files(graceid, filename, raw=True).read()
+
+
+@app.task(shared=False)
+def get_log(graceid, service):
+    return GraceDb(service).logs(graceid).json()['log']
 
 
 @app.task(ignore_result=True, shared=False)

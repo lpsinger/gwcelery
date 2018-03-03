@@ -1,4 +1,5 @@
 """Basic single-endpoint VOEvent broker."""
+from six.moves.urllib.parse import urlparse, urlunparse
 import socket
 import struct
 
@@ -6,8 +7,10 @@ from celery import Task
 from celery.utils.log import get_task_logger
 from celery_eternal import EternalProcessTask
 import gcn
+import lxml.etree
 
 from ..celery import app
+from ..tasks import gracedb
 
 # Logging
 log = get_task_logger(__name__)
@@ -65,10 +68,79 @@ def send(self, payload):
     self.conn = conn
 
 
-def handle(root, payload):
-    pass
+@app.task(ignore_result=True, shared=False)
+def validate(payload):
+    """Check that the contents of a public LIGO/Virgo GCN matches the original
+    VOEvent in GraceDB."""
+    root = lxml.etree.fromstring(payload)
+
+    # Which GraceDB ID does this refer to?
+    graceid = root.find("./What/Param[@name='GraceID']").attrib['value']
+
+    # Which VOEvent does this refer to?
+    u = urlparse(root.attrib['ivorn'])
+    assert u.scheme == 'ivo', (
+        'IVORN has unexpected scheme: {!r}'.format(u.scheme))
+    assert u.netloc == 'nasa.gsfc.gcn', (
+        'IVORN has unexpected netloc: {!r}'.format(u.netloc))
+    assert u.path == '/LVC', (
+        'IVORN has unexpected path: {!r}'.format(u.path))
+    local_id = u.fragment
+    filename = local_id + '.xml'
+
+    # Which GraceDB server does this refer to?
+    u = urlparse(root.find("./What/Param[@name='EventPage']").attrib['value'])
+    service = urlunparse((u.scheme, u.netloc, '/api/', None, None, None))
+
+    # Download and parse original VOEvent
+    orig = lxml.etree.fromstring(gracedb.download(filename, graceid, service))
+
+    xpath = ".//Param[@name='{}']"
+    for orig_name, root_name in [
+            ['skymap_fits_shib', 'SKYMAP_URL_FITS_SHIB'],
+            ['skymap_fits_x509', 'SKYMAP_URL_FITS_X509'],
+            ['skymap_fits_basic', 'SKYMAP_URL_FITS_BASIC'],
+            ['skymap_png_shib', 'SKYMAP_URL_PNG_SHIB'],
+            ['skymap_png_x509', 'SKYMAP_URL_PNG_X509'],
+            ['skymap_png_basic', 'SKYMAP_URL_PNG_BASIC']]:
+
+        orig_elem = orig.find(xpath.format(orig_name))
+        root_elem = root.find(xpath.format(root_name))
+
+        if orig_elem is None:
+            assert root_elem is None, (
+                'GCN has unexpected parameter: {!r}'.format(root_name))
+        else:
+            assert root_elem is not None, (
+                'GCN is missing parameter: {!r}'.format(root_name))
+            orig_value = orig_elem.attrib.get('value')
+            root_value = root_elem.attrib.get('value')
+            assert root_value == orig_value, (
+                'GCN parameter {!r} has value {!r}, but '
+                'original VOEvent parameter {!r} '
+                'has value {!r}'.format(
+                    root_name, root_value, orig_name, orig_value))
+
+    # Find matching GraceDB log entry
+    log = gracedb.get_log(graceid, service)
+    entry, = (e for e in log if e['filename'] == filename)
+    log_number = entry['N']
+
+    # Tag the VOEvent to indicate that it was received correctly
+    gracedb.create_tag('gcn_received', log_number, graceid, service)
+
+
+@gcn.include_notice_types(
+    gcn.notice_types.LVC_PRELIMINARY,
+    gcn.notice_types.LVC_INITIAL,
+    gcn.notice_types.LVC_UPDATE
+)
+def handle(payload, root):
+    validate.delay(payload)
 
 
 @app.task(base=EternalProcessTask, ignore_result=True, shared=False)
 def listen():
+    """Listen for public GCNs and validate the contents of public LIGO/Virgo
+    GCNs by passing their contents to :obj:`validate`."""
     gcn.listen(handler=handle)

@@ -1,0 +1,157 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<voe:VOEvent
+      ivorn="ivo://nasa.gsfc.gcn/LVC#G298048-1-Initial"
+      role="observation" version="2.0"
+      xmlns:voe="http://www.ivoa.net/xml/VOEvent/v2.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.ivoa.net/xml/VOEvent/v2.0  http://www.ivoa.net/xml/VOEvent/VOEvent-v2.0.xsd" >
+  <Who>
+    <AuthorIVORN>ivo://nasa.gsfc.tan/gcn</AuthorIVORN>
+    <Author>
+      <shortName>LVC (via VO-GCN/TAN)</shortName>
+      <contactName>LIGO Scientific Collaboration and Virgo Collaboration</contactName>
+      <contactEmail>lv-em@gw-astronomy.org</contactEmail>
+    </Author>
+    <Date>2017-08-17T13:08:16</Date>
+    <Description>This VOEvent notice was created with GCN/TAN VOE version: 1.25 23jul17</Description>
+  </Who>
+  <What>
+    <Param name="Packet_Type"  value="151" >
+                                 <Description>The Notice Type number is assigned/used within GCN, eg type=151 is an LVC_INITIAL notice</Description>
+                                 </Param>
+    <Param name="Pkt_Ser_Num"  value="183" >
+                                 <Description>The Packet Serial number is assigned/used within GCN to count the number distributed since the GCN program was last started</Description>
+                                 </Param>
+    <Param name="AlertType"    dataType="string" value="Initial"  ucd="meta.version" >
+                                 <Description>VOEvent alert type</Description>
+                                 </Param>
+    <Param name="GraceID"      dataType="string" value="G298048" unit="" ucd="meta.id" >
+                                 <Description>Identifier in GraceDB</Description>
+                                 </Param>
+    <Param name="ID_Letter"    dataType="string" value="G" unit="" ucd="meta.id" >
+                                 <Description>The prefix letter portion of GraceID: G, T, M, H, Y, E, K.</Description>
+                                 </Param>
+    <Param name="TrigID"       value="298048" ucd="meta.id" >
+                                 <Description>The 6-digit numerical portion of the GraceID Param.</Description>
+                                 </Param>
+    <Param name="Trigger_TJD"  value="17982"  unit="days" ucd="time" >
+                                 <Description>The Truncated Julian Day that the event occurred.</Description>
+                                 </Param>
+    <Param name="Trigger_SOD"  value="45664.445710" unit="sec" ucd="time" >
+                                 <Description>The Seconds-of-Day within the TJD that the event occurred.</Description>
+                                 </Param>
+    <Param name="EventPage"    dataType="string" value="https://gracedb.ligo.org/events/G298048" ucd="meta.ref.url" >
+                                 <Description>Web page for evolving status of this candidate event</Description>
+                                 </Param>
+    <Param name="Group"        dataType="string" value="CBC"  unit="" ucd="meta.code" >
+                                 <Description>Data analysis working group</Description> 
+                                 </Param>
+    <Param name="Search"       dataType="string" value="illegal value" unit="" ucd="meta.code" >
+                                 <Description>Specific low-latency search</Description> 
+                                 </Param>
+    <Param name="Pipeline"     dataType="string" value="GSTLAL" unit="" ucd="meta.code" >
+                                 <Description>Low-latency data analysis pipeline</Description>
+                                 </Param>
+    <Param name="Internal"     dataType="string" value="0" unit=""  ucd="meta.code" >
+                                 <Description>Indicates whether this event should be distributed to only LSC/Virgo members</Description> 
+                                 </Param>
+    <Param name="FAR"          dataType="float"  value="3.478e-12" unit="Hz"  ucd="arith.rate,stat.falsealarm" >
+                                 <Description>False alarm rate for GW candidates with this strength or greater</Description>
+                                 </Param>
+    <Param name="ProbHasNS"    dataType="string" value="1.00" unit=""  ucd="stat.probability" >
+                                 <Description>Probability that at least one object in the binary is less than 3 solar masses. Range is 0.0-1.0.</Description> 
+                                 </Param>
+    <Param name="ProbHasRemnant" dataType="string" value="1.00" unit=""  ucd="stat.probability" >
+                                 <Description>Probability that there is matter in the surroundings of the central object. Range is 0.0-1.0.</Description> 
+                                 </Param>
+    <Param name="Trigger_ID"   value="0x8" />
+    <Param name="Misc_flags"   value="0x1100001" />
+    <Group name="Trigger_ID" >
+      <Param name="LVC_Internal"   value="false" />
+      <Param name="Test"           value="false" />
+      <Param name="HardwareInj"    value="false" >
+                                     <Description>Indicates that this event is a hardware injection if 1, no if 0</Description>
+                                     </Param>
+      <Param name="Vetted"         value="true" >
+                                     <Description>Indicates whether this candidate has undergone basic vetting by humans</Description>
+                                     </Param>
+      <Param name="OpenAlert"      value="false" >
+                                     <Description>Indicates that this event is an open alert if 1, no if 0</Description>
+                                     </Param>
+      <Param name="Retraction"     value="false" >
+                                     <Description>Set to true if the event is retracted.</Description>
+                                     </Param>
+      <Param name="TemporalCoinc"  value="false" >
+                                     <Description>Set to true if the event is Temporally coincident with a large subset of other GCN events.</Description>
+                                     </Param>
+      <Param name="InternalTest"   value="false" >
+                                     <Description>Used for the *_TST loop-back (email-based) entries.</Description>
+                                     </Param>
+    </Group>
+    <Group name="Misc_flags" >
+      <Param name="Num_Det_participated"      value="1" unit="dn" >
+                                     <Description>The number of detectors (eg LHO, LLO, Virgo, etc) that participated.</Description>
+                                     </Param>
+      <Param name="LHO_participated"          value="true" />
+      <Param name="LLO_participated"          value="false" />
+      <Param name="Virgo_participated"        value="false" />
+      <Param name="GEO600_participated"       value="false" />
+      <Param name="KAGRA_participated"        value="false" />
+      <Param name="LIO_participated"          value="false" />
+      <Param name="Flt_Generated"             value="true" />
+      <Param name="Gnd_Generated"             value="false" />
+      <Param name="ID_Letter_Prefix"          dataType="string" value="G" >
+                                     <Description>The prefix letter: G, T, M, H, Y, E, K.</Description>
+                                     </Param>
+      <Param name="Sequence_number"           value="1" unit="dn" >
+                                     <Description>LVC-generated serial number for message sequence in this trig_num.</Description>
+                                     </Param>
+    </Group>
+    <Param name="SKYMAP_URL_FITS_SHIB" value="https://gracedb.ligo.org/events/G298048/files/bayestar.fits.gz" ucd="meta.ref.url">
+        <Description>Provides the location probability map for LIGO/Virgo GW event detections (FITS format; Shibboleth protected).</Description>
+    </Param>
+    <Param name="SKYMAP_URL_FITS_X509" value="https://gracedb.ligo.org/api/events/G298048/files/bayestar.fits.gz" ucd="meta.ref.url">
+        <Description>Provides the location probability map for LIGO/Virgo GW event detections (FITS format; X.509 protected).</Description>
+    </Param>
+    <Param name="SKYMAP_URL_FITS_BASIC" value="https://gracedb.ligo.org/apibasic/events/G298048/files/bayestar.fits.gz" ucd="meta.ref.url">
+        <Description>Provides the location probability map for LIGO/Virgo GW event detections (FITS format; Basic protected).</Description>
+    </Param>
+    <Param name="SKYMAP_URL_PNG_SHIB" value="https://gracedb.ligo.org/events/G298048/files/bayestar.png" ucd="meta.ref.url">
+        <Description>Provides a location probability map for LIGO/Virgo GW event detections (PNG format; Shibboleth protected).</Description>
+    </Param>
+    <Param name="SKYMAP_URL_PNG_X509" value="https://gracedb.ligo.org/api/events/G298048/files/bayestar.png" ucd="meta.ref.url">
+        <Description>Provides the location probability map for LIGO/Virgo GW event detections (PNG format; X.509 protected).</Description>
+    </Param>
+    <Param name="SKYMAP_URL_PNG_BASIC" value="https://gracedb.ligo.org/apibasic/events/G298048/files/bayestar.png" ucd="meta.ref.url">
+        <Description>Provides the location probability map for LIGO/Virgo GW event detections (PNG format; Basic protected).</Description>
+    </Param>
+  </What>
+  <WhereWhen>
+    <ObsDataLocation>
+      <ObservatoryLocation id="GEOLUN" />
+      <ObservationLocation>
+        <AstroCoordSystem id="UTC-FK5-GEO" />
+        <AstroCoords coord_system_id="UTC-FK5-GEO">
+          <Time unit="s">
+            <TimeInstant>
+              <ISOTime>2017-08-17T12:41:04.445710</ISOTime>
+            </TimeInstant>
+          </Time>
+        </AstroCoords>
+      </ObservationLocation>
+    </ObsDataLocation>
+  <Description>The RA,Dec coordinates are of the type: unavailable/inappropriate.</Description>
+  </WhereWhen>
+  <How>
+    <Description>LIGO/Virgo Gravitational Wave Observatories</Description>
+    <Reference uri="http://gcn.gsfc.nasa.gov/gcn/ligo.html" type="url" />
+    <Reference uri="http://gcn.gsfc.nasa.gov/gcn/lvc_events.html" type="url" />
+  </How>
+  <Why importance="1.0">
+    <Inference probability="1.0">
+      <Concept>process.variation;gw</Concept>
+    </Inference>
+  </Why>
+  <Description>
+  </Description>
+</voe:VOEvent>

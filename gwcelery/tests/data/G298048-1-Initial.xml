@@ -1,0 +1,101 @@
+<?xml version="1.0" ?>
+<voe:VOEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:voe="http://www.ivoa.net/xml/VOEvent/v2.0"
+xsi:schemaLocation="http://www.ivoa.net/xml/VOEvent/v2.0 http://www.ivoa.net/xml/VOEvent/VOEvent-v2.0.xsd"
+ version="2.0" role="observation" ivorn="ivo://gwnet/gcn_sender#G298048-1-Initial">
+    <Who>
+        <Date>2017-08-17T13:08:15</Date>
+        <Author>
+            <contactName>LIGO Scientific Collaboration and Virgo Collaboration</contactName>
+        </Author>
+    </Who>
+    <What>
+        <Param name="internal" dataType="int" value="0">
+            <Description>Indicates whether this event should be distributed to LSC/Virgo members only</Description>
+        </Param>
+        <Param name="Pkt_Ser_Num" dataType="string" value="1"/>
+        <Param name="GraceID" dataType="string" value="G298048" ucd="meta.id">
+            <Description>Identifier in GraceDB</Description>
+        </Param>
+        <Param name="AlertType" dataType="string" value="Initial" ucd="meta.version" unit="">
+            <Description>VOEvent alert type</Description>
+        </Param>
+        <Param name="Retraction" dataType="string" value="false" ucd="meta.code" unit="">
+            <Description>Set to true if the event is retracted.</Description>
+        </Param>
+        <Param name="HardwareInj" dataType="int" value="0" ucd="meta.number" unit="">
+            <Description>Indicates that this event is a hardware injection if 1, no if 0</Description>
+        </Param>
+        <Param name="Vetted" dataType="int" value="1" ucd="meta.number" unit="">
+            <Description>Indicates whether this candidate has undergone basic vetting by humans</Description>
+        </Param>
+        <Param name="OpenAlert" dataType="int" value="0" ucd="meta.number" unit="">
+            <Description>Indicates that this event is an open alert if 1, no if 0</Description>
+        </Param>
+        <Param name="EventPage" dataType="string" value="https://gracedb.ligo.org/events/G298048" ucd="meta.ref.url">
+            <Description>Web page for evolving status of this candidate event</Description>
+        </Param>
+        <Param name="Instruments" dataType="string" value="H1" ucd="meta.code">
+            <Description>List of instruments used in analysis to identify this event</Description>
+        </Param>
+        <Param name="FAR" dataType="float" value="3.47773444765e-12" ucd="arith.rate;stat.falsealarm" unit="Hz">
+            <Description>False alarm rate for GW candidates with this strength or greater</Description>
+        </Param>
+        <Param name="Group" dataType="string" value="CBC" ucd="meta.code" unit="">
+            <Description>Data analysis working group</Description>
+        </Param>
+        <Param name="Pipeline" dataType="string" value="gstlal" ucd="meta.code" unit="">
+            <Description>Low-latency data analysis pipeline</Description>
+        </Param>
+        <Param name="Search" dataType="string" value="O2VirgoTest" ucd="meta.code" unit="">
+            <Description>Specific low-latency search</Description>
+        </Param>
+        <Param name="ProbHasNS" dataType="float" value="1.0" ucd="stat.probability" unit="">
+            <Description>Probability that at least one object in the binary is less than 3 solar masses</Description>
+        </Param>
+        <Param name="ProbHasRemnant" dataType="float" value="1.0" ucd="stat.probability" unit="">
+            <Description>Probability that there is matter in the surroundings of the central object</Description>
+        </Param>
+        <Group type="GW_SKYMAP" name="bayestar-CBCO2VirgoTest">
+            <Param name="skymap_fits_shib" dataType="string" value="https://gracedb.ligo.org/events/G298048/files/bayestar.fits.gz" ucd="meta.ref.url" unit="">
+                <Description>Sky Map FITS Shibboleth protected</Description>
+            </Param>
+            <Param name="skymap_fits_x509" dataType="string" value="https://gracedb.ligo.org/api/events/G298048/files/bayestar.fits.gz" ucd="meta.ref.url" unit="">
+                <Description>Sky Map FITS X509 protected</Description>
+            </Param>
+            <Param name="skymap_fits_basic" dataType="string" value="https://gracedb.ligo.org/apibasic/events/G298048/files/bayestar.fits.gz" ucd="meta.ref.url" unit="">
+                <Description>Sky Map FITS basic auth protected</Description>
+            </Param>
+            <Param name="skymap_png_shib" dataType="string" value="https://gracedb.ligo.org/events/G298048/files/bayestar.png" ucd="meta.ref.url" unit="">
+                <Description>Sky Map image Shibboleth protected</Description>
+            </Param>
+            <Param name="skymap_png_x509" dataType="string" value="https://gracedb.ligo.org/api/events/G298048/files/bayestar.png" ucd="meta.ref.url" unit="">
+                <Description>Sky Map image X509 protected</Description>
+            </Param>
+            <Param name="skymap_png_basic" dataType="string" value="https://gracedb.ligo.org/apibasic/events/G298048/files/bayestar.png" ucd="meta.ref.url" unit="">
+                <Description>Sky Map image basic auth protected</Description>
+            </Param>
+        </Group>
+    </What>
+    <WhereWhen>
+        <ObsDataLocation>
+            <ObservatoryLocation id="LIGO Virgo"/>
+            <ObservationLocation>
+                <AstroCoordSystem id="UTC-FK5-GEO"/>
+                <AstroCoords coord_system_id="UTC-FK5-GEO">
+                    <Time>
+                        <TimeInstant>
+                            <ISOTime>2017-08-17T12:41:04.445710</ISOTime>
+                        </TimeInstant>
+                    </Time>
+                </AstroCoords>
+            </ObservationLocation>
+        </ObsDataLocation>
+    </WhereWhen>
+    <How>
+        <Description>Candidate gravitational wave event identified by low-latency analysis</Description>
+        <Description>H1: LIGO Hanford 4 km gravitational wave detector</Description>
+    </How>
+    <Description>Report of a candidate gravitational wave event</Description>
+</voe:VOEvent>
+

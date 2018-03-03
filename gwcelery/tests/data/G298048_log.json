@@ -1,0 +1,19 @@
+[
+ {
+  "comment": "",
+  "file_version": 0,
+  "tag_names": [
+   "em_follow"
+  ],
+  "file": "https://gracedb.ligo.org/api/events/G298048/files/G298048-1-Initial.xml,0",
+  "created": "2017-08-17T13:08:15+00:00",
+  "self": "https://gracedb.ligo.org/api/events/G298048/log/532",
+  "issuer": {
+   "username": "gracedb.processor",
+   "display_name": " GraceDB Processor"
+  },
+  "filename": "G298048-1-Initial.xml",
+  "tags": "https://gracedb.ligo.org/api/events/G298048/log/532/tag/",
+  "N": 532
+ }
+]
