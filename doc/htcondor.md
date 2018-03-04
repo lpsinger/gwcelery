@@ -1,11 +1,10 @@
 # Running under HTCondor
 
 The recommended way to start and stop GWCelery on the LIGO Data Grid cluster is
-using [HTCondor](https://research.cs.wisc.edu/htcondor/). See the example
-HTCondor submit file [`gwcelery.sub`](_static/gwcelery.sub). This submit file
-will start up Redis, the worker processes, and Flower. It will create some log
-files and a Unix domain socket, so you should first navigate to a directory
-where you want these files to go. For example:
+using [HTCondor]. See the example HTCondor submit file [`gwcelery.sub`]. This
+submit file will start up Redis, the worker processes, and Flower. It will
+create some log files and a Unix domain socket, so you should first navigate to
+a directory where you want these files to go. For example:
 
 	$ mkdir -p ~/gwcelery/var && cd ~/gwcelery/var
 
@@ -29,3 +28,6 @@ To restart GWCelery, run `condor_release`:
 Note that there is normally **no need** to explicitly kill or re-submit
 GWCelery if the machine is rebooted, because the jobs will persist in the
 HTCondor queue.
+
+[HTCondor]: https://research.cs.wisc.edu/htcondor/
+[`etc/gwcelery.sub`]: https://git.ligo.org/emfollow/gwcelery/blob/master/etc/gwcelery.sub
