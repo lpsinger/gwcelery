@@ -14,20 +14,18 @@ Then run the submit file as follows:
 	Submitting job(s)......
 	6 job(s) submitted to cluster 293497.
 
-Make note of the cluster number on the last line. To stop GWCelery, run the
-`condor_hold` command:
+To stop GWCelery, run the `condor_hold` command:
 
-	$ condor_hold 293497
-	All jobs in cluster 293497 have been held
+	$ condor_hold -constraint 'JobBatchName == "gwcelery"'
+	All jobs matching constraint (JobBatchName == "gwcelery") have been held
 
 To restart GWCelery, run `condor_release`:
 
-	$ condor_release 293497
-	All jobs in cluster 293497 have been released
+	$ condor_release -constraint 'JobBatchName == "gwcelery"'
+	All jobs matching constraint (JobBatchName == "gwcelery") have been released
 
-Note that there is normally **no need** to explicitly kill or re-submit
-GWCelery if the machine is rebooted, because the jobs will persist in the
-HTCondor queue.
+Note that there is normally **no need** to re-submit GWCelery if the machine is
+rebooted, because the jobs will persist in the HTCondor queue.
 
 [HTCondor]: https://research.cs.wisc.edu/htcondor/
 [`etc/gwcelery.sub`]: https://git.ligo.org/emfollow/gwcelery/blob/master/etc/gwcelery.sub
