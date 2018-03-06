@@ -26,9 +26,14 @@ ns = {'ns1': 'http://jabber.org/protocol/pubsub#event',
 
 def filter_messages(xml):
     for node in xml.iterfind('.//ns1:items[@node]', ns):
+        log.info('LVAlert node: %r', node.attrib['node'])
         if node.attrib['node'] in app.conf['lvalert_node_whitelist']:
             for entry in node.iterfind('.//ns2:entry', ns):
                 yield entry.text
+        else:
+            log.info(
+                'ignorning because LVAlert node is not in whitelist %r',
+                app.conf['lvalert_node_whitelist'])
 
 
 class LVAlertClient(EventHandler, TimeoutHandler, XMPPFeatureHandler):
