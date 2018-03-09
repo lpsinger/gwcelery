@@ -1,26 +1,27 @@
 """Communication with GraceDB."""
-from ligo.gracedb.rest import GraceDb
+from ligo.gracedb import rest
 
 from ..celery import app
 
 
 @app.task(ignore_result=True, shared=False)
 def create_tag(tag, n, graceid, service):
-    GraceDb(service).createTag(graceid, n, tag)
+    rest.GraceDb(service).createTag(graceid, n, tag)
 
 
 @app.task(shared=False)
 def download(filename, graceid, service):
     """Download a file from GraceDB."""
-    return GraceDb(service).files(graceid, filename, raw=True).read()
+    return rest.GraceDb(service).files(graceid, filename, raw=True).read()
 
 
 @app.task(shared=False)
 def get_log(graceid, service):
-    return GraceDb(service).logs(graceid).json()['log']
+    return rest.GraceDb(service).logs(graceid).json()['log']
 
 
 @app.task(ignore_result=True, shared=False)
 def upload(filecontents, filename, graceid, service, message, tags):
     """Upload a file to GraceDB."""
-    GraceDb(service).writeLog(graceid, message, filename, filecontents, tags)
+    rest.GraceDb(service).writeLog(
+        graceid, message, filename, filecontents, tags)

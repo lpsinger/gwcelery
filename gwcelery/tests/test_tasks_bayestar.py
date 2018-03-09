@@ -16,7 +16,7 @@ def mock_download(filename, graceid, service):
 
 
 @patch('gwcelery.tasks.gracedb.download', mock_download)
-@patch('gwcelery.tasks.gracedb.GraceDb', autospec=True)
+@patch('ligo.gracedb.rest.GraceDb', autospec=True)
 def test_bayestar(mock_gracedb):
     # Run function under test
     bayestar('T12345', 'https://gracedb.invalid/api/')

@@ -2,7 +2,7 @@ from ..tasks import gracedb
 from . import *
 
 
-@patch('gwcelery.tasks.gracedb.GraceDb', autospec=True)
+@patch('ligo.gracedb.rest.GraceDb', autospec=True)
 def test_create_tag(mock_gracedb):
     # Run function under test.
     gracedb.create_tag('tag', 'n', 'graceid', 'service')
@@ -15,7 +15,7 @@ def test_create_tag(mock_gracedb):
         'graceid', 'n', 'tag')
 
 
-@patch('gwcelery.tasks.gracedb.GraceDb', autospec=True)
+@patch('ligo.gracedb.rest.GraceDb', autospec=True)
 def test_download(mock_gracedb):
     # Run function under test.
     gracedb.download('filename', 'graceid', 'service')
@@ -44,7 +44,7 @@ def test_get_log(monkeypatch):
             assert graceid == 'graceid'
             return logs()
 
-    monkeypatch.setattr('gwcelery.tasks.gracedb.GraceDb', MockGraceDb)
+    monkeypatch.setattr('ligo.gracedb.rest.GraceDb', MockGraceDb)
 
     # Run function under test.
     ret = gracedb.get_log('graceid', 'service')
@@ -52,7 +52,7 @@ def test_get_log(monkeypatch):
     assert ret == 'stuff'
 
 
-@patch('gwcelery.tasks.gracedb.GraceDb', autospec=True)
+@patch('ligo.gracedb.rest.GraceDb', autospec=True)
 def test_upload(mock_gracedb):
     # Run function under test.
     gracedb.upload(

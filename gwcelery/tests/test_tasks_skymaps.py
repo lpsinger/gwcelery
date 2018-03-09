@@ -49,7 +49,7 @@ def mock_download(filename, graceid, service):
 
 @patch('gwcelery.tasks.skymaps.download', mock_download)
 @patch('gwcelery.tasks.skymaps.check_call')
-@patch('gwcelery.tasks.gracedb.GraceDb', autospec=True)
+@patch('ligo.gracedb.rest.GraceDb', autospec=True)
 def test_annotate_fits(mock_gracedb, check_call):
     skymaps.annotate_fits('test.fits,0', 'test', 'T12345',
                           'https://gracedb.invalid/api/',
