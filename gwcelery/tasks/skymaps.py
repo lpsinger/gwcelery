@@ -32,14 +32,17 @@ def annotate_fits(versioned_filename, filebase, graceid, service, tags):
 
     return gracedb.download.s(versioned_filename, graceid, service) | group(
         fits_header.s(versioned_filename) |
-        gracedb.upload.s(filebase + '.html', graceid, service, header_msg, tags),
+        gracedb.upload.s(
+            filebase + '.html', graceid, service, header_msg, tags),
 
         plot_allsky.s() |
-        gracedb.upload.s(filebase + '.png', graceid, service, allsky_msg, tags),
+        gracedb.upload.s(
+            filebase + '.png', graceid, service, allsky_msg, tags),
 
         is_3d_fits_file.s() |
         plot_volume.s() |
-        gracedb.upload.s(filebase + '.volume.png', graceid, service, volume_msg, tags)
+        gracedb.upload.s(
+            filebase + '.volume.png', graceid, service, volume_msg, tags)
     )
 
 
