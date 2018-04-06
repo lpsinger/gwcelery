@@ -57,7 +57,11 @@ def localize(coinc_psd, graceid, service, filename='bayestar.fits.gz',
     """
     from lalinference.io import events
     from lalinference.io import fits
-    from lalinference.bayestar.command import TemporaryDirectory
+    try:
+        # FIXME: class moved
+        from lalinference.bayestar.command import TemporaryDirectory
+    except ImportError:
+        from lalinference.util.file import TemporaryDirectory
     from lalinference.bayestar.sky_map import localize, rasterize
     from ligo.gracedb.logging import GraceDbLogHandler
     from ligo.gracedb.rest import GraceDb
