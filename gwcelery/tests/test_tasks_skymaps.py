@@ -47,8 +47,8 @@ def mock_download(filename, graceid, service):
         raise RuntimeError('Asked for unexpected FITS file')
 
 
-@patch('gwcelery.tasks.skymaps.download', mock_download)
-@patch('gwcelery.tasks.skymaps.check_call')
+@patch('gwcelery.tasks.gracedb.download.run', mock_download)
+@patch('subprocess.check_call')
 @patch('ligo.gracedb.rest.GraceDb', autospec=True)
 def test_annotate_fits(mock_gracedb, check_call):
     skymaps.annotate_fits('test.fits,0', 'test', 'T12345',
@@ -58,13 +58,13 @@ def test_annotate_fits(mock_gracedb, check_call):
 
 def test_fits_header(toy_fits_filecontents):
     # Run function under test
-    html = skymaps.fits_header('test.fits', toy_fits_filecontents)
+    html = skymaps.fits_header(toy_fits_filecontents, 'test.fits')
 
     # Check output
     assert html == resource_unicode(__name__, 'data/fits_header_result.html')
 
 
-@patch('gwcelery.tasks.skymaps.check_call')
+@patch('subprocess.check_call')
 def test_plot_allsky(mock_check_call):
     # Run function under test
     skymaps.plot_allsky('')
@@ -85,7 +85,7 @@ def test_is_3d_fits_file(toy_fits_filecontents, toy_3d_fits_filecontents):
     skymaps.is_3d_fits_file(toy_3d_fits_filecontents)
 
 
-@patch('gwcelery.tasks.skymaps.check_call')
+@patch('subprocess.check_call')
 def test_plot_volume(mock_check_call):
     # Run function under test
     skymaps.plot_volume('')

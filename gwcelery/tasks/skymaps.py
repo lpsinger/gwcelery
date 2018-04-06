@@ -1,12 +1,12 @@
 """Annotations for sky maps."""
 from __future__ import print_function
-from subprocess import check_call
+import subprocess
 
 from astropy.io.fits import HDUList
 from celery import group
 import six
 
-from .gracedb import download, upload
+from . import gracedb
 from ..celery import app
 from ..util.tempfile import NamedTemporaryFile
 
@@ -30,23 +30,21 @@ def annotate_fits(versioned_filename, filebase, graceid, service, tags):
         '{versioned_filename}">{versioned_filename}</a>').format(
             graceid=graceid, versioned_filename=versioned_filename)
 
-    content = download(versioned_filename, graceid, service)
+    return gracedb.download.s(versioned_filename, graceid, service) | group(
+        fits_header.s(versioned_filename) |
+        gracedb.upload.s(filebase + '.html', graceid, service, header_msg, tags),
 
-    return group(
-        fits_header.s(versioned_filename, content) |
-        upload.s(filebase + '.html', graceid, service, header_msg, tags),
+        plot_allsky.s() |
+        gracedb.upload.s(filebase + '.png', graceid, service, allsky_msg, tags),
 
-        plot_allsky.s(content) |
-        upload.s(filebase + '.png', graceid, service, allsky_msg, tags),
-
-        is_3d_fits_file.s(content) |
+        is_3d_fits_file.s() |
         plot_volume.s() |
-        upload.s(filebase + '.volume.png', graceid, service, volume_msg, tags)
+        gracedb.upload.s(filebase + '.volume.png', graceid, service, volume_msg, tags)
     )
 
 
 @app.task(shared=False)
-def fits_header(filename, filecontents):
+def fits_header(filecontents, filename):
     """Dump FITS header to HTML."""
     hdus = HDUList.fromstring(filecontents)
     out = six.StringIO()
@@ -95,8 +93,9 @@ def plot_allsky(filecontents):
     """Plot a Mollweide projection of a sky map."""
     with NamedTemporaryFile(mode='rb', suffix='.png') as pngfile:
         with NamedTemporaryFile(content=filecontents) as fitsfile:
-            check_call(['bayestar_plot_allsky', fitsfile.name, '-o',
-                        pngfile.name, '--annotate', '--contour', '50', '90'])
+            subprocess.check_call(['bayestar_plot_allsky', fitsfile.name, '-o',
+                                   pngfile.name, '--annotate',
+                                   '--contour', '50', '90'])
         return pngfile.read()
 
 
@@ -118,6 +117,6 @@ def plot_volume(filecontents):
     """Plot a Mollweide projection of a sky map."""
     with NamedTemporaryFile(mode='rb', suffix='.png') as pngfile:
         with NamedTemporaryFile(content=filecontents) as fitsfile:
-            check_call(['bayestar_plot_volume', fitsfile.name, '-o',
-                        pngfile.name, '--annotate'])
+            subprocess.check_call(['bayestar_plot_volume', fitsfile.name, '-o',
+                                   pngfile.name, '--annotate'])
         return pngfile.read()
