@@ -8,6 +8,11 @@ gwcelery\.tasks\.bayestar module
 
 .. automodule:: gwcelery.tasks.bayestar
 
+gwcelery\.tasks\.condor module
+--------------------------------
+
+.. automodule:: gwcelery.tasks.condor
+
 gwcelery\.tasks\.dispatch module
 --------------------------------
 
