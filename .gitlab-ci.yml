@@ -33,11 +33,8 @@ build:
       - '*.whl'
 
 test:
-  services:
-    - redis:3.2.11
   variables:
     GIT_STRATEGY: none
-    CELERY_BROKER_URL: redis://redis
   tags:
     - highmem
   stage: test
@@ -55,11 +52,8 @@ test:
       - htmlcov/
 
 test:python36:
-  services:
-    - redis:3.2.11
   variables:
     GIT_STRATEGY: none
-    CELERY_BROKER_URL: redis://redis
   script:
     # Install dependencies
     - yum install -y python36u-pip
