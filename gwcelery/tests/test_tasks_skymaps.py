@@ -52,9 +52,10 @@ def mock_download(filename, graceid, service):
 
 
 @patch('gwcelery.tasks.gracedb.download.run', mock_download)
-@patch('subprocess.check_call')
 @patch('ligo.gracedb.rest.GraceDb', autospec=True)
-def test_annotate_fits(mock_gracedb, check_call):
+@patch('ligo.skymap.tool.ligo_skymap_plot.main')
+@patch('ligo.skymap.tool.ligo_skymap_plot_volume.main')
+def test_annotate_fits(mock_plot_volume, mock_plot, mock_gracedb):
     skymaps.annotate_fits('test.fits,0', 'test', 'T12345',
                           'https://gracedb.invalid/api/',
                           ['tag1']).apply().get()
@@ -68,17 +69,16 @@ def test_fits_header(toy_fits_filecontents):
     assert html == resource_unicode(__name__, 'data/fits_header_result.html')
 
 
-@patch('subprocess.check_call')
-def test_plot_allsky(mock_check_call):
+@patch('ligo.skymap.tool.ligo_skymap_plot.main')
+def test_plot_allsky(mock_plot):
     # Run function under test
     skymaps.plot_allsky('')
 
     # Check that the script would have been run once
     # with the correct arguments
-    mock_check_call.assert_called_once()
-    cmdline, = mock_check_call.call_args[0]
-    assert cmdline[0] == 'bayestar_plot_allsky'
-    assert cmdline[3].endswith('.png')
+    mock_plot.assert_called_once()
+    cmdline, = mock_plot.call_args[0]
+    assert cmdline[2].endswith('.png')
 
 
 def test_is_3d_fits_file(toy_fits_filecontents, toy_3d_fits_filecontents):
@@ -89,14 +89,13 @@ def test_is_3d_fits_file(toy_fits_filecontents, toy_3d_fits_filecontents):
     skymaps.is_3d_fits_file(toy_3d_fits_filecontents)
 
 
-@patch('subprocess.check_call')
-def test_plot_volume(mock_check_call):
+@patch('ligo.skymap.tool.ligo_skymap_plot_volume.main')
+def test_plot_volume(mock_plot_volume):
     # Run function under test
     skymaps.plot_volume('')
 
     # Check that the script would have been run once
     # with the correct arguments
-    mock_check_call.assert_called_once()
-    cmdline, = mock_check_call.call_args[0]
-    assert cmdline[0] == 'bayestar_plot_volume'
+    mock_plot_volume.assert_called_once()
+    cmdline, = mock_plot_volume.call_args[0]
     assert cmdline[-2].endswith('.png')

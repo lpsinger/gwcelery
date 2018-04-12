@@ -1,8 +1,8 @@
 """Annotations for sky maps."""
-import subprocess
-
 from astropy.io import fits
 from celery import group
+from ligo.skymap.tool import ligo_skymap_plot
+from ligo.skymap.tool import ligo_skymap_plot_volume
 
 from . import gracedb
 from ..celery import app
@@ -59,9 +59,8 @@ def plot_allsky(filecontents):
     """Plot a Mollweide projection of a sky map."""
     with NamedTemporaryFile(mode='rb', suffix='.png') as pngfile, \
             NamedTemporaryFile(content=filecontents) as fitsfile:
-        subprocess.check_call(['bayestar_plot_allsky', fitsfile.name, '-o',
-                               pngfile.name, '--annotate',
-                               '--contour', '50', '90'])
+        ligo_skymap_plot.main([fitsfile.name, '-o', pngfile.name,
+                               '--annotate', '--contour', '50', '90'])
         return pngfile.read()
 
 
@@ -83,6 +82,6 @@ def plot_volume(filecontents):
     """Plot a Mollweide projection of a sky map."""
     with NamedTemporaryFile(mode='rb', suffix='.png') as pngfile, \
             NamedTemporaryFile(content=filecontents) as fitsfile:
-        subprocess.check_call(['bayestar_plot_volume', fitsfile.name, '-o',
-                               pngfile.name, '--annotate'])
+        ligo_skymap_plot_volume.main([fitsfile.name, '-o',
+                                      pngfile.name, '--annotate'])
         return pngfile.read()

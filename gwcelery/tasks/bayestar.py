@@ -5,11 +5,11 @@ import os
 import tempfile
 
 from celery import group
-from lalinference.bayestar import sky_map
-from lalinference.io import events
-from lalinference.io import fits
 from ligo.gracedb.logging import GraceDbLogHandler
 from ligo.gracedb import rest
+from ligo.skymap import bayestar as _bayestar
+from ligo.skymap.io import events
+from ligo.skymap.io import fits
 
 from ..celery import app
 from .gracedb import download, upload
@@ -73,7 +73,7 @@ def localize(coinc_psd, graceid, service, filename='bayestar.fits.gz',
 
         # Run BAYESTAR
         log.info("starting sky localization")
-        skymap = sky_map.rasterize(sky_map.localize(event))
+        skymap = _bayestar.rasterize(_bayestar.localize(event))
         skymap.meta['objid'] = str(graceid)
         log.info("sky localization complete")
 
