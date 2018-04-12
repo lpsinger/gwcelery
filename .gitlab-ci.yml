@@ -24,9 +24,9 @@ before_script:
 build:
   stage: build
   script:
-    - yum install -y python-pip
-    - pip install --upgrade setuptools wheel
-    - python setup.py sdist -d . bdist_wheel -d .
+    - yum install -y python36u-pip
+    - pip3.6 install wheel
+    - python3.6 setup.py sdist -d . bdist_wheel -d .
   artifacts:
     paths:
       - '*.tar.*'
@@ -40,28 +40,13 @@ test:
   stage: test
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   script:
-    # Install dependencies
-    - yum install -y python-pip lalinference-python
-    - pip install --upgrade setuptools
-    - pip install pytest-cov
-    # Run tests
+    - yum install -y python36u-pip python36u-devel
     - tar --strip-components 1 -xf *.tar.*
-    - python setup.py test --addopts='-vv --cov --cov-report=html --cov-report=term'
+    - LANG=en_US.UTF-8 pip3.6 install pytest-cov pytest-runner pytest-flake8 .
+    - python3.6 setup.py test --addopts='-vv --cov --cov-report=html --cov-report=term --flake8'
   artifacts:
     paths:
       - htmlcov/
-
-test:python36:
-  variables:
-    GIT_STRATEGY: none
-  script:
-    # Install dependencies
-    - yum install -y python36u-pip
-    - LANG="en_US.UTF-8" pip3.6 install pytest-runner pytest-flake8
-    # Run tests
-    - tar --strip-components 1 -xf *.tar.*
-    - pip3.6 install .
-    - python3.6 setup.py test --addopts='-vv --flake8'
 
 doc:
   stage: test

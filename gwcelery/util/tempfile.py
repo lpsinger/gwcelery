@@ -1,11 +1,7 @@
-from __future__ import absolute_import
 from contextlib import contextmanager
 import tempfile
-import shutil
 
-import six
-
-__all__ = ('NamedTemporaryFile', 'TemporaryDirectory')
+__all__ = ('NamedTemporaryFile',)
 
 
 @contextmanager
@@ -23,9 +19,9 @@ def NamedTemporaryFile(content=None, **kwargs):
         Additional keyword arguments to pass to
         :func:`tempfile.NamedTemporaryFile`.
     """
-    if isinstance(content, six.binary_type):
+    if isinstance(content, bytes):
         kwargs = dict(kwargs, mode='w+b')
-    elif isinstance(content, six.text_type):
+    elif isinstance(content, str):
         kwargs = dict(kwargs, mode='w+')
     elif content is not None:
         raise TypeError('content is of unknown type')
@@ -35,14 +31,3 @@ def NamedTemporaryFile(content=None, **kwargs):
             f.flush()
             f.seek(0)
         yield f
-
-
-@contextmanager
-def TemporaryDirectory(suffix='', prefix='tmp', dir=None, delete=True):
-    """Context manager for creating and cleaning up a temporary directory."""
-    try:
-        dir = tempfile.mkdtemp(suffix=suffix, prefix=prefix, dir=dir)
-        yield dir
-    finally:
-        if delete:
-            shutil.rmtree(dir)

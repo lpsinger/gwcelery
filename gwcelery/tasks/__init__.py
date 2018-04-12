@@ -1,5 +1,4 @@
 """All Celery tasks are declared in submodules of this module."""
-from __future__ import absolute_import
 import importlib
 import os
 import pkgutil

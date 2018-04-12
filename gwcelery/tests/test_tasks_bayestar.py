@@ -1,14 +1,9 @@
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
-
+from unittest.mock import patch
 import pkg_resources
 import pytest
+from xml.sax import SAXParseException
 
 from ..tasks.bayestar import bayestar, localize
-
-pytest.importorskip('lalinference.bayestar.sky_map')
 
 
 def mock_download(filename, graceid, service):
@@ -32,8 +27,6 @@ def test_bayestar(mock_gracedb):
 @patch('ligo.gracedb.rest.GraceDb', autospec=True)
 def test_localize_bad_psd(mock_gracedb):
     """Test running BAYESTAR with a pad PSD file"""
-    from xml.sax import SAXParseException
-
     # Test data
     coinc = pkg_resources.resource_string(__name__, 'data/coinc.xml')
     psd = b''

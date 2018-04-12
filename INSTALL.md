@@ -2,7 +2,9 @@
 
 ## To install
 
-With `virtualenv` and `pip`:
+GWCelery requires Python >= 3.5.
+
+The easiest way to install it is with `virtualenv` and `pip`:
 
 	$ virtualenv --system-site-packages ~/gwcelery
 	$ source ~/gwcelery/bin/activate

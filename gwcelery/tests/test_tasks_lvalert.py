@@ -1,11 +1,7 @@
-from __future__ import print_function
 import os
 import socket
+from unittest.mock import patch
 from xml.etree.ElementTree import XML
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
 
 import pkg_resources
 from pyxmpp2.exceptions import DNSError

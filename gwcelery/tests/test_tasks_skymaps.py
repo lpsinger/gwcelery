@@ -1,9 +1,6 @@
 import gzip
 import io
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
+from unittest.mock import patch
 
 from astropy.table import Table
 import numpy as np

@@ -1,5 +1,4 @@
 """Annotations for sky maps."""
-from __future__ import print_function
 import subprocess
 
 from astropy.io import fits

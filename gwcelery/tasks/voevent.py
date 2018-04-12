@@ -1,7 +1,7 @@
 """Basic single-endpoint VOEvent broker."""
-from six.moves.urllib.parse import urlparse, urlunparse
 import socket
 import struct
+from urllib.parse import urlparse, urlunparse
 
 from celery import Task
 from celery.utils.log import get_task_logger

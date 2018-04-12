@@ -11,7 +11,6 @@ References
 """
 import os
 import subprocess
-import sys
 import tempfile
 
 import lxml.etree
@@ -102,13 +101,6 @@ class JobRunning(Exception):
 
 class JobFailed(subprocess.CalledProcessError):
     """Raised if an HTCondor job fails."""
-
-    # FIXME: ``stderr`` was added to ``subprocess.CalledProcessError`` in
-    # Python 3.5.
-    if sys.version_info < (3, 5):  # pragma: no cover
-        def __init__(self, returncode, cmd, output=None, stderr=None):
-            super(JobFailed, self).__init__(returncode, cmd, output)
-            self.stderr = stderr
 
 
 @app.task(bind=True, autoretry_for=(JobRunning,), default_retry_delay=1,

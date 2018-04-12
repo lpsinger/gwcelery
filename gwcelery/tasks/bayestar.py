@@ -2,18 +2,17 @@
 import io
 import logging
 import os
+import tempfile
 
 from celery import group
+from lalinference.bayestar import sky_map
+from lalinference.io import events
+from lalinference.io import fits
+from ligo.gracedb.logging import GraceDbLogHandler
+from ligo.gracedb import rest
 
 from ..celery import app
-from ..util import TemporaryDirectory
 from .gracedb import download, upload
-
-# Workaround for testing in an environment that lacks LALInference
-try:
-    from lalinference.io.events import DetectorDisabledError
-except ImportError:  # pragma: no cover
-    DetectorDisabledError = ValueError
 
 log = logging.getLogger('BAYESTAR')
 
@@ -42,9 +41,7 @@ def bayestar(graceid, service):
                  'sky localization complete', 'sky_loc'))
 
 
-# FIXME: should be `throws=events.DetectorDisabledError, but that would add
-# a real on lalinference.
-@app.task(queue='openmp', shared=False, throws=DetectorDisabledError)
+@app.task(queue='openmp', shared=False, throws=events.DetectorDisabledError)
 def localize(coinc_psd, graceid, service, filename='bayestar.fits.gz',
              disabled_detectors=None):
     """Do the heavy lifting of generating a rapid localization using BAYESTAR.
@@ -56,13 +53,7 @@ def localize(coinc_psd, graceid, service, filename='bayestar.fits.gz',
     This task should execute in a special queue for computationally intensive
     OpenMP parallel tasks.
     """
-    from lalinference.io import events
-    from lalinference.io import fits
-    from lalinference.bayestar.sky_map import localize, rasterize
-    from ligo.gracedb.logging import GraceDbLogHandler
-    from ligo.gracedb.rest import GraceDb
-
-    handler = GraceDbLogHandler(GraceDb(service), graceid)
+    handler = GraceDbLogHandler(rest.GraceDb(service), graceid)
     handler.setLevel(logging.INFO)
     log.addHandler(handler)
 
@@ -82,11 +73,11 @@ def localize(coinc_psd, graceid, service, filename='bayestar.fits.gz',
 
         # Run BAYESTAR
         log.info("starting sky localization")
-        skymap = rasterize(localize(event))
+        skymap = sky_map.rasterize(sky_map.localize(event))
         skymap.meta['objid'] = str(graceid)
         log.info("sky localization complete")
 
-        with TemporaryDirectory() as tmpdir:
+        with tempfile.TemporaryDirectory() as tmpdir:
             fitspath = os.path.join(tmpdir, filename)
             fits.write_sky_map(fitspath, skymap, nest=True)
             return open(fitspath, 'rb').read()

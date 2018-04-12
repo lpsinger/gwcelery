@@ -2,10 +2,7 @@ import json
 import socket
 from threading import Thread
 from time import sleep
-try:
-    from mock import MagicMock
-except ImportError:
-    from unittest.mock import MagicMock
+from unittest.mock import MagicMock
 
 from gcn.voeventclient import _recv_packet
 import lxml.etree
