@@ -14,6 +14,8 @@ __all__ = ('app', 'celeryconf', 'patch', 'pkg_resources', 'pytest')
 @pytest.fixture(scope='session', autouse=True)
 def celeryconf():
     new_conf = dict(
+        broker_url='memory://',
+        result_backend='cache+memory://',
         gcn_bind_address='127.0.0.1',
         gcn_bind_port=53410,
         gcn_remote_address='127.0.0.1',
