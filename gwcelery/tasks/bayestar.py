@@ -6,6 +6,7 @@ import os
 from celery import group
 
 from ..celery import app
+from ..util import TemporaryDirectory
 from .gracedb import download, upload
 
 # Workaround for testing in an environment that lacks LALInference
@@ -57,11 +58,6 @@ def localize(coinc_psd, graceid, service, filename='bayestar.fits.gz',
     """
     from lalinference.io import events
     from lalinference.io import fits
-    try:
-        # FIXME: class moved
-        from lalinference.bayestar.command import TemporaryDirectory
-    except ImportError:
-        from lalinference.util.file import TemporaryDirectory
     from lalinference.bayestar.sky_map import localize, rasterize
     from ligo.gracedb.logging import GraceDbLogHandler
     from ligo.gracedb.rest import GraceDb

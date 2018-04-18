@@ -1,10 +1,11 @@
 from __future__ import absolute_import
 from contextlib import contextmanager
 import tempfile
+import shutil
 
 import six
 
-__all__ = ('NamedTemporaryFile',)
+__all__ = ('NamedTemporaryFile', 'TemporaryDirectory')
 
 
 @contextmanager
@@ -34,3 +35,14 @@ def NamedTemporaryFile(content=None, **kwargs):
             f.flush()
             f.seek(0)
         yield f
+
+
+@contextmanager
+def TemporaryDirectory(suffix='', prefix='tmp', dir=None, delete=True):
+    """Context manager for creating and cleaning up a temporary directory."""
+    try:
+        dir = tempfile.mkdtemp(suffix=suffix, prefix=prefix, dir=dir)
+        yield dir
+    finally:
+        if delete:
+            shutil.rmtree(dir)
