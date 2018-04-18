@@ -94,7 +94,7 @@ def localize(coinc_psd, graceid, service, filename='bayestar.fits.gz',
             fitspath = os.path.join(tmpdir, filename)
             fits.write_sky_map(fitspath, skymap, nest=True)
             return open(fitspath, 'rb').read()
-    except:
+    except:  # noqa
         # Produce log message for any otherwise uncaught exception
         log.exception("sky localization failed")
         raise

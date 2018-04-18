@@ -58,10 +58,10 @@ def send(self, payload):
     log.info('sending payload of %d bytes', nbytes)
     try:
         conn.sendall(_size_struct.pack(nbytes) + payload)
-    except:
+    except:  # noqa
         try:
             conn.shutdown(socket.SHUT_RDWR)
-        except:
+        except:  # noqa
             log.exception('failed to shut down socket')
         conn.close()
         raise
