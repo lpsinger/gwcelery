@@ -1,3 +1,4 @@
+import gzip
 import io
 try:
     from unittest.mock import patch
@@ -25,7 +26,8 @@ def toy_fits_filecontents():
     table.meta['comment'] = 'This is a comment.'
     table.meta['history'] = 'This is a history line.'
     table.meta['ORDERING'] = 'NESTED'
-    table.write(bytesio, format='fits')
+    with gzip.GzipFile(fileobj=bytesio, mode='wb') as f:
+        table.write(f, format='fits')
     return bytesio.getvalue()
 
 
@@ -38,7 +40,8 @@ def toy_3d_fits_filecontents():
     table.meta['comment'] = 'This is a comment.'
     table.meta['history'] = 'This is a history line.'
     table.meta['ORDERING'] = 'NESTED'
-    table.write(bytesio, format='fits')
+    with gzip.GzipFile(fileobj=bytesio, mode='wb') as f:
+        table.write(f, format='fits')
     return bytesio.getvalue()
 
 

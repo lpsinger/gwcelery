@@ -50,7 +50,7 @@ def annotate_fits(versioned_filename, filebase, graceid, service, tags):
 def fits_header(filecontents, filename):
     """Dump FITS header to HTML."""
     with NamedTemporaryFile(content=filecontents) as fitsfile, \
-         fits.open(fitsfile.name) as hdus:
+            fits.open(fitsfile.name) as hdus:
         out = six.StringIO()
         print('<!doctype html>', file=out)
         print('<meta charset="utf-8">', file=out)
@@ -58,9 +58,10 @@ def fits_header(filecontents, filename):
               'initial-scale=1, shrink-to-fit=no">', file=out)
         print('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/'
               'bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-'
-              'Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" '
-              'crossorigin="anonymous">', file=out)
-        print('<title>FITS headers for ', filename, '</title>', sep='', file=out)
+              'Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/'
+              'dAiS6JXm" crossorigin="anonymous">', file=out)
+        print('<title>FITS headers for ', filename, '</title>',
+              sep='', file=out)
         print('<div class=container>', file=out)
         print('<h1>FITS headers for ', filename, '</h1>', sep='', file=out)
         print('<table class="table table-condensed table-striped">', file=out)
@@ -77,10 +78,11 @@ def fits_header(filecontents, filename):
                   filename, '</strong></td></tr>', sep='', file=out)
             for card in hdu.header.cards:
                 print('<tr>', file=out)
-                print('<td style="font-family: monospace">', card.keyword, '</td>',
-                      sep='', file=out)
+                print('<td style="font-family: monospace">', card.keyword,
+                      '</td>', sep='', file=out)
                 if card.keyword in ('COMMENT', 'HISTORY'):
-                    print('<td colspan=2>', card.value, '</td>', sep='', file=out)
+                    print('<td colspan=2>', card.value, '</td>',
+                          sep='', file=out)
                 else:
                     print('<td style="font-family: monospace">', card.value,
                           '</td>', sep='', file=out)
