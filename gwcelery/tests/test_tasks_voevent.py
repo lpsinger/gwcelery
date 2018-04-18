@@ -9,9 +9,11 @@ except ImportError:
 
 from gcn.voeventclient import _recv_packet
 import lxml.etree
+import pkg_resources
+import pytest
 
 from ..tasks.voevent import handle, listen, send
-from . import *
+from .. import app
 
 # Test data
 with pkg_resources.resource_stream(

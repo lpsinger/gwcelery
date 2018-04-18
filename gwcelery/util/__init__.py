@@ -2,6 +2,6 @@
 from __future__ import absolute_import
 
 from . import tempfile
-from .tempfile import *
+from .tempfile import *  # noqa
 
 __all__ = tempfile.__all__

@@ -1,8 +1,9 @@
 from __future__ import print_function
 import subprocess
 
+import pytest
+
 from ..tasks import condor
-from . import *
 
 
 def get_submit_kwargs(args):

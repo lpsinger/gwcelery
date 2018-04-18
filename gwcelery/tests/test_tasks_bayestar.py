@@ -1,5 +1,12 @@
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
+
+import pkg_resources
+import pytest
+
 from ..tasks.bayestar import bayestar, localize
-from . import *
 
 pytest.importorskip('lalinference.bayestar.sky_map')
 
@@ -49,6 +56,7 @@ def test_localize(mock_gracedb):
         (coinc, psd), 'G211117', 'https://gracedb.invalid/api/')
 
     # FIXME: should do some sanity checks of the sky map here
+    assert fitscontent
 
 
 @patch('ligo.gracedb.rest.GraceDb', autospec=True)
@@ -64,3 +72,4 @@ def test_localize_detector_disabled(mock_gracedb):
         disabled_detectors=['L1'])
 
     # FIXME: should do some sanity checks of the sky map here
+    assert fitscontent

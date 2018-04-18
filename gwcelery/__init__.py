@@ -1,2 +1,2 @@
-from .celery import app
-from . import tasks
+from .celery import app  # noqa
+from . import tasks  # noqa

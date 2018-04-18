@@ -57,11 +57,11 @@ test:python36:
   script:
     # Install dependencies
     - yum install -y python36u-pip
-    - LANG="en_US.UTF-8" pip3.6 install pytest-runner pytest-codestyle
+    - LANG="en_US.UTF-8" pip3.6 install pytest-runner pytest-flake8
     # Run tests
     - tar --strip-components 1 -xf *.tar.*
     - pip3.6 install .
-    - python3.6 setup.py test --addopts='-vv --codestyle'
+    - python3.6 setup.py test --addopts='-vv --flake8'
 
 doc:
   stage: test

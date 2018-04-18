@@ -2,8 +2,6 @@
 import json
 import os
 
-from celery import group
-
 from ..celery import app
 from .bayestar import bayestar
 from .skymaps import annotate_fits

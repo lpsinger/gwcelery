@@ -1,11 +1,15 @@
 import io
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
-from astropy.io import fits
 from astropy.table import Table
 import numpy as np
+import pkg_resources
+import pytest
 
 from ..tasks import skymaps
-from . import *
 
 
 def resource_unicode(*args, **kwargs):

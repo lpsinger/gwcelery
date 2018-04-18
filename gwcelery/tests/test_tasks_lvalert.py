@@ -2,11 +2,17 @@ from __future__ import print_function
 import os
 import socket
 from xml.etree.ElementTree import XML
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
+import pkg_resources
 from pyxmpp2.exceptions import DNSError
+import pytest
 
 from ..tasks import lvalert
-from . import *
+from .. import app
 
 
 def test_filter_messages():
@@ -26,7 +32,7 @@ def whitelist_cbc_gstlal_mdc():
     app.conf.update(tmp)
 
 
-def test_filter_messages(whitelist_cbc_gstlal_mdc):
+def test_filter_messages_whitelist(whitelist_cbc_gstlal_mdc):
     xml = XML(pkg_resources.resource_string(__name__, 'data/lvalert_xmpp.xml'))
     messages = list(lvalert.filter_messages(xml))
     assert len(messages) == 1
