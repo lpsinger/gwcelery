@@ -2,7 +2,7 @@
 from __future__ import print_function
 import subprocess
 
-from astropy.io.fits import HDUList
+from astropy.io import fits
 from celery import group
 import six
 
@@ -49,45 +49,46 @@ def annotate_fits(versioned_filename, filebase, graceid, service, tags):
 @app.task(shared=False)
 def fits_header(filecontents, filename):
     """Dump FITS header to HTML."""
-    hdus = HDUList.fromstring(filecontents)
-    out = six.StringIO()
-    print('<!doctype html>', file=out)
-    print('<meta charset="utf-8">', file=out)
-    print('<meta name="viewport" content="width=device-width, '
-          'initial-scale=1, shrink-to-fit=no">', file=out)
-    print('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/'
-          'bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-'
-          'Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" '
-          'crossorigin="anonymous">', file=out)
-    print('<title>FITS headers for ', filename, '</title>', sep='', file=out)
-    print('<div class=container>', file=out)
-    print('<h1>FITS headers for ', filename, '</h1>', sep='', file=out)
-    print('<table class="table table-condensed table-striped">', file=out)
-    print('<thead>', file=out)
-    print('<tr>', file=out)
-    print('<th>Keyword</th>', file=out)
-    print('<th>Value</th>', file=out)
-    print('<th>Comment</th>', file=out)
-    print('</tr>', file=out)
-    print('</thead>', file=out)
-    print('<tbody>', file=out)
-    for ihdu, hdu in enumerate(hdus):
-        print('<tr class="info"><td colspan=3><strong>HDU #', ihdu, ' in ',
-              filename, '</strong></td></tr>', sep='', file=out)
-        for card in hdu.header.cards:
-            print('<tr>', file=out)
-            print('<td style="font-family: monospace">', card.keyword, '</td>',
-                  sep='', file=out)
-            if card.keyword in ('COMMENT', 'HISTORY'):
-                print('<td colspan=2>', card.value, '</td>', sep='', file=out)
-            else:
-                print('<td style="font-family: monospace">', card.value,
-                      '</td>', sep='', file=out)
-                print('<td>', card.comment, '</td>', sep='', file=out)
-            print('</tr>', file=out)
-    print('</tbody>', file=out)
-    print('</table>', file=out)
-    print('</div>', file=out)
+    with NamedTemporaryFile(content=filecontents) as fitsfile, \
+         fits.open(fitsfile.name) as hdus:
+        out = six.StringIO()
+        print('<!doctype html>', file=out)
+        print('<meta charset="utf-8">', file=out)
+        print('<meta name="viewport" content="width=device-width, '
+              'initial-scale=1, shrink-to-fit=no">', file=out)
+        print('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/'
+              'bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-'
+              'Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" '
+              'crossorigin="anonymous">', file=out)
+        print('<title>FITS headers for ', filename, '</title>', sep='', file=out)
+        print('<div class=container>', file=out)
+        print('<h1>FITS headers for ', filename, '</h1>', sep='', file=out)
+        print('<table class="table table-condensed table-striped">', file=out)
+        print('<thead>', file=out)
+        print('<tr>', file=out)
+        print('<th>Keyword</th>', file=out)
+        print('<th>Value</th>', file=out)
+        print('<th>Comment</th>', file=out)
+        print('</tr>', file=out)
+        print('</thead>', file=out)
+        print('<tbody>', file=out)
+        for ihdu, hdu in enumerate(hdus):
+            print('<tr class="info"><td colspan=3><strong>HDU #', ihdu, ' in ',
+                  filename, '</strong></td></tr>', sep='', file=out)
+            for card in hdu.header.cards:
+                print('<tr>', file=out)
+                print('<td style="font-family: monospace">', card.keyword, '</td>',
+                      sep='', file=out)
+                if card.keyword in ('COMMENT', 'HISTORY'):
+                    print('<td colspan=2>', card.value, '</td>', sep='', file=out)
+                else:
+                    print('<td style="font-family: monospace">', card.value,
+                          '</td>', sep='', file=out)
+                    print('<td>', card.comment, '</td>', sep='', file=out)
+                print('</tr>', file=out)
+        print('</tbody>', file=out)
+        print('</table>', file=out)
+        print('</div>', file=out)
     return out.getvalue()
 
 
@@ -107,10 +108,10 @@ def is_3d_fits_file(filecontents):
     """Determine if a FITS file has distance information. If it does, then
     the file contents are returned. If it does not, then a :obj:`ValueError` is
     raised."""
-    hdus = HDUList.fromstring(filecontents)
     try:
-        if hdus[1].header['TTYPE4'] == 'DISTNORM':
-            return filecontents
+        with NamedTemporaryFile(content=filecontents) as fitsfile:
+            if fits.getval(fitsfile.name, 'TTYPE4', 1) == 'DISTNORM':
+                return filecontents
     except (KeyError, IndexError):
         raise ValueError('Not a 3D FITS file')
 
