@@ -97,11 +97,11 @@ def fits_header(filecontents, filename):
 @app.task(shared=False)
 def plot_allsky(filecontents):
     """Plot a Mollweide projection of a sky map."""
-    with NamedTemporaryFile(mode='rb', suffix='.png') as pngfile:
-        with NamedTemporaryFile(content=filecontents) as fitsfile:
-            subprocess.check_call(['bayestar_plot_allsky', fitsfile.name, '-o',
-                                   pngfile.name, '--annotate',
-                                   '--contour', '50', '90'])
+    with NamedTemporaryFile(mode='rb', suffix='.png') as pngfile, \
+            NamedTemporaryFile(content=filecontents) as fitsfile:
+        subprocess.check_call(['bayestar_plot_allsky', fitsfile.name, '-o',
+                               pngfile.name, '--annotate',
+                               '--contour', '50', '90'])
         return pngfile.read()
 
 
@@ -121,8 +121,8 @@ def is_3d_fits_file(filecontents):
 @app.task(queue='openmp', shared=False)
 def plot_volume(filecontents):
     """Plot a Mollweide projection of a sky map."""
-    with NamedTemporaryFile(mode='rb', suffix='.png') as pngfile:
-        with NamedTemporaryFile(content=filecontents) as fitsfile:
-            subprocess.check_call(['bayestar_plot_volume', fitsfile.name, '-o',
-                                   pngfile.name, '--annotate'])
+    with NamedTemporaryFile(mode='rb', suffix='.png') as pngfile, \
+            NamedTemporaryFile(content=filecontents) as fitsfile:
+        subprocess.check_call(['bayestar_plot_volume', fitsfile.name, '-o',
+                               pngfile.name, '--annotate'])
         return pngfile.read()

@@ -65,11 +65,11 @@ def mock_condor_submit(monkeypatch):
         assert args[0] == 'condor_submit'
         submit_kwargs = get_submit_kwargs(args)
 
-        with open(submit_kwargs['error'], 'w') as stderr:
-            with open(submit_kwargs['output'], 'w') as stdout:
-                returncode = subprocess.call(
-                    submit_kwargs['arguments'][1:-1].split(),
-                    stderr=stderr, stdout=stdout)
+        with open(submit_kwargs['error'], 'w') as stderr, \
+                open(submit_kwargs['output'], 'w') as stdout:
+            returncode = subprocess.call(
+                submit_kwargs['arguments'][1:-1].split(),
+                stderr=stderr, stdout=stdout)
 
         with open(submit_kwargs['log'], 'w') as f:
             print('''<c>
