@@ -43,10 +43,10 @@ test:
     # Install dependencies
     - yum install -y python-pip lalinference-python
     - pip install --upgrade setuptools
-    - pip install pytest-cov pytest-codestyle
+    - pip install pytest-cov
     # Run tests
     - tar --strip-components 1 -xf *.tar.*
-    - python setup.py test --addopts='-vv --cov --cov-report=html --cov-report=term --codestyle'
+    - python setup.py test --addopts='-vv --cov --cov-report=html --cov-report=term'
   artifacts:
     paths:
       - htmlcov/
@@ -57,11 +57,11 @@ test:python36:
   script:
     # Install dependencies
     - yum install -y python36u-pip
-    - pip3.6 install pytest-runner
+    - pip3.6 install pytest-runner pytest-codestyle
     # Run tests
     - tar --strip-components 1 -xf *.tar.*
     - pip3.6 install .
-    - python3.6 setup.py test --addopts='-vv'
+    - python3.6 setup.py test --addopts='-vv --codestyle'
 
 doc:
   stage: test
