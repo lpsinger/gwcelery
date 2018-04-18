@@ -57,7 +57,7 @@ test:python36:
   script:
     # Install dependencies
     - yum install -y python36u-pip
-    - pip3.6 install pytest-runner pytest-codestyle
+    - LANG="en_US.UTF-8" pip3.6 install pytest-runner pytest-codestyle
     # Run tests
     - tar --strip-components 1 -xf *.tar.*
     - pip3.6 install .
