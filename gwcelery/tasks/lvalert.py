@@ -32,8 +32,8 @@ def filter_messages(xml):
                 yield entry.text
         else:
             log.info(
-                'ignorning because LVAlert node is not in whitelist %r',
-                app.conf['lvalert_node_whitelist'])
+                'ignorning because LVAlert node %r is not in whitelist %r',
+                node.attrib['node'], app.conf['lvalert_node_whitelist'])
 
 
 class LVAlertClient(EventHandler, TimeoutHandler, XMPPFeatureHandler):
