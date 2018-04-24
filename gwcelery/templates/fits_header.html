@@ -1,0 +1,35 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<title>FITS headers for {{ filename }}</title>
+<div class=container>
+<h1>FITS headers for {{ filename }}</h1>
+<table class="table table-condensed table-striped">
+<thead>
+<tr>
+<th>Keyword</th>
+<th>Value</th>
+<th>Comment</th>
+</tr>
+</thead>
+<tbody>
+{% for hdu in hdus %}
+<tr class="info"><td colspan=3>
+<strong>HDU #{{ loop.index0 }} in {{ filename }}</strong>
+</td></tr>
+{% for card in hdu.header.cards %}
+<tr>
+<td style="font-family: monospace">{{ card.keyword }}</td>
+{% if card.keyword in ('COMMENT', 'HISTORY') %}
+<td colspan=2>{{ card.value }}</td>
+{% else %}
+<td style="font-family: monospace">{{ card.value }}</td>
+<td>{{ card.comment }}</td>
+{% endif %}
+</tr>
+{% endfor %}
+{% endfor %}
+</tbody>
+</table>
+</div>
