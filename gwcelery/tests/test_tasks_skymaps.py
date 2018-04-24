@@ -24,7 +24,7 @@ def toy_fits_filecontents():
     bytesio = io.BytesIO()
     table = Table([[1, 2, 3], [4, 5, 6]], names=['foo', 'bar'])
     table.meta['comment'] = 'This is a comment.'
-    table.meta['history'] = 'This is a history line.'
+    table.meta['history'] = 'This is a history line. <This should be escaped.>'
     table.meta['ORDERING'] = 'NESTED'
     with gzip.GzipFile(fileobj=bytesio, mode='wb') as f:
         table.write(f, format='fits')
@@ -38,7 +38,7 @@ def toy_3d_fits_filecontents():
     table = Table(
         [np.arange(12)] * 4, names=['PROB', 'DISTMU', 'DISTSIGMA', 'DISTNORM'])
     table.meta['comment'] = 'This is a comment.'
-    table.meta['history'] = 'This is a history line.'
+    table.meta['history'] = 'This is a history line. <This should be escaped.>'
     table.meta['ORDERING'] = 'NESTED'
     with gzip.GzipFile(fileobj=bytesio, mode='wb') as f:
         table.write(f, format='fits')
