@@ -2,8 +2,12 @@
 import json
 import os
 
+from celery import group
+
 from ..celery import app
 from .bayestar import bayestar
+from .circulars import create_circular
+from . import gracedb
 from .skymaps import annotate_fits
 # from .voevent import send
 
@@ -41,4 +45,9 @@ def dispatch(payload):
             annotate_fits(
                 versioned_filename, filebase, graceid, service, tags).delay()
         elif filename == 'psd.xml.gz':
-            bayestar(graceid, service).delay()
+            group(
+                bayestar(graceid, service),
+                create_circular.s(graceid, service) |
+                gracedb.upload.s('circular.txt', graceid, service,
+                                 'Automated circular')
+            ).delay()
