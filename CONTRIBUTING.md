@@ -5,7 +5,8 @@ Contributors may familiarize themselves with Celery itself by going through the
 
 ## Where new code should go
 
-New code will generally consist of adding [Celery tasks](http://docs.celeryproject.org/en/latest/userguide/tasks.html).
+New code will generally consist of adding
+[Celery tasks](http://docs.celeryproject.org/en/latest/userguide/tasks.html).
 Tasks are organized by functionality into submodules of `gwcelery.tasks`. If
 your new task does not match with one of the existing submodules, please create
 a new submodule.
