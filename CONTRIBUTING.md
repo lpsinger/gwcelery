@@ -13,16 +13,24 @@ a new submodule.
 
 ## Guidelines for tasks
 
--  Tasks should delegate as much functionality as possible to external
-   packages. Ideally, a new task should simply call a function that is provided
-   by an external package such as lalsuite, pycbc, or a new self-contained
-   software project.
+-  **Tasks should be short.** When deciding where a new task should go, start from the following loose rules of thumb:
 
--  Tasks should avoid saving files to disk. Output should be placed directly in
-   GraceDb. Temporary files that are written in `/tmp` are OK but should be
-   cleaned up promptly.
+   1.  If it's less than a screenful of code, and related to functionality in
+       an existing module, then put the code in a new task in that module.
 
--  Dependencies of tasks should be listed in the `install_requires` section in
+   2.  If it's up to a few screenfuls of code, or not related to functionality
+       in an existing module, then try to break it into a few smaller functions
+       or tasks and put it in a new module.
+
+   3.  If it's more than a few screenfuls of code, or adds many additional
+       dependencies, then it should go in a separate package.
+
+-  **Tasks should avoid saving files to disk.** Output should be placed
+   directly in GraceDb. Temporary files that are written in `/tmp` are OK but
+   should be cleaned up promptly.
+
+-  **Dependencies should be installable by pip.** Dependencies of tasks should
+   be listed in the `install_requires` section in
    [`setup.cfg`](https://git.ligo.org/emfollow/gwcelery/blob/master/setup.cfg)
    so that they are installed automatically when GWCelery is installed with
    [`pip`](https://pip.pypa.io/).
