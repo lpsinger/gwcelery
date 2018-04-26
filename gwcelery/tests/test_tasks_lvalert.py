@@ -15,7 +15,18 @@ from ..tasks import lvalert
 from .. import app
 
 
-def test_filter_messages():
+@pytest.fixture
+def blacklist_cbc_gstlal_mdc():
+    new_conf = dict(
+        lvalert_node_whitelist={}
+    )
+    tmp = {key: app.conf[key] for key in new_conf.keys()}
+    app.conf.update(new_conf)
+    yield
+    app.conf.update(tmp)
+
+
+def test_filter_messages(blacklist_cbc_gstlal_mdc):
     xml = XML(pkg_resources.resource_string(__name__, 'data/lvalert_xmpp.xml'))
     messages = list(lvalert.filter_messages(xml))
     assert len(messages) == 0

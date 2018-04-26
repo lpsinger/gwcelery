@@ -31,8 +31,7 @@ def dispatch(payload):
 
     if alert['alert_type'] == 'update' and 'voevent_type' in alert['object']:
         send.delay(alert['object']['text'])
-    elif ((alert['alert_type'] == 'update' and alert.get('file')) and
-          not graceid.startswith('M')):
+    elif alert['alert_type'] == 'update' and alert.get('file'):
         _, versioned_filename = os.path.split(alert['object']['file'])
         filename, _, _ = versioned_filename.rpartition(',')
         filebase, fitsext, _ = filename.rpartition('.fits')

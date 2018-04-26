@@ -6,6 +6,35 @@ except ImportError:
 from ..tasks import gracedb
 
 
+def test_create_event(monkeypatch):
+
+    class MockResponse(object):
+
+        def json(self):
+            return {'graceid': 'T12345'}
+
+    class MockGraceDb(object):
+
+        def __init__(self, service):
+            assert service == 'service'
+
+        def createEvent(self, group, pipeline, filename, search=None,
+                        labels=None, offline=False, filecontents=None,
+                        **kwargs):
+            assert group == 'group'
+            assert pipeline == 'pipeline'
+            assert filename == 'initial.data'
+            assert search == 'search'
+            assert filecontents == 'filecontents'
+            return MockResponse()
+
+    monkeypatch.setattr('ligo.gracedb.rest.GraceDb', MockGraceDb)
+
+    graceid = gracedb.create_event('filecontents', 'search', 'pipeline',
+                                   'group', 'service')
+    assert graceid == 'T12345'
+
+
 @patch('ligo.gracedb.rest.GraceDb', autospec=True)
 def test_create_tag(mock_gracedb):
     # Run function under test.

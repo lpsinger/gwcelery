@@ -4,6 +4,15 @@ from ligo.gracedb import rest
 from ..celery import app
 
 
+@app.task(shared=False)
+def create_event(filecontents, search, pipeline, group, service):
+    client = rest.GraceDb(service)
+    response = client.createEvent(group=group, pipeline=pipeline,
+                                  filename='initial.data', search=search,
+                                  filecontents=filecontents)
+    return response.json()['graceid']
+
+
 @app.task(ignore_result=True, shared=False)
 def create_tag(tag, n, graceid, service):
     rest.GraceDb(service).createTag(graceid, n, tag)
