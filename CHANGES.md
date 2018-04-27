@@ -2,7 +2,8 @@
 
 ## 0.0.2 (unreleased)
 
-- No changes yet.
+- Add `gwcelery condor submit` and related subcommands as shortcuts for
+  managing GWCelery running under HTCondor.
 
 ## 0.0.1 (2017-04-27)
 
