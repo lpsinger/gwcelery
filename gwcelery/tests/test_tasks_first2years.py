@@ -4,6 +4,10 @@ try:
 except ImportError:
     from mock import patch
 
+from glue.ligolw import utils
+from glue.ligolw import lsctables
+from glue.ligolw import table
+from ligo.skymap.io.events.ligolw import ContentHandler
 import pkg_resources
 import pytest
 
@@ -19,17 +23,7 @@ def mock_now():
 
 @patch('lal.GPSTimeNow', mock_now)
 def test_pick_coinc():
-    from glue.ligolw import utils
-    from glue.ligolw import lsctables
-    from glue.ligolw import ligolw
-    from glue.ligolw import table
-
-    @lsctables.use_in
-    class ContentHandler(ligolw.LIGOLWContentHandler):
-        pass
-
     coinc = pick_coinc()
-
     xmldoc, _ = utils.load_fileobj(io.BytesIO(coinc),
                                    contenthandler=ContentHandler)
 

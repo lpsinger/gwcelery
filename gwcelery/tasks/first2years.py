@@ -3,6 +3,11 @@ import io
 
 from celery.task import PeriodicTask
 from celery.utils.log import get_task_logger
+from glue.ligolw import utils
+from glue.ligolw import lsctables
+from glue.ligolw.table import get_table
+import lal
+from ligo.skymap.io.events.ligolw import ContentHandler
 import numpy as np
 import pkg_resources
 
@@ -15,16 +20,9 @@ log = get_task_logger(__name__)
 @app.task(shared=False)
 def pick_coinc():
     """Pick a coincidence from the "First Two Years" paper."""
-    from glue.ligolw import utils
-    from glue.ligolw import lsctables
-    from glue.ligolw.table import get_table
-    import lal
-    from lalinference.bayestar.ligolw import LSCTablesContentHandler
-
     filename = pkg_resources.resource_filename(
         __name__, '../data/first2years/2016/gstlal.xml.gz')
-    xmldoc = utils.load_filename(
-        filename, contenthandler=LSCTablesContentHandler)
+    xmldoc = utils.load_filename(filename, contenthandler=ContentHandler)
     root, = xmldoc.childNodes
 
     # Remove unneeded tables
