@@ -19,17 +19,16 @@ def run_exec(*args):
 
 def submit():
     """Submit all GWCelery jobs to HTCondor (if not already running)."""
-    status = subprocess.check_output(['condor_q', '-totals', '-xml'])
+    status = subprocess.check_output(['condor_q', '-xml'])
     classads = lxml.etree.fromstring(status)
-    njobs = int(classads.find('.//a[@n="MyJobs"]/i').text)
-    if njobs > 0:
+    if classads.find('.//a') is None:
+        run_exec('condor_submit', SUBMIT_FILE)
+    else:
         print('error: GWCelery jobs are already running.\n'
               'You must first remove exist jobs with "gwcelery condor rm".\n'
               'To see the status of those jobs, run "gwcelery condor q".',
               file=sys.stderr)
         sys.exit(1)
-    else:
-        run_exec('condor_submit', SUBMIT_FILE)
 
 
 def rm():
