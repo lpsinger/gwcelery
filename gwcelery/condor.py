@@ -1,5 +1,6 @@
 """Provide subcommand to manage GWCelery through HTCondor."""
 import os
+import shlex
 import subprocess
 import sys
 
@@ -12,7 +13,7 @@ CONSTRAINTS = ('-constraint', 'JobBatchName=="gwcelery"')
 
 
 def run_exec(*args):
-    print(' '.join(args))
+    print(' '.join(shlex.quote(arg) for arg in args))
     os.execvp(args[0], args)
 
 
