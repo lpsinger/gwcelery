@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.3 (unreleased)
+## 0.0.3 (2017-04-27)
 
 - Fix some compatibility issues between the ``gwcelery condor submit``
   subcommand and the format of ``condor_q -totals -xml`` with older versions
