@@ -5,7 +5,7 @@ import os
 from ..celery import app
 from .bayestar import bayestar
 from .skymaps import annotate_fits
-from .voevent import send
+# from .voevent import send
 
 
 @app.task(ignore_result=True, shared=False)
@@ -30,7 +30,8 @@ def dispatch(payload):
     graceid = alert['uid']
 
     if alert['alert_type'] == 'update' and 'voevent_type' in alert['object']:
-        send.delay(alert['object']['text'])
+        # FIXME: temporarily disable sending GCNs as per P. Brady request
+        pass  # send.delay(alert['object']['text'])
     elif alert['alert_type'] == 'update' and alert.get('file'):
         _, versioned_filename = os.path.split(alert['object']['file'])
         filename, _, _ = versioned_filename.rpartition(',')

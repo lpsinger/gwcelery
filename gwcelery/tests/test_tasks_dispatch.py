@@ -1,4 +1,4 @@
-import json
+# import json
 try:
     from unittest.mock import patch
 except ImportError:
@@ -18,7 +18,7 @@ def test_dispatch_voevent(mock_send, mock_bayestar, mock_annotate_fits):
     payload = pkg_resources.resource_string(
         __name__, 'data/lvalert_voevent.json')
 
-    text = json.loads(payload)['object']['text']
+    # text = json.loads(payload)['object']['text']
 
     # Run function under test
     dispatch(payload)
@@ -26,7 +26,8 @@ def test_dispatch_voevent(mock_send, mock_bayestar, mock_annotate_fits):
     # Check that the correct tasks were dispatched.
     mock_annotate_fits.assert_not_called()
     mock_bayestar.assert_not_called()
-    mock_send.assert_called_once_with(text)
+    # FIXME: temporarily disable sending GCNs as per P. Brady request
+    mock_send.assert_not_called()  # mock_send.assert_called_once_with(text)
 
 
 @patch('gwcelery.tasks.dispatch.annotate_fits')
