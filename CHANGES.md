@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.1 (unreleased)
+
+- No changes yet.
+
 ## 0.0.1 (2017-04-27)
 
 - This is the initial release. It provides rapid sky localization with
