@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.3 (unreleased)
+
+- No changes yet.
+
 ## 0.0.2 (2017-04-27)
 
 - Add `gwcelery condor submit` and related subcommands as shortcuts for
