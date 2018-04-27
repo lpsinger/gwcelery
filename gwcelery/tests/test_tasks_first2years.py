@@ -1,8 +1,5 @@
 import io
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
+from unittest.mock import patch
 
 from glue.ligolw import utils
 from glue.ligolw import lsctables
