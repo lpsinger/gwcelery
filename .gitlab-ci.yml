@@ -44,7 +44,7 @@ dependencies:
 
 
 # Build docker container for application itself
-gwcelery:
+docker:
   stage: test
   variables:
     GIT_STRATEGY: none
@@ -120,3 +120,17 @@ pages:
     expire_in: 30 days
   only:
     - master
+
+# Upload package to PyPI
+pypi:
+  stage: deploy
+  image: python:slim
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - pip install twine
+    - twine upload *.tar.* *.whl
+  dependencies:
+    - dist
+  only:
+    - tags@emfollow/gwcelery
