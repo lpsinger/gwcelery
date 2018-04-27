@@ -2,7 +2,9 @@
 
 ## 0.0.3 (unreleased)
 
-- No changes yet.
+- Fix some compatibility issues between the ``gwcelery condor submit``
+  subcommand and the format of ``condor_q -totals -xml`` with older versions
+  of HTCondor.
 
 ## 0.0.2 (2017-04-27)
 
