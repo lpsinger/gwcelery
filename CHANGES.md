@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.2 (unreleased)
+## 0.0.2 (2017-04-27)
 
 - Add `gwcelery condor submit` and related subcommands as shortcuts for
   managing GWCelery running under HTCondor.
