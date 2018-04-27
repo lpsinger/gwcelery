@@ -1,65 +1,114 @@
-image: ligo/builder:el7
-
 stages:
-  - build
+  - dist
+  - dependencies
   - test
   - deploy
 
-cache:
-  paths:
-    - yum-cache
-    - pip-cache
-    - .eggs
+.docker: &docker
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  after_script:
+    - docker build -t $IMAGE_TAG .
+    - docker push $IMAGE_TAG
 
-before_script:
-  # Configure yum cache
-  - sed -i 's/keepcache=0/keepcache=1/' /etc/yum.conf
-  - sed -i 's|cachedir=.*|cachedir='$(pwd)'/yum-cache|' /etc/yum.conf
-  - mkdir -p yum-cache
-  # Configure pip cache
-  - echo [global] >> /etc/pip.conf
-  - echo cache-dir = $(pwd)/pip-cache >> /etc/pip.conf
-  - mkdir -p pip-cache
-
-build:
-  stage: build
+# Build Python packages
+dist:
+  image: python:slim
+  stage: dist
   script:
-    - yum install -y python36u-pip
-    - pip3.6 install wheel
-    - python3.6 setup.py sdist -d . bdist_wheel -d .
+    - python setup.py sdist bdist_wheel
+    - mv *.egg-info/requires.txt requirements.txt
+    - mv dist/* .
   artifacts:
     paths:
-      - '*.tar.*'
+      - '*.tar.gz'
       - '*.whl'
+      - requirements.txt
 
-test:
+# Build Docker container for dependencies
+dependencies:
+  stage: dependencies
   variables:
     GIT_STRATEGY: none
-  tags:
-    - highmem
+    IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_JOB_NAME:$CI_COMMIT_REF_NAME
+  script:
+    - |
+      cat <<EOF > Dockerfile
+      FROM python
+      COPY requirements.txt .
+      RUN pip --no-cache-dir install -r requirements.txt
+      RUN rm -f requirements.txt
+  dependencies:
+    - dist
+  <<: *docker
+
+
+# Build docker container for application itself
+gwcelery:
+  stage: test
+  variables:
+    GIT_STRATEGY: none
+    IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+  script:
+    - |
+      cat <<EOF > Dockerfile
+      FROM $CI_REGISTRY_IMAGE/dependencies:$CI_COMMIT_REF_NAME
+      COPY *.whl .
+      RUN pip install *.whl
+      RUN rm -f *.whl
+      USER nobody
+      WORKDIR /tmp
+      ENTRYPOINT ["gwcelery"]
+      EOF
+  dependencies:
+    - dist
+  <<: *docker
+
+# Run unit tests and coverage measurement
+test:
+  image: $CI_REGISTRY_IMAGE/dependencies:$CI_COMMIT_REF_NAME
   stage: test
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
+  variables:
+    GIT_STRATEGY: none
   script:
-    - yum install -y python36u-pip python36u-devel
     - tar --strip-components 1 -xf *.tar.*
-    - LANG=en_US.UTF-8 pip3.6 install pytest-cov pytest-runner pytest-flake8 .
-    - python3.6 setup.py test --addopts='-vv --cov --cov-report=html --cov-report=term --flake8'
+    - pip install pytest-cov
+    - python setup.py test --addopts='-vv --cov --cov-report=html --cov-report=term'
+  dependencies:
+    - dist
   artifacts:
     paths:
       - htmlcov/
 
-doc:
+lint:
+  image: $CI_REGISTRY_IMAGE/dependencies:$CI_COMMIT_REF_NAME
   stage: test
   variables:
     GIT_STRATEGY: none
   script:
-    - yum install -y python36u-setuptools
     - tar --strip-components 1 -xf *.tar.*
-    - python3.6 setup.py build_sphinx -W
+    - pip install flake8
+    - flake8 --show-source .
+  dependencies:
+    - dist
+
+# Generate documentation
+doc:
+  image: python:slim
+  stage: test
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - tar --strip-components 1 -xf *.tar.*
+    - python setup.py build_sphinx -W
+  dependencies:
+    - dist
   artifacts:
     paths:
       - build/sphinx/html
 
+# Publish docs and coverage
 pages:
   stage: deploy
   script:
