@@ -64,7 +64,7 @@ def plot_allsky(filecontents):
         return pngfile.read()
 
 
-@app.task(shared=False, throws=ValueError)
+@app.task(shared=False, throws=(ValueError,))
 def is_3d_fits_file(filecontents):
     """Determine if a FITS file has distance information. If it does, then
     the file contents are returned. If it does not, then a :obj:`ValueError` is

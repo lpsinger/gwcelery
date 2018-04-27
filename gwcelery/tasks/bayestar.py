@@ -41,7 +41,7 @@ def bayestar(graceid, service):
                  'sky localization complete', 'sky_loc'))
 
 
-@app.task(queue='openmp', shared=False, throws=events.DetectorDisabledError)
+@app.task(queue='openmp', shared=False, throws=(events.DetectorDisabledError,))
 def localize(coinc_psd, graceid, service, filename='bayestar.fits.gz',
              disabled_detectors=None):
     """Do the heavy lifting of generating a rapid localization using BAYESTAR.
