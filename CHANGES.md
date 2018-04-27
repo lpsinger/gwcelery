@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.4 (unreleased)
+
+- No changes yet.
+
 ## 0.0.3 (2017-04-27)
 
 - Fix some compatibility issues between the ``gwcelery condor submit``
