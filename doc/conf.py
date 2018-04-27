@@ -91,7 +91,7 @@ pygments_style = 'sphinx'
 todo_include_todos = False
 
 autodoc_mock_imports = []
-for mod in ['astropy', 'ligo', 'lxml', 'lxml.etree', 'numpy', 'gcn',
+for mod in ['astropy', 'gcn', 'ligo', 'lxml', 'lxml.etree', 'numpy',
             'pyxmpp2']:
     try:
         importlib.import_module(mod)
