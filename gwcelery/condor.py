@@ -21,7 +21,7 @@ def submit():
     """Submit all GWCelery jobs to HTCondor (if not already running)."""
     status = subprocess.check_output(('condor_q', '-xml') + CONSTRAINTS)
     classads = lxml.etree.fromstring(status)
-    if classads.find('.//a') is None:
+    if classads.find('.//c') is None:
         run_exec('condor_submit', SUBMIT_FILE)
     else:
         print('error: GWCelery jobs are already running.\n'
