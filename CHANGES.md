@@ -4,6 +4,8 @@
 
 - FITS history and comment entries are now displayed in a monospaced font.
 
+- Adjust error reporting for some tasks.
+
 - Depend on newer version of ``ligo.skymap``.
 
 ## 0.0.3 (2017-04-27)
