@@ -22,7 +22,7 @@
 <tr>
 <td style="font-family: monospace">{{ card.keyword }}</td>
 {% if card.keyword in ('COMMENT', 'HISTORY') %}
-<td colspan=2>{{ card.value }}</td>
+<td colspan=2 style="font-family: monospace">{{ card.value }}</td>
 {% else %}
 <td style="font-family: monospace">{{ card.value }}</td>
 <td>{{ card.comment }}</td>
