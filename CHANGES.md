@@ -8,6 +8,8 @@
 
 - Depend on newer version of ``ligo.skymap``.
 
+- Add unit tests for the ``gwcelery condor submit`` subcommand.
+
 ## 0.0.3 (2017-04-27)
 
 - Fix some compatibility issues between the ``gwcelery condor submit``
