@@ -4,6 +4,8 @@
 
 - FITS history and comment entries are now displayed in a monospaced font.
 
+- Depend on newer version of ``ligo.skymap``.
+
 ## 0.0.3 (2017-04-27)
 
 - Fix some compatibility issues between the ``gwcelery condor submit``
