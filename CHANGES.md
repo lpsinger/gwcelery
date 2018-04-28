@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.5 (unreleased)
+
+- No changes yet.
+
 ## 0.0.4 (2017-04-28)
 
 - FITS history and comment entries are now displayed in a monospaced font.
