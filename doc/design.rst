@@ -43,7 +43,15 @@ of several processes:
 
     *  :meth:`gwcelery.tasks.gcn.send`
 
-6.  **General-Purpose Worker**
+6   **Superevent Worker**
+
+    A Celery worker that is dedicated to serially process triggers from low
+    latency pipelines and create/modify superevents in *GraceDb*. There is only
+    one task that runs on the Superevent queue:
+
+    *  :meth:`gwcelery.tasks.superevent_manager.superevent_handler`
+
+7.  **General-Purpose Worker**
 
     A Celery worker that accepts all other tasks.
 

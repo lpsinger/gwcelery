@@ -14,7 +14,9 @@ app = Celery(
         gracedb_host='gracedb-dev1.ligo.org',
         gcn_bind_address='',
         gcn_bind_port=5341,
-        gcn_remote_address='128.183.96.236'  # capella2.gsfc.nasa.gov
+        gcn_remote_address='128.183.96.236',  # capella2.gsfc.nasa.gov
+        superevent_d_t_start=10.0,
+        superevent_d_t_end=10.0
     )
 )
 

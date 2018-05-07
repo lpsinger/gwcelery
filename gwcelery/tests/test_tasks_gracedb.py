@@ -78,3 +78,9 @@ def test_upload(mock_gracedb):
     # Check that one file was uploaded.
     mock_gracedb.writeLog.assert_called_once_with(
         'graceid', 'message', 'filename', 'filecontents', 'tags')
+
+
+@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
+def test_get_event(mock_gracedb):
+    gracedb.get_event('G123456')
+    mock_gracedb.event.assert_called_once_with('G123456')

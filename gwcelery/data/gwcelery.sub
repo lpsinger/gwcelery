@@ -36,6 +36,13 @@ log = gwcelery-openmp-worker.log
 output = gwcelery-openmp-worker.out
 queue
 
+arguments = "gwcelery worker -l info -n gwcelery-superevent-worker -Q superevent -c 1"
+description = gwcelery-superevent-worker
+error = gwcelery-superevent-worker.err
+log = gwcelery-superevent-worker.log
+output = gwcelery-superevent-worker.out
+queue
+
 arguments = "gwcelery worker -l info -n gwcelery-voevent-worker -Q voevent -c 1"
 description = gwcelery-voevent-worker
 error = gwcelery-voevent-worker.err
