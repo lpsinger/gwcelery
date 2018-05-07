@@ -83,7 +83,7 @@ class LVAlertClient(EventHandler, TimeoutHandler, XMPPFeatureHandler):
         log.info('Reached end of main loop')
 
 
-@app.task(base=EternalTask, bind=True, ignore_result=True, shared=False)
+@app.task(base=EternalTask, bind=True, shared=False)
 def listen(self):
     """Listen for LVAlert messages forever. Each message is processed by
     passing it to :func:`~gwcelery.tasks.dispatch.dispatch`."""

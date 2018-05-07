@@ -139,7 +139,7 @@ def handle(payload, root):
     validate.delay(payload)
 
 
-@app.task(base=EternalProcessTask, ignore_result=True, shared=False)
+@app.task(base=EternalProcessTask, shared=False)
 def listen():
     """Listen for public GCNs and validate the contents of public LIGO/Virgo
     GCNs by passing their contents to :obj:`validate`."""
