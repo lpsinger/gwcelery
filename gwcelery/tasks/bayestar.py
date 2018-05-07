@@ -5,6 +5,7 @@ import os
 import tempfile
 
 from celery import group
+from celery.exceptions import Ignore
 from ligo.gracedb.logging import GraceDbLogHandler
 from ligo.gracedb import rest
 from ligo.skymap import bayestar as _bayestar
@@ -41,7 +42,7 @@ def bayestar(graceid, service):
                  'sky localization complete', 'sky_loc'))
 
 
-@app.task(queue='openmp', shared=False, throws=(events.DetectorDisabledError,))
+@app.task(queue='openmp', shared=False)
 def localize(coinc_psd, graceid, service, filename='bayestar.fits.gz',
              disabled_detectors=None):
     """Do the heavy lifting of generating a rapid localization using BAYESTAR.
@@ -81,6 +82,8 @@ def localize(coinc_psd, graceid, service, filename='bayestar.fits.gz',
             fitspath = os.path.join(tmpdir, filename)
             fits.write_sky_map(fitspath, skymap, nest=True)
             return open(fitspath, 'rb').read()
+    except events.DetectorDisabledError:
+        raise Ignore()
     except:  # noqa
         # Produce log message for any otherwise uncaught exception
         log.exception("sky localization failed")

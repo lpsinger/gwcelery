@@ -6,6 +6,8 @@
   that we don't accidentally interact with production servers during the unit
   tests.
 
+- Ignore BAYESTAR jobs that raise a `DetectorDisabled` error. These exceptions are used for control flow and do not constitute a real error. Ignoring these jobs avoids polluting logs and the Flower monitor.
+
 ## 0.0.4 (2017-04-28)
 
 - FITS history and comment entries are now displayed in a monospaced font.
