@@ -98,7 +98,7 @@ def pick_coinc():
     return coinc_xml.getvalue()
 
 
-@app.task(base=PeriodicTask, ignore_result=True, shared=False, run_every=720)
+@app.task(base=PeriodicTask, shared=False, run_every=720)
 def upload_event(service='https://gracedb-playground.ligo.org/api/'):
     """Upload a random event from the "First Two Years" paper."""
     coinc = pick_coinc()
