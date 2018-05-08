@@ -86,6 +86,7 @@ else:
     resolves_invalid_urls, reason='your DNS server is resolving invalid '
     'hostnames (maybe a home internet provider that provides a default '
     'landing page?)')
+@pytest.mark.enable_socket
 def test_lvalert_constructor(netrc_lvalert):
     """Test that we at least attempt to connect to a non-existent URL."""
     with pytest.raises(DNSError):

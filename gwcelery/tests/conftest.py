@@ -1,4 +1,5 @@
 import pytest
+from pytest_socket import disable_socket
 
 from .. import app
 
@@ -19,3 +20,7 @@ def celeryconf():
     app.conf.update(new_conf)
     yield
     app.conf.update(tmp)
+
+
+def pytest_runtest_setup():
+    disable_socket()

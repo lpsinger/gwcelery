@@ -35,6 +35,7 @@ def send_thread():
         send.conn = None
 
 
+@pytest.mark.enable_socket
 def test_send_connection_closed(send_thread):
     """Test sending a VOEvent over loopback to a connection that
     is immediately closed."""
@@ -44,6 +45,7 @@ def test_send_connection_closed(send_thread):
     sock.close()
 
 
+@pytest.mark.enable_socket
 def test_send(send_thread):
     """Test sending a VOEvent over loopback."""
     # First, simulate connecting from a disallowed IP address.
@@ -114,6 +116,7 @@ def fake_gcn(celeryconf, monkeypatch):
     yield root
 
 
+@pytest.mark.enable_socket
 def test_listen(monkeypatch):
     """Test that the listen task would correctly launch gcn.listen()."""
     mock_gcn_listen = MagicMock()
