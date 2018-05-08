@@ -2,7 +2,9 @@
 
 ## 0.0.5 (unreleased)
 
-- No changes yet.
+- Disable socket access during most unit tests. This adds some extra assurance
+  that we don't accidentally interact with production servers during the unit
+  tests.
 
 ## 0.0.4 (2017-04-28)
 
