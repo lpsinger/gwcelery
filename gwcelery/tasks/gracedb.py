@@ -30,7 +30,7 @@ def get_log(graceid, service):
 
 
 @app.task(ignore_result=True, shared=False)
-def upload(filecontents, filename, graceid, service, message, tags):
+def upload(filecontents, filename, graceid, service, message, tags=()):
     """Upload a file to GraceDB."""
     rest.GraceDb(service).writeLog(
         graceid, message, filename, filecontents, tags)
