@@ -43,7 +43,8 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
-    'sphinx.ext.viewcode']
+    'sphinx.ext.viewcode',
+    'sphinx_celery.setting_crossref']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
