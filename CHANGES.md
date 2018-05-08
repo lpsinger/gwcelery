@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.5 (unreleased)
+## 0.0.5 (2018-05-08)
 
 - Disable socket access during most unit tests. This adds some extra assurance
   that we don't accidentally interact with production servers during the unit
