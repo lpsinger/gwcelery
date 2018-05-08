@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.6 (unreleased)
+
+- No changes yet.
+
 ## 0.0.5 (2018-05-08)
 
 - Disable socket access during most unit tests. This adds some extra assurance
