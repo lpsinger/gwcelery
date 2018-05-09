@@ -26,6 +26,10 @@ a new submodule.
    3.  If it's more than a few screenfuls of code, or adds many additional
        dependencies, then it should go in a separate package.
 
+   See also the note on [granularity](http://docs.celeryproject.org/en/latest/userguide/tasks.html#granularity)
+   in the Celery manual's "[Tips and Best Practices](http://docs.celeryproject.org/en/latest/userguide/tasks.html#tips-and-best-practices)"
+   section.
+
 -  **Tasks should avoid saving files to disk.** Output should be placed
    directly in GraceDb. Temporary files that are written in `/tmp` are OK but
    should be cleaned up promptly.
