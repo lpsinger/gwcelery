@@ -13,7 +13,8 @@ a new submodule.
 
 ## Guidelines for tasks
 
--  **Tasks should be short.** When deciding where a new task should go, start from the following loose rules of thumb:
+-  **Tasks should be short.** When deciding where a new task should go, start
+   from the following loose rules of thumb:
 
    1.  If it's less than a screenful of code, and related to functionality in
        an existing module, then put the code in a new task in that module.
