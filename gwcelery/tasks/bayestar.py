@@ -28,6 +28,22 @@ def bayestar(graceid, service):
 
     Internally, all of the heavy lifting is done by :meth:`localize`.
     """
+    # FIXME: should call like this:
+    #
+    #     group(
+    #         download.s('coinc.xml', ...),
+    #         download.s('psd.xml.gz', ...)
+    #     ) | group(
+    #         localize.s(...) |
+    #         upload.s(...) |
+    #         ...,
+    #         localize.s(...) |
+    #         upload.s(...) |
+    #         ...,
+    #     )
+    #
+    # but groups do not preserve order. See:
+    # https://github.com/celery/celery/issues/3781
     coinc = download('coinc.xml', graceid, service)
     psd = download('psd.xml.gz', graceid, service)
     coinc_psd = (coinc, psd)
