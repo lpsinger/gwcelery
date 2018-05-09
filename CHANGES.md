@@ -2,7 +2,7 @@
 
 ## 0.0.6 (unreleased)
 
-- No changes yet.
+- Generate GCN Circular drafts using ``ligo-followup-advocate``.
 
 ## 0.0.5 (2018-05-08)
 
