@@ -34,6 +34,9 @@ a new submodule.
    directly in GraceDb. Temporary files that are written in `/tmp` are OK but
    should be cleaned up promptly.
 
+   See also the Celery manual's notes on [data locality](http://docs.celeryproject.org/en/latest/userguide/tasks.html#data-locality)
+   and [state](http://docs.celeryproject.org/en/latest/userguide/tasks.html#state).
+
 -  **Dependencies should be installable by pip.** Dependencies of tasks should
    be listed in the `install_requires` section in
    [`setup.cfg`](https://git.ligo.org/emfollow/gwcelery/blob/master/setup.cfg)
