@@ -4,6 +4,10 @@
 
 -   Process gstlal-spiir events.
 
+-   Create combined LVC-Fermi skymap in case of coincident triggers and
+    upload to GraceDb superevent page. Also upload the original external
+    trigger sky map to the external trigger GraceDb page.
+
 ## 0.0.21 (2018-07-10)
 
 -   MBTA events in GraceDb leave the ``search`` field blank. Work around this

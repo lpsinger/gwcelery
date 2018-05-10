@@ -1,0 +1,18 @@
+[
+ {
+  "comment": "Original Data",
+  "file_version": 0,
+  "tag_names": [
+   ],
+  "file": "https://gracedb.ligo.org/api/events/E12345/files/nasa.gsfc.gcn_Fermi%23GBM_Gnd_Pos_2017-08-17T12:41:06.47_524666471_57-431.xml,0",
+  "created": "2017-08-17T12:41:45+00:00",
+  "self": "https://gracedb.ligo.org/api/events/E12345/log/1",
+  "issuer": {
+   "username": "gracedb.processor",
+   "display_name": " GraceDB Processor"
+  },
+  "filename": "nasa.gsfc.gcn_Fermi#GBM_Gnd_Pos_2017-08-17T12:41:06.47_524666471_57-431.xml",
+  "tags": "https://gracedb.ligo.org/api/events/E12345/log/1/tag/",
+  "N": 1
+ }
+]

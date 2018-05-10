@@ -1,0 +1,21 @@
+{
+  "superevent_id": "S170817",
+  "created": "2018-06-22 17:26:30 UTC",
+  "submitter": "emfollow",
+  "preferred_event": "T12345",
+  "t_start": 1187008872.45,
+  "t_0": 1187008882.45,
+  "t_end": 1187008892.45,
+  "gw_events": ["T12345"],
+  "em_events": ["E12345"],
+  "labels": ["EM_COINC"],
+  "links": {
+    "files": "https://gracedb-dev1.ligo.org/api/superevents/S170817/files/",
+    "logs": "https://gracedb-dev1.ligo.org/api/superevents/S170817/logs/",
+    "self": "https://gracedb-dev1.ligo.org/api/superevents/S170817/",
+    "labels": "https://gracedb-dev1.ligo.org/api/superevents/S170817/labels/",
+    "voevents": "https://gracedb-dev1.ligo.org/api/superevents/S170817/voevents/",
+    "emobservations": "https://gracedb-dev1.ligo.org/api/superevents/S170817/emobservations/",
+    "events": "https://gracedb-dev1.ligo.org/api/superevents/S170817/events/"
+  }
+}

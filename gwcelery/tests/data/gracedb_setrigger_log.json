@@ -1,0 +1,13 @@
+[
+  {
+    "self": "https://gracedb-dev1.ligo.org/api/superevents/S170717/logs/8/",
+    "N": 8, 
+    "comment": "BAYESTAR localization copied from T12345",
+    "created": "2018-07-10 14:54:06 UTC",
+    "issuer": "min-a.cho@LIGO.ORG",
+    "filename": "bayestar.fits.gz",
+    "file_version": 0,
+    "tag_names": ["sky_loc", "lvem"],
+    "file": "https://gracedb-dev1.ligo.org/api/superevents/S170817/files/bayestar.fits.gz,0"
+  }
+]

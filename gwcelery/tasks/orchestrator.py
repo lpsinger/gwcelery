@@ -14,6 +14,7 @@ from . import detchar
 from . import em_bright
 from . import gcn
 from . import gracedb
+from . import ligo_fermi_skymaps
 from . import lvalert
 from . import raven
 from . import skymaps
@@ -130,6 +131,9 @@ def handle_superevents_externaltriggers(alert):
 
     if alert['alert_type'] == 'new':
         raven.coincidence_search(graceid, alert['object']).delay()
+    elif alert['alert_type'] == 'label':
+        if 'EM_COINC' in alert['description'] and graceid.startswith('S'):
+            ligo_fermi_skymaps.create_combined_skymap(graceid).delay()
 
 
 @app.task(autoretry_for=(HTTPError, URLError, TimeoutError),

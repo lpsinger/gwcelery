@@ -136,3 +136,12 @@ def test_handle_superevent_creation(mock_raven_coincidence_search):
     # Check that the correct tasks were dispatched.
     mock_raven_coincidence_search.assert_called_once_with('S180616h',
                                                           alert['object'])
+
+
+@patch('gwcelery.tasks.ligo_fermi_skymaps.create_combined_skymap')
+def test_handle_superevent_emcoinc_label(mock_create_combined_skymap):
+    """Test dispatch of an LVAlert message for a superevent EM_COINC label
+    application."""
+    alert = resource_json(__name__, 'data/lvalert_superevent_label.json')
+    orchestrator.handle_superevents_externaltriggers(alert)
+    mock_create_combined_skymap.assert_called_once_with('S180616h')
