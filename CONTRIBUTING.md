@@ -3,6 +3,21 @@
 Contributors may familiarize themselves with Celery itself by going through the
 [First Steps with Celery](http://docs.celeryproject.org/en/latest/getting-started/first-steps-with-celery.html) tutorial.
 
+## Development model
+
+GWCelery operates on a fork-and-merge development model (see
+[GitLab basics](https://git.ligo.org/help/gitlab-basics/README.md) for an
+introduction).
+
+To contribute to GWCelery development, follow these steps:
+
+1.  [Create a personal fork of GWCelery](https://git.ligo.org/emfollow/gwcelery/forks/new).
+2.  Make your changes on a branch.
+3.  Open a merge request.
+
+Note that GWCelery uses
+[fast-forward merges](https://git.ligo.org/help/user/project/merge_requests/fast_forward_merge.md).
+
 ## Where new code should go
 
 New code will generally consist of adding
@@ -43,25 +58,26 @@ a new submodule.
    so that they are installed automatically when GWCelery is installed with
    [`pip`](https://pip.pypa.io/).
 
-## Development model
-
-GWCelery operates on a fork-and-merge development model (see
-[GitLab basics](https://git.ligo.org/help/gitlab-basics/README.md) for an
-introduction).
+## Unit tests
 
 Unit tests and code coverage measurement are run automatically for every branch
 and for every merge request. New code contributions must have 100% test
-coverage. Modifications to existing code must not decrease test coverage.
+coverage. Modifications to existing code must not decrease test coverage. To
+run the unit tests and measure code coverage, run the following commands in the
+top directory of your local source checkout:
+
+    $ pip install pytest-cov
+    $ python setup.py test --addopts='--cov --cov-report html'
+
+This will save a coverage report that you can view in a web browser as
+`htmlcov/index.html`.
+
+## Code style
 
 Code should be written in the
 [PEP 8 style](https://www.python.org/dev/peps/pep-0008/) and must pass linting
-by [Flake8](http://flake8.pycqa.org/en/latest/).
+by [Flake8](http://flake8.pycqa.org/en/latest/). To check code style, run the
+following commands in the top of your source directory:
 
-To contribute to GWCelery development, follow these steps:
-
-1.  [Create a personal fork of GWCelery](https://git.ligo.org/emfollow/gwcelery/forks/new).
-2.  Make your changes on a branch.
-3.  Open a merge request.
-
-Note that GWCelery uses
-[fast-forward merges](https://git.ligo.org/help/user/project/merge_requests/fast_forward_merge.md).
+    $ pip install flake8 pep8-naming
+    $ flake8 --show-source .

@@ -4,6 +4,12 @@
 
 - Generate GCN Circular drafts using ``ligo-followup-advocate``.
 
+- In the continuous integration pipeline, validate PEP8 naming conventions
+  using [``pep8-naming``](https://pypi.org/project/pep8-naming/).
+
+- Add instructions for measuring test coverage and running the linter locally
+  to the contributing guide.
+
 ## 0.0.5 (2018-05-08)
 
 - Disable socket access during most unit tests. This adds some extra assurance
