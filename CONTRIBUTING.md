@@ -81,3 +81,8 @@ following commands in the top of your source directory:
 
     $ pip install flake8 pep8-naming
     $ flake8 --show-source .
+
+## Documentation
+
+Documentation strings should be written in the
+[Numpydoc style](http://numpydoc.readthedocs.io/).
