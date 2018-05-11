@@ -5,7 +5,7 @@ __all__ = ('NamedTemporaryFile',)
 
 
 @contextmanager
-def NamedTemporaryFile(content=None, **kwargs):
+def NamedTemporaryFile(content=None, **kwargs):  # noqa: N802
     """Convenience wrapper for :func:`tempfile.NamedTemporaryFile` that writes
     some data to the file before handing it to the calling code.
 

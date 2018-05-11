@@ -88,7 +88,7 @@ lint:
     GIT_STRATEGY: none
   script:
     - tar --strip-components 1 -xf *.tar.*
-    - pip install flake8
+    - pip install flake8 pep8-naming
     - flake8 --show-source .
   dependencies:
     - dist

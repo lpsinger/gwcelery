@@ -15,9 +15,9 @@ def test_create_event(monkeypatch):
         def __init__(self, service):
             assert service == 'service'
 
-        def createEvent(self, group, pipeline, filename, search=None,
-                        labels=None, offline=False, filecontents=None,
-                        **kwargs):
+        def createEvent(self, group, pipeline, filename,  # noqa: N802
+                        search=None, labels=None, offline=False,
+                        filecontents=None, **kwargs):
             assert group == 'group'
             assert pipeline == 'pipeline'
             assert filename == 'initial.data'
@@ -60,7 +60,7 @@ def test_download(mock_gracedb):
 
 def test_get_log(monkeypatch):
 
-    class logs(object):
+    class logs(object):  # noqa: N801
 
         def json(self):
             return {'log': 'stuff'}
