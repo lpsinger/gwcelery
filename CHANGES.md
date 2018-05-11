@@ -2,7 +2,8 @@
 
 ## 0.0.6 (unreleased)
 
-- Generate GCN Circular drafts using ``ligo-followup-advocate``.
+- Generate GCN Circular drafts using
+  [``ligo-followup-advocate``](https://git.ligo.org/emfollow/ligo-followup-advocate).
 
 - In the continuous integration pipeline, validate PEP8 naming conventions
   using [``pep8-naming``](https://pypi.org/project/pep8-naming/).
