@@ -1,75 +1,18 @@
-"""Basic single-endpoint VOEvent broker."""
-import socket
-import struct
+"""Validate LIGO/Virgo GCN notices to make sure that their contents match the
+original VOEvent notices that we sent."""
 from urllib.parse import urlparse, urlunparse
 
-from celery import Task
-from celery.utils.log import get_task_logger
-from celery_eternal import EternalProcessTask
 import gcn
 import lxml.etree
 
-from ..celery import app
-from ..tasks import gracedb
-
-# Logging
-log = get_task_logger(__name__)
-
-_size_struct = struct.Struct("!I")
+from .. import gracedb
+from . import handler
 
 
-class SendTask(Task):
-
-    def __init__(self):
-        self.conn = None
-
-
-@app.task(queue='voevent', base=SendTask, ignore_result=True, bind=True,
-          autoretry_for=(socket.error,), default_retry_delay=0.001,
-          retry_backoff=True, retry_kwargs=dict(max_retries=None),
-          shared=False)
-def send(self, payload):
-    """Task to send VOEvents. Supports only a single client."""
-    payload = payload.encode('utf-8')
-    nbytes = len(payload)
-
-    conn = self.conn
-    self.conn = None
-
-    if conn is None:
-        log.info('creating new socket')
-        sock = socket.socket(socket.AF_INET)
-        try:
-            sock.bind((app.conf['gcn_bind_address'],
-                       app.conf['gcn_bind_port']))
-            sock.listen(0)
-            while True:
-                conn, (addr, _) = sock.accept()
-                if addr == app.conf['gcn_remote_address']:
-                    break
-                else:
-                    log.error('connection denied to remote host %s', addr)
-        finally:
-            sock.close()
-        conn.setsockopt(socket.SOL_SOCKET, socket.SO_LINGER,
-                        struct.pack('ii', 1, 0))
-        conn.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 1)
-
-    log.info('sending payload of %d bytes', nbytes)
-    try:
-        conn.sendall(_size_struct.pack(nbytes) + payload)
-    except:  # noqa
-        try:
-            conn.shutdown(socket.SHUT_RDWR)
-        except:  # noqa
-            log.exception('failed to shut down socket')
-        conn.close()
-        raise
-    self.conn = conn
-
-
-@app.task(ignore_result=True, shared=False)
-def validate(payload):
+@handler([gcn.NoticeType.LVC_PRELIMINARY,
+          gcn.NoticeType.LVC_INITIAL,
+          gcn.NoticeType.LVC_UPDATE])
+def validate_voevent(payload):
     """Check that the contents of a public LIGO/Virgo GCN matches the original
     VOEvent in GraceDB."""
     root = lxml.etree.fromstring(payload)
@@ -128,19 +71,3 @@ def validate(payload):
 
     # Tag the VOEvent to indicate that it was received correctly
     gracedb.create_tag('gcn_received', log_number, graceid, service)
-
-
-@gcn.include_notice_types(
-    gcn.notice_types.LVC_PRELIMINARY,
-    gcn.notice_types.LVC_INITIAL,
-    gcn.notice_types.LVC_UPDATE
-)
-def handle(payload, root):
-    validate.delay(payload)
-
-
-@app.task(base=EternalProcessTask, shared=False)
-def listen():
-    """Listen for public GCNs and validate the contents of public LIGO/Virgo
-    GCNs by passing their contents to :obj:`validate`."""
-    gcn.listen(handler=handle)

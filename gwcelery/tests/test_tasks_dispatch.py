@@ -10,7 +10,7 @@ from ..tasks.dispatch import dispatch
 @patch('gwcelery.tasks.dispatch.create_circular')
 @patch('gwcelery.tasks.dispatch.annotate_fits')
 @patch('gwcelery.tasks.dispatch.bayestar')
-@patch('gwcelery.tasks.voevent.send.delay')
+@patch('gwcelery.tasks.gcn.send.delay')
 def test_dispatch_voevent(mock_send, mock_bayestar, mock_annotate_fits,
                           mock_create_circular):
     """Test dispatch of a VOEvent message."""

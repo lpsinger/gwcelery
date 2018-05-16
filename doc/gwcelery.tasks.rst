@@ -18,6 +18,16 @@ gwcelery\.tasks\.dispatch module
 
 .. automodule:: gwcelery.tasks.dispatch
 
+gwcelery\.tasks\.gcn module
+---------------------------
+
+.. automodule:: gwcelery.tasks.gcn
+
+gwcelery\.tasks\.gcn.validate module
+------------------------------------
+
+.. automodule:: gwcelery.tasks.gcn.validate
+
 gwcelery\.tasks\.gracedb module
 -------------------------------
 
@@ -32,8 +42,3 @@ gwcelery\.tasks\.skymaps module
 -------------------------------
 
 .. automodule:: gwcelery.tasks.skymaps
-
-gwcelery\.tasks\.voevent module
--------------------------------
-
-.. automodule:: gwcelery.tasks.voevent
