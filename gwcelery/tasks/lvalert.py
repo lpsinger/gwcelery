@@ -17,7 +17,6 @@ from pyxmpp2.streamevents import DisconnectedEvent
 from ..celery import app
 from .dispatch import dispatch
 
-# Logging
 log = get_task_logger(__name__)
 
 ns = {'ns1': 'http://jabber.org/protocol/pubsub#event',
