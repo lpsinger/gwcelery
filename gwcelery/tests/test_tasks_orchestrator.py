@@ -4,7 +4,7 @@ from unittest.mock import patch
 from celery import group
 import pkg_resources
 
-from ..tasks.dispatch import dispatch
+from ..tasks.orchestrator import dispatch
 
 
 @patch('gwcelery.tasks.circulars.create_circular')

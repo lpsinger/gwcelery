@@ -15,7 +15,7 @@ from pyxmpp2.settings import XMPPSettings
 from pyxmpp2.streamevents import DisconnectedEvent
 
 from ..celery import app
-from .dispatch import dispatch
+from .core import DispatchHandler
 
 log = get_task_logger(__name__)
 
@@ -23,16 +23,34 @@ ns = {'ns1': 'http://jabber.org/protocol/pubsub#event',
       'ns2': 'http://jabber.org/protocol/pubsub'}
 
 
-def filter_messages(xml):
+handler = DispatchHandler()
+"""Function decorator to register a handler callback for specified LVAlert
+message types. The decorated function is turned into a Celery task, which will
+be automatically called whenever a matching LVAlert message is received.
+
+Parameters
+----------
+\*keys
+    List of LVAlert message types to accept
+\*\*kwargs
+    Additional keyword arguments for :meth:`celery.Celery.task`.
+
+Examples
+--------
+Declare a new handler like this::
+
+    @lvalert.handler('cbc_gstlal',
+                     'cbc_pycbc',
+                     'cbc_mbta')
+    def handle_cbc(alert_content):
+        # do work here...
+"""
+
+
+def _handle_messages(xml):
     for node in xml.iterfind('.//ns1:items[@node]', ns):
-        log.info('LVAlert node: %r', node.attrib['node'])
-        if node.attrib['node'] in app.conf['lvalert_node_whitelist']:
-            for entry in node.iterfind('.//ns2:entry', ns):
-                yield entry.text
-        else:
-            log.info(
-                'ignorning because LVAlert node %r is not in whitelist %r',
-                node.attrib['node'], app.conf['lvalert_node_whitelist'])
+        for entry in node.iterfind('.//ns2:entry', ns):
+            handler.dispatch(node.attrib['node'], entry.text)
 
 
 class _LVAlertClient(EventHandler, TimeoutHandler, XMPPFeatureHandler):
@@ -63,9 +81,7 @@ class _LVAlertClient(EventHandler, TimeoutHandler, XMPPFeatureHandler):
     @message_stanza_handler()
     def __handle_message(self, stanza):
         log.info('Got message')
-        for text in filter_messages(stanza.as_xml()):
-            log.debug('Dispatching: %s', text)
-            dispatch.s(text).delay()
+        _handle_messages(stanza.as_xml())
         return True
 
     @timeout_handler(1, recurring=True)
@@ -84,6 +100,7 @@ class _LVAlertClient(EventHandler, TimeoutHandler, XMPPFeatureHandler):
 
 @app.task(base=EternalTask, bind=True, shared=False)
 def listen(self):
-    """Listen for LVAlert messages forever. Each message is processed by
-    passing it to :func:`~gwcelery.tasks.dispatch.dispatch`."""
+    """Listen for LVAlert messages forever. LVAlert messages are dispatched
+    asynchronously to tasks that have been registered with
+    :meth:`gwcelery.tasks.lvalert.handler`."""
     _LVAlertClient(app.conf['lvalert_host'], self).run()

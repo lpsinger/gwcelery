@@ -13,11 +13,6 @@ gwcelery\.tasks\.condor module
 
 .. automodule:: gwcelery.tasks.condor
 
-gwcelery\.tasks\.dispatch module
---------------------------------
-
-.. automodule:: gwcelery.tasks.dispatch
-
 gwcelery\.tasks\.gcn module
 ---------------------------
 
@@ -37,6 +32,11 @@ gwcelery\.tasks\.lvalert module
 -------------------------------
 
 .. automodule:: gwcelery.tasks.lvalert
+
+gwcelery\.tasks\.orchestrator module
+------------------------------------
+
+.. automodule:: gwcelery.tasks.orchestrator
 
 gwcelery\.tasks\.skymaps module
 -------------------------------

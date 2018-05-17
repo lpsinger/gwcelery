@@ -61,6 +61,49 @@ are subclasses of :class:`celery_eternal.EternalTask` or
 Both of these run inside the general-purpose worker process described above,
 and are automatically started (and restarted as necessary) by Celery Beat.
 
+Handlers
+--------
+
+A recurring pattern in GWCelery is that an eternal task listens continuously to
+a remote connection, receives packets of data over that connection, and
+dispatches further handling to other tasks based on packet type.
+
+A decorator is provided to register a function as a Celery task and also plug
+it in as a handler for one or more packet types. This pattern is used for both
+GCN notices and LVAlert message handlers.
+
+GCN notices
+~~~~~~~~~~~
+
+GCN notice handler tasks are declared using the
+:meth:`gwcelery.tasks.gcn.handler` decorator::
+
+    import lxml.etree
+    from gwcelery.tasks import gcn
+
+    @gcn.handler(gcn.NoticeType.FERMI_GBM_GND_POS,
+                 gcn.NoticeType.FERMI_GBM_FIN_POS)
+    def handle_fermi(payload):
+        root = lxml.etree.fromstring(payload)
+        # do work here...
+
+LVAlert messages
+~~~~~~~~~~~~~~~~
+
+LVAlert message handler tasks are declared using the
+:meth:`gwcelery.tasks.lvalert.handler` decorator::
+
+    import json
+    from gwcelery.tasks import lvalert
+
+    @lvalert.handler('cbc_gstlal',
+                     'cbc_pycbc',
+                     'cbc_mbta')
+    def handle_cbc(alert_content):
+        alert = json.loads(alert_content)
+        # do work here...
+
+
 .. _`Choosing a Broker`: http://docs.celeryproject.org/en/latest/getting-started/first-steps-with-celery.html#choosing-a-broker
 .. _Redis: http://docs.celeryproject.org/en/latest/getting-started/brokers/redis.html#broker-redis
 .. _`Periodic Tasks`: http://docs.celeryproject.org/en/latest/userguide/periodic-tasks.html

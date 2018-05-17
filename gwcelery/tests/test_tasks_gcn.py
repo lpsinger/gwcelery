@@ -11,7 +11,7 @@ import lxml.etree
 import pkg_resources
 import pytest
 
-from ..tasks.gcn import _handle, handler, listen, send
+from ..tasks.gcn import handler, listen, send
 from .. import app
 
 # Test data
@@ -105,29 +105,35 @@ def fake_gcn(notice_type):
 def test_unrecognized_notice_type(caplog):
     """Test handling an unrecognized (enum not defined) notice type."""
     caplog.set_level(logging.WARNING)
-    _handle(*fake_gcn(10000))
+    handler.dispatch(*fake_gcn(10000))
     record, = caplog.records
-    assert record.message == 'ignoring unrecognized GCN notice type: 10000'
+    assert record.message == 'ignoring unrecognized key: 10000'
 
 
 def test_unregistered_notice_type(caplog):
     """Test handling an unregistered notice type."""
     caplog.set_level(logging.WARNING)
-    _handle(*fake_gcn(gcn.NoticeType.SWIFT_UVOT_POS_NACK))
+    handler.dispatch(*fake_gcn(gcn.NoticeType.SWIFT_UVOT_POS_NACK))
     record, = caplog.records
-    assert record.message == ('ignoring unrecognized GCN notice type: '
+    assert record.message == ('ignoring unrecognized key: '
                               '<NoticeType.SWIFT_UVOT_POS_NACK: 89>')
 
 
-def test_registered_notice_type(monkeypatch):
-    monkeypatch.setattr('gwcelery.tasks.gcn._handlers', {})
+@pytest.fixture
+def reset_handlers():
+    old_handler = dict(handler)
+    handler.clear()
+    yield
+    handler.update(old_handler)
 
+
+def test_registered_notice_type(reset_handlers):
     @handler(gcn.NoticeType.AGILE_POINTDIR, gcn.NoticeType.AGILE_TRANS)
     def agile_handler(payload):
         pass
 
     with patch.object(agile_handler, 'run') as mock_run:
-        _handle(*fake_gcn(gcn.NoticeType.SWIFT_UVOT_POS_NACK))
+        handler.dispatch(*fake_gcn(gcn.NoticeType.SWIFT_UVOT_POS_NACK))
         mock_run.assert_not_called()
-        _handle(*fake_gcn(gcn.NoticeType.AGILE_POINTDIR))
+        handler.dispatch(*fake_gcn(gcn.NoticeType.AGILE_POINTDIR))
         mock_run.assert_called_once()

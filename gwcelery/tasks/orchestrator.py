@@ -4,15 +4,19 @@ import os
 
 from celery import group
 
-from ..celery import app
 from . import bayestar
 from . import circulars
 from . import gracedb
+from . import lvalert
 from . import skymaps
 # from .voevent import send
 
 
-@app.task(ignore_result=True, shared=False)
+@lvalert.handler('cbc_gstlal',
+                 'cbc_pycbc',
+                 'cbc_mbtaonline',
+                 'cbc_gstlal_mdc',
+                 shared=False)
 def dispatch(payload):
     """Parse an LVAlert message and dispatch it to other tasks."""
     # Parse JSON payload

@@ -16,6 +16,7 @@ from gcn import get_notice_type, NoticeType
 import gcn
 
 from ...celery import app
+from ..core import DispatchHandler
 
 log = get_task_logger(__name__)
 
@@ -72,62 +73,47 @@ def send(self, payload):
     self.conn = conn
 
 
-_handlers = {}
+class _VOEventDispatchHandler(DispatchHandler):
 
+    def process_args(self, payload, root):
+        notice_type = get_notice_type(root)
 
-def handler(*notice_types, **kwargs):
-    """Function decorator to register a handler callback for specified GCN
-    notice types. The decorated function is turned into a Celery task, which
-    will be automatically called whenever a matching GCN notice is received.
-
-    Parameters
-    ----------
-    \*notice_types
-        List of GCN notice types to accept
-    \*\*kwargs
-        Additional keyword arguments for :meth:`celery.Celery.task`.
-
-    Examples
-    --------
-    Declare a new handler like this::
-
-        @handler(gcn.NoticeType.FERMI_GBM_GND_POS,
-                 gcn.NoticeType.FERMI_GBM_FIN_POS)
-        def handle_fermi(payload):
-            root = lxml.etree.fromstring(payload)
-            # do work here...
-    """
-
-    def wrap(f):
-        f = app.task(ignore_result=True, **kwargs)(f)
-        for notice_type in notice_types:
-            _handlers.setdefault(notice_type, []).append(f)
-        return f
-
-    return wrap
-
-
-def _handle(payload, root):
-    notice_type = get_notice_type(root)
-
-    try:
-        handlers = _handlers[notice_type]
-    except KeyError:
+        # Just cast to enum for prettier log messages
         try:
-            # Try to cast the notice type to an enum value to make
-            # the log message more informative.
             notice_type = NoticeType(notice_type)
         except ValueError:
-            # If it's invalid, that's OK; we only want it to make log
-            # messages prettier anyway and we can live with an int.
             pass
-        log.warn('ignoring unrecognized GCN notice type: %r', notice_type)
-    else:
-        for h in handlers:
-            h.s(payload).delay()
+
+        return notice_type, (payload,), {}
+
+
+handler = _VOEventDispatchHandler()
+"""Function decorator to register a handler callback for specified GCN notice
+types. The decorated function is turned into a Celery task, which will be
+automatically called whenever a matching GCN notice is received.
+
+Parameters
+----------
+\*keys
+    List of GCN notice types to accept
+\*\*kwargs
+    Additional keyword arguments for :meth:`celery.Celery.task`.
+
+Examples
+--------
+Declare a new handler like this::
+
+    @gcn.handler(gcn.NoticeType.FERMI_GBM_GND_POS,
+                 gcn.NoticeType.FERMI_GBM_FIN_POS)
+    def handle_fermi(payload):
+        root = lxml.etree.fromstring(payload)
+        # do work here...
+"""
 
 
 @app.task(base=EternalProcessTask, shared=False)
 def listen():
-    """Long-running GCN listener task."""
-    gcn.listen(handler=_handle)
+    """Listen to GCN notices forever. GCN notices are dispatched asynchronously
+    to tasks that have been registered with
+    :meth:`gwcelery.tasks.gcn.handler`."""
+    gcn.listen(handler=handler.dispatch)

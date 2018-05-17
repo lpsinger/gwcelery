@@ -8,41 +8,6 @@ from pyxmpp2.exceptions import DNSError
 import pytest
 
 from ..tasks import lvalert
-from .. import app
-
-
-@pytest.fixture
-def blacklist_cbc_gstlal_mdc():
-    new_conf = dict(
-        lvalert_node_whitelist={}
-    )
-    tmp = {key: app.conf[key] for key in new_conf.keys()}
-    app.conf.update(new_conf)
-    yield
-    app.conf.update(tmp)
-
-
-def test_filter_messages(blacklist_cbc_gstlal_mdc):
-    xml = XML(pkg_resources.resource_string(__name__, 'data/lvalert_xmpp.xml'))
-    messages = list(lvalert.filter_messages(xml))
-    assert len(messages) == 0
-
-
-@pytest.fixture
-def whitelist_cbc_gstlal_mdc():
-    new_conf = dict(
-        lvalert_node_whitelist={'cbc_gstlal_mdc'}
-    )
-    tmp = {key: app.conf[key] for key in new_conf.keys()}
-    app.conf.update(new_conf)
-    yield
-    app.conf.update(tmp)
-
-
-def test_filter_messages_whitelist(whitelist_cbc_gstlal_mdc):
-    xml = XML(pkg_resources.resource_string(__name__, 'data/lvalert_xmpp.xml'))
-    messages = list(lvalert.filter_messages(xml))
-    assert len(messages) == 1
 
 
 @pytest.fixture
@@ -91,3 +56,11 @@ def test_lvalert_constructor(netrc_lvalert):
     """Test that we at least attempt to connect to a non-existent URL."""
     with pytest.raises(DNSError):
         lvalert.listen()
+
+
+@patch('gwcelery.tasks.orchestrator.dispatch.run')
+def test_handle_messages(mock_dispatch, netrc_lvalert):
+    xml = XML(pkg_resources.resource_string(__name__, 'data/lvalert_xmpp.xml'))
+    json = xml.find('.//ns2:entry', lvalert.ns).text
+    lvalert._handle_messages(xml)
+    mock_dispatch.assert_called_once_with(json)
