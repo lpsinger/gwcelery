@@ -42,7 +42,7 @@ A complete deployment of GWCelery consists of the following processes:
     A Celery worker that is dedicated to sending VOEvents (has to be dedicated
     for technical reasons).
 
-    There is only one such task: :meth:`gwcelery.tasks.voevent.send`.
+    There is only one such task: :meth:`gwcelery.tasks.gcn.send`.
 
 Eternal Tasks
 -------------
