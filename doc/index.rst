@@ -16,6 +16,7 @@ GWCelery is a simple and reliable package for annotating and orchestrating LIGO/
    monitoring
    htcondor
    contributing
+   design
    gwcelery
 
 .. toctree::
