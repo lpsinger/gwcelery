@@ -1,13 +1,20 @@
 """All Celery tasks are declared in submodules of this module."""
-import importlib
-import os
-import pkgutil
 
-# Import all submodules of this module
-modules = vars()
-for _, module, _ in pkgutil.iter_modules([os.path.dirname(__file__)]):
-    modules[module] = importlib.import_module('.' + module, __name__)
-    del module
 
-# Clean up
-del importlib, modules, os, pkgutil
+def _import_all_submodules(module=vars()):
+    import importlib
+    import pkgutil
+
+    try:
+        path = module['__path__']
+    except KeyError:
+        # not a package, does not have submodules
+        return
+    for _, name, _ in pkgutil.iter_modules(path):
+        submodule = importlib.import_module('.' + name, module['__name__'])
+        module[name] = submodule
+        _import_all_submodules(vars(submodule))
+
+
+# Recursively import all submodules.
+_import_all_submodules()
