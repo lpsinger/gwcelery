@@ -35,7 +35,7 @@ def filter_messages(xml):
                 node.attrib['node'], app.conf['lvalert_node_whitelist'])
 
 
-class LVAlertClient(EventHandler, TimeoutHandler, XMPPFeatureHandler):
+class _LVAlertClient(EventHandler, TimeoutHandler, XMPPFeatureHandler):
 
     def __init__(self, server, task=None):
         # Look up username and password from the netrc file.
@@ -86,4 +86,4 @@ class LVAlertClient(EventHandler, TimeoutHandler, XMPPFeatureHandler):
 def listen(self):
     """Listen for LVAlert messages forever. Each message is processed by
     passing it to :func:`~gwcelery.tasks.dispatch.dispatch`."""
-    LVAlertClient(app.conf['lvalert_host'], self).run()
+    _LVAlertClient(app.conf['lvalert_host'], self).run()

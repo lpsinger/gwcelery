@@ -21,13 +21,13 @@ log = get_task_logger(__name__)
 _size_struct = struct.Struct("!I")
 
 
-class SendTask(Task):
+class _SendTask(Task):
 
     def __init__(self):
         self.conn = None
 
 
-@app.task(queue='voevent', base=SendTask, ignore_result=True, bind=True,
+@app.task(queue='voevent', base=_SendTask, ignore_result=True, bind=True,
           autoretry_for=(socket.error,), default_retry_delay=0.001,
           retry_backoff=True, retry_kwargs=dict(max_retries=None),
           shared=False)
