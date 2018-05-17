@@ -6,6 +6,7 @@ from ..celery import app
 
 @app.task(shared=False)
 def create_event(filecontents, search, pipeline, group, service):
+    """Create an event in GraceDb."""
     client = rest.GraceDb(service)
     response = client.createEvent(group=group, pipeline=pipeline,
                                   filename='initial.data', search=search,
@@ -15,6 +16,7 @@ def create_event(filecontents, search, pipeline, group, service):
 
 @app.task(ignore_result=True, shared=False)
 def create_tag(tag, n, graceid, service):
+    """Create a tag in GraceDb."""
     rest.GraceDb(service).createTag(graceid, n, tag)
 
 
@@ -26,6 +28,7 @@ def download(filename, graceid, service):
 
 @app.task(shared=False)
 def get_log(graceid, service):
+    """Get all log messages for an event in GraceDb."""
     return rest.GraceDb(service).logs(graceid).json()['log']
 
 
