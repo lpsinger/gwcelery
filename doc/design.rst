@@ -44,7 +44,7 @@ A complete deployment of GWCelery consists of the following processes:
 
     There is only one such task: :meth:`gwcelery.tasks.gcn.send`.
 
-Eternal Tasks
+Eternal tasks
 -------------
 
 GWCelery has a couple long-running tasks that do not return because they have
