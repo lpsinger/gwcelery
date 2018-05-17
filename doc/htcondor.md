@@ -29,9 +29,13 @@ rebooted, because the jobs will persist in the HTCondor queue.
 
 ## Shortcuts
 
-The commands `gwcelery condor submit`, `gwcelery condor rm`,
-`gwcelery condor q`, `gwcelery condor hold`, and `gwcelery condor release` are
-provided as shortcuts for the above operations.
+The following commands are provided as shortcuts for the above operations:
+
+    $ gwcelery condor submit
+    $ gwcelery condor rm
+    $ gwcelery condor q
+    $ gwcelery condor hold
+    $ gwcelery condor release
 
 [HTCondor]: https://research.cs.wisc.edu/htcondor/
 [`gwcelery.sub`]: https://git.ligo.org/emfollow/gwcelery/blob/master/gwcelery/data/gwcelery.sub
