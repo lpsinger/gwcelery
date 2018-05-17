@@ -203,7 +203,8 @@ texinfo_documents = [
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
-    'celery': ('http://celery.readthedocs.org/en/latest/', None)
+    'celery': ('http://celery.readthedocs.org/en/latest/', None),
+    'celery_eternal': ('http://celery-eternal.readthedocs.io/en/latest/', None)
 }
 
 
