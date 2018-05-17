@@ -4,7 +4,9 @@ Design and anatomy of GWCelery
 Processes
 ---------
 
-A complete deployment of GWCelery consists of the following processes:
+A complete deployment of GWCelery (whether launched from the
+:doc:`shell <quickstart>` or from :doc:`HTCondor <htcondor>`) consists
+of several processes:
 
 1.  **Message Broker**
 
@@ -22,35 +24,36 @@ A complete deployment of GWCelery consists of the following processes:
 
     You can optionally run Flower_, a web monitoring console for Celery.
 
-4.  **General-Purpose Worker**
-
-    A Celery worker that accepts most kinds of tasks.
-
-5.  **OpenMP Worker**
+4.  **OpenMP Worker**
 
     A Celery worker that has been configured to accept only computationally
     intensive tasks that use OpenMP parallelism. To route a task to the OpenMP
     worker, pass the keyword argument ``queue='openmp'`` to the ``@app.task``
     decorator when you declare it.
 
-    There are currently two such tasks:
-    :meth:`gwcelery.tasks.bayestar.localize` and
-    :meth:`gwcelery.tasks.skymaps.plot_volume`.
+    There are two tasks that run in the OpenMP queue:
 
-6.  **VOEvent Queue**
+    *  :meth:`gwcelery.tasks.bayestar.localize`
+    *  :meth:`gwcelery.tasks.skymaps.plot_volume`
+
+5.  **VOEvent Worker**
 
     A Celery worker that is dedicated to sending VOEvents (has to be dedicated
-    for technical reasons).
+    for technical reasons). There is only task that runs in the VOEvent queue:
 
-    There is only one such task: :meth:`gwcelery.tasks.gcn.send`.
+    *  :meth:`gwcelery.tasks.gcn.send`
+
+6.  **General-Purpose Worker**
+
+    A Celery worker that accepts all other tasks.
 
 Eternal tasks
 -------------
 
 GWCelery has a couple long-running tasks that do not return because they have
 to keep open a persistent connection with some external service. These tasks
-are subclasses of :class:`~celery_eternal.EternalTask` or
-:class:`~celery_eternal.EternalProcessTask`.
+are subclasses of :class:`celery_eternal.EternalTask` or
+:class:`celery_eternal.EternalProcessTask`.
 
 *  :meth:`gwcelery.tasks.gcn.listen`
 *  :meth:`gwcelery.tasks.lvalert.listen`
