@@ -98,7 +98,7 @@ def handler(*notice_types, **kwargs):
     """
 
     def wrap(f):
-        f = app.task(**kwargs)(f)
+        f = app.task(ignore_result=True, **kwargs)(f)
         for notice_type in notice_types:
             _handlers.setdefault(notice_type, []).append(f)
         return f
