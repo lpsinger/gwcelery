@@ -122,7 +122,7 @@ def test_unregistered_notice_type(caplog):
 def test_registered_notice_type(monkeypatch):
     monkeypatch.setattr('gwcelery.tasks.gcn._handlers', {})
 
-    @handler([gcn.NoticeType.AGILE_POINTDIR, gcn.NoticeType.AGILE_TRANS])
+    @handler(gcn.NoticeType.AGILE_POINTDIR, gcn.NoticeType.AGILE_TRANS)
     def agile_handler(payload):
         pass
 

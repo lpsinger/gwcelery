@@ -74,20 +74,15 @@ def send(self, payload):
 _handlers = {}
 
 
-def handler(notice_types, *args, **kwargs):
+def handler(*notice_types, **kwargs):
     """Function decorator to register a handler callback for specified GCN
     notice types. The decorated function is turned into a Celery task, which
     will be automatically called whenever a matching GCN notice is received.
 
     Parameters
     ----------
-    notice_type : list
+    \*notice_types
         List of GCN notice types to accept
-
-    Other Parameters
-    ----------------
-    \*args
-        Additional arguments for `celery.Celery.task`.
     \*\*kwargs
         Additional keyword arguments for `celery.Celery.task`.
 
@@ -95,15 +90,15 @@ def handler(notice_types, *args, **kwargs):
     --------
     Declare a new handler like this::
 
-        @handler([gcn.NoticeType.FERMI_GBM_GND_POS,
-                  gcn.NoticeType.FERMI_GBM_FIN_POS])
+        @handler(gcn.NoticeType.FERMI_GBM_GND_POS,
+                 gcn.NoticeType.FERMI_GBM_FIN_POS)
         def handle_fermi(payload):
             root = lxml.etree.fromstring(payload)
             # do work here...
     """
 
     def wrap(f):
-        f = app.task(*args, **kwargs)(f)
+        f = app.task(**kwargs)(f)
         for notice_type in notice_types:
             _handlers.setdefault(notice_type, []).append(f)
         return f
