@@ -37,8 +37,9 @@ def test_localize_bad_psd(mock_gracedb):
             (coinc, psd), 'G211117', 'https://gracedb.invalid/api/')
 
 
+@pytest.mark.parametrize('disabled_detectors', [None, ['L1']])
 @patch('ligo.gracedb.rest.GraceDb', autospec=True)
-def test_localize(mock_gracedb):
+def test_localize(mock_gracedb, disabled_detectors):
     """Test running BAYESTAR on G211117"""
     # Test data
     coinc = pkg_resources.resource_string(__name__, 'data/coinc.xml')
@@ -46,23 +47,8 @@ def test_localize(mock_gracedb):
 
     # Run function under test
     fitscontent = localize(
-        (coinc, psd), 'G211117', 'https://gracedb.invalid/api/')
-
-    # FIXME: should do some sanity checks of the sky map here
-    assert fitscontent
-
-
-@patch('ligo.gracedb.rest.GraceDb', autospec=True)
-def test_localize_detector_disabled(mock_gracedb):
-    """Test running BAYESTAR on G211117 with L1 disabled"""
-    # Test data
-    coinc = pkg_resources.resource_string(__name__, 'data/coinc.xml')
-    psd = pkg_resources.resource_string(__name__, 'data/psd.xml.gz')
-
-    # Run function under test
-    fitscontent = localize(
         (coinc, psd), 'G211117', 'https://gracedb.invalid/api/',
-        disabled_detectors=['L1'])
+        disabled_detectors=disabled_detectors)
 
     # FIXME: should do some sanity checks of the sky map here
     assert fitscontent
