@@ -58,7 +58,8 @@ are subclasses of :class:`celery_eternal.EternalTask` or
 *  :meth:`gwcelery.tasks.gcn.listen`
 *  :meth:`gwcelery.tasks.lvalert.listen`
 
-Both of these run inside the general-purpose worker process described above.
+Both of these run inside the general-purpose worker process described above,
+and are automatically started (and restarted as necessary) by Celery Beat.
 
 .. _`Choosing a Broker`: http://docs.celeryproject.org/en/latest/getting-started/first-steps-with-celery.html#choosing-a-broker
 .. _Redis: http://docs.celeryproject.org/en/latest/getting-started/brokers/redis.html#broker-redis
