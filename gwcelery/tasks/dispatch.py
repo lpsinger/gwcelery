@@ -5,10 +5,10 @@ import os
 from celery import group
 
 from ..celery import app
-from .bayestar import bayestar
-from .circulars import create_circular
+from . import bayestar
+from . import circulars
 from . import gracedb
-from .skymaps import annotate_fits
+from . import skymaps
 # from .voevent import send
 
 
@@ -42,12 +42,12 @@ def dispatch(payload):
         filebase, fitsext, _ = filename.rpartition('.fits')
         tags = alert['object']['tag_names']
         if fitsext:
-            annotate_fits(
+            skymaps.annotate_fits(
                 versioned_filename, filebase, graceid, service, tags).delay()
         elif filename == 'psd.xml.gz':
             group(
-                bayestar(graceid, service),
-                create_circular.s(graceid, service) |
+                bayestar.bayestar(graceid, service),
+                circulars.create_circular.s(graceid, service) |
                 gracedb.upload.s('circular.txt', graceid, service,
                                  'Automated circular')
             ).delay()

@@ -7,9 +7,9 @@ import pkg_resources
 from ..tasks.dispatch import dispatch
 
 
-@patch('gwcelery.tasks.dispatch.create_circular')
-@patch('gwcelery.tasks.dispatch.annotate_fits')
-@patch('gwcelery.tasks.dispatch.bayestar')
+@patch('gwcelery.tasks.circulars.create_circular')
+@patch('gwcelery.tasks.skymaps.annotate_fits')
+@patch('gwcelery.tasks.bayestar.bayestar')
 @patch('gwcelery.tasks.gcn.send.delay')
 def test_dispatch_voevent(mock_send, mock_bayestar, mock_annotate_fits,
                           mock_create_circular):
@@ -31,9 +31,9 @@ def test_dispatch_voevent(mock_send, mock_bayestar, mock_annotate_fits,
     mock_send.assert_not_called()  # mock_send.assert_called_once_with(text)
 
 
-@patch('gwcelery.tasks.dispatch.create_circular')
-@patch('gwcelery.tasks.dispatch.annotate_fits')
-@patch('gwcelery.tasks.dispatch.bayestar')
+@patch('gwcelery.tasks.circulars.create_circular')
+@patch('gwcelery.tasks.skymaps.annotate_fits')
+@patch('gwcelery.tasks.bayestar.bayestar')
 def test_dispatch_label(mock_bayestar, mock_annotate_fits,
                         mock_create_circular):
     """Test dispatch of a label message that should be ignored."""
@@ -50,9 +50,9 @@ def test_dispatch_label(mock_bayestar, mock_annotate_fits,
     mock_create_circular.assert_not_called()
 
 
-@patch('gwcelery.tasks.dispatch.create_circular')
-@patch('gwcelery.tasks.dispatch.annotate_fits')
-@patch('gwcelery.tasks.dispatch.bayestar')
+@patch('gwcelery.tasks.circulars.create_circular')
+@patch('gwcelery.tasks.skymaps.annotate_fits')
+@patch('gwcelery.tasks.bayestar.bayestar')
 def test_dispatch_ignored(mock_bayestar, mock_annotate_fits,
                           mock_create_circular):
     """Test dispatch of a detchar status message that should be ignored."""
@@ -70,8 +70,8 @@ def test_dispatch_ignored(mock_bayestar, mock_annotate_fits,
 
 
 @patch('gwcelery.tasks.gracedb.upload.run')
-@patch('gwcelery.tasks.dispatch.create_circular.run')
-@patch('gwcelery.tasks.dispatch.bayestar', return_value=group())
+@patch('gwcelery.tasks.circulars.create_circular.run')
+@patch('gwcelery.tasks.bayestar.bayestar', return_value=group())
 def test_dispatch_psd(mock_bayestar, mock_create_circular, mock_upload):
     """Test dispatch of an LVAlert message for a PSD upload."""
     # Test LVAlert payload.
@@ -88,7 +88,7 @@ def test_dispatch_psd(mock_bayestar, mock_create_circular, mock_upload):
     mock_upload.assert_called_once()
 
 
-@patch('gwcelery.tasks.dispatch.annotate_fits')
+@patch('gwcelery.tasks.skymaps.annotate_fits')
 def test_dispatch_fits(mock_annotate_fits):
     """Test dispatch of an LVAlert message for a PSD upload."""
     # Test LVAlert payload.
