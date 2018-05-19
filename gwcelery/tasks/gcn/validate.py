@@ -2,17 +2,16 @@
 original VOEvent notices that we sent."""
 from urllib.parse import urlparse, urlunparse
 
-import gcn
 import lxml.etree
 
+from .. import gcn
 from .. import gracedb
-from . import handler
 
 
-@handler(gcn.NoticeType.LVC_PRELIMINARY,
-         gcn.NoticeType.LVC_INITIAL,
-         gcn.NoticeType.LVC_UPDATE,
-         shared=False)
+@gcn.handler(gcn.NoticeType.LVC_PRELIMINARY,
+             gcn.NoticeType.LVC_INITIAL,
+             gcn.NoticeType.LVC_UPDATE,
+             shared=False)
 def validate_voevent(payload):
     """Check that the contents of a public LIGO/Virgo GCN matches the original
     VOEvent in GraceDB."""

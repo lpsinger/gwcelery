@@ -12,6 +12,7 @@ import struct
 from celery import Task
 from celery.utils.log import get_task_logger
 from celery_eternal import EternalProcessTask
+from gcn import get_notice_type, NoticeType
 import gcn
 
 from ...celery import app
@@ -107,7 +108,7 @@ def handler(*notice_types, **kwargs):
 
 
 def _handle(payload, root):
-    notice_type = gcn.get_notice_type(root)
+    notice_type = get_notice_type(root)
 
     try:
         handlers = _handlers[notice_type]
@@ -115,7 +116,7 @@ def _handle(payload, root):
         try:
             # Try to cast the notice type to an enum value to make
             # the log message more informative.
-            notice_type = gcn.NoticeType(notice_type)
+            notice_type = NoticeType(notice_type)
         except ValueError:
             # If it's invalid, that's OK; we only want it to make log
             # messages prettier anyway and we can live with an int.
