@@ -84,7 +84,7 @@ def handler(*notice_types, **kwargs):
     \*notice_types
         List of GCN notice types to accept
     \*\*kwargs
-        Additional keyword arguments for `celery.Celery.task`.
+        Additional keyword arguments for :meth:`celery.Celery.task`.
 
     Examples
     --------
