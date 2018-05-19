@@ -48,7 +48,9 @@ def mock_bayestar(*args, **kwargs):
                         'DISTNORM': np.ones(12)})
 
 
-@pytest.mark.parametrize('disabled_detectors', [None, ['L1']])
+@pytest.mark.parametrize('disabled_detectors', [None,
+                                                ['H1', 'L1'],
+                                                ['H1', 'L1', 'V1']])
 @patch('ligo.gracedb.rest.GraceDb', autospec=True)
 @patch('ligo.skymap.bayestar.localize', mock_bayestar)
 def test_localize(mock_gracedb, disabled_detectors):
