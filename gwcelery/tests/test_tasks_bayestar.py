@@ -1,6 +1,8 @@
 from unittest.mock import patch
 from xml.sax import SAXParseException
 
+from astropy import table
+import numpy as np
 import pkg_resources
 import pytest
 
@@ -38,8 +40,17 @@ def test_localize_bad_psd(mock_gracedb):
             (coinc, psd), 'G211117', 'https://gracedb.invalid/api/')
 
 
+def mock_bayestar(*args, **kwargs):
+    return table.Table({'UNIQ': np.arange(4, 16, dtype=np.uint64),
+                        'PROBDENSITY': np.ones(12),
+                        'DISTMU': np.ones(12),
+                        'DISTSIGMA': np.ones(12),
+                        'DISTNORM': np.ones(12)})
+
+
 @pytest.mark.parametrize('disabled_detectors', [None, ['L1']])
 @patch('ligo.gracedb.rest.GraceDb', autospec=True)
+@patch('ligo.skymap.bayestar.localize', mock_bayestar)
 def test_localize(mock_gracedb, disabled_detectors):
     """Test running BAYESTAR on G211117"""
     # Test data
