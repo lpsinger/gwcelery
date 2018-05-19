@@ -1,7 +1,8 @@
 from unittest.mock import patch
+from xml.sax import SAXParseException
+
 import pkg_resources
 import pytest
-from xml.sax import SAXParseException
 
 from ..tasks.bayestar import bayestar, localize
 
