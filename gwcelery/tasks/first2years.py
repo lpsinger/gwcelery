@@ -99,13 +99,13 @@ def pick_coinc():
 
 
 @app.task(base=PeriodicTask, shared=False, run_every=720)
-def upload_event(service='https://gracedb-playground.ligo.org/api/'):
+def upload_event():
     """Upload a random event from the "First Two Years" paper."""
     coinc = pick_coinc()
     psd = pkg_resources.resource_filename(
         __name__, '../data/first2years/2016/psd.xml.gz')
     with open(psd, 'rb') as f:
         psd = f.read()
-    graceid = gracedb.create_event(coinc, 'MDC', 'gstlal', 'CBC', service)
+    graceid = gracedb.create_event(coinc, 'MDC', 'gstlal', 'CBC')
     log.info('uploaded as %s', graceid)
-    gracedb.upload(psd, 'psd.xml.gz', graceid, service, 'Noise PSD', ['psd'])
+    gracedb.upload(psd, 'psd.xml.gz', graceid, 'Noise PSD', ['psd'])

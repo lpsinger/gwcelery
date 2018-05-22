@@ -5,6 +5,6 @@ from ..celery import app
 
 
 @app.task(shared=False)
-def create_circular(graceid, service):
+def create_circular(graceid):
     """Create and return circular txt."""
-    return ligo.followup_advocate.compose(graceid, service=service)
+    return ligo.followup_advocate.compose(graceid)

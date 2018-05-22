@@ -11,6 +11,7 @@ app = Celery(
         result_serializer='pickle',
         task_serializer='pickle',
         lvalert_host='lvalert-test.cgca.uwm.edu',
+        gracedb_host='gracedb-test.ligo.org',
         gcn_bind_address='',
         gcn_bind_port=5341,
         gcn_remote_address='128.183.96.236'  # capella2.gsfc.nasa.gov

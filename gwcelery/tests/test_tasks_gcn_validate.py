@@ -16,23 +16,20 @@ voevent = lvalert['object']['text']
 @pytest.fixture
 def fake_gcn(celeryconf, monkeypatch):
 
-    def mock_download(filename, graceid, service):
+    def mock_download(filename, graceid):
         assert filename == 'G298048-1-Initial.xml'
         assert graceid == 'G298048'
-        assert service == 'https://gracedb.ligo.org/api/'
         return pkg_resources.resource_string(__name__, 'data/' + filename)
 
-    def mock_get_log(graceid, service):
+    def mock_get_log(graceid):
         assert graceid == 'G298048'
-        assert service == 'https://gracedb.ligo.org/api/'
         return json.loads(
             pkg_resources.resource_string(__name__, 'data/G298048_log.json'))
 
-    def mock_create_tag(tag, n, graceid, service):
+    def mock_create_tag(tag, n, graceid):
         assert tag == 'gcn_received'
         assert n == 532
         assert graceid == 'G298048'
-        assert service == 'https://gracedb.ligo.org/api/'
 
     monkeypatch.setattr(
         'gwcelery.tasks.gracedb.download', mock_download)
@@ -69,10 +66,9 @@ def test_validate_voevent_mismatched_param(fake_gcn):
 def test_validate_voevent_unexpected_param(fake_gcn, monkeypatch):
     """Test that we correctly detect unexpected paremeters in GCNs."""
 
-    def mock_download(filename, graceid, service):
+    def mock_download(filename, graceid):
         assert filename == 'G298048-1-Initial.xml'
         assert graceid == 'G298048'
-        assert service == 'https://gracedb.ligo.org/api/'
         payload = pkg_resources.resource_string(__name__, 'data/' + filename)
         root = lxml.etree.fromstring(payload)
         elem = root.find(".//Group[@type='GW_SKYMAP']")

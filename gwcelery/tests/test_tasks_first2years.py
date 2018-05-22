@@ -43,9 +43,6 @@ def test_upload_event(mock_upload, mock_create_event):
         psd = f.read()
 
     upload_event()
-    mock_create_event.assert_called_once_with(
-        coinc, 'MDC', 'gstlal', 'CBC',
-        'https://gracedb-playground.ligo.org/api/')
+    mock_create_event.assert_called_once_with(coinc, 'MDC', 'gstlal', 'CBC')
     mock_upload.assert_called_once_with(
-        psd, 'psd.xml.gz', 'M1234', 'https://gracedb-playground.ligo.org/api/',
-        'Noise PSD', ['psd'])
+        psd, 'psd.xml.gz', 'M1234', 'Noise PSD', ['psd'])

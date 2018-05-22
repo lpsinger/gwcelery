@@ -22,18 +22,6 @@ def dispatch(payload):
     # Parse JSON payload
     alert = json.loads(payload)
 
-    # Determine GraceDB service URL
-    try:
-        try:
-            self_link = alert['object']['links']['self']
-        except KeyError:
-            self_link = alert['object']['self']
-    except KeyError:
-        # Cannot deduce API link
-        return
-    base, api, _ = self_link.partition('/api/')
-    service = base + api
-
     # Determine GraceDB ID
     graceid = alert['uid']
 
@@ -47,11 +35,11 @@ def dispatch(payload):
         tags = alert['object']['tag_names']
         if fitsext:
             skymaps.annotate_fits(
-                versioned_filename, filebase, graceid, service, tags).delay()
+                versioned_filename, filebase, graceid, tags).delay()
         elif filename == 'psd.xml.gz':
             group(
-                bayestar.bayestar(graceid, service),
-                circulars.create_circular.s(graceid, service) |
-                gracedb.upload.s('circular.txt', graceid, service,
+                bayestar.bayestar(graceid),
+                circulars.create_circular.s(graceid) |
+                gracedb.upload.s('circular.txt', graceid,
                                  'Automated circular')
             ).delay()

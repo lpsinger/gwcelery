@@ -1,5 +1,7 @@
 from unittest.mock import patch
 
+from ligo.gracedb import rest
+
 from ..tasks import gracedb
 
 
@@ -12,9 +14,6 @@ def test_create_event(monkeypatch):
 
     class MockGraceDb(object):
 
-        def __init__(self, service):
-            assert service == 'service'
-
         def createEvent(self, group, pipeline, filename,  # noqa: N802
                         search=None, labels=None, offline=False,
                         filecontents=None, **kwargs):
@@ -25,37 +24,29 @@ def test_create_event(monkeypatch):
             assert filecontents == 'filecontents'
             return MockResponse()
 
-    monkeypatch.setattr('ligo.gracedb.rest.GraceDb', MockGraceDb)
+    monkeypatch.setattr('gwcelery.tasks.gracedb.client', MockGraceDb())
 
     graceid = gracedb.create_event('filecontents', 'search', 'pipeline',
-                                   'group', 'service')
+                                   'group')
     assert graceid == 'T12345'
 
 
-@patch('ligo.gracedb.rest.GraceDb', autospec=True)
+@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
 def test_create_tag(mock_gracedb):
     # Run function under test.
-    gracedb.create_tag('tag', 'n', 'graceid', 'service')
-
-    # Check that GraceDb was instantiated once.
-    mock_gracedb.assert_called_once_with('service')
+    gracedb.create_tag('tag', 'n', 'graceid')
 
     # Check that one file was downloaded.
-    mock_gracedb.return_value.createTag.assert_called_once_with(
-        'graceid', 'n', 'tag')
+    mock_gracedb.createTag.assert_called_once_with('graceid', 'n', 'tag')
 
 
-@patch('ligo.gracedb.rest.GraceDb', autospec=True)
+@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
 def test_download(mock_gracedb):
     # Run function under test.
-    gracedb.download('filename', 'graceid', 'service')
-
-    # Check that GraceDb was instantiated once.
-    mock_gracedb.assert_called_once_with('service')
+    gracedb.download('filename', 'graceid')
 
     # Check that one file was downloaded.
-    mock_gracedb.return_value.files.assert_called_once_with(
-        'graceid', 'filename', raw=True)
+    mock_gracedb.files.assert_called_once_with('graceid', 'filename', raw=True)
 
 
 def test_get_log(monkeypatch):
@@ -67,30 +58,23 @@ def test_get_log(monkeypatch):
 
     class MockGraceDb(object):
 
-        def __init__(self, service):
-            assert service == 'service'
-
         def logs(self, graceid):
             assert graceid == 'graceid'
             return logs()
 
-    monkeypatch.setattr('ligo.gracedb.rest.GraceDb', MockGraceDb)
+    monkeypatch.setattr('gwcelery.tasks.gracedb.client', MockGraceDb())
 
     # Run function under test.
-    ret = gracedb.get_log('graceid', 'service')
+    ret = gracedb.get_log('graceid')
 
     assert ret == 'stuff'
 
 
-@patch('ligo.gracedb.rest.GraceDb', autospec=True)
+@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
 def test_upload(mock_gracedb):
     # Run function under test.
-    gracedb.upload(
-        'filecontents', 'filename', 'graceid', 'service', 'message', 'tags')
-
-    # Check that GraceDb was instantiated once.
-    mock_gracedb.assert_called_once_with('service')
+    gracedb.upload('filecontents', 'filename', 'graceid', 'message', 'tags')
 
     # Check that one file was uploaded.
-    mock_gracedb.return_value.writeLog.assert_called_once_with(
+    mock_gracedb.writeLog.assert_called_once_with(
         'graceid', 'message', 'filename', 'filecontents', 'tags')

@@ -3,6 +3,7 @@ import io
 from unittest.mock import patch
 
 from astropy.table import Table
+from ligo.gracedb import rest
 import numpy as np
 import pkg_resources
 import pytest
@@ -42,22 +43,19 @@ def toy_3d_fits_filecontents():
     return bytesio.getvalue()
 
 
-def mock_download(filename, graceid, service):
-    if (
-            filename == 'test.fits,0' and graceid == 'T12345' and
-            service == 'https://gracedb.invalid/api/'):
+def mock_download(filename, graceid):
+    if filename == 'test.fits,0' and graceid == 'T12345':
         return toy_3d_fits_filecontents()
     else:
         raise RuntimeError('Asked for unexpected FITS file')
 
 
 @patch('gwcelery.tasks.gracedb.download.run', mock_download)
-@patch('ligo.gracedb.rest.GraceDb', autospec=True)
+@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
 @patch('ligo.skymap.tool.ligo_skymap_plot.main')
 @patch('ligo.skymap.tool.ligo_skymap_plot_volume.main')
 def test_annotate_fits(mock_plot_volume, mock_plot, mock_gracedb):
     skymaps.annotate_fits('test.fits,0', 'test', 'T12345',
-                          'https://gracedb.invalid/api/',
                           ['tag1']).apply().get()
 
 

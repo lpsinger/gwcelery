@@ -3,11 +3,12 @@ from ligo.gracedb import rest
 
 from ..celery import app
 
+client = rest.GraceDb('https://' + app.conf.gracedb_host + '/api/')
+
 
 @app.task(shared=False)
-def create_event(filecontents, search, pipeline, group, service):
+def create_event(filecontents, search, pipeline, group):
     """Create an event in GraceDb."""
-    client = rest.GraceDb(service)
     response = client.createEvent(group=group, pipeline=pipeline,
                                   filename='initial.data', search=search,
                                   filecontents=filecontents)
@@ -15,25 +16,24 @@ def create_event(filecontents, search, pipeline, group, service):
 
 
 @app.task(ignore_result=True, shared=False)
-def create_tag(tag, n, graceid, service):
+def create_tag(tag, n, graceid):
     """Create a tag in GraceDb."""
-    rest.GraceDb(service).createTag(graceid, n, tag)
+    client.createTag(graceid, n, tag)
 
 
 @app.task(shared=False)
-def download(filename, graceid, service):
+def download(filename, graceid):
     """Download a file from GraceDB."""
-    return rest.GraceDb(service).files(graceid, filename, raw=True).read()
+    return client.files(graceid, filename, raw=True).read()
 
 
 @app.task(shared=False)
-def get_log(graceid, service):
+def get_log(graceid):
     """Get all log messages for an event in GraceDb."""
-    return rest.GraceDb(service).logs(graceid).json()['log']
+    return client.logs(graceid).json()['log']
 
 
 @app.task(ignore_result=True, shared=False)
-def upload(filecontents, filename, graceid, service, message, tags=()):
+def upload(filecontents, filename, graceid, message, tags=()):
     """Upload a file to GraceDB."""
-    rest.GraceDb(service).writeLog(
-        graceid, message, filename, filecontents, tags)
+    client.writeLog(graceid, message, filename, filecontents, tags)

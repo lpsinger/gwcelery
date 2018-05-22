@@ -7,18 +7,17 @@ import tempfile
 from celery import group
 from celery.exceptions import Ignore
 from ligo.gracedb.logging import GraceDbLogHandler
-from ligo.gracedb import rest
 from ligo.skymap import bayestar as _bayestar
 from ligo.skymap.io import events
 from ligo.skymap.io import fits
 
 from ..celery import app
-from .gracedb import download, upload
+from . import gracedb
 
 log = logging.getLogger('BAYESTAR')
 
 
-def bayestar(graceid, service):
+def bayestar(graceid):
     """Peform end-to-end rapid sky localization with BAYESTAR, including
     GraceDB downloads and uploads.
 
@@ -44,22 +43,22 @@ def bayestar(graceid, service):
     #
     # but groups do not preserve order. See:
     # https://github.com/celery/celery/issues/3781
-    coinc = download('coinc.xml', graceid, service)
-    psd = download('psd.xml.gz', graceid, service)
+    coinc = gracedb.download('coinc.xml', graceid)
+    psd = gracedb.download('psd.xml.gz', graceid)
     coinc_psd = (coinc, psd)
     return group(
-        localize.s(coinc_psd, graceid, service) |
-        upload.s('bayestar.fits.gz', graceid, service,
-                 'sky localization complete', 'sky_loc'),
-        localize.s(coinc_psd, graceid, service,
+        localize.s(coinc_psd, graceid) |
+        gracedb.upload.s('bayestar.fits.gz', graceid,
+                         'sky localization complete', 'sky_loc'),
+        localize.s(coinc_psd, graceid,
                    disabled_detectors=['V1'],
                    filename='bayestar_no_virgo.fits.gz') |
-        upload.s('bayestar_no_virgo.fits.gz', graceid, service,
-                 'sky localization complete', 'sky_loc'))
+        gracedb.upload.s('bayestar_no_virgo.fits.gz', graceid,
+                         'sky localization complete', 'sky_loc'))
 
 
 @app.task(queue='openmp', shared=False)
-def localize(coinc_psd, graceid, service, filename='bayestar.fits.gz',
+def localize(coinc_psd, graceid, filename='bayestar.fits.gz',
              disabled_detectors=None):
     """Do the heavy lifting of generating a rapid localization using BAYESTAR.
 
@@ -70,7 +69,7 @@ def localize(coinc_psd, graceid, service, filename='bayestar.fits.gz',
     This task should execute in a special queue for computationally intensive
     OpenMP parallel tasks.
     """
-    handler = GraceDbLogHandler(rest.GraceDb(service), graceid)
+    handler = GraceDbLogHandler(gracedb.client, graceid)
     handler.setLevel(logging.INFO)
     log.addHandler(handler)
 

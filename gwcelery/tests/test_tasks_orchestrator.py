@@ -81,10 +81,8 @@ def test_dispatch_psd(mock_bayestar, mock_create_circular, mock_upload):
     dispatch(payload)
 
     # Check that the correct tasks were dispatched.
-    mock_bayestar.assert_called_once_with(
-        'T250822', 'https://gracedb-test.ligo.org/api/')
-    mock_create_circular.assert_called_once_with(
-        'T250822', 'https://gracedb-test.ligo.org/api/')
+    mock_bayestar.assert_called_once_with('T250822')
+    mock_create_circular.assert_called_once_with('T250822')
     mock_upload.assert_called_once()
 
 
@@ -99,5 +97,4 @@ def test_dispatch_fits(mock_annotate_fits):
 
     # Check that the correct tasks were dispatched.
     mock_annotate_fits.assert_called_once_with(
-        'bayestar.fits.gz,2', 'bayestar', 'T250822',
-        'https://gracedb-test.ligo.org/api/', ['sky_loc'])
+        'bayestar.fits.gz,2', 'bayestar', 'T250822', ['sky_loc'])

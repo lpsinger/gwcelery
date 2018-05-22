@@ -10,7 +10,7 @@ from ..jinja import env
 from ..util.tempfile import NamedTemporaryFile
 
 
-def annotate_fits(versioned_filename, filebase, graceid, service, tags):
+def annotate_fits(versioned_filename, filebase, graceid, tags):
     """Perform annotations on a sky map.
 
     This function downloads a FITS file and then generates and uploads all
@@ -29,19 +29,19 @@ def annotate_fits(versioned_filename, filebase, graceid, service, tags):
         '{versioned_filename}">{versioned_filename}</a>').format(
             graceid=graceid, versioned_filename=versioned_filename)
 
-    return gracedb.download.s(versioned_filename, graceid, service) | group(
+    return gracedb.download.s(versioned_filename, graceid) | group(
         fits_header.s(versioned_filename) |
         gracedb.upload.s(
-            filebase + '.html', graceid, service, header_msg, tags),
+            filebase + '.html', graceid, header_msg, tags),
 
         plot_allsky.s() |
         gracedb.upload.s(
-            filebase + '.png', graceid, service, allsky_msg, tags),
+            filebase + '.png', graceid, allsky_msg, tags),
 
         is_3d_fits_file.s() |
         plot_volume.s() |
         gracedb.upload.s(
-            filebase + '.volume.png', graceid, service, volume_msg, tags)
+            filebase + '.volume.png', graceid, volume_msg, tags)
     )
 
 

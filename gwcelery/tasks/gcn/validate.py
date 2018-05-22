@@ -1,6 +1,6 @@
 """Validate LIGO/Virgo GCN notices to make sure that their contents match the
 original VOEvent notices that we sent."""
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import urlparse
 
 import lxml.etree
 
@@ -31,12 +31,8 @@ def validate_voevent(payload):
     local_id = u.fragment
     filename = local_id + '.xml'
 
-    # Which GraceDB server does this refer to?
-    u = urlparse(root.find("./What/Param[@name='EventPage']").attrib['value'])
-    service = urlunparse((u.scheme, u.netloc, '/api/', None, None, None))
-
     # Download and parse original VOEvent
-    orig = lxml.etree.fromstring(gracedb.download(filename, graceid, service))
+    orig = lxml.etree.fromstring(gracedb.download(filename, graceid))
 
     xpath = ".//Param[@name='{}']"
     for orig_name, root_name in [
@@ -65,9 +61,9 @@ def validate_voevent(payload):
                     root_name, root_value, orig_name, orig_value))
 
     # Find matching GraceDB log entry
-    log = gracedb.get_log(graceid, service)
+    log = gracedb.get_log(graceid)
     entry, = (e for e in log if e['filename'] == filename)
     log_number = entry['N']
 
     # Tag the VOEvent to indicate that it was received correctly
-    gracedb.create_tag('gcn_received', log_number, graceid, service)
+    gracedb.create_tag('gcn_received', log_number, graceid)
