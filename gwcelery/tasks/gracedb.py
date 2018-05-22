@@ -1,9 +1,16 @@
 """Communication with GraceDB."""
 from ligo.gracedb import rest
+from celery.local import PromiseProxy
 
 from ..celery import app
 
-client = rest.GraceDb('https://' + app.conf.gracedb_host + '/api/')
+# Defer initializing the GraceDb REST client until it is needed,
+# because if the user lacks valid credentials, then the API will
+# raise an exception as soon as it is instantiated---which would
+# otherwise make it impossible to import this module without first
+# logging in.
+client = PromiseProxy(rest.GraceDb,
+                      ('https://' + app.conf.gracedb_host + '/api/',))
 
 
 @app.task(shared=False)
