@@ -1,4 +1,5 @@
 from unittest.mock import patch
+from pkg_resources import resource_string
 
 from ligo.gracedb import rest
 
@@ -84,3 +85,21 @@ def test_upload(mock_gracedb):
 def test_get_event(mock_gracedb):
     gracedb.get_event('G123456')
     mock_gracedb.event.assert_called_once_with('G123456')
+
+
+@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
+def test_get_events(mock_gracedb):
+    gracedb.get_events(query='Some query', orderby=None,
+                       count=None, columns=None)
+    mock_gracedb.events.assert_called_once_with(query='Some query',
+                                                orderby=None, count=None,
+                                                columns=None)
+
+
+@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
+def test_replace_event(mock_gracedb):
+    text = resource_string(__name__, 'data/fermi_grb_gcn.xml')
+    gracedb.replace_event(graceid='G123456', payload=text)
+    mock_gracedb.replaceEvent.assert_called_once_with(graceid='G123456',
+                                                      filename='initial.data',
+                                                      filecontents=text)

@@ -38,9 +38,10 @@ redis and start a server:
 	$ make -j
 	$ src/redis-server
 
-GWCelery itself consists of four workers:
+GWCelery itself consists of five workers:
 
 	$ gwcelery worker -l info -n gwcelery-worker -Q celery -B
 	$ gwcelery worker -l info -n gwcelery-openmp-worker -Q openmp -c 1
 	$ gwcelery worker -l info -n gwcelery-voevent-worker -Q voevent -c 1
 	$ gwcelery worker -l info -n gwcelery-superevent-worker -Q superevent -c 1
+        $ gwcelery worker -l info -n gwcelery-exttrig-worker -Q exttrig -c 1

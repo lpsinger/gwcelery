@@ -18,6 +18,11 @@ gwcelery\.tasks\.gcn module
 
 .. automodule:: gwcelery.tasks.gcn
 
+gwcelery\.tasks\.gcn.external_triggers module
+---------------------------------------------
+
+.. automodule:: gwcelery.tasks.gcn.external_triggers
+
 gwcelery\.tasks\.gcn.validate module
 ------------------------------------
 
@@ -47,3 +52,4 @@ gwcelery\.tasks\.superevent_manager module
 ------------------------------------------
 
 .. automodule:: gwcelery.tasks.superevent_manager
+

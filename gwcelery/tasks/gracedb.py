@@ -48,6 +48,13 @@ def download(filename, graceid):
 
 
 @app.task(shared=False)
+def get_events(query=None, orderby=None, count=None, columns=None):
+    """Get events from GraceDb."""
+    return list(client.events(query=query, orderby=orderby,
+                count=count, columns=columns))
+
+
+@app.task(shared=False)
 def get_event(graceid):
     """Retrieve an event from GraceDb."""
     return client.event(graceid).json()
@@ -57,6 +64,12 @@ def get_event(graceid):
 def get_log(graceid):
     """Get all log messages for an event in GraceDb."""
     return client.logs(graceid).json()['log']
+
+
+@app.task(shared=False)
+def replace_event(graceid, payload):
+    """Get an event from GraceDb."""
+    client.replaceEvent(graceid, 'initial.data', filecontents=payload)
 
 
 @app.task(ignore_result=True, shared=False)

@@ -15,6 +15,7 @@ app = Celery(
         gcn_bind_address='',
         gcn_bind_port=5341,
         gcn_remote_address='128.183.96.236',  # capella2.gsfc.nasa.gov
+        external_trigger_event_type='Test',
         superevent_d_t_start=10.0,
         superevent_d_t_end=10.0
     )
