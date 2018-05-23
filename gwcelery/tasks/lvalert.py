@@ -1,4 +1,5 @@
 """LVAlert client."""
+import json
 import netrc
 import os
 import uuid
@@ -16,6 +17,7 @@ from pyxmpp2.streamevents import DisconnectedEvent
 
 from ..celery import app
 from .core import DispatchHandler
+from . import gracedb
 
 log = get_task_logger(__name__)
 
@@ -23,7 +25,33 @@ ns = {'ns1': 'http://jabber.org/protocol/pubsub#event',
       'ns2': 'http://jabber.org/protocol/pubsub'}
 
 
-handler = DispatchHandler()
+class _LVAlertDispatchHandler(DispatchHandler):
+
+    def process_args(self, node, payload):
+        # Determine GraceDB service URL
+        alert = json.loads(payload)
+        try:
+            try:
+                self_link = alert['object']['links']['self']
+            except KeyError:
+                self_link = alert['object']['self']
+        except KeyError:
+            log.exception('LVAlert message does not contain an API URL: %r',
+                          alert)
+            return None, None, None
+        base, api, _ = self_link.partition('/api/')
+        service = base + api
+
+        if service != gracedb.client.service_url:
+            log.warn('ignoring LVAlert message because it is intended for '
+                     'GraceDb server %s, but we are set up for server %s',
+                     service, gracedb.client.service_url)
+            return None, None, None
+
+        return super().process_args(node, payload)
+
+
+handler = _LVAlertDispatchHandler()
 """Function decorator to register a handler callback for specified LVAlert
 message types. The decorated function is turned into a Celery task, which will
 be automatically called whenever a matching LVAlert message is received.

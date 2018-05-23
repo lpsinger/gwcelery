@@ -1,3 +1,5 @@
+import json
+import logging
 import os
 import socket
 from unittest.mock import patch
@@ -58,9 +60,72 @@ def test_lvalert_constructor(netrc_lvalert):
         lvalert.listen()
 
 
-@patch('gwcelery.tasks.orchestrator.dispatch.run')
-def test_handle_messages(mock_dispatch, netrc_lvalert):
+@pytest.fixture
+def fake_lvalert():
     xml = XML(pkg_resources.resource_string(__name__, 'data/lvalert_xmpp.xml'))
-    json = xml.find('.//ns2:entry', lvalert.ns).text
+    entry = xml.find('.//ns2:entry', lvalert.ns)
+    return xml, entry
+
+
+@patch('gwcelery.tasks.orchestrator.dispatch.run')
+def test_handle_messages(mock_dispatch, netrc_lvalert, fake_lvalert):
+    """Test handling an LVAlert message that originates from the configured
+    GraceDb server."""
+    xml, entry = fake_lvalert
+
+    # Manipulate alert content
+    alert = json.loads(entry.text)
+    alert['object']['self'] = \
+        alert['object']['self'].replace('gracedb.ligo.org', 'gracedb.invalid')
+    entry.text = json.dumps(alert)
+
+    # Run function under test
     lvalert._handle_messages(xml)
-    mock_dispatch.assert_called_once_with(json)
+    mock_dispatch.assert_called_once_with(entry.text)
+
+
+@patch('gwcelery.tasks.orchestrator.dispatch.run')
+def test_handle_messages_wrong_server(mock_dispatch, netrc_lvalert,
+                                      fake_lvalert, caplog):
+    """Test handling an LVAlert message that originates from a GraceDb server
+    other than the configured GraceDb server. It should be ignored."""
+    xml, entry = fake_lvalert
+
+    # Manipulate alert content
+    alert = json.loads(entry.text)
+    alert['object']['self'] = \
+        alert['object']['self'].replace('gracedb.ligo.org', 'gracedb2.invalid')
+    entry.text = json.dumps(alert)
+
+    # Run function under test
+    lvalert._handle_messages(xml)
+
+    # Run function under test
+    caplog.set_level(logging.WARNING)
+    lvalert._handle_messages(xml)
+    record, *_ = caplog.records
+    assert record.message == ('ignoring LVAlert message because it is '
+                              'intended for GraceDb server '
+                              'https://gracedb2.invalid/api/, but we are set '
+                              'up for server https://gracedb.invalid/api/')
+    mock_dispatch.assert_not_called()
+
+
+@patch('gwcelery.tasks.orchestrator.dispatch.run')
+def test_handle_messages_no_self_link(mock_dispatch, netrc_lvalert,
+                                      fake_lvalert, caplog):
+    """Test handling an LVAlert message that does not identify the GraceDb
+    server of origin. It should be rejected."""
+    xml, entry = fake_lvalert
+
+    # Manipulate alert content
+    alert = json.loads(entry.text)
+    del alert['object']['self']
+    entry.text = json.dumps(alert)
+
+    # Run function under test
+    caplog.set_level(logging.ERROR)
+    lvalert._handle_messages(xml)
+    record, = caplog.records
+    assert 'LVAlert message does not contain an API URL' in record.message
+    mock_dispatch.assert_not_called()
