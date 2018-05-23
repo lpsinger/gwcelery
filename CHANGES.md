@@ -15,6 +15,10 @@
     that this submodule contains functionality related to GCN notices,
     rather than VOEvents in general.
 
+-   Rename `gwcelery.tasks.dispatch` to `gwcelery.tasks.orchestrator` to make
+    it clear that this module encapsulates the behavior associated with the
+    "orchestrator" in the O3 low-latency design document.
+
 -   Unify dispatch of LVAlert and GCN messages using decorators.
     GCN notice handlers are declared like this:
 
