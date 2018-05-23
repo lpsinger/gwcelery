@@ -19,6 +19,8 @@
     it clear that this module encapsulates the behavior associated with the
     "orchestrator" in the O3 low-latency design document.
 
+-   Mock up calls to BAYESTAR in test suite to speed it up.
+
 -   Unify dispatch of LVAlert and GCN messages using decorators.
     GCN notice handlers are declared like this:
 
