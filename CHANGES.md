@@ -45,6 +45,9 @@
             alert = json.loads(alert_content)
             # do work here...
 
+-   Instead of carrying around the GraceDb service URL in tasks, store the
+    GraceDb host name in the Celery application config.
+
 ## 0.0.5 (2018-05-08)
 
 -   Disable socket access during most unit tests. This adds some extra assurance
