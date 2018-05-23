@@ -11,6 +11,30 @@
 -   Add instructions for measuring test coverage and running the linter locally
     to the contributing guide.
 
+-   Unify dispatch of LVAlert and GCN messages using decorators.
+    GCN notice handlers are declared like this:
+
+        import lxml.etree
+        from gwcelery.tasks import gcn
+
+        @gcn.handler(gcn.NoticeType.FERMI_GBM_GND_POS,
+                     gcn.NoticeType.FERMI_GBM_FIN_POS)
+        def handle_fermi(payload):
+            root = lxml.etree.fromstring(payload)
+            # do work here...
+
+    LVAlert message handlers are declared like this:
+
+        import json
+        from gwcelery.tasks import lvalert
+
+        @lvalert.handler('cbc_gstlal',
+                         'cbc_pycbc',
+                         'cbc_mbta')
+        def handle_cbc(alert_content):
+            alert = json.loads(alert_content)
+            # do work here...
+
 ## 0.0.5 (2018-05-08)
 
 -   Disable socket access during most unit tests. This adds some extra assurance
