@@ -11,6 +11,10 @@
 -   Add instructions for measuring test coverage and running the linter locally
     to the contributing guide.
 
+-   Rename `gwcelery.tasks.voevent` to `gwcelery.tasks.gcn` to make it clear
+    that this submodule contains functionality related to GCN notices,
+    rather than VOEvents in general.
+
 -   Unify dispatch of LVAlert and GCN messages using decorators.
     GCN notice handlers are declared like this:
 
