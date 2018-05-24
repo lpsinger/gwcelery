@@ -54,3 +54,12 @@ def get_log(graceid):
 def upload(filecontents, filename, graceid, message, tags=()):
     """Upload a file to GraceDB."""
     client.writeLog(graceid, message, filename, filecontents, tags)
+
+
+@app.task(queue='superevent', shared=False)
+def get_event(gid):
+    """Wrapper function for GraceDb.event.
+    Can be called in async if required
+    """
+    event_dict = client.event(gid).json()
+    return event_dict
