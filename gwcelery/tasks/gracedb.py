@@ -45,6 +45,12 @@ def download(filename, graceid):
 
 
 @app.task(shared=False)
+def get_event(graceid):
+    """Retrieve an event from GraceDb."""
+    return client.event(graceid).json()
+
+
+@app.task(shared=False)
 def get_log(graceid):
     """Get all log messages for an event in GraceDb."""
     return client.logs(graceid).json()['log']
@@ -54,12 +60,3 @@ def get_log(graceid):
 def upload(filecontents, filename, graceid, message, tags=()):
     """Upload a file to GraceDB."""
     client.writeLog(graceid, message, filename, filecontents, tags)
-
-
-@app.task(queue='superevent', shared=False)
-def get_event(gid):
-    """Wrapper function for GraceDb.event.
-    Can be called in async if required
-    """
-    event_dict = client.event(gid).json()
-    return event_dict
