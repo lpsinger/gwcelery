@@ -49,12 +49,12 @@ def bayestar(graceid):
     return group(
         localize.s(coinc_psd, graceid) |
         gracedb.upload.s('bayestar.fits.gz', graceid,
-                         'sky localization complete', 'sky_loc'),
+                         'sky localization complete', ['sky_loc', 'lvem']),
         localize.s(coinc_psd, graceid,
                    disabled_detectors=['V1'],
                    filename='bayestar_no_virgo.fits.gz') |
         gracedb.upload.s('bayestar_no_virgo.fits.gz', graceid,
-                         'sky localization complete', 'sky_loc'))
+                         'sky localization complete', ['sky_loc', 'lvem']))
 
 
 @app.task(queue='openmp', shared=False)
