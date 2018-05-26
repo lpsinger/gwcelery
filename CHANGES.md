@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.6 (unreleased)
+## 0.0.6 (2018-05-26)
 
 -   Generate GCN Circular drafts using
     [``ligo-followup-advocate``](https://git.ligo.org/emfollow/ligo-followup-advocate).
