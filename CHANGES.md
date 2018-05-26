@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.7 (unreleased)
+
+-   No changes yet.
+
 ## 0.0.6 (2018-05-26)
 
 -   Generate GCN Circular drafts using
