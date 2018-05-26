@@ -2,10 +2,6 @@
 
 ## 0.0.6 (unreleased)
 
--   Add superevent management functionality for triggers from the `gracedb-dev1`
-    server. Primary logic to create/update superevents in the `parse_trigger`
-    function.
-
 -   Generate GCN Circular drafts using
     [``ligo-followup-advocate``](https://git.ligo.org/emfollow/ligo-followup-advocate).
 
@@ -51,6 +47,9 @@
 
 -   Instead of carrying around the GraceDb service URL in tasks, store the
     GraceDb host name in the Celery application config.
+
+-   Create superevents by simple clustering in time. Currently this is only
+    supported by the `gracedb-dev1` host.
 
 ## 0.0.5 (2018-05-08)
 
