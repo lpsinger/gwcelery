@@ -38,7 +38,7 @@ redis and start a server:
 	$ make -j
 	$ src/redis-server
 
-GWCelery itself consists of three workers:
+GWCelery itself consists of four workers:
 
 	$ gwcelery worker -l info -n gwcelery-worker -Q celery -B
 	$ gwcelery worker -l info -n gwcelery-openmp-worker -Q openmp -c 1
