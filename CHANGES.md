@@ -2,7 +2,7 @@
 
 ## 0.0.7 (unreleased)
 
--   Ingest Swift, Fermi, and SNEWS GCN notices and save them in GraceDb..
+-   Ingest Swift, Fermi, and SNEWS GCN notices and save them in GraceDb.
 
 ## 0.0.6 (2018-05-26)
 
