@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.8 (unreleased)
+
+-   No changes yet.
+
 ## 0.0.7 (2018-05-31)
 
 -   Ingest Swift, Fermi, and SNEWS GCN notices and save them in GraceDb.
