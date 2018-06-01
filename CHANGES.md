@@ -4,6 +4,10 @@
 
 -   Ingest Swift, Fermi, and SNEWS GCN notices and save them in GraceDb.
 
+-   Depend on the pre-release version of the GraceDb client, ligo-gracedb
+    1.29.dev0, because this is the only version that supports superevents at
+    the moment.
+
 ## 0.0.6 (2018-05-26)
 
 -   Generate GCN Circular drafts using
