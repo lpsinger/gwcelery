@@ -2,7 +2,11 @@
 
 ## 0.0.10 (unreleased)
 
--   No changes yet.
+-   Model the time extent of events and superevents using the
+    `glue.segments` module.
+
+-   Replace GraceDb.get with GraceDb.superevents from the recent dev
+    release of gracedb-client.
 
 ## 0.0.9 (2018-06-06)
 

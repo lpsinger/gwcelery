@@ -10,6 +10,7 @@ superevents.
 import json
 
 from celery.utils.log import get_task_logger
+from glue.segments import segment, segmentlist
 
 from ..celery import app
 from . import gracedb, lvalert
@@ -33,34 +34,41 @@ def superevent_handler(text):
     serially processes them to create/modify superevents
     """
     payload = json.loads(text)
-
     gid = payload['uid']
     alert_type = payload['alert_type']
-    gpstime = payload['object'].get('gpstime')
-    # superevents is the list of superevents,
-    # sid is True if gid exists in any superevent gw_list
+
     sid, preferred_flag, superevents = gracedb.get_superevent(gid)
-    # FIXME as config grows, this could go into separate function
+    superevents = superevent_segment_list(superevents)
+
     d_t_start = app.conf['superevent_d_t_start']
     d_t_end = app.conf['superevent_d_t_end']
+
     # Condition 1/4
     if sid is None and alert_type == 'new':
         log.debug('Entered 1st if')
+        event_segment = Event(payload['object'].get('gpstime'),
+                              payload['uid'],
+                              payload['object'].get('group'),
+                              payload['object'].get('pipeline'),
+                              payload['object'].get('search'),
+                              event_dict=payload)
+
         # Check which superevent window trigger gpstime falls in
-        for superevent in superevents:
-            if superevent['t_start'] <= gpstime < superevent['t_end']:
-                log.info('Event %s in window of %s',
-                         gid, superevent['superevent_id'])
-                gracedb.add_event_to_superevent(superevent['superevent_id'],
-                                                gid)
-                # ADDITIONAL LOGIC HERE IF THE TIME
-                # WINDOW IS TO BE CHANGED BASED ON
-                # TRIGGER PARAMETERS
-                # gracedb is a module under tasks and not gracedb-client
-                gracedb.set_preferred_event(superevent['superevent_id'],
-                                            superevent['preferred_event'],
-                                            gid)
-                break
+        if superevents.intersects_segment(event_segment):
+            # FIXME .find() has to be generalized when event_segments
+            # have a chance of not completely being contained in a
+            # superevent segment
+            superevent = superevents[superevents.find(event_segment)]
+            log.info('Event %s in window of %s',
+                     gid, superevent.superevent_id)
+            gracedb.add_event_to_superevent(superevent.superevent_id,
+                                            event_segment.gid)
+            # ADDITIONAL LOGIC HERE IF THE TIME
+            # WINDOW IS TO BE CHANGED BASED ON
+            # TRIGGER PARAMETERS
+            gracedb.set_preferred_event(superevent.superevent_id,
+                                        superevent.preferred_event,
+                                        event_segment.gid)
         # Create a new event if not in any time window
         else:
             gracedb.create_superevent(payload,
@@ -92,18 +100,70 @@ def superevent_handler(text):
     # Condition 4/4
     elif sid and alert_type == 'update':
         # Logic to update the preferred G event
-        log.debug('4th if: Update the pointer')
-        for superevent in superevents:
-            if superevent['superevent_id'] == sid:
-                break
-        # if the preferred_event superevent does not exists for some reason
-        if not superevent['preferred_event']:
-            # FIXME: To be implemented
-            raise NotImplementedError
-        preferred_event = superevent['preferred_event']
-        # logic to decide if new event is preferred
-        gracedb.set_preferred_event(superevent['superevent_id'],
-                                    preferred_event, gid)
+        log.debug('4th if: SID returned update alert. Change the pointer')
+        superevent = list(filter(lambda s:
+                                 s.superevent_id == sid, superevents))
+        # superevent will contain only one item based on matching sid
+        gracedb.set_preferred_event(superevent[0].superevent_id,
+                                    superevent[0].preferred_event,
+                                    gid)
     # Condition else
     else:
         log.critical('Unhandled by parse_trigger, passing...')
+
+
+def superevent_segment_list(superevents):
+    """Ingests a list of superevent dictionaries, creates
+    :class:`SuperEvent` objects from each and returns
+    a segmentlist of the same
+
+    Parameters
+    ----------
+    superevents : list
+        list of superevent dictionaries, usually fetched by
+        :meth:`GraceDb.superevents()`.
+
+    Returns
+    -------
+    superevent_list : segmentlist
+        superevents as a segmentlist object
+    """
+    superevent_list = \
+        [SuperEvent(s['t_0'], s['t_start'], s['t_end'],
+                    s['superevent_id'], s['preferred_event'], s)
+            for s in superevents]
+    return segmentlist(superevent_list)
+
+
+class Event(segment):
+    """An event implemented as an extension of
+    :class:`glue.segments.segment`
+    """
+    def __new__(cls, t0, *args, **kwargs):
+        return super().__new__(cls, t0, t0)
+
+    def __init__(self, t0, gid, group=None, pipeline=None,
+                 search=None, event_dict={}):
+        self.t0 = t0
+        self.gid = gid
+        self.group = group
+        self.pipeline = pipeline
+        self.search = search
+        self.event_dict = event_dict
+
+
+class SuperEvent(segment):
+    """An superevent implemented as an extension of
+    :class:`glue.segments.segment`
+    """
+    def __new__(cls, t_start, t_end, *args, **kwargs):
+        return super().__new__(cls, t_start, t_end)
+
+    def __init__(self, t_start, t_end, t_0, sid,
+                 preferred_event=None, event_dict={}):
+        self.t_start = t_start
+        self.t_end = t_end
+        self.t_0 = t_0
+        self.superevent_id = sid
+        self.preferred_event = preferred_event
+        self.event_dict = event_dict
