@@ -41,18 +41,14 @@ def test_set_preferred_event(monkeypatch):
 
 
 def test_get_superevent(monkeypatch):
-    class SuperEventsTTPResponse(object):
-        def json(self):
-            with pkg_resources.resource_stream(
-                    __name__, 'data/superevents.json') as f:
-                return json.load(f)
-
     class FakeDb(object):
         def __init__(self):
             self.service_url = 'service_url'
 
-        def get(self, url):
-            return SuperEventsTTPResponse()
+        def superevents(self, **kwargs):
+            with pkg_resources.resource_stream(
+                    __name__, 'data/superevents.json') as f:
+                return (s for s in json.load(f)['superevents'])
 
     monkeypatch.setattr('gwcelery.tasks.gracedb.client', FakeDb())
 
@@ -93,19 +89,15 @@ def test_parse_trigger_1(monkeypatch):
                         superevent="S0039",
                         far=3.021362523404484e-09)
 
-    class SuperEventsTTPResponse(object):
-        def json(self):
-            with pkg_resources.resource_stream(
-                    __name__, 'data/superevents.json') as f:
-                return json.load(f)
-
     class FakeDb(object):
         def __init__(self):
             self.service_url = 'service_url'
             self._addevent_called = False
 
-        def get(self, url):
-            return SuperEventsTTPResponse()
+        def superevents(self, **kwargs):
+            with pkg_resources.resource_stream(
+                    __name__, 'data/superevents.json') as f:
+                return (s for s in json.load(f)['superevents'])
 
         def addEventToSuperevent(self, *args, **kwargs):    # noqa: N802
             assert not self._addevent_called
@@ -141,20 +133,16 @@ def test_parse_trigger_2(monkeypatch):
                         superevent="S0039",
                         far=3.021362523404484e-31)
 
-    class SuperEventsTTPResponse(object):
-        def json(self):
-            with pkg_resources.resource_stream(
-                    __name__, 'data/superevents.json') as f:
-                return json.load(f)
-
     class FakeDb(object):
         def __init__(self):
             self.service_url = 'service_url'
             self._update_superevent_called = False
             self._addevent_called = False
 
-        def get(self, url):
-            return SuperEventsTTPResponse()
+        def superevents(self, **kwargs):
+            with pkg_resources.resource_stream(
+                    __name__, 'data/superevents.json') as f:
+                return (s for s in json.load(f)['superevents'])
 
         def addEventToSuperevent(self, *args, **kwargs):    # noqa: N802
             assert not self._addevent_called
@@ -181,12 +169,6 @@ def test_parse_trigger_2(monkeypatch):
 def test_parse_trigger_3(monkeypatch):
     """New trigger G000001, not present among superevents
     New superevent created"""
-    class SuperEventsTTPResponse(object):
-        def json(self):
-            with pkg_resources.resource_stream(
-                    __name__, 'data/superevents.json') as f:
-                return json.load(f)
-
     class FakeDb(object):
         def __init__(self):
             self.service_url = 'service_url'
@@ -196,8 +178,10 @@ def test_parse_trigger_3(monkeypatch):
             assert not self._create_superevent_called
             self._create_superevent_called = True
 
-        def get(self, url):
-            return SuperEventsTTPResponse()
+        def superevents(self, **kwargs):
+            with pkg_resources.resource_stream(
+                    __name__, 'data/superevents.json') as f:
+                return (s for s in json.load(f)['superevents'])
 
     monkeypatch.setattr('gwcelery.tasks.gracedb.client', FakeDb())
     with pkg_resources.resource_stream(
@@ -212,12 +196,6 @@ def test_parse_trigger_4(monkeypatch):
     received.
     Should give warning in captured log while running
     unittests"""
-    class SuperEventsTTPResponse(object):
-        def json(self):
-            with pkg_resources.resource_stream(
-                    __name__, 'data/superevents.json') as f:
-                return json.load(f)
-
     class G000001TTPResponse(object):
         def json(self):
             # FIXME json packet currently has only necessary keys
@@ -235,8 +213,10 @@ def test_parse_trigger_4(monkeypatch):
             assert not self._create_superevent_called
             self._create_superevent_called = True
 
-        def get(self, url):
-            return SuperEventsTTPResponse()
+        def superevents(self, **kwargs):
+            with pkg_resources.resource_stream(
+                    __name__, 'data/superevents.json') as f:
+                return (s for s in json.load(f)['superevents'])
 
         def event(self, gid):
             return G000001TTPResponse()
@@ -252,12 +232,6 @@ def test_parse_trigger_4(monkeypatch):
 
 def test_parse_trigger_5(monkeypatch):
     """Update alert comes in for already existing superevent T0211"""
-    class SuperEventsTTPResponse(object):
-        def json(self):
-            with pkg_resources.resource_stream(
-                    __name__, 'data/superevents.json') as f:
-                return json.load(f)
-
     class T0212TTPResponse(object):
         def json(self):
             with pkg_resources.resource_stream(
@@ -277,8 +251,10 @@ def test_parse_trigger_5(monkeypatch):
             self.service_url = 'service_url'
             self._update_superevent_called = False
 
-        def get(self, url):
-            return SuperEventsTTPResponse()
+        def superevents(self, **kwargs):
+            with pkg_resources.resource_stream(
+                    __name__, 'data/superevents.json') as f:
+                return (s for s in json.load(f)['superevents'])
 
         def event(self, gid):
             if gid == "T0212":

@@ -5,6 +5,7 @@ import sys
 from ligo.gracedb import rest
 from celery.local import PromiseProxy
 from celery.utils.log import get_task_logger
+from glue.segments import segment
 
 from ..celery import app
 
@@ -94,12 +95,10 @@ def get_superevent(gid):
         uid of the superevent. None if not found
     preferred_flag : bool
         True if gid is found and it is preferred. None if not found.
-    r : dict
-        The JSON packet of the superevent. None if not found.
+    superevents : list
+        The list of the superevents.
     """
-    r = client.get(client.service_url+"superevents/")
-    r_json = r.json()
-    superevents = r_json['superevents']
+    superevents = list(client.superevents(orderby='t_0'))
     for superevent in superevents:
         preferred_flag = False
         # check preferred_event first
@@ -107,13 +106,13 @@ def get_superevent(gid):
             preferred_flag = True
             log.info('Found association (Preferred) %s <-> %s',
                      gid, superevent['superevent_id'])
-            return superevent['superevent_id'], preferred_flag, r_json
+            return superevent['superevent_id'], preferred_flag, superevents
         # then check the gw_events
         elif gid in superevent['gw_events']:
             log.info('Found association (NOT Preferred) %s <-> %s',
                      gid, superevent['superevent_id'])
-            return superevent['superevent_id'], preferred_flag, r_json
-    return None, False, r_json
+            return superevent['superevent_id'], preferred_flag, superevents
+    return None, False, superevents
 
 
 @app.task(ignore_result=True, shared=False)
@@ -157,3 +156,31 @@ def add_event_to_superevent(sid, gid):
     Can be called in async if required
     """
     client.addEventToSuperevent(sid, gid)
+
+
+class Event(segment):
+    def __new__(cls, t0, *args, **kwargs):
+        return super().__new__(cls, t0, t0)
+
+    def __init__(self, t0, gid, group=None, pipeline=None,
+                 search=None, event_dict={}):
+        self.t0 = t0
+        self.gid = gid
+        self.group = group
+        self.pipeline = pipeline
+        self.search = search
+        self.event_dict = event_dict
+
+
+class SuperEvent(segment):
+    def __new__(cls, t_start, t_end, *args, **kwargs):
+        return super().__new__(cls, t_start, t_end)
+
+    def __init__(self, t_start, t_end, t_0, sid,
+                 preferred_event=None, event_dict={}):
+        self.t_start = t_start
+        self.t_end = t_end
+        self.t_0 = t_0
+        self.superevent_id = sid
+        self.preferred_event = preferred_event
+        self.event_dict = event_dict
