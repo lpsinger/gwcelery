@@ -5,7 +5,6 @@ import sys
 from ligo.gracedb import rest
 from celery.local import PromiseProxy
 from celery.utils.log import get_task_logger
-from glue.segments import segment
 
 from ..celery import app
 
