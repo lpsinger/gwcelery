@@ -19,7 +19,8 @@ log = get_task_logger(__name__)
 
 @lvalert.handler('test_gstlal',
                  'cbc_gstlal_mdc',
-                 queue='superevent')
+                 queue='superevent',
+                 shared=False)
 def superevent_handler(text):
     """LVAlert handler for superevent manager.
     Recieves payload from test and production nodes and
