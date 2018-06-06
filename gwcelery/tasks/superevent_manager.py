@@ -17,8 +17,14 @@ from . import gracedb, lvalert
 log = get_task_logger(__name__)
 
 
-@lvalert.handler('test_gstlal',
+@lvalert.handler('cbc_gstlal',
+                 'cbc_pycbc',
+                 'cbc_mbtaonline',
                  'cbc_gstlal_mdc',
+                 'test_gstlal',
+                 'test_pycbc',
+                 'test_mbtaonline',
+                 'test_gstlal_mdc',
                  queue='superevent',
                  shared=False)
 def superevent_handler(text):

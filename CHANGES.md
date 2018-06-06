@@ -2,7 +2,7 @@
 
 ## 0.0.9 (unreleased)
 
--   No changes yet.
+-   Add missing LVAlert message types to superevent handler.
 
 ## 0.0.8 (2018-06-06)
 
