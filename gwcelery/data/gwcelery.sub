@@ -22,7 +22,7 @@ log = gwcelery-beat.log
 output = gwcelery-beat.out
 queue
 
-arguments = "gwcelery worker -l info -n gwcelery-worker -Q celery"
+arguments = "gwcelery worker -l debug -n gwcelery-worker -Q celery"
 description = gwcelery-worker
 error = gwcelery-worker.err
 log = gwcelery-worker.log
