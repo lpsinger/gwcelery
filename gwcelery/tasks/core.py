@@ -53,16 +53,19 @@ class DispatchHandler(dict):
         return wrap
 
     def dispatch(self, *args, **kwargs):
+        log.debug('considering dispatch: args=%r, kwargs=%r', args, kwargs)
         try:
             key, args, kwargs = self.process_args(*args, **kwargs)
         except (TypeError, ValueError):
             log.exception('error unpacking key')
             return
+        log.debug('unpacked: key=%r, args=%r, kwargs=%r', key, args, kwargs)
 
         try:
             matching_handlers = self[key]
         except KeyError:
             log.warn('ignoring unrecognized key: %r', key)
         else:
+            log.info('calling handlers %r for key %r', matching_handlers, key)
             for handler in matching_handlers:
                 handler.apply_async(args, kwargs)

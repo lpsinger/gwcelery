@@ -2,7 +2,8 @@
 
 ## 0.0.8 (unreleased)
 
--   No changes yet.
+-   Add some logging to the GCN and LVAlert dispatch code in order to
+    diagnose missed messages.
 
 ## 0.0.7 (2018-05-31)
 
