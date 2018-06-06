@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.9 (unreleased)
+
+-   No changes yet.
+
 ## 0.0.8 (2018-06-06)
 
 -   Add some logging to the GCN and LVAlert dispatch code in order to
