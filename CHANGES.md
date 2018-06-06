@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.0.9 (unreleased)
+## 0.0.10 (unreleased)
+
+-   No changes yet.
+
+## 0.0.9 (2018-06-06)
 
 -   Add missing LVAlert message types to superevent handler.
 
