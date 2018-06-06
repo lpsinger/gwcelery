@@ -17,7 +17,9 @@ from . import gracedb, lvalert
 log = get_task_logger(__name__)
 
 
-@lvalert.handler('test_gstlal', 'cbc_gstlal_mdc', queue='superevent')
+@lvalert.handler('test_gstlal',
+                 'cbc_gstlal_mdc',
+                 queue='superevent')
 def superevent_handler(text):
     """LVAlert handler for superevent manager.
     Recieves payload from test and production nodes and
