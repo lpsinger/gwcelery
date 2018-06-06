@@ -20,7 +20,8 @@ log = get_task_logger(__name__)
              gcn.NoticeType.SWIFT_BAT_KNOWN_SRC,
              gcn.NoticeType.SWIFT_BAT_GRB_LC,
              gcn.NoticeType.SNEWS,
-             queue='exttrig')
+             queue='exttrig',
+             shared=False)
 def handle_exttrig(payload):
     """Handles the payload from the Fermi, Swift and SNEWS alerts.
     Prepares the alert to be sent to graceDB as 'E' events."""
