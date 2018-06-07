@@ -154,6 +154,6 @@ def create_superevent(payload, d_t_start=5, d_t_end=5):
 
 
 @app.task(ignore_result=True, shared=False)
-def add_event_to_superevent(sid, gid):
+def add_event_to_superevent(superevent_id, graceid):
     """Add an event to a superevent in GraceDb."""
-    client.addEventToSuperevent(sid, gid)
+    client.addEventToSuperevent(superevent_id, graceid)
