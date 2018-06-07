@@ -155,7 +155,5 @@ def create_superevent(payload, d_t_start=5, d_t_end=5):
 
 @app.task(ignore_result=True, shared=False)
 def add_event_to_superevent(sid, gid):
-    """Wrapper for GraceDb.addEventToSuperevent.
-    Can be called in async if required
-    """
+    """Add an event to a superevent in GraceDb."""
     client.addEventToSuperevent(sid, gid)
