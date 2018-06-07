@@ -49,7 +49,7 @@ of several processes:
     latency pipelines and create/modify superevents in *GraceDb*. There is only
     one task that runs on the Superevent queue:
 
-    *  :meth:`gwcelery.tasks.superevent_manager.superevent_handler`
+    *  :meth:`gwcelery.tasks.superevents.handle`
 
 7.  **External Trigger Worker**
 

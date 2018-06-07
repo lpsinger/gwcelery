@@ -3,7 +3,7 @@ import json
 import pytest
 import pkg_resources
 
-from ..tasks import gracedb, superevent_manager
+from ..tasks import gracedb, superevents
 
 
 def test_set_preferred_event(monkeypatch):
@@ -68,7 +68,7 @@ def test_parse_trigger_raising():
     garbage_payload = dict(some_value=999, something_else=99)
     garbage_text = json.dumps(garbage_payload)
     with pytest.raises(KeyError):
-        superevent_manager.superevent_handler(garbage_text)
+        superevents.handle(garbage_text)
 
 
 # FIXME lot of redundancy, implement setUp tearDown for below
@@ -113,7 +113,7 @@ def test_parse_trigger_1(monkeypatch):
             __name__, 'data/mock_trigger_new_G000000.json') as f:
         text = f.read()
     # New trigger G000000 time falls in S0039 window
-    superevent_manager.superevent_handler(text)
+    superevents.handle(text)
 
 
 def test_parse_trigger_2(monkeypatch):
@@ -163,7 +163,7 @@ def test_parse_trigger_2(monkeypatch):
     with pkg_resources.resource_stream(
             __name__, 'data/mock_trigger_new_G000000.json') as f:
         text = f.read()
-    superevent_manager.superevent_handler(text)
+    superevents.handle(text)
 
 
 def test_parse_trigger_3(monkeypatch):
@@ -188,7 +188,7 @@ def test_parse_trigger_3(monkeypatch):
             __name__, 'data/mock_trigger_new_G000001.json') as f:
         text = f.read()
     # G000001 absent in any superevent window, new superevent created
-    superevent_manager.superevent_handler(text)
+    superevents.handle(text)
 
 
 def test_parse_trigger_4(monkeypatch):
@@ -227,7 +227,7 @@ def test_parse_trigger_4(monkeypatch):
         text = f.read()
     # G000001 absent in any superevent window, update alert
     # triggers creation of a new superevent
-    superevent_manager.superevent_handler(text)
+    superevents.handle(text)
 
 
 def test_parse_trigger_5(monkeypatch):
@@ -270,4 +270,4 @@ def test_parse_trigger_5(monkeypatch):
     with pkg_resources.resource_stream(
             __name__, 'data/mock_trigger_update_T0211.json') as f:
         text = f.read()
-    superevent_manager.superevent_handler(text)
+    superevents.handle(text)

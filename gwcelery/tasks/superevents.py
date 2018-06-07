@@ -5,7 +5,7 @@ superevents.
       pipelines.
     * Dedicated **superevent** queue for this purpose.
     * Primary logic to respond to low latency triggers contained
-      in :meth:`superevent_handler` function.
+      in :meth:`handle` function.
 """
 import json
 
@@ -28,7 +28,7 @@ log = get_task_logger(__name__)
                  'test_gstlal_mdc',
                  queue='superevent',
                  shared=False)
-def superevent_handler(text):
+def handle(text):
     """LVAlert handler for superevent manager.
     Recieves payload from test and production nodes and
     serially processes them to create/modify superevents

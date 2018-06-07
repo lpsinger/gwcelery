@@ -48,8 +48,8 @@ gwcelery\.tasks\.skymaps module
 
 .. automodule:: gwcelery.tasks.skymaps
 
-gwcelery\.tasks\.superevent_manager module
-------------------------------------------
+gwcelery\.tasks\.superevents module
+-----------------------------------
 
-.. automodule:: gwcelery.tasks.superevent_manager
+.. automodule:: gwcelery.tasks.superevents
 
