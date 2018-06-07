@@ -1,7 +1,5 @@
 from unittest.mock import patch
 
-# import pytest
-
 from pkg_resources import resource_string
 
 from ..tasks.gcn.external_triggers import handle_exttrig
