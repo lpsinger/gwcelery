@@ -22,7 +22,7 @@ log = get_task_logger(__name__)
              gcn.NoticeType.SNEWS,
              queue='exttrig',
              shared=False)
-def handle_exttrig(payload):
+def handle(payload):
     """Handles the payload from the Fermi, Swift and SNEWS alerts.
     Prepares the alert to be sent to graceDB as 'E' events."""
     event_type = app.conf.external_trigger_event_type
