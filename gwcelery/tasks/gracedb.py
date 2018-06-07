@@ -147,7 +147,6 @@ def create_superevent(payload, d_t_start=5, d_t_end=5):
     ts = t0 - d_t_start
     te = t0 + d_t_end
     client.createSuperevent(ts, t0, te, preferred_event=gid)
-    log.info('Successfully created superevent')
 
 
 @app.task(ignore_result=True, shared=False)
