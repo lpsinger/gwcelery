@@ -137,8 +137,7 @@ def set_preferred_event(sid, preferred_event, gid):
     r_new_event = client.event(gid).json()
     r_preferred_event = client.event(preferred_event).json()
     if r_new_event['far'] < r_preferred_event['far']:
-        client.updateSuperevent(sid,
-                                preferred_event=r_new_event['graceid'])
+        client.updateSuperevent(sid, preferred_event=r_new_event['graceid'])
 
 
 @app.task(ignore_result=True, shared=False)
