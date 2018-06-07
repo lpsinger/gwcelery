@@ -8,6 +8,10 @@
 -   Replace GraceDb.get with GraceDb.superevents from the recent dev
     release of gracedb-client.
 
+-   Fix possible false positive matches between GCNs for unrelated GRBs
+    by matching on both TrigID (which is generally the mission elapsed time)
+    and mission name.
+
 ## 0.0.9 (2018-06-06)
 
 -   Add missing LVAlert message types to superevent handler.

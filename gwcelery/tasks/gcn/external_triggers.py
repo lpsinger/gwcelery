@@ -37,7 +37,8 @@ def handle_exttrig(payload):
                         '/Fermi': 'Fermi',
                         '/SNEWS': 'SNEWS'}
     event_observatory = stream_obsv_dict[stream_path]
-    query = '{} grbevent.trigger_id ="{}"'.format(event_type, trig_id)
+    query = 'group: {} pipeline: {} grbevent.trigger_id = "{}"'.format(
+        event_type, event_observatory, trig_id)
     events = gracedb.get_events(query=query)
 
     if events:
