@@ -142,9 +142,7 @@ def set_preferred_event(sid, preferred_event, gid):
 
 @app.task(ignore_result=True, shared=False)
 def create_superevent(payload, d_t_start=5, d_t_end=5):
-    """
-    Create new superevent in GraceDb with preferred G event.
-    """
+    """ Create new superevent in GraceDb with preferred G event."""
     t0 = payload['object']['gpstime']
     gid = payload['uid']
     ts = t0 - d_t_start
