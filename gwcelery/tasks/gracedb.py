@@ -143,10 +143,10 @@ def set_preferred_event(sid, preferred_event, gid):
 def create_superevent(payload, d_t_start=5, d_t_end=5):
     """ Create new superevent in GraceDb with preferred G event."""
     t0 = payload['object']['gpstime']
-    gid = payload['uid']
+    graceid = payload['uid']
     ts = t0 - d_t_start
     te = t0 + d_t_end
-    client.createSuperevent(ts, t0, te, preferred_event=gid)
+    client.createSuperevent(ts, t0, te, preferred_event=graceid)
 
 
 @app.task(ignore_result=True, shared=False)
