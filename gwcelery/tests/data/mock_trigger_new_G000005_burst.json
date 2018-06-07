@@ -1,0 +1,49 @@
+{
+	"object": {
+		"graceid": "G000005",
+		"gpstime": 1163905214.4,
+		"pipeline": "cwb",
+		"group": "Burst",
+		"links": {
+			"neighbors": "",
+			"files": "",
+			"log": "",
+			"tags": "",
+			"self": "",
+			"labels": "",
+			"filemeta": "",
+			"emobservations": ""
+		},
+		"created": 1524056420.473776,
+		"far": 3.021362523404484e-09,
+		"instruments": "H1,L1",
+		"labels": {},
+		"extra_attributes": {
+			"MultiBurst": {
+				"central_freq": 116.472755,
+				"false_alarm_rate": null,
+				"confidence": null,
+				"start_time_ns": 468800000,
+				"start_time": 1163905215,
+				"ligo_angle_sig": null,
+				"single_ifo_times": "1163905215.5054,1163905215.5067",
+				"bandwidth": 34.8256,
+				"snr": 10.3440804327886,
+				"ligo_angle": null,
+				"amplitude": 6.672188,
+				"ligo_axis_ra": 58.952194,
+				"duration": 0.23639,
+				"ligo_axis_dec": 43.804489,
+				"ifos": "H1,L1",
+				"peak_time": null,
+				"peak_time_ns": null
+			}
+		},
+		"submitter": "deep.chatterjee@ligo.org",
+		"offline": false
+	},
+	"alert_type": "new",
+	"uid": "G000005",
+	"file": "",
+	"description": ""
+}

@@ -40,6 +40,13 @@
     applied to the superevent and external trigger page and the external
     trigger is added to the list of em_events in superevent object dictionary.
 
+-   `cwb` and `lib` nodes added to superevent handler.
+
+-   Events are treated as finite segment window, initial superevent
+    creation with preferred event window. Addition of events to
+    superevents may change the superevent window and also the
+    preferred event.
+
 ## 0.0.10 (2018-06-13)
 
 -   Model the time extent of events and superevents using the

@@ -1,0 +1,31 @@
+{
+    "uid": "G000003",
+    "alert_type": "new",
+    "description": "",
+    "file": "/home/deep/FAKE_DB/G000003/coinc.xml",
+    "object": {
+        "graceid": "G000003",
+        "gpstime": 1163905224.4332082,
+        "pipeline": "gstlal",
+        "group": "CBC",
+        "links": {
+            "neighbors": "",
+            "files": "/home/deep/FAKE_DB/G000003/files.pkl",
+            "log": "/home/deep/FAKE_DB/G000003/logs.pkl",
+            "filemeta": "/home/deep/FAKE_DB/G000003/toplevel.pkl",
+            "tags": "",
+            "self": "/home/deep/FAKE_DB/G000003",
+            "labels": "/home/deep/FAKE_DB/G000003/labels.pkl",
+            "emobservations": ""
+        },
+        "created": 1524056420.473776,
+        "far": 3.021362523404484e-31,
+        "instruments": "H1,L1",
+        "labels": {
+        },
+        "extra_attributes": {
+        },
+        "submitter": "deep.chatterjee@ligo.org",
+        "offline": false
+    }
+}

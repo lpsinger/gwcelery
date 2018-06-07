@@ -1,0 +1,44 @@
+{
+	"object": {
+		"graceid": "G000006",
+		"gpstime": 1163905239.5,
+		"pipeline": "LIB",
+		"group": "Burst",
+		"links": {
+			"neighbors": "",
+			"files": "",
+			"log": "",
+			"tags": "",
+			"self": "",
+			"labels": "",
+			"filemeta": "",
+			"emobservations": ""
+		},
+		"created": 1524056420.473776,
+		"far": 3.021362523404484e-16,
+		"instruments": "H1,L1",
+		"labels": {},
+		"extra_attributes": {
+			"LalInferenceBurst": {
+				"omicron_snr_H1": 5.60463,
+				"quality_mean": 20.64583414148003,
+				"hrss_mean": 5.44921359504255e-23,
+				"frequency_median": 116.888587187779,
+				"hrss_median": 5.33537116603445e-23,
+				"omicron_snr_network": 8.7783137048,
+				"omicron_snr_L1": 6.75625,
+				"bsn": 20.337667,
+				"frequency_mean": 117.964487295081,
+				"quality_median": 20.60582756190122,
+				"omicron_snr_V1": null,
+				"bci": 7.046
+			}
+		},
+		"submitter": "deep.chatterjee@ligo.org",
+		"offline": false
+	},
+	"alert_type": "new",
+	"uid": "G000006",
+	"file": "",
+	"description": ""
+}
