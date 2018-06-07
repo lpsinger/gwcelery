@@ -17,7 +17,7 @@ from . import skymaps
                  'cbc_mbtaonline',
                  'cbc_gstlal_mdc',
                  shared=False)
-def dispatch(payload):
+def handle(payload):
     """Parse an LVAlert message and dispatch it to other tasks."""
     # Parse JSON payload
     alert = json.loads(payload)

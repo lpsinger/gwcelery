@@ -4,15 +4,15 @@ from unittest.mock import patch
 from celery import group
 import pkg_resources
 
-from ..tasks.orchestrator import dispatch
+from ..tasks import orchestrator
 
 
 @patch('gwcelery.tasks.circulars.create_circular')
 @patch('gwcelery.tasks.skymaps.annotate_fits')
 @patch('gwcelery.tasks.bayestar.bayestar')
 @patch('gwcelery.tasks.gcn.send.delay')
-def test_dispatch_voevent(mock_send, mock_bayestar, mock_annotate_fits,
-                          mock_create_circular):
+def test_handle_voevent(mock_send, mock_bayestar, mock_annotate_fits,
+                        mock_create_circular):
     """Test dispatch of a VOEvent message."""
     # Test LVAlert payload.
     payload = pkg_resources.resource_string(
@@ -21,7 +21,7 @@ def test_dispatch_voevent(mock_send, mock_bayestar, mock_annotate_fits,
     # text = json.loads(payload)['object']['text']
 
     # Run function under test
-    dispatch(payload)
+    orchestrator.handle(payload)
 
     # Check that the correct tasks were dispatched.
     mock_annotate_fits.assert_not_called()
@@ -34,15 +34,14 @@ def test_dispatch_voevent(mock_send, mock_bayestar, mock_annotate_fits,
 @patch('gwcelery.tasks.circulars.create_circular')
 @patch('gwcelery.tasks.skymaps.annotate_fits')
 @patch('gwcelery.tasks.bayestar.bayestar')
-def test_dispatch_label(mock_bayestar, mock_annotate_fits,
-                        mock_create_circular):
+def test_handle_label(mock_bayestar, mock_annotate_fits, mock_create_circular):
     """Test dispatch of a label message that should be ignored."""
     # Test LVAlert payload.
     payload = pkg_resources.resource_string(
         __name__, 'data/lvalert_label_dqv.json')
 
     # Run function under test
-    dispatch(payload)
+    orchestrator.handle(payload)
 
     # Check that no tasks were dispatched.
     mock_annotate_fits.assert_not_called()
@@ -53,15 +52,15 @@ def test_dispatch_label(mock_bayestar, mock_annotate_fits,
 @patch('gwcelery.tasks.circulars.create_circular')
 @patch('gwcelery.tasks.skymaps.annotate_fits')
 @patch('gwcelery.tasks.bayestar.bayestar')
-def test_dispatch_ignored(mock_bayestar, mock_annotate_fits,
-                          mock_create_circular):
+def test_handle_ignored(mock_bayestar, mock_annotate_fits,
+                        mock_create_circular):
     """Test dispatch of a detchar status message that should be ignored."""
     # Test LVAlert payload.
     payload = pkg_resources.resource_string(
         __name__, 'data/lvalert_detchar.json')
 
     # Run function under test
-    dispatch(payload)
+    orchestrator.handle(payload)
 
     # Check that no tasks were dispatched.
     mock_annotate_fits.assert_not_called()
@@ -72,13 +71,13 @@ def test_dispatch_ignored(mock_bayestar, mock_annotate_fits,
 @patch('gwcelery.tasks.gracedb.upload.run')
 @patch('gwcelery.tasks.circulars.create_circular.run')
 @patch('gwcelery.tasks.bayestar.bayestar', return_value=group())
-def test_dispatch_psd(mock_bayestar, mock_create_circular, mock_upload):
+def test_handle_psd(mock_bayestar, mock_create_circular, mock_upload):
     """Test dispatch of an LVAlert message for a PSD upload."""
     # Test LVAlert payload.
     payload = pkg_resources.resource_string(__name__, 'data/lvalert_psd.json')
 
     # Run function under test
-    dispatch(payload)
+    orchestrator.handle(payload)
 
     # Check that the correct tasks were dispatched.
     mock_bayestar.assert_called_once_with('T250822')
@@ -87,13 +86,13 @@ def test_dispatch_psd(mock_bayestar, mock_create_circular, mock_upload):
 
 
 @patch('gwcelery.tasks.skymaps.annotate_fits')
-def test_dispatch_fits(mock_annotate_fits):
+def test_handle_fits(mock_annotate_fits):
     """Test dispatch of an LVAlert message for a PSD upload."""
     # Test LVAlert payload.
     payload = pkg_resources.resource_string(__name__, 'data/lvalert_fits.json')
 
     # Run function under test
-    dispatch(payload)
+    orchestrator.handle(payload)
 
     # Check that the correct tasks were dispatched.
     mock_annotate_fits.assert_called_once_with(
