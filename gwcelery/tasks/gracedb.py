@@ -122,8 +122,7 @@ def get_superevent(gid):
 @app.task(ignore_result=True, shared=False)
 def set_preferred_event(sid, preferred_event, gid):
     """
-    Update superevent with the new trigger id based on
-    FAR values.
+    Update superevent with the new trigger id based on FAR values.
 
     Parameters
     ----------
