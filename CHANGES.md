@@ -12,6 +12,10 @@
     by matching on both TrigID (which is generally the mission elapsed time)
     and mission name.
 
+-   Add the configuration variable `superevent_far_threshold` to limit
+    the maximum false alarm rate of events that are included in superevents.
+
+
 ## 0.0.9 (2018-06-06)
 
 -   Add missing LVAlert message types to superevent handler.

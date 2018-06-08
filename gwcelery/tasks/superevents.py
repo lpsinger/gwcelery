@@ -37,6 +37,10 @@ def handle(text):
     gid = payload['uid']
     alert_type = payload['alert_type']
 
+    if not _far_check(payload):
+        log.info("Skipping processing of %s because of low far", gid)
+        return
+
     sid, preferred_flag, superevents = gracedb.get_superevent(gid)
     superevents = superevent_segment_list(superevents)
 
@@ -77,12 +81,13 @@ def handle(text):
 
     # Condition 2/4
     elif sid is None and alert_type == 'update':
-        # Probable case of a restart
-        log.debug('2nd if: Possible restart scenario')
-        log.warning('No superevent found for alert_type update for %s', gid)
-        log.warning('Creating new superevent for %s', gid)
-        # update alerts don't have gpstime, hence fetch from gracedb
+        log.debug('2nd if: possible restart scenario')
+        log.info('No superevent found for update alert for %s',
+                 gid)
+        # update alerts don't have far, gpstime, hence fetch from gracedb
         event_dict = gracedb.get_event(gid)
+        log.warning('Possible restart scenario. \
+                     Creating new superevent for %s', gid)
         # add gpstime to payload dict since update alert don't have gpstime
         payload['object']['gpstime'] = event_dict['gpstime']
 
@@ -110,6 +115,15 @@ def handle(text):
     # Condition else
     else:
         log.critical('Unhandled by parse_trigger, passing...')
+
+
+def _far_check(payload):
+    """
+    Returns boolean value if event satsfies low enough FAR
+    """
+    far = payload['object'].get('far') or \
+        gracedb.get_event(payload['uid'])['far']
+    return far < app.conf['superevent_far_threshold']
 
 
 def update_preferred_event(sid, preferred_event, gid):

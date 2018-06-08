@@ -17,7 +17,8 @@ app = Celery(
         gcn_remote_address='capella2.gsfc.nasa.gov',
         external_trigger_event_type='Test',
         superevent_d_t_start=10.0,
-        superevent_d_t_end=10.0
+        superevent_d_t_end=10.0,
+        superevent_far_threshold=1.9e-07,
     )
 )
 
