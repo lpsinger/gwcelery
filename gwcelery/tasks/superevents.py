@@ -42,7 +42,7 @@ def handle(text):
         return
 
     sid, preferred_flag, superevents = gracedb.get_superevent(gid)
-    superevents = superevent_segment_list(superevents)
+    superevents = _superevent_segment_list(superevents)
 
     d_t_start = app.conf['superevent_d_t_start']
     d_t_end = app.conf['superevent_d_t_end']
@@ -50,12 +50,12 @@ def handle(text):
     # Condition 1/4
     if sid is None and alert_type == 'new':
         log.debug('Entered 1st if')
-        event_segment = Event(payload['object'].get('gpstime'),
-                              payload['uid'],
-                              payload['object'].get('group'),
-                              payload['object'].get('pipeline'),
-                              payload['object'].get('search'),
-                              event_dict=payload)
+        event_segment = _Event(payload['object'].get('gpstime'),
+                               payload['uid'],
+                               payload['object'].get('group'),
+                               payload['object'].get('pipeline'),
+                               payload['object'].get('search'),
+                               event_dict=payload)
 
         # Check which superevent window trigger gpstime falls in
         if superevents.intersects_segment(event_segment):
@@ -70,9 +70,9 @@ def handle(text):
             # ADDITIONAL LOGIC HERE IF THE TIME
             # WINDOW IS TO BE CHANGED BASED ON
             # TRIGGER PARAMETERS
-            update_preferred_event(superevent.superevent_id,
-                                   superevent.preferred_event,
-                                   event_segment.gid)
+            _update_preferred_event(superevent.superevent_id,
+                                    superevent.preferred_event,
+                                    event_segment.gid)
         # Create a new event if not in any time window
         else:
             gracedb.create_superevent(payload,
@@ -109,9 +109,9 @@ def handle(text):
         superevent = list(filter(lambda s:
                                  s.superevent_id == sid, superevents))
         # superevent will contain only one item based on matching sid
-        update_preferred_event(superevent[0].superevent_id,
-                               superevent[0].preferred_event,
-                               gid)
+        _update_preferred_event(superevent[0].superevent_id,
+                                superevent[0].preferred_event,
+                                gid)
     # Condition else
     else:
         log.critical('Unhandled by parse_trigger, passing...')
@@ -126,7 +126,7 @@ def _far_check(payload):
     return far < app.conf['superevent_far_threshold']
 
 
-def update_preferred_event(sid, preferred_event, gid):
+def _update_preferred_event(sid, preferred_event, gid):
     """
     Update superevent with the new trigger id based on FAR values.
 
@@ -145,9 +145,8 @@ def update_preferred_event(sid, preferred_event, gid):
         gracedb.set_preferred_event(sid, gid)
 
 
-def superevent_segment_list(superevents):
-    """Ingests a list of superevent dictionaries, creates
-    :class:`SuperEvent` objects from each and returns
+def _superevent_segment_list(superevents):
+    """Ingests a list of superevent dictionaries, and returns
     a segmentlist of the same
 
     Parameters
@@ -162,13 +161,13 @@ def superevent_segment_list(superevents):
         superevents as a segmentlist object
     """
     superevent_list = \
-        [SuperEvent(s['t_0'], s['t_start'], s['t_end'],
-                    s['superevent_id'], s['preferred_event'], s)
+        [_SuperEvent(s['t_0'], s['t_start'], s['t_end'],
+                     s['superevent_id'], s['preferred_event'], s)
             for s in superevents]
     return segmentlist(superevent_list)
 
 
-class Event(segment):
+class _Event(segment):
     """An event implemented as an extension of
     :class:`glue.segments.segment`
     """
@@ -185,7 +184,7 @@ class Event(segment):
         self.event_dict = event_dict
 
 
-class SuperEvent(segment):
+class _SuperEvent(segment):
     """An superevent implemented as an extension of
     :class:`glue.segments.segment`
     """

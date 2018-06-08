@@ -37,7 +37,7 @@ def test_update_preferred_event(monkeypatch):
             self.__update_superevent_called = True
 
     monkeypatch.setattr('gwcelery.tasks.gracedb.client', FakeDb())
-    superevents.update_preferred_event('S0039', 'T0212', 'T1234')
+    superevents._update_preferred_event('S0039', 'T0212', 'T1234')
 
 
 def test_get_superevent(monkeypatch):
