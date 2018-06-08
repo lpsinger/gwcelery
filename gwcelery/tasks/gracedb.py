@@ -120,23 +120,19 @@ def get_superevent(gid):
 
 
 @app.task(ignore_result=True, shared=False)
-def set_preferred_event(sid, preferred_event, gid):
+def set_preferred_event(sid, gid):
     """
-    Update superevent with the new trigger id based on FAR values.
+    Update superevent with gid. Wrapper around
+    :meth:`updateSuperevent`
 
     Parameters
     ----------
     sid : str
         superevent uid
-    preferred_event : str
-        preferred event id of the superevent
     gid : str
         uid of the new trigger
     """
-    r_new_event = client.event(gid).json()
-    r_preferred_event = client.event(preferred_event).json()
-    if r_new_event['far'] < r_preferred_event['far']:
-        client.updateSuperevent(sid, preferred_event=r_new_event['graceid'])
+    client.updateSuperevent(sid, preferred_event=gid)
 
 
 @app.task(ignore_result=True, shared=False)

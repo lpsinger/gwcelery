@@ -6,7 +6,7 @@ import pkg_resources
 from ..tasks import gracedb, superevents
 
 
-def test_set_preferred_event(monkeypatch):
+def test_update_preferred_event(monkeypatch):
     class T0212TTPResponse(object):
         def json(self):
             with pkg_resources.resource_stream(
@@ -37,7 +37,7 @@ def test_set_preferred_event(monkeypatch):
             self.__update_superevent_called = True
 
     monkeypatch.setattr('gwcelery.tasks.gracedb.client', FakeDb())
-    gracedb.set_preferred_event('S0039', 'T0212', 'T1234')
+    superevents.update_preferred_event('S0039', 'T0212', 'T1234')
 
 
 def test_get_superevent(monkeypatch):

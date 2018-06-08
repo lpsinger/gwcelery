@@ -66,9 +66,9 @@ def handle(text):
             # ADDITIONAL LOGIC HERE IF THE TIME
             # WINDOW IS TO BE CHANGED BASED ON
             # TRIGGER PARAMETERS
-            gracedb.set_preferred_event(superevent.superevent_id,
-                                        superevent.preferred_event,
-                                        event_segment.gid)
+            update_preferred_event(superevent.superevent_id,
+                                   superevent.preferred_event,
+                                   event_segment.gid)
         # Create a new event if not in any time window
         else:
             gracedb.create_superevent(payload,
@@ -104,12 +104,31 @@ def handle(text):
         superevent = list(filter(lambda s:
                                  s.superevent_id == sid, superevents))
         # superevent will contain only one item based on matching sid
-        gracedb.set_preferred_event(superevent[0].superevent_id,
-                                    superevent[0].preferred_event,
-                                    gid)
+        update_preferred_event(superevent[0].superevent_id,
+                               superevent[0].preferred_event,
+                               gid)
     # Condition else
     else:
         log.critical('Unhandled by parse_trigger, passing...')
+
+
+def update_preferred_event(sid, preferred_event, gid):
+    """
+    Update superevent with the new trigger id based on FAR values.
+
+    Parameters
+    ----------
+    sid : str
+        superevent uid
+    preferred_event : str
+        preferred event id of the superevent
+    gid : str
+        uid of the new trigger
+    """
+    new_event = gracedb.client.event(gid).json()
+    preferred_event = gracedb.client.event(preferred_event).json()
+    if new_event['far'] < preferred_event['far']:
+        gracedb.set_preferred_event(sid, gid)
 
 
 def superevent_segment_list(superevents):
