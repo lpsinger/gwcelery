@@ -7,8 +7,6 @@ superevents.
     * Primary logic to respond to low latency triggers contained
       in :meth:`handle` function.
 """
-import json
-
 from celery.utils.log import get_task_logger
 from glue.segments import segment, segmentlist
 
@@ -28,12 +26,11 @@ log = get_task_logger(__name__)
                  'test_gstlal_mdc',
                  queue='superevent',
                  shared=False)
-def handle(text):
+def handle(payload):
     """LVAlert handler for superevent manager.
     Recieves payload from test and production nodes and
     serially processes them to create/modify superevents
     """
-    payload = json.loads(text)
     gid = payload['uid']
     alert_type = payload['alert_type']
 

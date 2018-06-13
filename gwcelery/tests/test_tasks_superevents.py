@@ -1,17 +1,13 @@
-import json
-
 import pytest
-import pkg_resources
 
 from ..tasks import gracedb, superevents
+from . import resource_json
 
 
 def test_update_preferred_event(monkeypatch):
     class T0212TTPResponse(object):
         def json(self):
-            with pkg_resources.resource_stream(
-                    __name__, 'data/T0212_S0039_preferred.json') as f:
-                return json.load(f)
+            return resource_json(__name__, 'data/T0212_S0039_preferred.json')
 
     class NewEventTTPResponse(object):
         def json(self):
@@ -46,9 +42,8 @@ def test_get_superevent(monkeypatch):
             self.service_url = 'service_url'
 
         def superevents(self, **kwargs):
-            with pkg_resources.resource_stream(
-                    __name__, 'data/superevents.json') as f:
-                return (s for s in json.load(f)['superevents'])
+            response = resource_json(__name__, 'data/superevents.json')
+            return (s for s in response['superevents'])
 
     monkeypatch.setattr('gwcelery.tasks.gracedb.client', FakeDb())
 
@@ -66,9 +61,8 @@ def test_get_superevent(monkeypatch):
 
 def test_parse_trigger_raising():
     garbage_payload = dict(some_value=999, something_else=99)
-    garbage_text = json.dumps(garbage_payload)
     with pytest.raises(KeyError):
-        superevents.handle(garbage_text)
+        superevents.handle(garbage_payload)
 
 
 # FIXME lot of redundancy, implement setUp tearDown for below
@@ -77,9 +71,7 @@ def test_parse_trigger_1(monkeypatch):
     existing superevent"""
     class T0212TTPResponse(object):
         def json(self):
-            with pkg_resources.resource_stream(
-                    __name__, 'data/T0212_S0039_preferred.json') as f:
-                return json.load(f)
+            return resource_json(__name__, 'data/T0212_S0039_preferred.json')
 
     class NewEventTTPResponse(object):
         def json(self):
@@ -95,9 +87,8 @@ def test_parse_trigger_1(monkeypatch):
             self._addevent_called = False
 
         def superevents(self, **kwargs):
-            with pkg_resources.resource_stream(
-                    __name__, 'data/superevents.json') as f:
-                return (s for s in json.load(f)['superevents'])
+            response = resource_json(__name__, 'data/superevents.json')
+            return (s for s in response['superevents'])
 
         def addEventToSuperevent(self, *args, **kwargs):    # noqa: N802
             assert not self._addevent_called
@@ -109,11 +100,9 @@ def test_parse_trigger_1(monkeypatch):
             else:
                 return NewEventTTPResponse()
     monkeypatch.setattr('gwcelery.tasks.gracedb.client', FakeDb())
-    with pkg_resources.resource_stream(
-            __name__, 'data/mock_trigger_new_G000000.json') as f:
-        text = f.read()
+    payload = resource_json(__name__, 'data/mock_trigger_new_G000000.json')
     # New trigger G000000 time falls in S0039 window
-    superevents.handle(text)
+    superevents.handle(payload)
 
 
 def test_parse_trigger_2(monkeypatch):
@@ -121,9 +110,7 @@ def test_parse_trigger_2(monkeypatch):
     existing superevent"""
     class T0212TTPResponse(object):
         def json(self):
-            with pkg_resources.resource_stream(
-                    __name__, 'data/T0212_S0039_preferred.json') as f:
-                return json.load(f)
+            return resource_json(__name__, 'data/T0212_S0039_preferred.json')
 
     class NewEventTTPResponse(object):
         def json(self):
@@ -140,9 +127,8 @@ def test_parse_trigger_2(monkeypatch):
             self._addevent_called = False
 
         def superevents(self, **kwargs):
-            with pkg_resources.resource_stream(
-                    __name__, 'data/superevents.json') as f:
-                return (s for s in json.load(f)['superevents'])
+            response = resource_json(__name__, 'data/superevents.json')
+            return (s for s in response['superevents'])
 
         def addEventToSuperevent(self, *args, **kwargs):    # noqa: N802
             assert not self._addevent_called
@@ -160,10 +146,8 @@ def test_parse_trigger_2(monkeypatch):
                 return NewEventTTPResponse()
     monkeypatch.setattr('gwcelery.tasks.gracedb.client', FakeDb())
     # New trigger G000000 falls in S0039 window
-    with pkg_resources.resource_stream(
-            __name__, 'data/mock_trigger_new_G000000.json') as f:
-        text = f.read()
-    superevents.handle(text)
+    payload = resource_json(__name__, 'data/mock_trigger_new_G000000.json')
+    superevents.handle(payload)
 
 
 def test_parse_trigger_3(monkeypatch):
@@ -179,16 +163,13 @@ def test_parse_trigger_3(monkeypatch):
             self._create_superevent_called = True
 
         def superevents(self, **kwargs):
-            with pkg_resources.resource_stream(
-                    __name__, 'data/superevents.json') as f:
-                return (s for s in json.load(f)['superevents'])
+            response = resource_json(__name__, 'data/superevents.json')
+            return (s for s in response['superevents'])
 
     monkeypatch.setattr('gwcelery.tasks.gracedb.client', FakeDb())
-    with pkg_resources.resource_stream(
-            __name__, 'data/mock_trigger_new_G000001.json') as f:
-        text = f.read()
+    payload = resource_json(__name__, 'data/mock_trigger_new_G000001.json')
     # G000001 absent in any superevent window, new superevent created
-    superevents.handle(text)
+    superevents.handle(payload)
 
 
 def test_parse_trigger_4(monkeypatch):
@@ -214,29 +195,24 @@ def test_parse_trigger_4(monkeypatch):
             self._create_superevent_called = True
 
         def superevents(self, **kwargs):
-            with pkg_resources.resource_stream(
-                    __name__, 'data/superevents.json') as f:
-                return (s for s in json.load(f)['superevents'])
+            response = resource_json(__name__, 'data/superevents.json')
+            return (s for s in response['superevents'])
 
         def event(self, gid):
             return G000001TTPResponse()
 
     monkeypatch.setattr('gwcelery.tasks.gracedb.client', FakeDb())
-    with pkg_resources.resource_stream(
-            __name__, 'data/mock_trigger_update_G000001.json') as f:
-        text = f.read()
+    payload = resource_json(__name__, 'data/mock_trigger_update_G000001.json')
     # G000001 absent in any superevent window, update alert
     # triggers creation of a new superevent
-    superevents.handle(text)
+    superevents.handle(payload)
 
 
 def test_parse_trigger_5(monkeypatch):
     """Update alert comes in for already existing superevent T0211"""
     class T0212TTPResponse(object):
         def json(self):
-            with pkg_resources.resource_stream(
-                    __name__, 'data/T0212_S0039_preferred.json') as f:
-                return json.load(f)
+            return resource_json(__name__, 'data/T0212_S0039_preferred.json')
 
     class T0211TTPResponse(object):
         def json(self):
@@ -252,9 +228,8 @@ def test_parse_trigger_5(monkeypatch):
             self._update_superevent_called = False
 
         def superevents(self, **kwargs):
-            with pkg_resources.resource_stream(
-                    __name__, 'data/superevents.json') as f:
-                return (s for s in json.load(f)['superevents'])
+            response = resource_json(__name__, 'data/superevents.json')
+            return (s for s in response['superevents'])
 
         def event(self, gid):
             if gid == "T0212":
@@ -267,7 +242,5 @@ def test_parse_trigger_5(monkeypatch):
             self._update_superevent_called = True
 
     monkeypatch.setattr('gwcelery.tasks.gracedb.client', FakeDb())
-    with pkg_resources.resource_stream(
-            __name__, 'data/mock_trigger_update_T0211.json') as f:
-        text = f.read()
-    superevents.handle(text)
+    payload = resource_json(__name__, 'data/mock_trigger_update_T0211.json')
+    superevents.handle(payload)

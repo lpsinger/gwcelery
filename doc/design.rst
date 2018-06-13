@@ -109,14 +109,12 @@ LVAlert messages
 LVAlert message handler tasks are declared using the
 :meth:`gwcelery.tasks.lvalert.handler` decorator::
 
-    import json
     from gwcelery.tasks import lvalert
 
     @lvalert.handler('cbc_gstlal',
                      'cbc_pycbc',
                      'cbc_mbta')
-    def handle_cbc(alert_content):
-        alert = json.loads(alert_content)
+    def handle_cbc(alert):
         # do work here...
 
 

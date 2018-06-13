@@ -15,6 +15,10 @@
 -   Add the configuration variable `superevent_far_threshold` to limit
     the maximum false alarm rate of events that are included in superevents.
 
+-   LVAlert handlers are now passed the actual alert data structure rather than
+    the JSON text, so handlers are no longer responsible for calling
+    `json.loads`. It is a little bit more convenient and possibly also faster
+    for Celery to deserialize the alert messages.
 
 ## 0.0.9 (2018-06-06)
 

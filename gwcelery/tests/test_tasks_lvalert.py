@@ -83,8 +83,8 @@ def test_handle_messages(mock_orchestrator_handle, mock_superevents_handle,
 
     # Run function under test
     lvalert._handle_messages(xml)
-    mock_orchestrator_handle.assert_called_once_with(entry.text)
-    mock_superevents_handle.assert_called_once_with(entry.text)
+    mock_orchestrator_handle.assert_called_once()
+    mock_superevents_handle.assert_called_once()
 
 
 @patch('gwcelery.tasks.superevents.handle.run')

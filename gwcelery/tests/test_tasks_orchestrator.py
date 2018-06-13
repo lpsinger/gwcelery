@@ -2,9 +2,9 @@
 from unittest.mock import patch
 
 from celery import group
-import pkg_resources
 
 from ..tasks import orchestrator
+from . import resource_json
 
 
 @patch('gwcelery.tasks.circulars.create_circular')
@@ -15,13 +15,12 @@ def test_handle_voevent(mock_send, mock_bayestar, mock_annotate_fits,
                         mock_create_circular):
     """Test dispatch of a VOEvent message."""
     # Test LVAlert payload.
-    payload = pkg_resources.resource_string(
-        __name__, 'data/lvalert_voevent.json')
+    alert = resource_json(__name__, 'data/lvalert_voevent.json')
 
-    # text = json.loads(payload)['object']['text']
+    # text = alert['object']['text']
 
     # Run function under test
-    orchestrator.handle(payload)
+    orchestrator.handle(alert)
 
     # Check that the correct tasks were dispatched.
     mock_annotate_fits.assert_not_called()
@@ -37,11 +36,10 @@ def test_handle_voevent(mock_send, mock_bayestar, mock_annotate_fits,
 def test_handle_label(mock_bayestar, mock_annotate_fits, mock_create_circular):
     """Test dispatch of a label message that should be ignored."""
     # Test LVAlert payload.
-    payload = pkg_resources.resource_string(
-        __name__, 'data/lvalert_label_dqv.json')
+    alert = resource_json(__name__, 'data/lvalert_label_dqv.json')
 
     # Run function under test
-    orchestrator.handle(payload)
+    orchestrator.handle(alert)
 
     # Check that no tasks were dispatched.
     mock_annotate_fits.assert_not_called()
@@ -56,11 +54,10 @@ def test_handle_ignored(mock_bayestar, mock_annotate_fits,
                         mock_create_circular):
     """Test dispatch of a detchar status message that should be ignored."""
     # Test LVAlert payload.
-    payload = pkg_resources.resource_string(
-        __name__, 'data/lvalert_detchar.json')
+    alert = resource_json(__name__, 'data/lvalert_detchar.json')
 
     # Run function under test
-    orchestrator.handle(payload)
+    orchestrator.handle(alert)
 
     # Check that no tasks were dispatched.
     mock_annotate_fits.assert_not_called()
@@ -74,10 +71,10 @@ def test_handle_ignored(mock_bayestar, mock_annotate_fits,
 def test_handle_psd(mock_bayestar, mock_create_circular, mock_upload):
     """Test dispatch of an LVAlert message for a PSD upload."""
     # Test LVAlert payload.
-    payload = pkg_resources.resource_string(__name__, 'data/lvalert_psd.json')
+    alert = resource_json(__name__, 'data/lvalert_psd.json')
 
     # Run function under test
-    orchestrator.handle(payload)
+    orchestrator.handle(alert)
 
     # Check that the correct tasks were dispatched.
     mock_bayestar.assert_called_once_with('T250822')
@@ -89,10 +86,10 @@ def test_handle_psd(mock_bayestar, mock_create_circular, mock_upload):
 def test_handle_fits(mock_annotate_fits):
     """Test dispatch of an LVAlert message for a PSD upload."""
     # Test LVAlert payload.
-    payload = pkg_resources.resource_string(__name__, 'data/lvalert_fits.json')
+    alert = resource_json(__name__, 'data/lvalert_fits.json')
 
     # Run function under test
-    orchestrator.handle(payload)
+    orchestrator.handle(alert)
 
     # Check that the correct tasks were dispatched.
     mock_annotate_fits.assert_called_once_with(

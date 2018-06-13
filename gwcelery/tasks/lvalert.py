@@ -48,7 +48,7 @@ class _LVAlertDispatchHandler(DispatchHandler):
                      service, gracedb.client.service_url)
             return None, None, None
 
-        return super().process_args(node, payload)
+        return super().process_args(node, alert)
 
 
 handler = _LVAlertDispatchHandler()

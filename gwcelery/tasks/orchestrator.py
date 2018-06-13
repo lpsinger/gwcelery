@@ -1,5 +1,4 @@
 """Routing of LVAlert messages to other tasks."""
-import json
 import os
 
 from celery import group
@@ -17,11 +16,8 @@ from . import skymaps
                  'cbc_mbtaonline',
                  'cbc_gstlal_mdc',
                  shared=False)
-def handle(payload):
+def handle(alert):
     """Parse an LVAlert message and dispatch it to other tasks."""
-    # Parse JSON payload
-    alert = json.loads(payload)
-
     # Determine GraceDB ID
     graceid = alert['uid']
 
