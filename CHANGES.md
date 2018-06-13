@@ -20,6 +20,10 @@
     `json.loads`. It is a little bit more convenient and possibly also faster
     for Celery to deserialize the alert messages.
 
+-   Introduce ``Production``, ``Development``, ``Test``, and ``Playground``
+    application configuration objects in order to facilitate quickly switching
+    between GraceDb servers.
+
 ## 0.0.9 (2018-06-06)
 
 -   Add missing LVAlert message types to superevent handler.
