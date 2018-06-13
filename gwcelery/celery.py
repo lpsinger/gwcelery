@@ -24,11 +24,25 @@ class Base:
     gcn_remote_address = 'capella2.gsfc.nasa.gov'
     """Address to listen for inbound (receiving) connections to GCN."""
 
-    superevent_d_t_start = 10.0
+    superevent_d_t_start = dict(gstlal=10.0,
+                                pycbc=10.0,
+                                mbtaonline=10.0,
+                                cwb=10.0,
+                                lib=10.0)
     """Lower extent of superevent segments."""
 
-    superevent_d_t_end = 10.0
-    """Upper extent of superevent segments."""
+    superevent_d_t_end = dict(gstlal=10.0,
+                              pycbc=10.0,
+                              mbtaonline=10.0,
+                              cwb=10.0,
+                              lib=10.0)
+    """Upper extent of superevent segments"""
+
+    superevent_default_d_t_start = 10.0
+    """Default lower extent of superevent segments"""
+
+    superevent_default_d_t_end = 10.0
+    """Default upper extent for superevent segments"""
 
     superevent_far_threshold = 1.9e-07
     """Maximum false alarm rate to consider events superevents."""

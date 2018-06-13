@@ -41,8 +41,7 @@ def handle(payload):
     sid, preferred_flag, superevents = gracedb.get_superevent(gid)
     superevents = _superevent_segment_list(superevents)
 
-    d_t_start = app.conf['superevent_d_t_start']
-    d_t_end = app.conf['superevent_d_t_end']
+    d_t_start, d_t_end = _get_dts(payload)
 
     # Condition 1/4
     if sid is None and alert_type == 'new':
@@ -112,6 +111,27 @@ def handle(payload):
     # Condition else
     else:
         log.critical('Unhandled by parse_trigger, passing...')
+
+
+# FIXME: Unify _get_dts and _far_check, call get_event only once
+def _get_dts(payload):
+    """
+    Returns the dt_start and dt_end values based on CBC/Burst
+    for new and update type alerts
+    """
+    alert_type = payload['alert_type']
+    if alert_type == 'new':
+        group = payload['object']['group'].lower()
+    else:
+        group = gracedb.get_event(payload['uid'])['group'].lower()
+
+    dt_start = app.conf['superevent_d_t_start'].get(
+        group, app.conf['superevent_default_d_t_start'])
+
+    dt_end = app.conf['superevent_d_t_end'].get(
+        group, app.conf['superevent_default_d_t_end'])
+
+    return dt_start, dt_end
 
 
 def _far_check(payload):

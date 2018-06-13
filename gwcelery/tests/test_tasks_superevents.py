@@ -182,6 +182,8 @@ def test_parse_trigger_4(monkeypatch):
             # FIXME json packet currently has only necessary keys
             return dict(graceid="G000001",
                         instruments="H1,L1",
+                        group="CBC",
+                        pipeline="gstlal",
                         gpstime=1286741861.52678,
                         far=3.021362523404484e-31)
 
@@ -219,6 +221,8 @@ def test_parse_trigger_5(monkeypatch):
             # The update will change the preferred event
             return dict(graceid="T0211",
                         instruments="H1,L1",
+                        group="CBC",
+                        pipeline="gstlal",
                         gpstime=1163905217.52678,
                         far=5.500858049414366e-20)
 

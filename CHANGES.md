@@ -24,6 +24,9 @@
     application configuration objects in order to facilitate quickly switching
     between GraceDb servers.
 
+-   Pipeline specific start and end times for superevent segments. These values
+    are controlled via configuration variables.
+
 ## 0.0.9 (2018-06-06)
 
 -   Add missing LVAlert message types to superevent handler.
