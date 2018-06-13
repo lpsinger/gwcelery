@@ -29,7 +29,7 @@ def annotate_fits(versioned_filename, filebase, graceid, tags):
         '{versioned_filename}">{versioned_filename}</a>').format(
             graceid=graceid, versioned_filename=versioned_filename)
 
-    return gracedb.download.s(versioned_filename, graceid) | group(
+    return group(
         fits_header.s(versioned_filename) |
         gracedb.upload.s(
             filebase + '.html', graceid, header_msg, tags),

@@ -68,8 +68,7 @@ def fake_lvalert():
 
 
 @patch('gwcelery.tasks.superevents.handle.run')
-@patch('gwcelery.tasks.orchestrator.handle.run')
-def test_handle_messages(mock_orchestrator_handle, mock_superevents_handle,
+def test_handle_messages(mock_superevents_handle,
                          netrc_lvalert, fake_lvalert):
     """Test handling an LVAlert message that originates from the configured
     GraceDb server."""
@@ -83,14 +82,11 @@ def test_handle_messages(mock_orchestrator_handle, mock_superevents_handle,
 
     # Run function under test
     lvalert._handle_messages(xml)
-    mock_orchestrator_handle.assert_called_once()
     mock_superevents_handle.assert_called_once()
 
 
 @patch('gwcelery.tasks.superevents.handle.run')
-@patch('gwcelery.tasks.orchestrator.handle.run')
-def test_handle_messages_wrong_server(mock_orchestrator_handle,
-                                      mock_superevents_handle,
+def test_handle_messages_wrong_server(mock_superevents_handle,
                                       netrc_lvalert, fake_lvalert, caplog):
     """Test handling an LVAlert message that originates from a GraceDb server
     other than the configured GraceDb server. It should be ignored."""
@@ -113,14 +109,11 @@ def test_handle_messages_wrong_server(mock_orchestrator_handle,
                               'intended for GraceDb server '
                               'https://gracedb2.invalid/api/, but we are set '
                               'up for server https://gracedb.invalid/api/')
-    mock_orchestrator_handle.assert_not_called()
     mock_superevents_handle.assert_not_called()
 
 
 @patch('gwcelery.tasks.superevents.handle.run')
-@patch('gwcelery.tasks.orchestrator.handle.run')
-def test_handle_messages_no_self_link(mock_orchestrator_handle,
-                                      mock_superevents_handle,
+def test_handle_messages_no_self_link(mock_superevents_handle,
                                       netrc_lvalert, fake_lvalert, caplog):
     """Test handling an LVAlert message that does not identify the GraceDb
     server of origin. It should be rejected."""
@@ -136,5 +129,4 @@ def test_handle_messages_no_self_link(mock_orchestrator_handle,
     lvalert._handle_messages(xml)
     record, = caplog.records
     assert 'LVAlert message does not contain an API URL' in record.message
-    mock_orchestrator_handle.assert_not_called()
     mock_superevents_handle.assert_not_called()

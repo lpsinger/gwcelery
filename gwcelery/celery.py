@@ -53,6 +53,12 @@ class Base:
     superevent_far_threshold = 1.9e-07
     """Maximum false alarm rate to consider events superevents."""
 
+    orchestrator_timeout = 60.0
+    """The orchestrator will wait this many seconds from the time of the
+    creation of a new superevent to the time that annotations begin, in order
+    to let the superevent manager's decision on the preferred event
+    stabilize."""
+
 
 class Production(Base):
     """Application configuration for ``gracedb.ligo.org``."""

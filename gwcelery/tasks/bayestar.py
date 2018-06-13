@@ -12,49 +12,48 @@ from ligo.skymap.io import events
 from ligo.skymap.io import fits
 
 from ..celery import app
+from . import lvalert
 from . import gracedb
 
 log = logging.getLogger('BAYESTAR')
 
 
-def bayestar(graceid):
+@lvalert.handler('cbc_gstlal',
+                 'cbc_pycbc',
+                 'cbc_mbtaonline',
+                 'test_gstlal',
+                 'test_pycbc',
+                 'test_mbtaonline',
+                 shared=False)
+def handle(alert):
     """Peform end-to-end rapid sky localization with BAYESTAR, including
     GraceDB downloads and uploads.
 
-    This function downloads all of the required inputs for BAYESTAR,
-    runs rapid sky localization with a few different detector settings,
-    and uploads the resulting sky map FITS files to GraceDB.
+    This function downloads all of the required inputs for BAYESTAR, runs rapid
+    sky localization, and uploads the resulting sky map FITS files to GraceDB.
 
     Internally, all of the heavy lifting is done by :meth:`localize`.
     """
-    # FIXME: should call like this:
-    #
-    #     group(
-    #         download.s('coinc.xml', ...),
-    #         download.s('psd.xml.gz', ...)
-    #     ) | group(
-    #         localize.s(...) |
-    #         upload.s(...) |
-    #         ...,
-    #         localize.s(...) |
-    #         upload.s(...) |
-    #         ...,
-    #     )
-    #
-    # but groups do not preserve order. See:
-    # https://github.com/celery/celery/issues/3781
-    coinc = gracedb.download('coinc.xml', graceid)
-    psd = gracedb.download('psd.xml.gz', graceid)
-    coinc_psd = (coinc, psd)
-    return group(
-        localize.s(coinc_psd, graceid) |
-        gracedb.upload.s('bayestar.fits.gz', graceid,
-                         'sky localization complete', ['sky_loc', 'lvem']),
-        localize.s(coinc_psd, graceid,
-                   disabled_detectors=['V1'],
-                   filename='bayestar_no_virgo.fits.gz') |
-        gracedb.upload.s('bayestar_no_virgo.fits.gz', graceid,
-                         'sky localization complete', ['sky_loc', 'lvem']))
+
+    # Skip alerts that are not meant for us.
+    if alert['alert_type'] != 'update' or alert.get('file') != 'psd.xml.gz':
+        return
+
+    graceid = alert['uid']
+
+    (
+        group(
+            gracedb.download.s('coinc.xml', graceid),
+            gracedb.download.s('psd.xml.gz', graceid)
+        )
+        |
+        localize.s(graceid)
+        |
+        gracedb.upload.s(
+            'bayestar.fits.gz', graceid,
+            'sky localization complete', ['sky_loc', 'lvem']
+        )
+    ).delay()
 
 
 @app.task(queue='openmp', shared=False)

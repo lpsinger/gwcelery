@@ -54,9 +54,10 @@ def mock_download(filename, graceid):
 @patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
 @patch('ligo.skymap.tool.ligo_skymap_plot.main')
 @patch('ligo.skymap.tool.ligo_skymap_plot_volume.main')
-def test_annotate_fits(mock_plot_volume, mock_plot, mock_gracedb):
-    skymaps.annotate_fits('test.fits,0', 'test', 'T12345',
-                          ['tag1']).apply().get()
+def test_annotate_fits(mock_plot_volume, mock_plot, mock_gracedb,
+                       toy_3d_fits_filecontents):
+    skymaps.annotate_fits('test.fits,0', 'test', 'T12345', ['tag1']).delay(
+        toy_3d_fits_filecontents).get()
 
 
 def test_fits_header(toy_fits_filecontents):

@@ -7,11 +7,12 @@ import numpy as np
 import pkg_resources
 import pytest
 
-from ..tasks.bayestar import bayestar, localize
+from ..tasks.bayestar import handle, localize
+from . import resource_json
 
 
-def mock_download(filename, graceid):
-    assert graceid == 'T12345'
+def mock_download(filename, graceid, *args, **kwargs):
+    assert graceid == 'T250822'
     if filename == 'coinc.xml':
         return pkg_resources.resource_string(__name__, 'data/coinc.xml')
     elif filename == 'psd.xml.gz':
@@ -20,11 +21,25 @@ def mock_download(filename, graceid):
         raise ValueError
 
 
-@patch('gwcelery.tasks.gracedb.download', mock_download)
+@patch('gwcelery.tasks.gracedb.download.run', mock_download)
+@patch('gwcelery.tasks.bayestar.localize.run')
 @patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
-def test_bayestar(mock_gracedb):
-    # Run function under test
-    bayestar('T12345')
+def test_handle(mock_gracedb, mock_localize):
+    """Test that an LVAlert message for a newly uploaded PSD file triggers
+    BAYESTAR."""
+    alert = resource_json(__name__, 'data/lvalert_psd.json')
+    handle(alert)
+    mock_localize.assert_called_once()
+
+
+@patch('gwcelery.tasks.gracedb.download.run', mock_download)
+@patch('gwcelery.tasks.bayestar.localize.run')
+@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
+def test_handle_ignored(mock_gracedb, mock_localize):
+    """Test that unrelated LVAlert messages do not trigger BAYESTAR."""
+    alert = resource_json(__name__, 'data/lvalert_detchar.json')
+    handle(alert)
+    mock_localize.assert_not_called()
 
 
 @patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
