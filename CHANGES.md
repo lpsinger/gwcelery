@@ -24,9 +24,9 @@
     `json.loads`. It is a little bit more convenient and possibly also faster
     for Celery to deserialize the alert messages.
 
--   Introduce ``Production``, ``Development``, ``Test``, and ``Playground``
-    application configuration objects in order to facilitate quickly switching
-    between GraceDb servers.
+-   Introduce `Production`, `Development`, `Test`, and `Playground` application
+    configuration objects in order to facilitate quickly switching between
+    GraceDb servers.
 
 -   Pipeline specific start and end times for superevent segments. These values
     are controlled via configuration variables.
