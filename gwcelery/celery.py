@@ -1,3 +1,5 @@
+"""Celery application configuration."""
+
 from celery import Celery
 
 
