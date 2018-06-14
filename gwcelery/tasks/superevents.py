@@ -50,7 +50,7 @@ def handle(payload):
 
     d_t_start, d_t_end = _get_dts(payload)
 
-    # Condition 1/4
+    # Condition 1/2
     if sid is None and alert_type == 'new':
         log.debug('Entered 1st if')
         event_segment = _Event(payload['object'].get('gpstime'),
@@ -82,39 +82,12 @@ def handle(payload):
                                       d_t_start=d_t_start,
                                       d_t_end=d_t_end)
 
-    # Condition 2/4
-    elif sid is None and alert_type == 'update':
-        log.debug('2nd if: possible restart scenario')
-        log.info('No superevent found for update alert for %s',
-                 gid)
-        # update alerts don't have far, gpstime, hence fetch from gracedb
-        event_dict = gracedb.get_event(gid)
-        log.warning('Possible restart scenario. \
-                     Creating new superevent for %s', gid)
-        # add gpstime to payload dict since update alert don't have gpstime
-        payload['object']['gpstime'] = event_dict['gpstime']
-
-        gracedb.create_superevent(payload,
-                                  d_t_start=d_t_start,
-                                  d_t_end=d_t_end)
-
-    # Condition 3/4
+    # Condition 2/2
     elif sid and alert_type == 'new':
         # ERROR SITUATION
         log.debug('3rd if: SID returned and new alert')
         log.critical('Superevent %s exists for alert_type new for %s',
                      sid, gid)
-
-    # Condition 4/4
-    elif sid and alert_type == 'update':
-        # Logic to update the preferred G event
-        log.debug('4th if: SID returned update alert. Change the pointer')
-        superevent = list(filter(lambda s:
-                                 s.superevent_id == sid, superevents))
-        # superevent will contain only one item based on matching sid
-        _update_preferred_event(superevent[0].superevent_id,
-                                superevent[0].preferred_event,
-                                gid)
     # Condition else
     else:
         log.critical('Unhandled by parse_trigger, passing...')
