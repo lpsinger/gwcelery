@@ -6,6 +6,14 @@
 
 -   Retry GraceDb tasks that raise a `TimeoutError` exception.
 
+-   The superevent handler now skips LVAlert messages that do not affect
+    the false alarm rate of an event (e.g. simple log messages).
+
+    (Note that the false alarm rate in GraceDb is set by the initial event
+    upload and can be updated by replacing the event; however replacing the
+    event does not produce an LVAlert message at all, so there is no way to
+    intercept it.)
+
 ## 0.0.10 (2018-06-13)
 
 -   Model the time extent of events and superevents using the

@@ -34,9 +34,16 @@ def handle(payload):
     gid = payload['uid']
     alert_type = payload['alert_type']
 
-    if not _far_check(payload):
-        log.info("Skipping processing of %s because of low far", gid)
+    try:
+        far = payload['object']['far']
+    except KeyError:
+        log.info(
+            'skipping %s because LVAlert message does not provide FAR', gid)
         return
+    else:
+        if far < app.conf['superevent_far_threshold']:
+            log.info("Skipping processing of %s because of low far", gid)
+            return
 
     sid, preferred_flag, superevents = gracedb.get_superevent(gid)
     superevents = _superevent_segment_list(superevents)
@@ -132,15 +139,6 @@ def _get_dts(payload):
         group, app.conf['superevent_default_d_t_end'])
 
     return dt_start, dt_end
-
-
-def _far_check(payload):
-    """
-    Returns boolean value if event satsfies low enough FAR
-    """
-    far = payload['object'].get('far') or \
-        gracedb.get_event(payload['uid'])['far']
-    return far < app.conf['superevent_far_threshold']
 
 
 def _update_preferred_event(sid, preferred_event, gid):
