@@ -14,6 +14,13 @@
     event does not produce an LVAlert message at all, so there is no way to
     intercept it.)
 
+-   Added a query kwarg to superevents method to reduce latency in
+    fetching the superevents from gracedb.
+
+-   Refactored getting event information for update type events so
+    that gracedb is polled only once to get the information needed
+    for superevent manager.
+
 ## 0.0.10 (2018-06-13)
 
 -   Model the time extent of events and superevents using the

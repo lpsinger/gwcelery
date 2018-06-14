@@ -33,6 +33,12 @@ class Base:
                                 lib=10.0)
     """Lower extent of superevent segments."""
 
+    superevent_query_d_t_start = 100.
+    """Lower extent of superevents query"""
+
+    superevent_query_d_t_end = 100.
+    """Upper extent of superevents query"""
+
     superevent_d_t_end = dict(gstlal=10.0,
                               pycbc=10.0,
                               mbtaonline=10.0,

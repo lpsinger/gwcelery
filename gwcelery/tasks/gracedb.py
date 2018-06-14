@@ -89,8 +89,8 @@ def upload(filecontents, filename, graceid, message, tags=None):
     client.writeLog(graceid, message, filename, filecontents, tags)
 
 
-@task(shared=False)
-def get_superevent(gid):
+@app.task(shared=False)
+def get_superevent(gid, query=None):
     """Iterate through superevents in gracedb and return sid if
     gid exists in the association.
 
@@ -98,6 +98,9 @@ def get_superevent(gid):
     ----------
     gid : str
         uid of the trigger to be checked
+
+    query : str
+        optional query to be passed to :meth:`superevents`
 
     Returns
     -------
@@ -108,7 +111,7 @@ def get_superevent(gid):
     superevents : list
         The list of the superevents.
     """
-    superevents = list(client.superevents(orderby='t_0'))
+    superevents = list(client.superevents(query=query, orderby='t_0'))
     for superevent in superevents:
         preferred_flag = False
         # check preferred_event first

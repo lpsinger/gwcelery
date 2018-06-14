@@ -33,6 +33,7 @@ def handle(payload):
     """
     gid = payload['uid']
     alert_type = payload['alert_type']
+    event_info = _event_info(payload)
 
     try:
         far = payload['object']['far']
@@ -45,19 +46,25 @@ def handle(payload):
             log.info("Skipping processing of %s because of low far", gid)
             return
 
-    sid, preferred_flag, superevents = gracedb.get_superevent(gid)
+    query_times = (event_info['gpstime'] -
+                   app.conf['superevent_query_d_t_start'],
+                   event_info['gpstime'] +
+                   app.conf['superevent_query_d_t_end'])
+
+    sid, preferred_flag, superevents = gracedb.get_superevent(
+        gid, query='''{} .. {}'''.format(*query_times))
     superevents = _superevent_segment_list(superevents)
 
-    d_t_start, d_t_end = _get_dts(payload)
+    d_t_start, d_t_end = _get_dts(event_info)
 
     # Condition 1/2
     if sid is None and alert_type == 'new':
         log.debug('Entered 1st if')
-        event_segment = _Event(payload['object'].get('gpstime'),
-                               payload['uid'],
-                               payload['object'].get('group'),
-                               payload['object'].get('pipeline'),
-                               payload['object'].get('search'),
+        event_segment = _Event(event_info['gpstime'],
+                               event_info['uid'],
+                               event_info['group'],
+                               event_info['pipeline'],
+                               event_info['search'],
                                event_dict=payload)
 
         # Check which superevent window trigger gpstime falls in
@@ -93,23 +100,42 @@ def handle(payload):
         log.critical('Unhandled by parse_trigger, passing...')
 
 
-# FIXME: Unify _get_dts and _far_check, call get_event only once
-def _get_dts(payload):
+def _event_info(payload):
+    """Helper function to fetch required event info from GraceDb
+    at once and reduce polling
+    """
+    alert_type = payload['alert_type']
+    if alert_type == 'new':
+        event_info = dict(uid=payload['uid'],
+                          gpstime=payload['object']['gpstime'],
+                          far=payload['object']['far'],
+                          group=payload['object']['group'],
+                          pipeline=payload['object']['pipeline'],
+                          search=payload['object'].get('search'),
+                          alert_type=payload['alert_type'])
+    else:
+        event_dict = gracedb.get_event(payload['uid'])
+        event_info = dict(uid=event_dict['graceid'],
+                          gpstime=event_dict['gpstime'],
+                          far=event_dict['far'],
+                          group=event_dict['group'],
+                          pipeline=event_dict['pipeline'],
+                          search=event_dict.get('search'),
+                          alert_type=payload['alert_type'])
+    return event_info
+
+
+def _get_dts(event_info):
     """
     Returns the dt_start and dt_end values based on CBC/Burst
     for new and update type alerts
     """
-    alert_type = payload['alert_type']
-    if alert_type == 'new':
-        group = payload['object']['group'].lower()
-    else:
-        group = gracedb.get_event(payload['uid'])['group'].lower()
-
+    group = event_info['group']
     dt_start = app.conf['superevent_d_t_start'].get(
-        group, app.conf['superevent_default_d_t_start'])
+        group.lower(), app.conf['superevent_default_d_t_start'])
 
     dt_end = app.conf['superevent_d_t_end'].get(
-        group, app.conf['superevent_default_d_t_end'])
+        group.lower(), app.conf['superevent_default_d_t_end'])
 
     return dt_start, dt_end
 
