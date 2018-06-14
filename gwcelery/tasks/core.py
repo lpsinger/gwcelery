@@ -1,5 +1,6 @@
 """Base classes for other Celery tasks."""
 
+from celery import group
 from celery.utils.log import get_task_logger
 
 from ..celery import app
@@ -69,5 +70,5 @@ class DispatchHandler(dict):
             log.warn('ignoring unrecognized key: %r', key)
         else:
             log.info('calling handlers %r for key %r', matching_handlers, key)
-            for handler in matching_handlers:
-                handler.apply_async(args, kwargs)
+            group([handler.s() for handler in matching_handlers]).apply_async(
+                args, kwargs)

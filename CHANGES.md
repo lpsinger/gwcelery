@@ -2,7 +2,7 @@
 
 ## 0.0.11 (unreleased)
 
--   No changes yet.
+-   Submit handler tasks to Celery as a single group.
 
 ## 0.0.10 (2018-06-13)
 
