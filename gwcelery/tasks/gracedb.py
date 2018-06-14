@@ -26,7 +26,13 @@ if prog != 'sphinx-build' and 'build_sphinx' not in sys.argv:
 log = get_task_logger(__name__)
 
 
-@app.task(shared=False)
+def task(*args, **kwargs):
+    return app.task(*args, **kwargs, autoretry_for=(TimeoutError,),
+                    default_retry_delay=20.0, retry_backoff=True,
+                    retry_kwargs=dict(max_retries=10))
+
+
+@task(shared=False)
 def create_event(filecontents, search, pipeline, group):
     """Create an event in GraceDb."""
     response = client.createEvent(group=group, pipeline=pipeline,
@@ -35,44 +41,44 @@ def create_event(filecontents, search, pipeline, group):
     return response.json()['graceid']
 
 
-@app.task(ignore_result=True, shared=False)
+@task(ignore_result=True, shared=False)
 def create_tag(tag, n, graceid):
     """Create a tag in GraceDb."""
     client.createTag(graceid, n, tag)
 
 
-@app.task(shared=False)
+@task(shared=False)
 def download(filename, graceid):
     """Download a file from GraceDB."""
     return client.files(graceid, filename, raw=True).read()
 
 
-@app.task(shared=False)
+@task(shared=False)
 def get_events(query=None, orderby=None, count=None, columns=None):
     """Get events from GraceDb."""
     return list(client.events(query=query, orderby=orderby,
                 count=count, columns=columns))
 
 
-@app.task(shared=False)
+@task(shared=False)
 def get_event(graceid):
     """Retrieve an event from GraceDb."""
     return client.event(graceid).json()
 
 
-@app.task(shared=False)
+@task(shared=False)
 def get_log(graceid):
     """Get all log messages for an event in GraceDb."""
     return client.logs(graceid).json()['log']
 
 
-@app.task(shared=False)
+@task(shared=False)
 def replace_event(graceid, payload):
     """Get an event from GraceDb."""
     client.replaceEvent(graceid, 'initial.data', filecontents=payload)
 
 
-@app.task(ignore_result=True, shared=False)
+@task(ignore_result=True, shared=False)
 def upload(filecontents, filename, graceid, message, tags=None):
     """Upload a file to GraceDB."""
     # FIXME: it would be more elegant to have `tags=()` in the kwargs, but
@@ -83,7 +89,7 @@ def upload(filecontents, filename, graceid, message, tags=None):
     client.writeLog(graceid, message, filename, filecontents, tags)
 
 
-@app.task(shared=False)
+@task(shared=False)
 def get_superevent(gid):
     """Iterate through superevents in gracedb and return sid if
     gid exists in the association.
@@ -119,7 +125,7 @@ def get_superevent(gid):
     return None, False, superevents
 
 
-@app.task(ignore_result=True, shared=False)
+@task(ignore_result=True, shared=False)
 def set_preferred_event(sid, gid):
     """
     Update superevent with gid. Wrapper around
@@ -135,7 +141,7 @@ def set_preferred_event(sid, gid):
     client.updateSuperevent(sid, preferred_event=gid)
 
 
-@app.task(ignore_result=True, shared=False)
+@task(ignore_result=True, shared=False)
 def create_superevent(payload, d_t_start=5, d_t_end=5):
     """ Create new superevent in GraceDb with preferred G event."""
     t0 = payload['object']['gpstime']
@@ -145,7 +151,7 @@ def create_superevent(payload, d_t_start=5, d_t_end=5):
     client.createSuperevent(ts, t0, te, preferred_event=graceid)
 
 
-@app.task(ignore_result=True, shared=False)
+@task(ignore_result=True, shared=False)
 def add_event_to_superevent(superevent_id, graceid):
     """Add an event to a superevent in GraceDb."""
     client.addEventToSuperevent(superevent_id, graceid)

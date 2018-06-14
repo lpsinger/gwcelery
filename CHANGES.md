@@ -4,6 +4,8 @@
 
 -   Submit handler tasks to Celery as a single group.
 
+-   Retry GraceDb tasks that raise a `TimeoutError` exception.
+
 ## 0.0.10 (2018-06-13)
 
 -   Model the time extent of events and superevents using the
