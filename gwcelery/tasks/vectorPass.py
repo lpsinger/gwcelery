@@ -15,16 +15,16 @@ channel = 'H1:DMT-DQ_VECTOR'
 gpsstart = 1180098560
 # gps time to start analysis, typically beginning of source time
 duration = 1
-goodBits = [0, 1]
+check_good_bits = [0, 1]
 # bits in bitmask which need to be 1 for good data
-sampleSize = 3
+sample_size = 3
 # samples to veto at a time, if necessary
 logicType = 'allBad'
 # allBad = need all bits to fail goodbits to veto
 # oneBad = one bit fails goodbits vetoes entire sample
 
 
-def readGWF(source, channel, gpsstart, duration):
+def read_gwf(source, channel, gpsstart, duration):
     """Read .gwf file and outputs as time series"""
     timeseries = frread.read_timeseries(
                     source, channel,
@@ -32,43 +32,43 @@ def readGWF(source, channel, gpsstart, duration):
     return timeseries
 
 
-def goodBit(binary, goodbits):
+def check_good_bit(binary, goodbits):
     """Determine whether or not the a binary passes the bitmask. True = pass"""
-    goodBitList = []
+    good_bit_list = []
     for bit in goodbits:
         assert max(goodbits) <= len(binary)-1, """The size of the largest
             good bit required exceeds the size of the word."""
         if bit < len(binary):
-            goodBitList.append(binary[len(binary)-1-bit] == '1')
-    return all(goodBitList)
+            good_bit_list.append(binary[len(binary)-1-bit] == '1')
+    return all(good_bit_list)
 
 
-def resultsLists(source, channel, gpsstart, duration):
+def make_results_lists(source, channel, gpsstart, duration):
     """Create lists of gps times, integers, binaries, and good/bad
     for each single data point
     """
-    timeseries = readGWF(source, channel, gpsstart, duration)
-    timeList = []
-    intsList = []
-    binsList = []
-    goodList = []
+    timeseries = read_gwf(source, channel, gpsstart, duration)
+    time_list = []
+    ints_list = []
+    bins_list = []
+    good_list = []
     for i in range(len(timeseries.data.data)):
-        timeList.append(float(timeseries.epoch)+i*timeseries.deltaT)
-        intsList.append(timeseries.data.data[i])
-        binsList.append(np.binary_repr(timeseries.data.data[i]))
-        goodList.append(goodBit(np.binary_repr(timeseries.data.data[i]),
-                        goodBits))
-    return timeList, intsList, binsList, goodList
+        time_list.append(float(timeseries.epoch)+i*timeseries.deltaT)
+        ints_list.append(timeseries.data.data[i])
+        bins_list.append(np.binary_repr(timeseries.data.data[i]))
+        good_list.append(check_good_bit(np.binary_repr(timeseries.data.data[i]),
+                        check_good_bits))
+    return time_list, ints_list, bins_list, good_list
 
 
-def spliceIntoSamples(sampleSize, someList):
-    """Splices a list into sublists of size sampleSize"""
-    outList = [someList[i:i+sampleSize]
-               for i in range(0, len(someList), sampleSize)]
-    return outList
+def splice_into_samples(sample_size, someList):
+    """Splices a list into sublists of size sample_size"""
+    spliced_list = [someList[i:i+sample_size]
+               for i in range(0, len(someList), sample_size)]
+    return spliced_list
 
 
-def samplePass(bitList, logicType):
+def does_sample_pass(bitList, logicType):
     """Given a list of lists of True/False values, representing whether or not
     the sample passes the good bit bitmask, and a logic type,
     returns a list of True/False values regarding whether or not the sample
@@ -76,25 +76,25 @@ def samplePass(bitList, logicType):
     The logic type 'oneBad' fails the entire sample if any one bit is False.
     The logic type 'allBad' fails the sample only if all bits are False.
     """
-    samplePass = []
+    does_sample_pass_list = []
     assert logicType == 'oneBad' or logicType == 'allBad', """Please set
     logicType to 'oneBad' or 'allBad'."""
     if logicType == 'oneBad':
         for sample in bitList:
-            samplePass.append(all(sample))
-        return samplePass
+            does_sample_pass_list.append(all(sample))
+        return does_sample_pass_list
     if logicType == 'allBad':
         for sample in bitList:
-            samplePass.append(any(sample))
-        return samplePass
+            does_sample_pass_list.append(any(sample))
+        return does_sample_pass_list
 
 
-def checkVector(source, channel, gpsstart, duration, goodBits,
-                sampleSize=1, logicType='oneBad'):
+def check_vector(source, channel, gpsstart, duration, check_good_bits,
+                sample_size=1, logicType='oneBad'):
     """This is the function which checks the vector."""
-    timeList, intsList, binsList, goodList = resultsLists(
+    time_list, ints_list, bins_list, good_list = make_results_lists(
                     source,
                     channel, gpsstart, duration)
-    goodListInSamples = spliceIntoSamples(sampleSize, goodList)
-    passFailForEachSample = samplePass(goodListInSamples, logicType)
-    return passFailForEachSample
+    spliced_good_list = splice_into_samples(sample_size, good_list)
+    pass_fail_for_each_sample = does_sample_pass(spliced_good_list, logicType)
+    return pass_fail_for_each_sample
