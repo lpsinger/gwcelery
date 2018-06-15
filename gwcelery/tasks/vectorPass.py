@@ -69,9 +69,9 @@ def samplePass(bitList, logicType):
 		return samplePass
 
 def checkVector(source, channel, gpsstart, duration, goodBits, sampleSize=1, logicType='oneBad'):
+	'''This is the function which checks the vector.'''
 	timeList, intsList, binsList, goodList = resultsLists(source, channel, gpsstart, duration)
 	goodListInSamples = spliceIntoSamples(sampleSize, goodList)
-	outputList = samplePass(goodListInSamples, logicType)
-	return outputList
+	passFailForEachSample = samplePass(goodListInSamples, logicType)
+	return passFailForEachSample 
 	
-print(checkVector(source, channel, gpsstart, duration, goodBits))
