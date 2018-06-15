@@ -84,25 +84,33 @@ def test_parse_trigger_1(monkeypatch):
     class FakeDb(object):
         def __init__(self):
             self.service_url = 'service_url'
-            self._addevent_called = False
+            self._update_superevent_called = 0
+            self._addevent_called = 0
 
         def superevents(self, **kwargs):
             response = resource_json(__name__, 'data/superevents.json')
             return (s for s in response['superevents'])
 
+        def updateSuperevent(self, *args, **kwargs):    # noqa: N802
+            self._update_superevent_called += 1
+
         def addEventToSuperevent(self, *args, **kwargs):    # noqa: N802
-            assert not self._addevent_called
-            self._addevent_called = True
+            self._addevent_called += 1
 
         def event(self, gid):
             if gid == "T0212":
                 return T0212TTPResponse()
             else:
                 return NewEventTTPResponse()
-    monkeypatch.setattr('gwcelery.tasks.gracedb.client', FakeDb())
+    g = FakeDb()
+    monkeypatch.setattr('gwcelery.tasks.gracedb.client', g)
     payload = resource_json(__name__, 'data/mock_trigger_new_G000000.json')
     # New trigger G000000 time falls in S0039 window
     superevents.handle(payload)
+    # addEventToSuperevent should be called
+    assert g._addevent_called == 1
+    # updateSuperevent should not be called
+    assert g._update_superevent_called == 0
 
 
 def test_parse_trigger_2(monkeypatch):
@@ -123,31 +131,32 @@ def test_parse_trigger_2(monkeypatch):
     class FakeDb(object):
         def __init__(self):
             self.service_url = 'service_url'
-            self._update_superevent_called = False
-            self._addevent_called = False
+            self._update_superevent_called = 0
+            self._addevent_called = 0
 
         def superevents(self, **kwargs):
             response = resource_json(__name__, 'data/superevents.json')
             return (s for s in response['superevents'])
 
         def addEventToSuperevent(self, *args, **kwargs):    # noqa: N802
-            assert not self._addevent_called
-            self._addevent_called = True
+            self._addevent_called += 1
 
         def updateSuperevent(self, *args, **kwargs):    # noqa: N802
-            assert not self._update_superevent_called
-            # function should be called only once
-            self._update_superevent_called = True
+            self._update_superevent_called += 1
 
         def event(self, gid):
             if gid == "T0212":
                 return T0212TTPResponse()
             else:
                 return NewEventTTPResponse()
-    monkeypatch.setattr('gwcelery.tasks.gracedb.client', FakeDb())
+    g = FakeDb()
+    monkeypatch.setattr('gwcelery.tasks.gracedb.client', g)
     # New trigger G000000 falls in S0039 window
     payload = resource_json(__name__, 'data/mock_trigger_new_G000000.json')
     superevents.handle(payload)
+    # following two methods should be called exactly once
+    assert g._addevent_called == 1
+    assert g._update_superevent_called == 1
 
 
 def test_parse_trigger_3(monkeypatch):
@@ -156,17 +165,45 @@ def test_parse_trigger_3(monkeypatch):
     class FakeDb(object):
         def __init__(self):
             self.service_url = 'service_url'
-            self._create_superevent_called = False
+            self._create_superevent_called = 0
 
         def createSuperevent(self, *args, **kwargs):    # noqa: N802
-            assert not self._create_superevent_called
-            self._create_superevent_called = True
+            self._create_superevent_called += 1
 
         def superevents(self, **kwargs):
             response = resource_json(__name__, 'data/superevents.json')
             return (s for s in response['superevents'])
 
-    monkeypatch.setattr('gwcelery.tasks.gracedb.client', FakeDb())
+    g = FakeDb()
+    monkeypatch.setattr('gwcelery.tasks.gracedb.client', g)
     payload = resource_json(__name__, 'data/mock_trigger_new_G000001.json')
     # G000001 absent in any superevent window, new superevent created
     superevents.handle(payload)
+    # createSuperevent should be called exactly once
+    assert g._create_superevent_called == 1
+
+
+def test_parse_trigger_4(monkeypatch):
+    """New trigger G000002, doesn't pass far threshold"""
+    class FakeDb(object):
+        def __init__(self):
+            self.service_url = 'service_url'
+            self._update_superevent_called = 0
+            self._addevent_called = 0
+
+        def superevents(self, **kwargs):
+            response = resource_json(__name__, 'data/superevents.json')
+            return (s for s in response['superevents'])
+
+        def updateSuperevent(self, *args, **kwargs):    # noqa: N802
+            self._update_superevent_called += 1
+
+        def addEventToSuperevent(self, *args, **kwargs):    # noqa: N802
+            self._addevent_called += 1
+    g = FakeDb()
+    monkeypatch.setattr('gwcelery.tasks.gracedb.client', g)
+    payload = resource_json(__name__, 'data/mock_trigger_new_G000002.json')
+    superevents.handle(payload)
+    # neither method is called due to low far
+    assert g._addevent_called == 0
+    assert g._update_superevent_called == 0

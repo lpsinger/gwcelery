@@ -42,7 +42,7 @@ def handle(payload):
             'skipping %s because LVAlert message does not provide FAR', gid)
         return
     else:
-        if far < app.conf['superevent_far_threshold']:
+        if far > app.conf['superevent_far_threshold']:
             log.info("Skipping processing of %s because of low far", gid)
             return
 
