@@ -19,7 +19,7 @@ check_good_bits = [0, 1]
 # bits in bitmask which need to be 1 for good data
 sample_size = 3
 # samples to veto at a time, if necessary
-logicType = 'allBad'
+logic_type = 'allBad'
 # allBad = need all bits to fail goodbits to veto
 # oneBad = one bit fails goodbits vetoes entire sample
 
@@ -56,19 +56,21 @@ def make_results_lists(source, channel, gpsstart, duration):
         time_list.append(float(timeseries.epoch)+i*timeseries.deltaT)
         ints_list.append(timeseries.data.data[i])
         bins_list.append(np.binary_repr(timeseries.data.data[i]))
-        good_list.append(check_good_bit(np.binary_repr(timeseries.data.data[i]),
-                        check_good_bits))
+        good_list.append(check_good_bit(
+                np.binary_repr(timeseries.data.data[i]),
+                check_good_bits))
     return time_list, ints_list, bins_list, good_list
 
 
-def splice_into_samples(sample_size, someList):
+def splice_into_samples(sample_size, some_list):
     """Splices a list into sublists of size sample_size"""
-    spliced_list = [someList[i:i+sample_size]
-               for i in range(0, len(someList), sample_size)]
+    spliced_list = [
+               some_list[i:i+sample_size]
+               for i in range(0, len(some_list), sample_size)]
     return spliced_list
 
 
-def does_sample_pass(bitList, logicType):
+def does_sample_pass(bit_list, logic_type):
     """Given a list of lists of True/False values, representing whether or not
     the sample passes the good bit bitmask, and a logic type,
     returns a list of True/False values regarding whether or not the sample
@@ -77,24 +79,24 @@ def does_sample_pass(bitList, logicType):
     The logic type 'allBad' fails the sample only if all bits are False.
     """
     does_sample_pass_list = []
-    assert logicType == 'oneBad' or logicType == 'allBad', """Please set
-    logicType to 'oneBad' or 'allBad'."""
-    if logicType == 'oneBad':
-        for sample in bitList:
+    assert logic_type == 'oneBad' or logic_type == 'allBad', """Please set
+    logic_type to 'oneBad' or 'allBad'."""
+    if logic_type == 'oneBad':
+        for sample in bit_list:
             does_sample_pass_list.append(all(sample))
         return does_sample_pass_list
-    if logicType == 'allBad':
-        for sample in bitList:
+    if logic_type == 'allBad':
+        for sample in bit_list:
             does_sample_pass_list.append(any(sample))
         return does_sample_pass_list
 
 
 def check_vector(source, channel, gpsstart, duration, check_good_bits,
-                sample_size=1, logicType='oneBad'):
+                 sample_size=1, logic_type='oneBad'):
     """This is the function which checks the vector."""
     time_list, ints_list, bins_list, good_list = make_results_lists(
                     source,
                     channel, gpsstart, duration)
     spliced_good_list = splice_into_samples(sample_size, good_list)
-    pass_fail_for_each_sample = does_sample_pass(spliced_good_list, logicType)
+    pass_fail_for_each_sample = does_sample_pass(spliced_good_list, logic_type)
     return pass_fail_for_each_sample
