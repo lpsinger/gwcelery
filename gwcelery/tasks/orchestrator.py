@@ -7,6 +7,7 @@ from . import bayestar
 from . import circulars
 from . import gracedb
 from . import lvalert
+from . import raven
 from . import skymaps
 # from .voevent import send
 
@@ -39,3 +40,21 @@ def handle(alert):
                 gracedb.upload.s('circular.txt', graceid,
                                  'Automated circular')
             ).delay()
+
+
+@lvalert.handler('superevent',
+                 'external_fermi',
+                 'external_fermi_grb',
+                 'external_grb',
+                 'external_snews',
+                 'external_snews_supernova',
+                 'external_swift',
+                 shared=False)
+def handle_superevents_externaltriggers(alert):
+    """Parse an LVAlert message related to superevents/external triggers and
+    dispatch it to other tasks."""
+    # Determine GraceDb ID
+    graceid = alert['uid']
+
+    if alert['alert_type'] == 'new':
+        raven.coincidence_search(graceid, alert['object'])

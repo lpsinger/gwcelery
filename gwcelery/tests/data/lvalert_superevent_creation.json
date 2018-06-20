@@ -1,0 +1,28 @@
+{
+    "uid": "S180616h",
+    "alert_type": "new",
+    "description": "NEW: superevent S180616h",
+    "file": "",
+    "labels": [],
+    "object": {
+        "superevent_id": "S180616h",
+        "created": "2018-06-16 17:35:13 UTC",
+        "submitter": "emfollow",
+        "preferred_event": "M4634",
+        "t_start": 1213205522.24,
+        "t_0": 1213205532.24,
+        "t_end": 1213205542.24,
+        "gw_events": ["M4634"],
+        "em_events": [],
+        "labels": [],
+        "links": {
+            "files": "https://gracedb-dev1.ligo.org/api/superevents/S180616h/files/",
+            "logs": "https://gracedb-dev1.ligo.org/api/superevents/S180616h/logs/",
+            "self": "https://gracedb-dev1.ligo.org/api/superevents/S180616h/",
+            "labels": "https://gracedb-dev1.ligo.org/api/superevents/S180616h/labels/",
+            "voevents": "https://gracedb-dev1.ligo.org/api/superevents/S180616h/voevents/",
+            "emobservations": "https://gracedb-dev1.ligo.org/api/superevents/S180616h/emobservations/",
+            "events": "https://gracedb-dev1.ligo.org/api/superevents/S180616h/events/"
+        }
+    }
+}

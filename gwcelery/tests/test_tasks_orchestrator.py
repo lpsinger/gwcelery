@@ -94,3 +94,17 @@ def test_handle_fits(mock_annotate_fits):
     # Check that the correct tasks were dispatched.
     mock_annotate_fits.assert_called_once_with(
         'bayestar.fits.gz,2', 'bayestar', 'T250822', ['sky_loc'])
+
+
+@patch('gwcelery.tasks.raven.coincidence_search')
+def test_handle_superevent_creation(mock_raven_coincidence_search):
+    """Test dispatch of an LVAlert message for a superevent creation."""
+    # Test LVAlert payload.
+    alert = resource_json(__name__, 'data/lvalert_superevent_creation.json')
+
+    # Run function under test
+    orchestrator.handle_superevents_externaltriggers(alert)
+
+    # Check that the correct tasks were dispatched.
+    mock_raven_coincidence_search.assert_called_once_with('S180616h',
+                                                          alert['object'])

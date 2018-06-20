@@ -35,6 +35,11 @@
 
 -   CBC `t_start` and `t_end` values are changed to 1 sec interval.
 
+-   Added ligo-raven to run on external trigger and superevent creation lvalerts
+    to search for coincidences. In case of coincidence, EM_COINC label is
+    applied to the superevent and external trigger page and the external
+    trigger is added to the list of em_events in superevent object dictionary.
+
 ## 0.0.10 (2018-06-13)
 
 -   Model the time extent of events and superevents using the
