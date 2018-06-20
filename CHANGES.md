@@ -21,6 +21,11 @@
     that gracedb is polled only once to get the information needed
     for superevent manager.
 
+-   Renamed the `set_preferred_event` -> `update_superevent` in gracedb.py
+    to be a full wrapper around the `updateSuperevent` client function.
+    Now it can be used to set preferred event and also update superevent
+    time windows.
+
 ## 0.0.10 (2018-06-13)
 
 -   Model the time extent of events and superevents using the

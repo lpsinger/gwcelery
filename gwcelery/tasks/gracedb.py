@@ -129,24 +129,32 @@ def get_superevent(gid, query=None):
 
 
 @task(ignore_result=True, shared=False)
-def set_preferred_event(sid, gid):
+def update_superevent(superevent_id, t_start=None,
+                      t_end=None, t_0=None, preferred_event=None):
     """
-    Update superevent with gid. Wrapper around
+    Update superevent information. Wrapper around
     :meth:`updateSuperevent`
 
     Parameters
     ----------
-    sid : str
+    superevent_id : str
         superevent uid
-    gid : str
-        uid of the new trigger
+    t_start : float
+        start of superevent time window, unchanged if None
+    t_end : float
+        end of superevent time window, unchanged if None
+    t_0 : float
+        superevent t_0, unchanged if None
+    preferred_event : str
+        uid of the preferred event, unchanged if None
     """
-    client.updateSuperevent(sid, preferred_event=gid)
+    client.updateSuperevent(superevent_id, t_start=t_start, t_end=t_end,
+                            t_0=t_0, preferred_event=preferred_event)
 
 
 @task(ignore_result=True, shared=False)
 def create_superevent(payload, d_t_start=5, d_t_end=5):
-    """ Create new superevent in GraceDb with preferred G event."""
+    """Create new superevent in GraceDb with preferred G event."""
     t0 = payload['object']['gpstime']
     graceid = payload['uid']
     ts = t0 - d_t_start

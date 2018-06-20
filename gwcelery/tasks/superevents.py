@@ -140,13 +140,13 @@ def _get_dts(event_info):
     return dt_start, dt_end
 
 
-def _update_preferred_event(sid, preferred_event, gid):
+def _update_preferred_event(superevent_id, preferred_event, gid):
     """
     Update superevent with the new trigger id based on FAR values.
 
     Parameters
     ----------
-    sid : str
+    superevent_id : str
         superevent uid
     preferred_event : str
         preferred event id of the superevent
@@ -156,7 +156,7 @@ def _update_preferred_event(sid, preferred_event, gid):
     new_event = gracedb.client.event(gid).json()
     preferred_event = gracedb.client.event(preferred_event).json()
     if new_event['far'] < preferred_event['far']:
-        gracedb.set_preferred_event(sid, gid)
+        gracedb.update_superevent(superevent_id, preferred_event=gid)
 
 
 def _superevent_segment_list(superevents):
