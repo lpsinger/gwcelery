@@ -153,10 +153,20 @@ def update_superevent(superevent_id, t_start=None,
 
 
 @task(ignore_result=True, shared=False)
-def create_superevent(payload, d_t_start=5, d_t_end=5):
-    """Create new superevent in GraceDb with preferred G event."""
-    t0 = payload['object']['gpstime']
-    graceid = payload['uid']
+def create_superevent(graceid, t0, d_t_start, d_t_end):
+    """Create new superevent in GraceDb with `graceid`
+
+    Parameters
+    ----------
+    graceid : str
+        graceid with which superevent is created.
+    t0 : float
+        `t_0` parameter of superevent
+    d_t_start : float
+        superevent `t_start` = `t0 - d_t_start`
+    d_t_end : float
+        superevent `t_end` = `t0 + t_end`
+    """
     ts = t0 - d_t_start
     te = t0 + d_t_end
     client.createSuperevent(ts, t0, te, preferred_event=graceid)

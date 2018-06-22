@@ -26,6 +26,10 @@
     Now it can be used to set preferred event and also update superevent
     time windows.
 
+-   Many `cwb` (extra) attributes, which should be floating point
+    numbers, are present in lvalert packet as strings. Casting them
+    to avoid embarassing TypeErrors.
+
 ## 0.0.10 (2018-06-13)
 
 -   Model the time extent of events and superevents using the

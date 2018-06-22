@@ -87,9 +87,10 @@ def handle(payload):
                                     event_segment.gid)
         # Create a new event if not in any time window
         else:
-            gracedb.create_superevent(payload,
-                                      d_t_start=d_t_start,
-                                      d_t_end=d_t_end)
+            gracedb.create_superevent(event_info['uid'],
+                                      event_info['gpstime'],
+                                      d_t_start,
+                                      d_t_end)
 
     # Condition 2/2
     elif sid and alert_type == 'new':
@@ -109,8 +110,8 @@ def _event_info(payload):
     alert_type = payload['alert_type']
     if alert_type == 'new':
         event_info = dict(uid=payload['uid'],
-                          gpstime=payload['object']['gpstime'],
-                          far=payload['object']['far'],
+                          gpstime=float(payload['object']['gpstime']),
+                          far=float(payload['object']['far']),
                           group=payload['object']['group'],
                           pipeline=payload['object']['pipeline'],
                           search=payload['object'].get('search'),
@@ -118,8 +119,8 @@ def _event_info(payload):
     else:
         event_dict = gracedb.get_event(payload['uid'])
         event_info = dict(uid=event_dict['graceid'],
-                          gpstime=event_dict['gpstime'],
-                          far=event_dict['far'],
+                          gpstime=float(event_dict['gpstime']),
+                          far=float(event_dict['far']),
                           group=event_dict['group'],
                           pipeline=event_dict['pipeline'],
                           search=event_dict.get('search'),

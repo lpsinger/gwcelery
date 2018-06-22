@@ -1,6 +1,7 @@
 import pytest
 
 from ..tasks import gracedb, superevents
+from ..celery import app
 from . import resource_json
 
 
@@ -204,6 +205,39 @@ def test_parse_trigger_4(monkeypatch):
     monkeypatch.setattr('gwcelery.tasks.gracedb.client', g)
     payload = resource_json(__name__, 'data/mock_trigger_new_G000002.json')
     superevents.handle(payload)
-    # neither method is called due to low far
-    assert g._addevent_called == 0
-    assert g._update_superevent_called == 0
+
+
+def test_parse_trigger_burst_4(monkeypatch):
+    """New CWB trigger G000008, not present among superevents
+    New superevent created.
+    Note: cwb `gpstime` in `new` lvalert packet is a string, this
+    test checks for that failure mode too.
+    extra attribute duration = 0.02s
+    """
+    class FakeDb(object):
+        def __init__(self):
+            self.service_url = 'service_url'
+            self._create_superevent_called = 0
+            self._superevent_d_t = None
+
+        def createSuperevent(self, *args, **kwargs):    # noqa: N802
+            self._create_superevent_called += 1
+            # values are such that the d_start and d_t_end are 0.02s
+            # assert t_end - t_start == d_t_start + d_t_end
+            assert args[2] - args[0] == \
+                app.conf['superevent_d_t_start']['cwb'] + \
+                app.conf['superevent_d_t_end']['cwb']
+            assert kwargs.get('preferred_event') == 'G000008'
+
+        def superevents(self, **kwargs):
+            response = resource_json(__name__, 'data/superevents.json')
+            return (s for s in response['superevents'])
+
+    g = FakeDb()
+    monkeypatch.setattr('gwcelery.tasks.gracedb.client', g)
+    payload = \
+        resource_json(__name__, 'data/mock_trigger_new_G000008_burst.json')
+    # G000001 absent in any superevent window, new superevent created
+    superevents.handle(payload)
+    # createSuperevent should be called exactly once
+    assert g._create_superevent_called == 1
