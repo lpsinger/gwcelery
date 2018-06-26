@@ -110,8 +110,8 @@ def _event_info(payload):
     alert_type = payload['alert_type']
     if alert_type == 'new':
         event_info = dict(uid=payload['uid'],
-                          gpstime=float(payload['object']['gpstime']),
-                          far=float(payload['object']['far']),
+                          gpstime=payload['object']['gpstime'],
+                          far=payload['object']['far'],
                           group=payload['object']['group'],
                           pipeline=payload['object']['pipeline'],
                           search=payload['object'].get('search'),
@@ -119,8 +119,8 @@ def _event_info(payload):
     else:
         event_dict = gracedb.get_event(payload['uid'])
         event_info = dict(uid=event_dict['graceid'],
-                          gpstime=float(event_dict['gpstime']),
-                          far=float(event_dict['far']),
+                          gpstime=event_dict['gpstime'],
+                          far=event_dict['far'],
                           group=event_dict['group'],
                           pipeline=event_dict['pipeline'],
                           search=event_dict.get('search'),

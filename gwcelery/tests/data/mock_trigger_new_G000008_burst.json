@@ -1,7 +1,7 @@
 {
 	"object": {
 		"graceid": "G000008", 
-		"gpstime": "1128658942.9878", 
+		"gpstime": 1128658942.9878, 
 		"pipeline": "CWB", 
 		"group": "Burst", 
 		"links": {
@@ -18,20 +18,20 @@
 			"labels": [], 
 			"extra_attributes": {
 				"MultiBurst": {
-					"central_freq": "137.893524", 
+					"central_freq": 137.893524, 
 					"false_alarm_rate": null, 
 					"confidence": null, 
 					"start_time_ns": 750000000, 
 					"start_time": 1128658942, 
 					"ligo_angle_sig": null, 
-					"bandwidth": "53.996037", 
+					"bandwidth": 53.996037, 
 					"single_ifo_times": "1128658942.9903,1128658942.9878", 
 					"snr": 19.82422760159901, 
 					"ligo_angle": null, 
-					"amplitude": "12.458254", 
-					"ligo_axis_ra": "136.599640", 
-					"duration": "0.02", 
-					"ligo_axis_dec": "-31.039240", 
+					"amplitude": 12.458254, 
+					"ligo_axis_ra": 136.599640, 
+					"duration": 0.02, 
+					"ligo_axis_dec": -31.039240, 
 					"peak_time_ns": null, 
 					"peak_time": null, 
 					"ifos": "H1,L1"

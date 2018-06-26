@@ -30,6 +30,9 @@
     numbers, are present in lvalert packet as strings. Casting them
     to avoid embarassing TypeErrors.
 
+-   Reverted back the typecasting of far, gpstime into float. This is
+    fixed in https://git.ligo.org/lscsoft/gracedb/issues/10
+
 ## 0.0.10 (2018-06-13)
 
 -   Model the time extent of events and superevents using the
