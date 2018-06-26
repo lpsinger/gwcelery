@@ -33,6 +33,8 @@
 -   Reverted back the typecasting of far, gpstime into float. This is
     fixed in https://git.ligo.org/lscsoft/gracedb/issues/10
 
+-   CBC `t_start` and `t_end` values are changed to 1 sec interval.
+
 ## 0.0.10 (2018-06-13)
 
 -   Model the time extent of events and superevents using the
