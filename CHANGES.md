@@ -47,6 +47,9 @@
     superevents may change the superevent window and also the
     preferred event.
 
+-   Change default GraceDb server to https://gracedb-playground.ligo.org/
+    for open public alert challenge.
+
 ## 0.0.10 (2018-06-13)
 
 -   Model the time extent of events and superevents using the
