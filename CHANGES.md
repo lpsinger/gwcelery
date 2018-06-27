@@ -50,6 +50,8 @@
 -   Change default GraceDb server to https://gracedb-playground.ligo.org/
     for open public alert challenge.
 
+-   Update to ligo-lvalert >= 1.29dev1.
+
 ## 0.0.10 (2018-06-13)
 
 -   Model the time extent of events and superevents using the
