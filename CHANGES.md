@@ -54,7 +54,7 @@
 -   Change default GraceDb server to https://gracedb-playground.ligo.org/
     for open public alert challenge.
 
--   Update to ligo-lvalert >= 1.29dev1.
+-   Update to ligo-gracedb >= 1.29dev1.
 
 -   Rename the `get_superevent` task to `get_superevents` and add
     a new `get_superevent` task that is a trivial wrapper around
