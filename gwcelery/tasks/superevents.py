@@ -54,7 +54,7 @@ def handle(payload):
                    event_info['gpstime'] +
                    app.conf['superevent_query_d_t_end'])
 
-    sid, preferred_flag, superevents = gracedb.get_superevent(
+    sid, preferred_flag, superevents = gracedb.get_superevents(
         gid, query='''{} .. {}'''.format(*query_times))
 
     d_t_start, d_t_end = _get_dts(event_info)

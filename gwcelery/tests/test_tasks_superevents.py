@@ -40,7 +40,7 @@ def test_update_preferred_event(monkeypatch):
                              t_start=None, t_end=None, t_0=None)
 
 
-def test_get_superevent(monkeypatch):
+def test_get_superevents(monkeypatch):
     class FakeDb(object):
         def __init__(self):
             self.service_url = 'service_url'
@@ -54,9 +54,9 @@ def test_get_superevent(monkeypatch):
     gid_1 = 'T0212'  # present in fake superevent queue
     gid_2 = 'T0219'  # present but not preferred event
     gid_3 = 'T9999'  # absent in fake superevent queue
-    superevent_id_1, preferred_flag_1, r_1 = gracedb.get_superevent(gid_1)
-    superevent_id_2, preferred_flag_2, r_2 = gracedb.get_superevent(gid_2)
-    superevent_id_3, preferred_flag_3, r_3 = gracedb.get_superevent(gid_3)
+    superevent_id_1, preferred_flag_1, r_1 = gracedb.get_superevents(gid_1)
+    superevent_id_2, preferred_flag_2, r_2 = gracedb.get_superevents(gid_2)
+    superevent_id_3, preferred_flag_3, r_3 = gracedb.get_superevents(gid_3)
 
     assert superevent_id_1 == 'S0039' and preferred_flag_1
     assert superevent_id_2 == 'S0041' and not preferred_flag_2

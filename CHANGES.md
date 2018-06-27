@@ -52,6 +52,10 @@
 
 -   Update to ligo-lvalert >= 1.29dev1.
 
+-   Rename the `get_superevent` task to `get_superevents` and add
+    a new `get_superevent` task that is a trivial wrapper around
+    `ligo.gracedb.rest.GraceDb.superevent()`.
+
 ## 0.0.10 (2018-06-13)
 
 -   Model the time extent of events and superevents using the

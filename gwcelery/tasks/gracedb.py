@@ -73,6 +73,12 @@ def get_log(graceid):
 
 
 @task(shared=False)
+def get_superevent(graceid):
+    """Retrieve a superevent from GraceDb."""
+    return client.superevent(graceid).json()
+
+
+@task(shared=False)
 def replace_event(graceid, payload):
     """Get an event from GraceDb."""
     client.replaceEvent(graceid, 'initial.data', filecontents=payload)
@@ -90,7 +96,7 @@ def upload(filecontents, filename, graceid, message, tags=None):
 
 
 @app.task(shared=False)
-def get_superevent(gid, query=None):
+def get_superevents(gid, query=None):
     """Iterate through superevents in gracedb and return sid if
     gid exists in the association.
 

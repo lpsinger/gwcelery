@@ -72,6 +72,15 @@ def test_get_log(monkeypatch):
 
 
 @patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
+def test_get_superevent(mock_gracedb):
+    # Run function under test.
+    gracedb.get_superevent('graceid')
+
+    # Check that one file was downloaded.
+    mock_gracedb.superevent.assert_called_once_with('graceid')
+
+
+@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
 def test_upload(mock_gracedb):
     # Run function under test.
     gracedb.upload('filecontents', 'filename', 'graceid', 'message', 'tags')
