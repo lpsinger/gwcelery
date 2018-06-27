@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.11 (unreleased)
+## 0.0.11 (2017-06-27)
 
 -   Submit handler tasks to Celery as a single group.
 
