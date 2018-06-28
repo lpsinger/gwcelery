@@ -3,7 +3,6 @@ import io
 import json
 
 from ligo.skymap.io import events
-import numpy as np
 
 from ..celery import app
 
@@ -21,9 +20,9 @@ def source_classification(m1, m2, c1, threshold=3.0):
     not. It does not attempt to classify for the remnant mass, returns a NaN
     value for that probability."""
     if m2 <= threshold:
-        return([100.0, np.nan])
+        return([100.0, 100.0])
     else:
-        return([0.0, np.nan])
+        return([0.0, 0.0])
 
 
 @app.task(shared=False)
