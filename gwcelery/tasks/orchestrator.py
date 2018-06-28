@@ -3,6 +3,7 @@ import json
 from urllib.error import URLError
 
 from celery import group
+from celery.exceptions import Ignore
 from ligo.gracedb.rest import HTTPError
 
 from ..celery import app
@@ -23,8 +24,8 @@ def handle_superevent(alert):
     """Schedule annotations for new superevents.
 
     This task calls
-    :func:`~gwcelery.tasks.orchestrator.annotate_superevent` after a timeout
-    specified by the :obj:`~gwcelery.celery.Base.orchestrator_timeout`
+    :func:`~gwcelery.tasks.orchestrator.annotate_cbc_superevent` after a
+    timeout specified by the :obj:`~gwcelery.celery.Base.orchestrator_timeout`
     configuration variable.
     """
 
@@ -33,8 +34,11 @@ def handle_superevent(alert):
 
     superevent_id = alert['object']['superevent_id']
     (
-        get_preferred_event.s(superevent_id) |
-        annotate_superevent.s(superevent_id)
+        get_preferred_event.s(superevent_id)
+        |
+        continue_if_group_is('CBC')
+        |
+        annotate_cbc_superevent.s(superevent_id)
     ).apply_async(countdown=app.conf['orchestrator_timeout'])
 
 
@@ -46,11 +50,11 @@ def handle_superevent(alert):
                  'test_mbtaonline',
                  shared=False)
 def handle_cbc_event(alert):
-    """Peform annotations that depend on pipeline-specific matched-filter
-    parameter estimates, including preliminary sky localization with BAYESTAR
-    (via the :meth:`gwcelery.tasks.bayestar.localize` task) and preliminary
-    source classification (via the :meth:`gwcelery.tasks.em_bright.em_bright`
-    task). """
+    """Peform annotations for CBC events that depend on pipeline-specific
+    matched-filter parameter estimates, including preliminary sky localization
+    with BAYESTAR (via the :meth:`gwcelery.tasks.bayestar.localize` task) and
+    preliminary source classification (via the
+    :meth:`gwcelery.tasks.em_bright.em_bright` task)."""
 
     # Only handle alerts for the upload of a PSD file.
     if alert['alert_type'] != 'update' or alert.get('file') != 'psd.xml.gz':
@@ -132,6 +136,16 @@ def get_preferred_event(superevent_id):
 
 
 @gracedb.task
+def continue_if_group_is(graceid, group):
+    """Continue processing if an event's group matches `group`, else halt
+    the rest of the canvas."""
+    if gracedb.get_event(graceid).lower() == group.lower():
+        return graceid
+    else:
+        raise Ignore('This is not a {} event.'.format(group))
+
+
+@gracedb.task
 def create_voevent_for_em_bright(em_bright_json, *args, **kwargs):
     """Create a VOEvent record from an EM bright JSON file."""
     data = json.loads(em_bright_json)
@@ -141,8 +155,8 @@ def create_voevent_for_em_bright(em_bright_json, *args, **kwargs):
 
 
 @app.task(ignore_result=True, shared=False)
-def annotate_superevent(preferred_event_id, superevent_id):
-    """Perform annotations for a new superevent."""
+def annotate_cbc_superevent(preferred_event_id, superevent_id):
+    """Perform annotations for a superevent whose preferred event is a CBC."""
     (
         download.s('bayestar.fits.gz', preferred_event_id)
         |
