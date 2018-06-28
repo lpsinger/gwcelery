@@ -1,11 +1,15 @@
 """Routing of LVAlert messages to other tasks."""
+import json
 from urllib.error import URLError
 
 from celery import group
 from ligo.gracedb.rest import HTTPError
 
 from ..celery import app
+from . import bayestar
 from . import circulars
+from .core import identity
+from . import em_bright
 from . import gracedb
 from . import lvalert
 from . import raven
@@ -15,7 +19,7 @@ from . import skymaps
 @lvalert.handler('superevent',
                  'test_superevent',
                  shared=False)
-def handle(alert):
+def handle_superevent(alert):
     """Schedule annotations for new superevents.
 
     This task calls
@@ -32,6 +36,54 @@ def handle(alert):
         get_preferred_event.s(superevent_id) |
         annotate_superevent.s(superevent_id)
     ).apply_async(countdown=app.conf['orchestrator_timeout'])
+
+
+@lvalert.handler('cbc_gstlal',
+                 'cbc_pycbc',
+                 'cbc_mbtaonline',
+                 'test_gstlal',
+                 'test_pycbc',
+                 'test_mbtaonline',
+                 shared=False)
+def handle_cbc_event(alert):
+    """Peform annotations that depend on pipeline-specific matched-filter
+    parameter estimates, including preliminary sky localization with BAYESTAR
+    (via the :meth:`gwcelery.tasks.bayestar.localize` task) and preliminary
+    source classification (via the :meth:`gwcelery.tasks.em_bright.em_bright`
+    task). """
+
+    # Only handle alerts for the upload of a PSD file.
+    if alert['alert_type'] != 'update' or alert.get('file') != 'psd.xml.gz':
+        return
+
+    graceid = alert['uid']
+
+    (
+        group(
+            gracedb.download.s('coinc.xml', graceid),
+            gracedb.download.s('psd.xml.gz', graceid)
+        )
+        |
+        # FIXME: group(A, B) | group(C, D) does not pass the results from
+        # tasks A and B to tasks C and D without this.
+        identity.s()
+        |
+        group(
+            bayestar.localize.s(graceid)
+            |
+            gracedb.upload.s(
+                'bayestar.fits.gz', graceid,
+                'sky localization complete', ['sky_loc', 'lvem']
+            ),
+
+            em_bright.classifier.s(graceid)
+            |
+            gracedb.upload.s(
+                'source_classification.json', graceid,
+                'source classification complete', ['em_bright', 'lvem']
+            )
+        )
+    ).delay()
 
 
 @lvalert.handler('superevent',
@@ -79,6 +131,15 @@ def get_preferred_event(superevent_id):
     return gracedb.get_superevent(superevent_id)['preferred_event']
 
 
+@gracedb.task
+def create_voevent_for_em_bright(em_bright_json, *args, **kwargs):
+    """Create a VOEvent record from an EM bright JSON file."""
+    data = json.loads(em_bright_json)
+    return gracedb.create_voevent(*args, **kwargs,
+                                  ProbHasNS=0.01 * data['Prob NS2'],
+                                  ProbHasRemnant=0.01 * data['Prob EMbright'])
+
+
 @app.task(ignore_result=True, shared=False)
 def annotate_superevent(preferred_event_id, superevent_id):
     """Perform annotations for a new superevent."""
@@ -102,11 +163,23 @@ def annotate_superevent(preferred_event_id, superevent_id):
             )
         )
         |
-        gracedb.create_voevent.si(
-            superevent_id, 'preliminary',
-            skymap_type='BAYESTAR',
-            skymap_filename='bayestar.fits.gz',
-            skymap_image_filename='bayestar.png'
+        download.si('source_classification.json', preferred_event_id)
+        |
+        group(
+            create_voevent_for_em_bright.s(
+                superevent_id, 'preliminary',
+                skymap_type='BAYESTAR',
+                skymap_filename='bayestar.fits.gz',
+                skymap_image_filename='bayestar.png'
+            ),
+
+            gracedb.upload.s(
+                'source_classification.json',
+                superevent_id,
+                message='Source classification copied from {}'.format(
+                    preferred_event_id),
+                tags=['em_bright', 'lvem']
+            ),
         )
         |
         circulars.create_circular.si(superevent_id)

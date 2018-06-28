@@ -13,6 +13,11 @@ gwcelery\.tasks\.condor module
 
 .. automodule:: gwcelery.tasks.condor
 
+gwcelery\.tasks\.em_bright module
+---------------------------------
+
+.. automodule:: gwcelery.tasks.em_bright
+
 gwcelery\.tasks\.gcn module
 ---------------------------
 

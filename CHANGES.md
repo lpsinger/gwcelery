@@ -7,6 +7,10 @@
 -   Update ligo-followup-advocate to >= 0.0.10. Re-enable automatic generation
     of GCN circulars.
 
+-   Add "EM bright" classification. This is rudimentary and based only on the
+    point mass estimates from the search pipeline because some of the EM bright
+    classifier's dependencies are not yet ready for Python 3.
+
 ## 0.0.12 (2017-06-28)
 
 -   Prevent receiving duplicate copies of LVAlert messages by unregistering

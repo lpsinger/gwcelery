@@ -4,7 +4,6 @@ import logging
 import os
 import tempfile
 
-from celery import group
 from celery.exceptions import Ignore
 from ligo.gracedb.logging import GraceDbLogHandler
 from ligo.skymap import bayestar as _bayestar
@@ -12,48 +11,9 @@ from ligo.skymap.io import events
 from ligo.skymap.io import fits
 
 from ..celery import app
-from . import lvalert
 from . import gracedb
 
 log = logging.getLogger('BAYESTAR')
-
-
-@lvalert.handler('cbc_gstlal',
-                 'cbc_pycbc',
-                 'cbc_mbtaonline',
-                 'test_gstlal',
-                 'test_pycbc',
-                 'test_mbtaonline',
-                 shared=False)
-def handle(alert):
-    """Peform end-to-end rapid sky localization with BAYESTAR, including
-    GraceDB downloads and uploads.
-
-    This function downloads all of the required inputs for BAYESTAR, runs rapid
-    sky localization, and uploads the resulting sky map FITS files to GraceDB.
-
-    Internally, all of the heavy lifting is done by :meth:`localize`.
-    """
-
-    # Skip alerts that are not meant for us.
-    if alert['alert_type'] != 'update' or alert.get('file') != 'psd.xml.gz':
-        return
-
-    graceid = alert['uid']
-
-    (
-        group(
-            gracedb.download.s('coinc.xml', graceid),
-            gracedb.download.s('psd.xml.gz', graceid)
-        )
-        |
-        localize.s(graceid)
-        |
-        gracedb.upload.s(
-            'bayestar.fits.gz', graceid,
-            'sky localization complete', ['sky_loc', 'lvem']
-        )
-    ).delay()
 
 
 @app.task(queue='openmp', shared=False)

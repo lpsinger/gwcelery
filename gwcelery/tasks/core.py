@@ -8,6 +8,12 @@ from ..celery import app
 log = get_task_logger(__name__)
 
 
+@app.task(shared=False)
+def identity(arg):
+    """Identity task (returns its input)."""
+    return arg
+
+
 class DispatchHandler(dict):
 
     def process_args(self, *args, **kwargs):
