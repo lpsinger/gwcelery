@@ -19,6 +19,8 @@
 -   Create (but do not send) preliminary VOEvents for all superevents.
     No vetting is performed yet.
 
+-   Change FAR threshold for creation of superevents to 1 per day.
+
 ## 0.0.11 (2017-06-27)
 
 -   Submit handler tasks to Celery as a single group.
