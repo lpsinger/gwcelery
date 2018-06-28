@@ -42,6 +42,20 @@ def test_create_tag(mock_gracedb):
 
 
 @patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
+def test_create_voevent(mock_gracedb):
+    # Run function under test.
+    gracedb.create_voevent('graceid', 'voevent_type',
+                           skymap_filename='skymap_filename',
+                           skymap_type='skymap_type')
+
+    # Check that one file was downloaded.
+    mock_gracedb.createVOEvent.assert_called_once_with(
+        'graceid', 'voevent_type',
+        skymap_filename='skymap_filename',
+        skymap_type='skymap_type')
+
+
+@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
 def test_download(mock_gracedb):
     # Run function under test.
     gracedb.download('filename', 'graceid')

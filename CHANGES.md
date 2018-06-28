@@ -10,6 +10,9 @@
 
 -   Upload BAYESTAR sky maps and annotations to superevents.
 
+-   Create (but do not send) preliminary VOEvents for all superevents.
+    No vetting is performed yet.
+
 ## 0.0.11 (2017-06-27)
 
 -   Submit handler tasks to Celery as a single group.

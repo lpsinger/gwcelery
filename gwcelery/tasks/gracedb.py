@@ -48,6 +48,16 @@ def create_tag(tag, n, graceid):
 
 
 @task(shared=False)
+def create_voevent(graceid, voevent_type, **kwargs):
+    response = client.createVOEvent(graceid, voevent_type, **kwargs)
+    response = response.json()
+    # FIXME: createVOEvent() no longer returns the VOEvent content.
+    # See https://git.ligo.org/lscsoft/gracedb/issues/13
+    # response = response['text']
+    return response
+
+
+@task(shared=False)
 def download(filename, graceid):
     """Download a file from GraceDB."""
     return client.files(graceid, filename, raw=True).read()

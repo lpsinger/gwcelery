@@ -90,14 +90,6 @@ def annotate_superevent(preferred_event_id, superevent_id):
                 message='BAYESTAR localization copied from {}'.format(
                     preferred_event_id),
                 tags=['sky_loc', 'lvem']
-            )
-            |
-            circulars.create_circular.si(superevent_id)
-            |
-            gracedb.upload.s(
-                'circular.txt',
-                superevent_id,
-                'Automated circular'
             ),
 
             skymaps.annotate_fits(
@@ -106,5 +98,20 @@ def annotate_superevent(preferred_event_id, superevent_id):
                 superevent_id,
                 ['sky_loc', 'lvem']
             )
+        )
+        |
+        gracedb.create_voevent.si(
+            superevent_id, 'preliminary',
+            skymap_type='BAYESTAR',
+            skymap_filename='bayestar.fits.gz',
+            skymap_image_filename='bayestar.png'
+        )
+        |
+        circulars.create_circular.si(superevent_id)
+        |
+        gracedb.upload.s(
+            'circular.txt',
+            superevent_id,
+            'Automated circular'
         )
     ).delay()
