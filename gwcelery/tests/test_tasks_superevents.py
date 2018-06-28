@@ -14,6 +14,7 @@ def test_update_preferred_event(monkeypatch):
         def json(self):
             return dict(graceid="T1234",
                         instruments="I1,J1,K1,L1,M1",
+                        group="CBC",
                         superevent="some_superevent",
                         far=1e-30)
 
@@ -285,16 +286,15 @@ def test_parse_trigger_burst_2(monkeypatch):
     monkeypatch.setattr('gwcelery.tasks.gracedb.client', g)
     payload = \
         resource_json(__name__, 'data/mock_trigger_new_G000006_burst.json')
-    # preferred event should be updated
-    # superevent window should change
+    # preferred event not be updated, in spite of lower far of new event
+    # because existing preferred event is CBC
     with patch.object(g, 'addEventToSuperevent') as p1, \
             patch.object(g, 'updateSuperevent') as p2:
         superevents.handle(payload)
         p1.assert_called_once()
-        p2.assert_called_once_with('S0039', t_0=None,
+        p2.assert_called_once_with('S0039', t_0=None, preferred_event=None,
                                    t_end=pytest.approx(1163905239, abs=1),
-                                   t_start=pytest.approx(1163905214, abs=1),
-                                   preferred_event='G000006')
+                                   t_start=pytest.approx(1163905214, abs=1))
 
 
 def test_parse_trigger_burst_3(monkeypatch):

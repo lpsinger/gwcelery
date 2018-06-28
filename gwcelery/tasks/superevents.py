@@ -163,12 +163,22 @@ def _get_dts(event_info):
     return d_t_start, d_t_end
 
 
+def _keyfunc(event):
+    group = event['group'].lower()
+    try:
+        group_rank = ['cbc', 'burst'].index(group)
+    except ValueError:
+        group_rank = float('inf')
+    return group_rank, event['far']
+
+
 def _update_superevent(superevent_id, preferred_event, new_event_dict,
                        t_start, t_end):
     """
     Update preferred event and/or change time window.
     Decision between `preferred_event` and `new_event`
-    based on FAR values.
+    based on FAR values if groups match, else CBC takes
+    precedence over burst
 
     Parameters
     ----------
@@ -185,17 +195,16 @@ def _update_superevent(superevent_id, preferred_event, new_event_dict,
     """
     preferred_event_dict = gracedb.client.event(preferred_event).json()
 
-    if new_event_dict['far'] < preferred_event_dict['far']:
-        gracedb.update_superevent(superevent_id,
-                                  preferred_event=new_event_dict['graceid'],
-                                  t_start=t_start,
-                                  t_end=t_end)
-    else:
-        # no action needed if t_start or t_end is not supplied
-        if t_start or t_end:
-            gracedb.update_superevent(superevent_id,
-                                      t_start=t_start,
-                                      t_end=t_end)
+    kwargs = {}
+    if t_start is not None:
+        kwargs['t_start'] = t_start
+    if t_end is not None:
+        kwargs['t_end'] = t_end
+    if _keyfunc(new_event_dict) < _keyfunc(preferred_event_dict):
+        kwargs['preferred_event'] = new_event_dict['graceid']
+
+    if kwargs:
+        gracedb.update_superevent(superevent_id, **kwargs)
 
 
 def _superevent_segment_list(superevents):

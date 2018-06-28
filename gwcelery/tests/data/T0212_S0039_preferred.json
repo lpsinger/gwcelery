@@ -85,7 +85,7 @@
         "neighbors": "https://gracedb-dev1.ligo.org/api/events/T0212/neighbors/"
     },
     "submitter": "deep.chatterjee@LIGO.ORG",
-    "group": "Test",
+    "group": "CBC",
     "labels": [
 
     ],

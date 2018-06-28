@@ -11,6 +11,9 @@
     point mass estimates from the search pipeline because some of the EM bright
     classifier's dependencies are not yet ready for Python 3.
 
+-   Added logic to select CBC events as preferred event over Burst. FAR acts
+    as tie breaker when groups for preferred event and new event match.
+
 ## 0.0.12 (2017-06-28)
 
 -   Prevent receiving duplicate copies of LVAlert messages by unregistering
