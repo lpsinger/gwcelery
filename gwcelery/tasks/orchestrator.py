@@ -4,7 +4,7 @@ from urllib.error import URLError
 from celery import group
 
 from ..celery import app
-# from . import circulars
+from . import circulars
 from . import gracedb
 from . import lvalert
 from . import raven
@@ -106,15 +106,12 @@ def annotate_superevent(preferred_event_id, superevent_id):
             skymap_filename='bayestar.fits.gz',
             skymap_image_filename='bayestar.png'
         )
-        # FIXME: Circulars don't work yet due to a regression in ligo-gracedb.
-        # See https://git.ligo.org/lscsoft/gracedb-client/issues/7
-        #
-        # |
-        # circulars.create_circular.si(superevent_id)
-        # |
-        # gracedb.upload.s(
-        #     'circular.txt',
-        #     superevent_id,
-        #     'Automated circular'
-        # )
+        |
+        circulars.create_circular.si(superevent_id)
+        |
+        gracedb.upload.s(
+            'circular.txt',
+            superevent_id,
+            'Automated circular'
+        )
     ).delay()

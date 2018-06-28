@@ -4,6 +4,9 @@
 
 -   Change FAR threshold for creation of superevents to 1 per day.
 
+-   Update ligo-followup-advocate to >= 0.0.10. Re-enable automatic generation
+    of GCN circulars.
+
 ## 0.0.12 (2017-06-28)
 
 -   Prevent receiving duplicate copies of LVAlert messages by unregistering
