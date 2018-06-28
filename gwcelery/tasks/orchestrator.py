@@ -57,4 +57,4 @@ def handle_superevents_externaltriggers(alert):
     graceid = alert['uid']
 
     if alert['alert_type'] == 'new':
-        raven.coincidence_search(graceid, alert['object'])
+        raven.coincidence_search(graceid, alert['object']).delay()

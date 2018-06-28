@@ -6,8 +6,26 @@ from ..celery import app
 from . import gracedb
 
 
-@app.task(shared=False)
 def coincidence_search(gracedb_id, alert_object):
+    """Perform ligo-raven search for coincidences.
+    The ligo.raven.search.search method applies EM_COINC label on its own.
+
+    Parameters
+    ----------
+    gracedb_id: str
+        ID of the trigger used by GraceDb
+    alert_object: dict
+        lvalert['object']
+    """
+    return (
+        search.s(gracedb_id, alert_object)
+        |
+        add_exttrig_to_superevent.s(gracedb_id)
+    )
+
+
+@app.task(shared=False)
+def search(gracedb_id, alert_object):
     """Perform ligo-raven search for coincidences.
     The ligo.raven.search.search method applies EM_COINC label on its own.
 
@@ -22,13 +40,11 @@ def coincidence_search(gracedb_id, alert_object):
         list with the dictionaries of related gracedb events
     """
     if alert_object.get('superevent_id'):
-        event = ligo.raven.gracedb_events.SE(gracedb_id,
-                                             gracedb=gracedb.client)
+        cls = ligo.raven.gracedb_events.SE
     else:
-        event = ligo.raven.gracedb_events.ExtTrig(gracedb_id,
-                                                  gracedb=gracedb.client)
-    return (ligo.raven.search.search.s(event, -5, 5, gracedb=gracedb.client) |
-            add_exttrig_to_superevent(gracedb_id))
+        cls = ligo.raven.gracedb_events.ExtTrig
+    event = cls(gracedb_id, gracedb=gracedb.client)
+    return ligo.raven.search.search(event, -5, 5, gracedb=gracedb.client)
 
 
 @app.task(shared=False)
