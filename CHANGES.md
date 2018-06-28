@@ -5,6 +5,9 @@
 -   Prevent receiving duplicate copies of LVAlert messages by unregistering
     redundant LVAlert message types.
 
+-   Update to ligo-followup-advocate >= 0.0.9 to update GCN Circular text for
+    superevents.
+
 ## 0.0.11 (2017-06-27)
 
 -   Submit handler tasks to Celery as a single group.
