@@ -2,6 +2,7 @@
 from urllib.error import URLError
 
 from celery import group
+from ligo.gracedb.rest import HTTPError
 
 from ..celery import app
 from . import circulars
@@ -51,8 +52,9 @@ def handle_superevents_externaltriggers(alert):
         raven.coincidence_search(graceid, alert['object']).delay()
 
 
-@app.task(autoretry_for=(URLError, TimeoutError), default_retry_delay=20.0,
-          retry_backoff=True, retry_kwargs=dict(max_retries=500), shared=False)
+@app.task(autoretry_for=(HTTPError, URLError, TimeoutError),
+          default_retry_delay=20.0, retry_backoff=True,
+          retry_kwargs=dict(max_retries=500), shared=False)
 def download(*args, **kwargs):
     """Download a file from GraceDb.
 
