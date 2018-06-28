@@ -3,6 +3,7 @@ from unittest.mock import Mock, patch
 from ligo.gracedb import rest
 import pkg_resources
 import pytest
+from gwpy.timeseries import TimeSeries
 
 from ..tasks import orchestrator
 from . import resource_json
@@ -30,6 +31,12 @@ from . import resource_json
 #     # FIXME: temporarily disable sending GCNs as per P. Brady request
 #     mock_send.assert_not_called()  # mock_send.assert_called_once_with(text)
 
+def mock_read_gwf(*args, **kwargs):
+    return TimeSeries.read(
+        pkg_resources.resource_filename(__name__,
+                                        'data/check_vector_test_pass.gwf'),
+        'H1:DMT-DQ_VECTOR')
+
 
 @pytest.mark.parametrize(
     'group,other_group,annotate,other_annotate', [
@@ -44,14 +51,17 @@ from . import resource_json
             'gwcelery.tasks.orchestrator.annotate_cbc_superevent.run'
         ]
     ])
-def test_handle_superevent(monkeypatch, group, other_group,
+@patch('gwcelery.tasks.detchar.read_gwf')
+def test_handle_superevent(mock_read_gwf, monkeypatch, group, other_group,
                            annotate, other_annotate):
     """Test a superevent is dispatched to the correct annotation task based on
     its preferred event's search group."""
     alert = {
         'alert_type': 'new',
         'object': {
-            'superevent_id': 'S1234'
+            'superevent_id': 'S1234',
+            't_start': 1214714160,
+            't_end': 1214714164
         }
     }
 

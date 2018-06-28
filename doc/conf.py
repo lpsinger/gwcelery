@@ -95,6 +95,7 @@ autodoc_mock_imports = []
 for mod in ['astropy',
             'gcn',
             'glue',
+            'gwpy',
             'lal',
             'lalapps',
             'lalburst',
@@ -225,7 +226,9 @@ texinfo_documents = [
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'celery': ('http://celery.readthedocs.org/en/latest/', None),
-    'celery_eternal': ('http://celery-eternal.readthedocs.io/en/latest/', None)
+    'celery_eternal': ('http://celery-eternal.readthedocs.io/en/latest/',
+                       None),
+    'gwpy': ('https://gwpy.github.io/docs/stable/', None)
 }
 
 
