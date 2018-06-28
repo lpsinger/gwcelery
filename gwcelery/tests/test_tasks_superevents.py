@@ -194,6 +194,9 @@ def test_parse_trigger_cbc_4(monkeypatch):
         def addEventToSuperevent(self, *args, **kwargs):    # noqa: N802
             pass
 
+        def createSuperevent(self, *args, **kwargs):    # noqa: N802
+            pass
+
     g = FakeDb()
     monkeypatch.setattr('gwcelery.tasks.gracedb.client', g)
     payload = \
@@ -201,7 +204,7 @@ def test_parse_trigger_cbc_4(monkeypatch):
     superevents.handle(payload)
     # neither method is called due to low far
     with patch.object(g, 'addEventToSuperevent') as p1, \
-            patch.object(g, 'updateSuperevent') as p2:
+            patch.object(g, 'createSuperevent') as p2:
         superevents.handle(payload)
         p1.assert_not_called()
         p2.assert_not_called()
