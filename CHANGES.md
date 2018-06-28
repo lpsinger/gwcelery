@@ -2,7 +2,7 @@
 
 ## 0.0.13 (unreleased)
 
--   No changes yet.
+-   Change FAR threshold for creation of superevents to 1 per day.
 
 ## 0.0.12 (2017-06-28)
 
@@ -18,8 +18,6 @@
 
 -   Create (but do not send) preliminary VOEvents for all superevents.
     No vetting is performed yet.
-
--   Change FAR threshold for creation of superevents to 1 per day.
 
 ## 0.0.11 (2017-06-27)
 
