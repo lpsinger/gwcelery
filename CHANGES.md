@@ -2,7 +2,8 @@
 
 ## 0.0.12 (unreleased)
 
--   No changes yet.
+-   Prevent receiving duplicate copies of LVAlert messages by unregistering
+    redundant LVAlert message types.
 
 ## 0.0.11 (2017-06-27)
 
