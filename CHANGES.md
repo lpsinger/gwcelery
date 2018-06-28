@@ -6,7 +6,9 @@
     redundant LVAlert message types.
 
 -   Update to ligo-followup-advocate >= 0.0.9 to update GCN Circular text for
-    superevents.
+    superevents. Unfortunately, circulars are still disabled due to a
+    regression in ligo-gracedb (see
+    https://git.ligo.org/lscsoft/gracedb-client/issues/7).
 
 -   Upload BAYESTAR sky maps and annotations to superevents.
 
