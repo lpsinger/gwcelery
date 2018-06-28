@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.13 (unreleased)
+
+-   No changes yet.
+
 ## 0.0.12 (2017-06-28)
 
 -   Prevent receiving duplicate copies of LVAlert messages by unregistering
