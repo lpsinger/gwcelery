@@ -13,13 +13,13 @@
 
 -   Create a label in GraceDb whenever `em_bright` or `bayestar` completes.
 
-## 0.0.14 (2017-06-28)
+## 0.0.14 (2018-06-28)
 
 -   Fix typo that was causing a task to fail.
 
 -   Decrease orchestrator timeout to 15 seconds.
 
-## 0.0.13 (2017-06-28)
+## 0.0.13 (2018-06-28)
 
 -   Change FAR threshold for creation of superevents to 1 per day.
 
@@ -35,7 +35,7 @@
 
 -   BAYESTAR now adds GraceDb URLs of events to FITS headers.
 
-## 0.0.12 (2017-06-28)
+## 0.0.12 (2018-06-28)
 
 -   Prevent receiving duplicate copies of LVAlert messages by unregistering
     redundant LVAlert message types.
@@ -50,7 +50,7 @@
 -   Create (but do not send) preliminary VOEvents for all superevents.
     No vetting is performed yet.
 
-## 0.0.11 (2017-06-27)
+## 0.0.11 (2018-06-27)
 
 -   Submit handler tasks to Celery as a single group.
 
