@@ -11,8 +11,7 @@
 -   Add rudimentary burst event workflow to orchestrator: it just generates
     VOEvents and circulars.
 
--   create a label in gracedb whenever `em_bright` or `bayestar`
-    completes
+-   Create a label in GraceDb whenever `em_bright` or `bayestar` completes.
 
 ## 0.0.14 (2017-06-28)
 
