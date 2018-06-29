@@ -72,8 +72,8 @@ def handle(payload):
         superevent = _partially_intersects(superevents, event_segment)
 
         if not superevent:
-            log.info("New event %s with no superevent in GraceDb, \
-                     creating new superevent", gid)
+            log.info('New event %s with no superevent in GraceDb, '
+                     'creating new superevent', gid)
             gracedb.create_superevent(event_info['graceid'],
                                       event_info['gpstime'],
                                       d_t_start,
