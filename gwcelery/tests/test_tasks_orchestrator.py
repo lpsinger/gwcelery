@@ -1,7 +1,8 @@
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from ligo.gracedb import rest
 import pkg_resources
+import pytest
 
 from ..tasks import orchestrator
 from . import resource_json
@@ -28,6 +29,61 @@ from . import resource_json
 #     mock_create_circular.assert_not_called()
 #     # FIXME: temporarily disable sending GCNs as per P. Brady request
 #     mock_send.assert_not_called()  # mock_send.assert_called_once_with(text)
+
+
+@pytest.mark.parametrize(
+    'group,other_group,annotate,other_annotate', [
+        [
+            'CBC', 'Burst',
+            'gwcelery.tasks.orchestrator.annotate_cbc_superevent.run',
+            'gwcelery.tasks.orchestrator.annotate_burst_superevent.run'
+        ],
+        [
+            'Burst', 'CBC',
+            'gwcelery.tasks.orchestrator.annotate_burst_superevent.run',
+            'gwcelery.tasks.orchestrator.annotate_cbc_superevent.run'
+        ]
+    ])
+def test_handle_superevent(monkeypatch, group, other_group,
+                           annotate, other_annotate):
+    """Test a superevent is dispatched to the correct annotation task based on
+    its preferred event's search group."""
+    alert = {
+        'alert_type': 'new',
+        'object': {
+            'superevent_id': 'S1234'
+        }
+    }
+
+    def get_superevent(superevent_id):
+        assert superevent_id == 'S1234'
+        return {'preferred_event': 'G1234'}
+
+    def get_event(graceid):
+        assert graceid == 'G1234'
+        return {'group': group}
+
+    mock_annotate = Mock()
+    mock_other_annotate = Mock()
+
+    monkeypatch.setattr('gwcelery.tasks.gracedb.get_superevent.run',
+                        get_superevent)
+    monkeypatch.setattr('gwcelery.tasks.gracedb.get_event.run',
+                        get_event)
+    monkeypatch.setattr(annotate, mock_annotate)
+    monkeypatch.setattr(other_annotate, mock_other_annotate)
+
+    # Run function under test
+    orchestrator.handle_superevent(alert)
+
+    mock_annotate.assert_called_once_with('G1234', 'S1234')
+
+    # FIXME: The assertion below will fail in the unit tests because of an
+    # issue in Celery with Ignore semipredicates in eager mode. However, it
+    # is fine when running live.
+    # See https://github.com/celery/celery/issues/4868.
+
+    # mock_other_annotate.assert_not_called()
 
 
 def mock_download(filename, graceid, *args, **kwargs):

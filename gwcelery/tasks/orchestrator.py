@@ -36,9 +36,15 @@ def handle_superevent(alert):
     (
         get_preferred_event.s(superevent_id)
         |
-        continue_if_group_is.s('CBC')
-        |
-        annotate_cbc_superevent.s(superevent_id)
+        group(
+            continue_if_group_is.s('CBC')
+            |
+            annotate_cbc_superevent.s(superevent_id),
+
+            continue_if_group_is.s('Burst')
+            |
+            annotate_burst_superevent.s(superevent_id)
+        )
     ).apply_async(countdown=app.conf['orchestrator_timeout'])
 
 
@@ -152,6 +158,17 @@ def create_voevent_for_em_bright(em_bright_json, *args, **kwargs):
     return gracedb.create_voevent(*args, **kwargs,
                                   ProbHasNS=0.01 * data['Prob NS2'],
                                   ProbHasRemnant=0.01 * data['Prob EMbright'])
+
+
+@app.task(ignore_result=True, shared=False)
+def annotate_burst_superevent(preferred_event_id, superevent_id):
+    """Perform annotations for a superevent whose preferred event is a
+    Burst."""
+    (
+        gracedb.create_voevent.s(superevent_id, 'preliminary')
+        |
+        circulars.create_circular.si(superevent_id)
+    ).delay()
 
 
 @app.task(ignore_result=True, shared=False)
