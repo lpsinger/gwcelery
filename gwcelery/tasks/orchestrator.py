@@ -36,7 +36,7 @@ def handle_superevent(alert):
     (
         get_preferred_event.s(superevent_id)
         |
-        continue_if_group_is('CBC')
+        continue_if_group_is.s('CBC')
         |
         annotate_cbc_superevent.s(superevent_id)
     ).apply_async(countdown=app.conf['orchestrator_timeout'])

@@ -2,7 +2,7 @@
 
 ## 0.0.14 (unreleased)
 
--   No changes yet.
+-   Fix typo that was causing a task to fail.
 
 ## 0.0.13 (2017-06-28)
 
