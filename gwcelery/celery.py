@@ -50,7 +50,7 @@ class Base:
     superevent_default_d_t_end = 1.0
     """Default upper extent for superevent segments"""
 
-    superevent_far_threshold = 1.15e-05
+    superevent_far_threshold = 1 / 3600
     """Maximum false alarm rate to consider events superevents."""
 
     orchestrator_timeout = 15.0

@@ -2,7 +2,7 @@
 
 ## 0.0.15 (unreleased)
 
--   No changes yet.
+-   Change superevent threshold and mock event rate to once per hour.
 
 ## 0.0.14 (2017-06-28)
 

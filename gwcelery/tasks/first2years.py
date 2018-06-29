@@ -98,7 +98,7 @@ def pick_coinc():
     return coinc_xml.getvalue()
 
 
-@app.task(base=PeriodicTask, shared=False, run_every=720)
+@app.task(base=PeriodicTask, shared=False, run_every=3600)
 def upload_event():
     """Upload a random event from the "First Two Years" paper."""
     coinc = pick_coinc()
