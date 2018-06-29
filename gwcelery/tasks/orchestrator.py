@@ -139,7 +139,7 @@ def get_preferred_event(superevent_id):
 def continue_if_group_is(graceid, group):
     """Continue processing if an event's group matches `group`, else halt
     the rest of the canvas."""
-    if gracedb.get_event(graceid).lower() == group.lower():
+    if gracedb.get_event(graceid)['group'].lower() == group.lower():
         return graceid
     else:
         raise Ignore('This is not a {} event.'.format(group))
