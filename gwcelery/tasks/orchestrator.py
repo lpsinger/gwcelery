@@ -171,7 +171,10 @@ def annotate_burst_superevent(preferred_event_id, superevent_id):
     (
         gracedb.create_voevent.s(superevent_id, 'preliminary')
         |
-        circulars.create_circular.si(superevent_id)
+        group(
+            circulars.create_circular.si(superevent_id),
+            gracedb.create_label.si('GCN_PRELIM_SENT', superevent_id)
+        )
     ).delay()
 
 
@@ -208,7 +211,9 @@ def annotate_cbc_superevent(preferred_event_id, superevent_id):
                 skymap_type='BAYESTAR',
                 skymap_filename='bayestar.fits.gz',
                 skymap_image_filename='bayestar.png'
-            ),
+            )
+            |
+            gracedb.create_label.si('GCN_PRELIM_SENT', superevent_id),
 
             gracedb.upload.s(
                 'source_classification.json',
