@@ -5,7 +5,6 @@ from celery.utils.log import get_task_logger
 
 from .. import gcn
 from .. import gracedb
-from ...celery import app
 
 log = get_task_logger(__name__)
 
@@ -25,7 +24,6 @@ log = get_task_logger(__name__)
 def handle(payload):
     """Handles the payload from the Fermi, Swift and SNEWS alerts.
     Prepares the alert to be sent to graceDB as 'E' events."""
-    event_type = app.conf.external_trigger_event_type
     root = etree.fromstring(payload)
     u = urlparse(root.attrib['ivorn'])
     stream_path = u.path
@@ -37,8 +35,8 @@ def handle(payload):
                         '/Fermi': 'Fermi',
                         '/SNEWS': 'SNEWS'}
     event_observatory = stream_obsv_dict[stream_path]
-    query = 'group: {} pipeline: {} grbevent.trigger_id = "{}"'.format(
-        event_type, event_observatory, trig_id)
+    query = 'group: External pipeline: {} grbevent.trigger_id = "{}"'.format(
+        event_observatory, trig_id)
     events = gracedb.get_events(query=query)
 
     if events:
@@ -50,5 +48,5 @@ def handle(payload):
     else:
         gracedb.create_event(filecontents=payload,
                              search='GRB',
-                             group=event_type,
+                             group='External',
                              pipeline=event_observatory)

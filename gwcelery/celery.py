@@ -63,9 +63,6 @@ class Base:
 class Production(Base):
     """Application configuration for ``gracedb.ligo.org``."""
 
-    external_trigger_event_type = 'External'
-    """GraceDb group for external triggers (e.g. GRBs, SNe, neutrinos)."""
-
     lvalert_host = 'lvalert.cgca.uwm.edu'
     """LVAlert host."""
 
@@ -75,9 +72,6 @@ class Production(Base):
 
 class Test(Base):
     """Application configuration for ``gracedb-test.ligo.org``."""
-
-    external_trigger_event_type = 'Test'
-    """GraceDb group for external triggers (e.g. GRBs, SNe, neutrinos)."""
 
     lvalert_host = 'lvalert-test.cgca.uwm.edu'
     """LVAlert host."""

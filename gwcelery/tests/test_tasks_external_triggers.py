@@ -12,7 +12,7 @@ def test_handle_create_event(mock_create_event):
     mock_create_event.assert_called_once_with(filecontents=text,
                                               search='GRB',
                                               pipeline='Fermi',
-                                              group='Test')
+                                              group='External')
 
 
 @patch('gwcelery.tasks.gracedb.get_events', return_value=[{'graceid': 'E1'}])

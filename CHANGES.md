@@ -6,6 +6,8 @@
 
 -   Add `gracedb.create_label` task.
 
+-   Always upload external triggers to the 'External' group.
+
 ## 0.0.14 (2017-06-28)
 
 -   Fix typo that was causing a task to fail.
