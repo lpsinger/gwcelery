@@ -53,7 +53,7 @@ class Base:
     superevent_far_threshold = 1.15e-05
     """Maximum false alarm rate to consider events superevents."""
 
-    orchestrator_timeout = 60.0
+    orchestrator_timeout = 15.0
     """The orchestrator will wait this many seconds from the time of the
     creation of a new superevent to the time that annotations begin, in order
     to let the superevent manager's decision on the preferred event

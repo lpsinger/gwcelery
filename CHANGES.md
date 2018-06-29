@@ -4,6 +4,8 @@
 
 -   Fix typo that was causing a task to fail.
 
+-   Decrease orchestrator timeout to 15 seconds.
+
 ## 0.0.13 (2017-06-28)
 
 -   Change FAR threshold for creation of superevents to 1 per day.
