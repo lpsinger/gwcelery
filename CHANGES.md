@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.15 (unreleased)
+## 0.0.15 (2018-06-29)
 
 -   Change superevent threshold and mock event rate to once per hour.
 
