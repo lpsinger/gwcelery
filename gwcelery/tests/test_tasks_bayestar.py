@@ -2,16 +2,16 @@ from unittest.mock import patch
 from xml.sax import SAXParseException
 
 from astropy import table
-from ligo.gracedb import rest
+from astropy.io import fits
 import numpy as np
 import pkg_resources
 import pytest
 
 from ..tasks.bayestar import localize
+from ..util.tempfile import NamedTemporaryFile
 
 
-@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
-def test_localize_bad_psd(mock_gracedb):
+def test_localize_bad_psd():
     """Test running BAYESTAR with a pad PSD file"""
     # Test data
     coinc = pkg_resources.resource_string(__name__, 'data/coinc.xml')
@@ -33,9 +33,8 @@ def mock_bayestar(*args, **kwargs):
 @pytest.mark.parametrize('disabled_detectors', [None,
                                                 ['H1', 'L1'],
                                                 ['H1', 'L1', 'V1']])
-@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
 @patch('ligo.skymap.bayestar.localize', mock_bayestar)
-def test_localize(mock_gracedb, disabled_detectors):
+def test_localize(disabled_detectors):
     """Test running BAYESTAR on G211117"""
     # Test data
     coinc = pkg_resources.resource_string(__name__, 'data/coinc.xml')
@@ -45,5 +44,6 @@ def test_localize(mock_gracedb, disabled_detectors):
     fitscontent = localize(
         (coinc, psd), 'G211117', disabled_detectors=disabled_detectors)
 
-    # FIXME: should do some sanity checks of the sky map here
-    assert fitscontent
+    with NamedTemporaryFile(content=fitscontent) as fitsfile:
+        url = fits.getval(fitsfile.name, 'REFERENC', 1)
+        assert url == 'https://gracedb.invalid/events/G211117'

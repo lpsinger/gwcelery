@@ -3,6 +3,7 @@ import io
 import logging
 import os
 import tempfile
+import urllib.parse
 
 from celery.exceptions import Ignore
 from ligo.gracedb.logging import GraceDbLogHandler
@@ -32,6 +33,10 @@ def localize(coinc_psd, graceid, filename='bayestar.fits.gz',
     handler.setLevel(logging.INFO)
     log.addHandler(handler)
 
+    # Determine the base URL for event pages.
+    scheme, netloc, *_ = urllib.parse.urlparse(gracedb.client.service_url)
+    base_url = urllib.parse.urlunparse((scheme, netloc, 'events', '', '', ''))
+
     try:
         # A little bit of Cylon humor
         log.info('by your command...')
@@ -50,6 +55,7 @@ def localize(coinc_psd, graceid, filename='bayestar.fits.gz',
         log.info("starting sky localization")
         skymap = _bayestar.rasterize(_bayestar.localize(event))
         skymap.meta['objid'] = str(graceid)
+        skymap.meta['url'] = '{}/{}'.format(base_url, graceid)
         log.info("sky localization complete")
 
         with tempfile.TemporaryDirectory() as tmpdir:
