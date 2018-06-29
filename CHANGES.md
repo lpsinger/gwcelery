@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.14 (unreleased)
+
+-   No changes yet.
+
 ## 0.0.13 (2017-06-28)
 
 -   Change FAR threshold for creation of superevents to 1 per day.
