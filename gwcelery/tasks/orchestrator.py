@@ -84,7 +84,9 @@ def handle_cbc_event(alert):
             gracedb.upload.s(
                 'bayestar.fits.gz', graceid,
                 'sky localization complete', ['sky_loc', 'lvem']
-            ),
+            )
+            |
+            gracedb.create_label.si('SKYMAP_READY', graceid),
 
             em_bright.classifier.s(graceid)
             |
@@ -92,6 +94,8 @@ def handle_cbc_event(alert):
                 'source_classification.json', graceid,
                 'source classification complete', ['em_bright', 'lvem']
             )
+            |
+            gracedb.create_label.si('EMBRIGHT_READY', graceid)
         )
     ).delay()
 
@@ -184,7 +188,9 @@ def annotate_cbc_superevent(preferred_event_id, superevent_id):
                 message='BAYESTAR localization copied from {}'.format(
                     preferred_event_id),
                 tags=['sky_loc', 'lvem']
-            ),
+            )
+            |
+            gracedb.create_label.si('SKYMAP_READY', superevent_id),
 
             skymaps.annotate_fits(
                 'bayestar.fits.gz',
@@ -210,7 +216,9 @@ def annotate_cbc_superevent(preferred_event_id, superevent_id):
                 message='Source classification copied from {}'.format(
                     preferred_event_id),
                 tags=['em_bright', 'lvem']
-            ),
+            )
+            |
+            gracedb.create_label.si('EMBRIGHT_READY', superevent_id),
         )
         |
         circulars.create_circular.si(superevent_id)
