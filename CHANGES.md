@@ -4,6 +4,8 @@
 
 -   Change superevent threshold and mock event rate to once per hour.
 
+-   Add `gracedb.create_label` task.
+
 ## 0.0.14 (2017-06-28)
 
 -   Fix typo that was causing a task to fail.

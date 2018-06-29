@@ -33,6 +33,15 @@ def test_create_event(monkeypatch):
 
 
 @patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
+def test_create_label(mock_gracedb):
+    # Run function under test.
+    gracedb.create_label('label', 'graceid')
+
+    # Check that one file was downloaded.
+    mock_gracedb.writeLabel.assert_called_once_with('graceid', 'label')
+
+
+@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
 def test_create_tag(mock_gracedb):
     # Run function under test.
     gracedb.create_tag('tag', 'n', 'graceid')

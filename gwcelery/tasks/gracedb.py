@@ -42,6 +42,12 @@ def create_event(filecontents, search, pipeline, group):
 
 
 @task(ignore_result=True, shared=False)
+def create_label(label, graceid):
+    """Create a label in GraceDb."""
+    client.writeLabel(graceid, label)
+
+
+@task(ignore_result=True, shared=False)
 def create_tag(tag, n, graceid):
     """Create a tag in GraceDb."""
     client.createTag(graceid, n, tag)
