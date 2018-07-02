@@ -34,7 +34,9 @@ def handle_superevent(alert):
 
     superevent_id = alert['object']['superevent_id']
     (
-        get_preferred_event.s(superevent_id)
+        get_preferred_event.s(superevent_id).set(
+            countdown=app.conf['orchestrator_timeout']
+        )
         |
         group(
             continue_if_group_is.s('CBC')
@@ -45,7 +47,7 @@ def handle_superevent(alert):
             |
             annotate_burst_superevent.s(superevent_id)
         )
-    ).apply_async(countdown=app.conf['orchestrator_timeout'])
+    ).apply_async()
 
 
 @lvalert.handler('cbc_gstlal',
