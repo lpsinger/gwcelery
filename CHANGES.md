@@ -2,8 +2,16 @@
 
 ## 0.0.16 (unreleased)
 
+
 -   Stop listening for three unnecessary GCN notice types:
     `SWIFT_BAT_ALARM_LONG`, `SWIFT_BAT_ALARM_SHORT`, and `SWIFT_BAT_KNOWN_SRC`.
+
+-   Switch to [SleekXMPP](http://sleekxmpp.com) for the LVAlert client,
+    instead of [PyXMPP2](http://jajcus.github.io/pyxmpp2/). Because SleekXMPP
+    has first-class support for publish-subscribe, the LVAlert listener can
+    now automatically subscribe to all LVAlert nodes for which our code has
+    handlers. Most of the client code now lives in a new external package,
+    [sleek-lvalert](https://git.ligo.org/emfollow/sleek-lvalert).
 
 ## 0.0.15 (2018-06-29)
 

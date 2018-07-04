@@ -114,7 +114,7 @@ for mod in ['astropy',
             'lxml',
             'lxml.etree',
             'numpy',
-            'pyxmpp2']:
+            'sleek_lvalert']:
     try:
         importlib.import_module(mod)
     except ImportError:
