@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.16 (unreleased)
+## 0.0.16 (2018-07-05)
 
 -   Stop listening for three unnecessary GCN notice types:
     `SWIFT_BAT_ALARM_LONG`, `SWIFT_BAT_ALARM_SHORT`, and `SWIFT_BAT_KNOWN_SRC`.
