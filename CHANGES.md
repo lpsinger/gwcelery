@@ -2,7 +2,6 @@
 
 ## 0.0.16 (unreleased)
 
-
 -   Stop listening for three unnecessary GCN notice types:
     `SWIFT_BAT_ALARM_LONG`, `SWIFT_BAT_ALARM_SHORT`, and `SWIFT_BAT_KNOWN_SRC`.
 
