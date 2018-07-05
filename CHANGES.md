@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.17 (unreleased)
+## 0.0.17 (2018-07-05)
 
 -   Undo accidental configuration change in last version.
 
