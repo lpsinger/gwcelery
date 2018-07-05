@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.17 (unreleased)
+
+-   No changes yet.
+
 ## 0.0.16 (2018-07-05)
 
 -   Stop listening for three unnecessary GCN notice types:
