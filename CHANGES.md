@@ -2,7 +2,7 @@
 
 ## 0.0.17 (unreleased)
 
--   No changes yet.
+-   Undo accidental configuration change in last version.
 
 ## 0.0.16 (2018-07-05)
 

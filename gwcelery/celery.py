@@ -96,7 +96,7 @@ class Playground(Test):
 
 # Celery application object.
 # Use redis broker, because it supports locks (and thus singleton tasks).
-app = Celery('gwcelery', broker='redis://', config_source=Development)
+app = Celery('gwcelery', broker='redis://', config_source=Playground)
 
 # Use the same URL for both the result backend and the broker.
 app.conf['result_backend'] = app.conf.broker_url
