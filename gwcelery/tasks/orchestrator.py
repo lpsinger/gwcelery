@@ -10,12 +10,12 @@ from ..celery import app
 from . import bayestar
 from . import circulars
 from .core import identity
+from . import detchar
 from . import em_bright
 from . import gracedb
 from . import lvalert
 from . import raven
 from . import skymaps
-from . import detchar
 
 
 @lvalert.handler('superevent',
@@ -33,39 +33,25 @@ def handle_superevent(alert):
     if alert['alert_type'] != 'new':
         return
 
-    check_vector_params = {'channel': ('DMT-DQ_VECTOR',
-                                       'GDS-CALIB_STATE_VECTOR'),
-                           'ifo': ('H1', 'L1'),
-                           'bitmask': 0b11}
-    check_vector_result = {}
-
-    # Check state vectors
-    # -------------------
-    # Read frames from L1 and H1
-    for channel in check_vector_params['channel']:
-        for ifo in check_vector_params['ifo']:
-            check_vector_result['{}:{}'.format(ifo, channel)] = \
-                    detchar.check_vector(
-                        ifo, channel, alert['object']['t_start'],
-                        alert['object']['t_end'] - alert['object']['t_start'],
-                        check_vector_params['bitmask'],
-                        'any'
-                                        )
-
-    # Annotate GraceDB event
-    detchar.check_vector_gracedb_label(check_vector_result,
-                                       alert['object']['superevent_id'])
-    # Check if any state vector has failed the check
-    # min(check_vector_result.values())  # return False if any vector fails
-    """How should this be put into the canvas?"""
-    """
-    min(check_vector_result.values()) will return False if any vector fails
-    """
     superevent_id = alert['object']['superevent_id']
+    start = alert['object']['t_start']
+    end = alert['object']['t_end']
+
     (
-        get_preferred_event.s(superevent_id).set(
+        group(
+            detchar.check_vector.s(ifo, channel, start, end, 0b11, 'all')
+            |
+            detchar.check_vector_gracedb_label.s(ifo, channel, superevent_id)
+
+            for ifo in ['H1', 'L1']
+            for channel in ['DMT-DQ_VECTOR', 'GDS-CALIB_STATE_VECTOR']
+        )
+        |
+        get_preferred_event.si(superevent_id).set(
             countdown=app.conf['orchestrator_timeout']
         )
+        |
+        identity.s()
         |
         group(
             continue_if_group_is.s('CBC')

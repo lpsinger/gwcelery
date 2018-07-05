@@ -59,6 +59,9 @@ class Base:
     to let the superevent manager's decision on the preferred event
     stabilize."""
 
+    llhoft_dir = '/dev/shm/llhoft'
+    """Low-latency h(t) directory."""
+
 
 class Production(Base):
     """Application configuration for ``gracedb.ligo.org``."""

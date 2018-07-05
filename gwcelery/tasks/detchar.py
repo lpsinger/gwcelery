@@ -1,13 +1,17 @@
 import glob
 
-import numpy as np
+from celery.exceptions import Ignore
+from celery.utils.log import get_task_logger
 from glue.lal import Cache
 from gwpy.timeseries import TimeSeries
+import numpy as np
 
 from ..celery import app
 from . import gracedb
 
 __author__ = 'Geoffrey Mo <geoffrey.mo@ligo.org>'
+
+log = get_task_logger(__name__)
 
 
 def read_gwf(ifo, channel, start, end):
@@ -18,16 +22,11 @@ def read_gwf(ifo, channel, start, end):
     Parameters
     ----------
     ifo : str
-        Name of observatory.
-
+        Interferometer name (e.g. ``H1``).
     channel : str
         Channel to look at minus observatory code, ie 'DMT-DQ_VECTOR'.
-
-    start : float
-        Start time
-
-    end: float
-        End time
+    start, end : int or float
+        GPS start and end times desired.
 
     Returns
     -------
@@ -69,13 +68,11 @@ def read_gwf(ifo, channel, start, end):
 
     This is important for if gwcelery is run locally (and not on a cluster),
     where /dev/shm is inaccessible.
-
     """
-    pattern = '/dev/shm/llhoft/{}/*.gwf'.format(ifo)
+    pattern = '{}/{}/*.gwf'.format(app.conf['llhoft_dir'], ifo)
     filenames = glob.glob(pattern)
-    source = Cache.from_urls(filenames)
-    return TimeSeries.read(source, ifo+':'+channel,
-                           start=start, end=end)
+    cache = Cache.from_urls(filenames)
+    return TimeSeries.read(cache, ifo + ':' + channel, start=start, end=end)
 
 
 @app.task(shared=False)
@@ -84,17 +81,19 @@ def check_vector(ifo, channel, start, end, bitmask, logic_type):
 
     Parameters
     ----------
-    First four parameters same as in :func:`read_gwf`.
-
-    timeseries : :class:`gwpy.timeseries.TimeSeries`
-        Timeseries to check.
+    ifo : str
+        Interferometer name (e.g. ``H1``).
+    channel : str
+        Channel to look at minus observatory code, ie 'DMT-DQ_VECTOR'.
+    start, end : int or float
+        GPS start and end times desired.
     bitmask : binary integer
         Bitmask which needs to be 1 in order for the timeseries to pass.
         Example: 0b11 means the 0th and 1st bits need to be 1.
     logic_type : str
         Type of logic to apply for vetoing.
-        'all' needs each entry in the timeseries to fail to veto the sample
-        'any' will fail the sample upon the failure of any entry
+        If ``all``, then all samples in the window must pass the bitmask.
+        If ``any``, then one or more samples in the window must pass.
 
     Returns
     -------
@@ -104,7 +103,7 @@ def check_vector(ifo, channel, start, end, bitmask, logic_type):
     Example
     -------
     >>> check_vector('H1', 'DMT-DQ_VECTOR', 1214606036, 1214606040, 0b11,
-    >>>                     'any')
+    ...              'all')
     True
 
     Notes
@@ -114,7 +113,7 @@ def check_vector(ifo, channel, start, end, bitmask, logic_type):
     efficient to check each sample in the series instead of checking the
     entire series, as is done here.
 
-    In addition, with the current configuration of start and duration, this
+    In addition, with the current configuration of start and end, this
     code would have missed the glitch in L1 just before GW170817, since it
     occurred ~0.5 seconds before the start time. Currently, this code is
     called in orchestrator.py with the start and end times of the superevent,
@@ -122,51 +121,63 @@ def check_vector(ifo, channel, start, end, bitmask, logic_type):
     would be implemented:
 
     :func:`check_vector` would gain two parameters:
-    check_vector(..., start, duration, ..., prepeek=0, postpeek=0)
-    where "prepeek" and "postpeek" refer to durations before and after the
+    ``check_vector(..., start, end, ..., prepeek=0, postpeek=0)``
+    where ``prepeek`` and ``postpeek`` refer to durations before and after the
     superevent respectively. These would be configured as "vector_prepeek"
     and "vector_postpeek" in gwcelery/gwcelery/celery.py, and would be
     forced to be positive ints or floats. Note that the default will be
     zero, i.e. taking the superevent's start and end times.
 
     In the code of :func:`check_vector`, :func:`read_gwf` will read
-    read_gwf(channel, ifo, start-prepeek, duration+prepeek+postpeek)
+    ``read_gwf(ifo, channel, start - prepeek, end + postpeek)``.
 
     In orchestrator.py, where this function is called, two new parameters
-    will be called. They would sit after app.conf['vector_check_logic']
-    and would be app.conf['vector_prepeek'] and
-    app.conf['vector_postpeek'] respectively.
+    will be called. They would sit after ``app.conf['vector_check_logic']``
+    and would be ``app.conf['vector_prepeek']`` and
+    ``app.conf['vector_postpeek']`` respectively.
     """
-    timeseries = read_gwf(ifo, channel, start, end)
-    list_of_sample_pass = timeseries.value & bitmask == bitmask
-    if logic_type == 'all':
-        return np.any(list_of_sample_pass)
+    try:
+        timeseries = read_gwf(ifo, channel, start, end)
+    except IndexError:
+        # FIXME: figure out how to get access to low-latency frames outside
+        # of the cluster. Until we figure that out, actual I/O errors have
+        # to be non-fatal.
+        log.exception('Failed to read from low-latency frame files')
+        return '?'
 
-    elif logic_type == 'any':
-        return np.all(list_of_sample_pass)
+    good = timeseries.value & bitmask == bitmask
 
+    if logic_type == 'any':
+        return np.any(good)
+    elif logic_type == 'all':
+        return np.all(good)
     else:
         raise ValueError("logic_type must be either 'all' or 'any'.")
 
 
-@app.task(shared=False, ignore_result=True)
-def check_vector_gracedb_label(check_vector_result_dict, graceid):
-    """Append label to GraceDb with results of check_vector().
+@gracedb.task(ignore_result=True)
+def check_vector_gracedb_label(result, ifo, channel, graceid):
+    """Add label to GraceDb with results of check_vector().
 
     Parameters
     ----------
-    check_vector_result_dict : dict
-        Dictionary of check_vector() results
-
+    result : bool
+        Return value from :func:`check_vector()`
+    ifo : str
+        Interferometer name (e.g. ``H1``).
+    channel : str
+        Channel to look at minus observatory code, ie 'DMT-DQ_VECTOR'.
     graceid : str
         GraceID to which to append label.
-
-    Returns
-    -------
-    None
     """
-    for channel in check_vector_result_dict:
-        if check_vector_result_dict[channel]:
-            gracedb.create_label(channel+'_PASS', graceid)
-        else:
-            gracedb.create_label(channel+'_FAIL', graceid)
+    if result == '?':
+        # Could not read from low-latency h(t) directory.
+        # Do not create a label.
+        return
+    elif result:
+        # Passed. Create label and continue processing of canvas.
+        gracedb.create_label('{}:{}_PASS'.format(ifo, channel), graceid)
+    else:
+        # Failed. Create label and stop processing of canvas.
+        gracedb.create_label('{}:{}_FAIL'.format(ifo, channel), graceid)
+        raise Ignore()
