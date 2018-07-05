@@ -6,7 +6,7 @@ stages:
 
 # Build Python packages
 dist:
-  image: python:slim
+  image: python:3.6-slim
   stage: dist
   script:
     - python setup.py sdist bdist_wheel
@@ -28,7 +28,7 @@ dependencies:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - |
       cat <<EOF > Dockerfile
-      FROM python
+      FROM python:3.6
       COPY requirements.txt .
       RUN pip --no-cache-dir install -r requirements.txt
       RUN rm -f requirements.txt
@@ -92,7 +92,7 @@ lint:
 
 # Generate documentation
 doc:
-  image: python:slim
+  image: python:3.6-slim
   stage: test
   variables:
     GIT_STRATEGY: none
@@ -121,7 +121,7 @@ pages:
 # Upload package to PyPI
 pypi:
   stage: deploy
-  image: python:slim
+  image: python:3.6-slim
   variables:
     GIT_STRATEGY: none
   script:
