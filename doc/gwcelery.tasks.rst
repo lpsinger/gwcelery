@@ -13,6 +13,11 @@ gwcelery\.tasks\.condor module
 
 .. automodule:: gwcelery.tasks.condor
 
+gwcelery\.tasks\.detchar module
+-------------------------------
+
+.. automodule:: gwcelery.tasks.detchar
+
 gwcelery\.tasks\.em_bright module
 ---------------------------------
 
