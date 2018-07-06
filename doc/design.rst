@@ -36,14 +36,7 @@ of several processes:
     *  :meth:`gwcelery.tasks.bayestar.localize`
     *  :meth:`gwcelery.tasks.skymaps.plot_volume`
 
-5.  **VOEvent Worker**
-
-    A Celery worker that is dedicated to sending VOEvents (has to be dedicated
-    for technical reasons). There is only task that runs in the VOEvent queue:
-
-    *  :meth:`gwcelery.tasks.gcn.send`
-
-6.  **Superevent Worker**
+5.  **Superevent Worker**
 
     A Celery worker that is dedicated to serially process triggers from low
     latency pipelines and create/modify superevents in *GraceDb*. There is only
@@ -51,7 +44,7 @@ of several processes:
 
     *  :meth:`gwcelery.tasks.superevents.handle`
 
-7.  **External Trigger Worker**
+6.  **External Trigger Worker**
 
     A Celery worker that is dedicated to serially process external triggers from GRB
     alerts received from Fermi, Swift and neutrino alerts received from SNEWS 
@@ -59,7 +52,7 @@ of several processes:
 
     *  :meth:`gwcelery.tasks.gcn.external_triggers.handle`
 
-8.  **General-Purpose Worker**
+7.  **General-Purpose Worker**
 
     A Celery worker that accepts all other tasks.
 
@@ -71,6 +64,7 @@ to keep open a persistent connection with some external service. These tasks
 are subclasses of :class:`celery_eternal.EternalTask` or
 :class:`celery_eternal.EternalProcessTask`.
 
+*  :meth:`gwcelery.tasks.gcn.broker`
 *  :meth:`gwcelery.tasks.gcn.listen`
 *  :meth:`gwcelery.tasks.lvalert.listen`
 

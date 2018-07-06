@@ -1,18 +1,21 @@
+import contextlib
 import json
 import logging
 import socket
+import struct
 from threading import Thread
 from time import sleep
 from unittest.mock import MagicMock, patch
 
-import gcn
 from gcn.voeventclient import _recv_packet
 import lxml.etree
 import pkg_resources
 import pytest
 
-from ..tasks.gcn import handler, listen, send
+from ..tasks import gcn
 from .. import app
+
+logging.basicConfig(level=logging.INFO)
 
 # Test data
 with pkg_resources.resource_stream(
@@ -22,65 +25,94 @@ voevent = lvalert['object']['text']
 
 
 @pytest.fixture
-def send_thread():
-    thread = Thread(target=send, args=(voevent,))
-    thread.daemon = True
+def broker_thread(monkeypatch):
+    queue = [b'foo', b'bar', b'bat']
+
+    def lindex(key, index):
+        assert key == gcn._queue_name
+        try:
+            return queue[index]
+        except IndexError:
+            return None
+
+    def lpop(key):
+        assert key == gcn._queue_name
+        try:
+            return queue.pop(0)
+        except IndexError:
+            return None
+
+    monkeypatch.setattr('gwcelery.tasks.gcn.broker.backend.lindex',
+                        lindex, raising=False)
+    monkeypatch.setattr('gwcelery.tasks.gcn.broker.backend.lpop',
+                        lpop, raising=False)
+
+    monkeypatch.setattr('gwcelery.tasks.gcn.broker.is_aborted', lambda: False)
+    thread = Thread(target=gcn.broker)
     thread.start()
-    sleep(1)
-    yield thread
+    sleep(0.1)
+    yield
+    monkeypatch.setattr('gwcelery.tasks.gcn.broker.is_aborted', lambda: True)
     thread.join()
-    if send.conn is not None:
-        try:
-            send.conn.close()
-        except socket.error:
-            pass
-        send.conn = None
 
 
-@pytest.mark.enable_socket
-def test_send_connection_closed(send_thread):
-    """Test sending a VOEvent over loopback to a connection that
-    is immediately closed."""
-    sock = socket.socket(socket.AF_INET)
-    sock.connect(('127.0.0.1', 53410))
-    sock.shutdown(socket.SHUT_RDWR)
-    sock.close()
-
-
-@pytest.mark.enable_socket
-def test_send(send_thread):
-    """Test sending a VOEvent over loopback."""
-    # First, simulate connecting from a disallowed IP address.
-    # The connection should be refused.
+@pytest.fixture
+def wrong_remote_address():
+    old = app.conf['gcn_remote_address']
     app.conf['gcn_remote_address'] = '192.0.2.0'
-    sock = socket.socket(socket.AF_INET)
-    try:
-        sock.settimeout(0.1)
-        with pytest.raises(socket.error):
-            sock.connect(('127.0.0.1', 53410))
-            packet = _recv_packet(sock)
-    finally:
-        try:
-            sock.shutdown(socket.SHUT_RDWR)
-        except socket.error:
-            pass
-        sock.close()
+    yield
+    app.conf['gcn_remote_address'] = old
 
-    # Now, simulate connecting from the allowed IP address.
-    # The VOEvent should be received.
-    app.conf['gcn_remote_address'] = '127.0.0.1'
-    sock = socket.socket(socket.AF_INET)
-    try:
-        sock.settimeout(0.1)
+
+@pytest.fixture
+def connection_to_broker(broker_thread):
+    with contextlib.closing(socket.socket(socket.AF_INET)) as sock:
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_LINGER,
+                        struct.pack('ii', 1, 0))
         sock.connect(('127.0.0.1', 53410))
-        packet = _recv_packet(sock)
-    finally:
-        try:
-            sock.shutdown(socket.SHUT_RDWR)
-        except socket.error:
-            pass
-        sock.close()
-    assert packet == voevent.encode('utf-8')
+        yield sock
+
+
+@pytest.mark.enable_socket
+def test_broker_aborted_before_accept(broker_thread, monkeypatch):
+    """Test aborting the broker while it is still waiting for connections."""
+    monkeypatch.setattr('gwcelery.tasks.gcn.broker.is_aborted', lambda: True)
+
+
+@pytest.mark.enable_socket
+def test_broker_aborted_after_accept(connection_to_broker, monkeypatch):
+    """Test aborting the broker after it has accepted a connection."""
+    monkeypatch.setattr('gwcelery.tasks.gcn.broker.is_aborted', lambda: True)
+
+
+@pytest.mark.enable_socket
+def test_broker_disconnected(connection_to_broker):
+    """Test connection from a broker to a client that immediately closes the
+    socket."""
+    pass
+
+
+@pytest.mark.enable_socket
+def test_broker_wrong_address(capsys, wrong_remote_address,
+                              connection_to_broker):
+    """Test that the broker refuses connections from the wrong IP address."""
+    assert connection_to_broker.recv(1) == b''
+
+
+@pytest.mark.enable_socket
+def test_broker(connection_to_broker, broker_thread):
+    """Test receiving packets from the broker."""
+    connection_to_broker.settimeout(1.0)
+    packets = [_recv_packet(connection_to_broker) for _ in range(3)]
+    assert packets == [b'foo', b'bar', b'bat']
+
+
+def test_send(monkeypatch):
+    mock_rpush = MagicMock()
+    monkeypatch.setattr('gwcelery.tasks.gcn.broker.backend.rpush',
+                        mock_rpush, raising=False)
+    gcn.send('foo')
+    mock_rpush.assert_called_once_with(gcn._queue_name, b'foo')
 
 
 @pytest.mark.enable_socket
@@ -88,7 +120,7 @@ def test_listen(monkeypatch):
     """Test that the listen task would correctly launch gcn.listen()."""
     mock_gcn_listen = MagicMock()
     monkeypatch.setattr('gcn.listen', mock_gcn_listen)
-    listen.run()
+    gcn.listen.run()
     mock_gcn_listen.assert_called_once()
 
 
@@ -105,7 +137,7 @@ def fake_gcn(notice_type):
 def test_unrecognized_notice_type(caplog):
     """Test handling an unrecognized (enum not defined) notice type."""
     caplog.set_level(logging.WARNING)
-    handler.dispatch(*fake_gcn(10000))
+    gcn.handler.dispatch(*fake_gcn(10000))
     record, = caplog.records
     assert record.message == 'ignoring unrecognized key: 10000'
 
@@ -113,7 +145,7 @@ def test_unrecognized_notice_type(caplog):
 def test_unregistered_notice_type(caplog):
     """Test handling an unregistered notice type."""
     caplog.set_level(logging.WARNING)
-    handler.dispatch(*fake_gcn(gcn.NoticeType.SWIFT_UVOT_POS_NACK))
+    gcn.handler.dispatch(*fake_gcn(gcn.NoticeType.SWIFT_UVOT_POS_NACK))
     record, = caplog.records
     assert record.message == ('ignoring unrecognized key: '
                               '<NoticeType.SWIFT_UVOT_POS_NACK: 89>')
@@ -121,19 +153,19 @@ def test_unregistered_notice_type(caplog):
 
 @pytest.fixture
 def reset_handlers():
-    old_handler = dict(handler)
-    handler.clear()
+    old_handler = dict(gcn.handler)
+    gcn.handler.clear()
     yield
-    handler.update(old_handler)
+    gcn.handler.update(old_handler)
 
 
 def test_registered_notice_type(reset_handlers):
-    @handler(gcn.NoticeType.AGILE_POINTDIR, gcn.NoticeType.AGILE_TRANS)
+    @gcn.handler(gcn.NoticeType.AGILE_POINTDIR, gcn.NoticeType.AGILE_TRANS)
     def agile_handler(payload):
         pass
 
     with patch.object(agile_handler, 'run') as mock_run:
-        handler.dispatch(*fake_gcn(gcn.NoticeType.SWIFT_UVOT_POS_NACK))
+        gcn.handler.dispatch(*fake_gcn(gcn.NoticeType.SWIFT_UVOT_POS_NACK))
         mock_run.assert_not_called()
-        handler.dispatch(*fake_gcn(gcn.NoticeType.AGILE_POINTDIR))
+        gcn.handler.dispatch(*fake_gcn(gcn.NoticeType.AGILE_POINTDIR))
         mock_run.assert_called_once()

@@ -2,7 +2,7 @@
 
 ## 0.0.19 (unreleased)
 
--   No changes yet.
+-   Rewrite the GCN broker so that it does not require a dedicated worker.
 
 ## 0.0.18 (2018-07-06)
 
