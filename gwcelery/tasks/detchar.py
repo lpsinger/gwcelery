@@ -132,7 +132,7 @@ def check_vector(ifo, channel, start, end, bitmask, logic_type):
     ``read_gwf(ifo, channel, start - prepeek, end + postpeek)``.
 
     In orchestrator.py, where this function is called, two new parameters
-    will be called. They would sit after ``app.conf['vector_check_logic']``
+    will be called. They would sit after the bitmask ``0b11``
     and would be ``app.conf['vector_prepeek']`` and
     ``app.conf['vector_postpeek']`` respectively.
     """

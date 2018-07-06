@@ -2,7 +2,7 @@
 
 ## 0.0.18 (unreleased)
 
--   No changes yet.
+-   Add detector state vector checks to the preliminary alert workflow.
 
 ## 0.0.17 (2018-07-05)
 
