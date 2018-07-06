@@ -8,6 +8,8 @@
 
 -   Add detector state vector checks to the preliminary alert workflow.
 
+-   Send VOEvents for preliminary alerts to GCN.
+
 ## 0.0.17 (2018-07-05)
 
 -   Undo accidental configuration change in last version.

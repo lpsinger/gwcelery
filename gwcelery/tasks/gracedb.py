@@ -55,12 +55,15 @@ def create_tag(tag, n, graceid):
 
 @task(shared=False)
 def create_voevent(graceid, voevent_type, **kwargs):
-    response = client.createVOEvent(graceid, voevent_type, **kwargs)
-    response = response.json()
-    # FIXME: createVOEvent() no longer returns the VOEvent content.
-    # See https://git.ligo.org/lscsoft/gracedb/issues/13
-    # response = response['text']
-    return response
+    """Create a VOEvent.
+
+    Returns
+    -------
+    str
+        The filename of the new VOEvent.
+    """
+    response = client.createVOEvent(graceid, voevent_type, **kwargs).json()
+    return response['file']
 
 
 @task(shared=False)

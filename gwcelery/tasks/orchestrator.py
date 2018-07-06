@@ -12,6 +12,7 @@ from . import circulars
 from .core import identity
 from . import detchar
 from . import em_bright
+from . import gcn
 from . import gracedb
 from . import lvalert
 from . import raven
@@ -183,6 +184,11 @@ def annotate_burst_superevent(preferred_event_id, superevent_id):
         |
         group(
             circulars.create_circular.si(superevent_id),
+
+            gracedb.download.s(superevent_id)
+            |
+            gcn.send.s()
+            |
             gracedb.create_label.si('GCN_PRELIM_SENT', superevent_id)
         )
     ).delay()
@@ -222,6 +228,10 @@ def annotate_cbc_superevent(preferred_event_id, superevent_id):
                 skymap_filename='bayestar.fits.gz',
                 skymap_image_filename='bayestar.png'
             )
+            |
+            gracedb.download.s(superevent_id)
+            |
+            gcn.send.s()
             |
             gracedb.create_label.si('GCN_PRELIM_SENT', superevent_id),
 
