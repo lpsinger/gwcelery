@@ -38,14 +38,7 @@ def handle_superevent(alert):
     end = alert['object']['t_end']
 
     (
-        group(
-            detchar.check_vector.s(ifo, channel, start, end, 0b11, 'all')
-            |
-            detchar.check_vector_gracedb_label.s(ifo, channel, superevent_id)
-
-            for ifo in ['H1', 'L1']
-            for channel in ['DMT-DQ_VECTOR', 'GDS-CALIB_STATE_VECTOR']
-        )
+        detchar.check_vectors(superevent_id, start, end)
         |
         get_preferred_event.si(superevent_id).set(
             countdown=app.conf['orchestrator_timeout']

@@ -1,5 +1,6 @@
 import glob
 
+from celery import group
 from celery.exceptions import Ignore
 from celery.utils.log import get_task_logger
 from glue.lal import Cache
@@ -136,6 +137,9 @@ def check_vector(ifo, channel, start, end, bitmask, logic_type):
     and would be ``app.conf['vector_prepeek']`` and
     ``app.conf['vector_postpeek']`` respectively.
     """
+    if logic_type not in ('any', 'all'):
+        raise ValueError("logic_type must be either 'all' or 'any'.")
+
     try:
         timeseries = read_gwf(ifo, channel, start, end)
     except IndexError:
@@ -143,41 +147,41 @@ def check_vector(ifo, channel, start, end, bitmask, logic_type):
         # of the cluster. Until we figure that out, actual I/O errors have
         # to be non-fatal.
         log.exception('Failed to read from low-latency frame files')
-        return '?'
+        return None
 
-    good = timeseries.value & bitmask == bitmask
-
-    if logic_type == 'any':
-        return np.any(good)
-    elif logic_type == 'all':
-        return np.all(good)
-    else:
-        raise ValueError("logic_type must be either 'all' or 'any'.")
+    return getattr(np, logic_type)(timeseries.value & bitmask == bitmask)
 
 
 @gracedb.task(ignore_result=True)
-def check_vector_gracedb_label(result, ifo, channel, graceid):
+def check_vector_gracedb_label(results, graceid):
     """Add label to GraceDb with results of check_vector().
 
     Parameters
     ----------
-    result : bool
-        Return value from :func:`check_vector()`
-    ifo : str
-        Interferometer name (e.g. ``H1``).
-    channel : str
-        Channel to look at minus observatory code, ie 'DMT-DQ_VECTOR'.
+    results : list
+        Return values from :func:`check_vector()` tasks
     graceid : str
         GraceID to which to append label.
     """
-    if result == '?':
-        # Could not read from low-latency h(t) directory.
-        # Do not create a label.
+    # FIXME: non-fatal I/O errors (e.g. due to running GWCelery on a machine
+    # that does not have access to /dev/shm) are reported by check_vector()
+    # returning None.
+    if False in results:
+        gracedb.create_label('DQV', graceid)
+        raise Ignore('Vetoed by DQ flags')  # halt further processing of canvas
+    elif None in results:
         return
-    elif result:
-        # Passed. Create label and continue processing of canvas.
-        gracedb.create_label('{}:{}_PASS'.format(ifo, channel), graceid)
-    else:
-        # Failed. Create label and stop processing of canvas.
-        gracedb.create_label('{}:{}_FAIL'.format(ifo, channel), graceid)
-        raise Ignore()
+    else:  # all(results) is True
+        gracedb.create_label('DQOK', graceid)
+
+
+def check_vectors(graceid, start, end):
+    return (
+        group(
+            check_vector.s(ifo, channel, start, end, 0b11, 'all')
+            for channel in ['DMT-DQ_VECTOR', 'GDS-CALIB_STATE_VECTOR']
+            for ifo in ['H1', 'L1']
+        )
+        |
+        check_vector_gracedb_label.s(graceid)
+    )
