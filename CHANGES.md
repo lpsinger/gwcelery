@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.18 (unreleased)
+## 0.0.18 (2018-07-06)
 
 -   Add detector state vector checks to the preliminary alert workflow.
 
