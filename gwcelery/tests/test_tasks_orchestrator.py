@@ -63,7 +63,7 @@ def test_handle_superevent(monkeypatch, group, other_group,
 
     def get_event(graceid):
         assert graceid == 'G1234'
-        return {'group': group}
+        return {'group': group, 'instruments': 'H1,L1,V1'}
 
     mock_annotate = Mock()
     mock_other_annotate = Mock()
@@ -78,7 +78,7 @@ def test_handle_superevent(monkeypatch, group, other_group,
     # Run function under test
     orchestrator.handle_superevent(alert)
 
-    mock_annotate.assert_called_once_with('G1234', 'S1234')
+    mock_annotate.assert_called_once_with(get_event('G1234'), 'S1234')
 
     # FIXME: The assertion below will fail in the unit tests because of an
     # issue in Celery with Ignore semipredicates in eager mode. However, it

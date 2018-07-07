@@ -27,9 +27,8 @@ def test_read_gwf(llhoft_dir_fail):
 
 
 def test_check_vector(llhoft_dir_pass):
-    channel = 'DMT-DQ_VECTOR'
-    ifo = 'H1'
+    channel = 'H1:DMT-DQ_VECTOR'
     start = 1214714160
     end = 1214714164
-    assert detchar.check_vector(ifo, channel, start, end, 0b11, 'any')
-    assert not detchar.check_vector(ifo, channel, start, end, 0b1111, 'any')
+    assert detchar.check_vector(channel, start, end, 0b11, 'any')
+    assert not detchar.check_vector(channel, start, end, 0b1111, 'any')

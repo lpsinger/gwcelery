@@ -39,13 +39,13 @@ def handle_superevent(alert):
     end = alert['object']['t_end']
 
     (
-        detchar.check_vectors(superevent_id, start, end)
-        |
         get_preferred_event.si(superevent_id).set(
             countdown=app.conf['orchestrator_timeout']
         )
         |
-        identity.s()
+        gracedb.get_event.s()
+        |
+        detchar.check_vectors.s(superevent_id, start, end)
         |
         group(
             continue_if_group_is.s('CBC')
@@ -144,9 +144,7 @@ def download(*args, **kwargs):
     return gracedb.download(*args, **kwargs)
 
 
-@app.task(autoretry_for=(URLError, TimeoutError), default_retry_delay=1.0,
-          retry_backoff=True, retry_backoff_max=10.0,
-          retry_kwargs=dict(max_retries=10), shared=False)
+@gracedb.task
 def get_preferred_event(superevent_id):
     """Determine preferred event for a superevent by querying GraceDb.
 
@@ -156,12 +154,12 @@ def get_preferred_event(superevent_id):
     return gracedb.get_superevent(superevent_id)['preferred_event']
 
 
-@gracedb.task
-def continue_if_group_is(graceid, group):
+@app.task(shared=False)
+def continue_if_group_is(event, group):
     """Continue processing if an event's group matches `group`, else halt
     the rest of the canvas."""
-    if gracedb.get_event(graceid)['group'].lower() == group.lower():
-        return graceid
+    if event['group'].lower() == group.lower():
+        return event
     else:
         raise Ignore('This is not a {} event.'.format(group))
 
@@ -176,7 +174,7 @@ def create_voevent_for_em_bright(em_bright_json, *args, **kwargs):
 
 
 @app.task(ignore_result=True, shared=False)
-def annotate_burst_superevent(preferred_event_id, superevent_id):
+def annotate_burst_superevent(event, superevent_id):
     """Perform annotations for a superevent whose preferred event is a
     Burst."""
     (
@@ -195,8 +193,10 @@ def annotate_burst_superevent(preferred_event_id, superevent_id):
 
 
 @app.task(ignore_result=True, shared=False)
-def annotate_cbc_superevent(preferred_event_id, superevent_id):
+def annotate_cbc_superevent(event, superevent_id):
     """Perform annotations for a superevent whose preferred event is a CBC."""
+    preferred_event_id = event['graceid']
+
     (
         download.s('bayestar.fits.gz', preferred_event_id)
         |

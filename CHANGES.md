@@ -6,6 +6,9 @@
 
 -   Send VOEvents for preliminary alerts to GCN.
 
+-   Only perform state vector checks for detectors that were online,
+    according to the preferred event.
+
 ## 0.0.18 (2018-07-06)
 
 -   Add detector state vector checks to the preliminary alert workflow.

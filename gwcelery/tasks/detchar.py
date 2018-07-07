@@ -1,6 +1,5 @@
 import glob
 
-from celery import group
 from celery.exceptions import Ignore
 from celery.utils.log import get_task_logger
 from glue.lal import Cache
@@ -76,16 +75,13 @@ def read_gwf(ifo, channel, start, end):
     return TimeSeries.read(cache, ifo + ':' + channel, start=start, end=end)
 
 
-@app.task(shared=False)
-def check_vector(ifo, channel, start, end, bitmask, logic_type):
+def check_vector(channel, start, end, bitmask, logic_type):
     """Check timeseries of decimals against a bitmask.
 
     Parameters
     ----------
-    ifo : str
-        Interferometer name (e.g. ``H1``).
     channel : str
-        Channel to look at minus observatory code, ie 'DMT-DQ_VECTOR'.
+        Channel to look at, e.g. ``H1:DMT-DQ_VECTOR``.
     start, end : int or float
         GPS start and end times desired.
     bitmask : binary integer
@@ -103,8 +99,7 @@ def check_vector(ifo, channel, start, end, bitmask, logic_type):
 
     Example
     -------
-    >>> check_vector('H1', 'DMT-DQ_VECTOR', 1214606036, 1214606040, 0b11,
-    ...              'all')
+    >>> check_vector('H1:DMT-DQ_VECTOR', 1214606036, 1214606040, 0b11, 'all')
     True
 
     Notes
@@ -130,7 +125,7 @@ def check_vector(ifo, channel, start, end, bitmask, logic_type):
     zero, i.e. taking the superevent's start and end times.
 
     In the code of :func:`check_vector`, :func:`read_gwf` will read
-    ``read_gwf(ifo, channel, start - prepeek, end + postpeek)``.
+    ``read_gwf(channel, start - prepeek, end + postpeek)``.
 
     In orchestrator.py, where this function is called, two new parameters
     will be called. They would sit after the bitmask ``0b11``
@@ -141,7 +136,7 @@ def check_vector(ifo, channel, start, end, bitmask, logic_type):
         raise ValueError("logic_type must be either 'all' or 'any'.")
 
     try:
-        timeseries = read_gwf(ifo, channel, start, end)
+        timeseries = read_gwf(*channel.split(':'), start, end)
     except IndexError:
         # FIXME: figure out how to get access to low-latency frames outside
         # of the cluster. Until we figure that out, actual I/O errors have
@@ -149,39 +144,42 @@ def check_vector(ifo, channel, start, end, bitmask, logic_type):
         log.exception('Failed to read from low-latency frame files')
         return None
 
-    return getattr(np, logic_type)(timeseries.value & bitmask == bitmask)
+    # FIXME: Explicitly cast to Python bool because ``np.all([1]) is True``
+    # does not evaluate to True
+    return bool(getattr(np, logic_type)(timeseries.value & bitmask == bitmask))
 
 
-@gracedb.task(ignore_result=True)
-def check_vector_gracedb_label(results, graceid):
-    """Add label to GraceDb with results of check_vector().
+@app.task(shared=False)
+def check_vectors(event, superevent_id, start, end):
+    """Perform data quality checks for an event."""
+    instruments = event['instruments'].split(',')
 
-    Parameters
-    ----------
-    results : list
-        Return values from :func:`check_vector()` tasks
-    graceid : str
-        GraceID to which to append label.
-    """
-    # FIXME: non-fatal I/O errors (e.g. due to running GWCelery on a machine
-    # that does not have access to /dev/shm) are reported by check_vector()
-    # returning None.
-    if False in results:
-        gracedb.create_label('DQV', graceid)
-        raise Ignore('Vetoed by DQ flags')  # halt further processing of canvas
-    elif None in results:
-        return
-    else:  # all(results) is True
-        gracedb.create_label('DQOK', graceid)
+    states = {key: check_vector(key, start, end, *value)
+              for key, value in app.conf['llhoft_state_vectors'].items()
+              if key.split(':')[0] in instruments}
 
+    if None in states.values():
+        overall_state = None
+    elif False in states.values():
+        overall_state = False
+    else:
+        assert all(states.values())
+        overall_state = True
 
-def check_vectors(graceid, start, end):
-    return (
-        group(
-            check_vector.s(ifo, channel, start, end, 0b11, 'all')
-            for channel in ['DMT-DQ_VECTOR', 'GDS-CALIB_STATE_VECTOR']
-            for ifo in ['H1', 'L1']
-        )
-        |
-        check_vector_gracedb_label.s(graceid)
+    fmt = 'detector state is {}: channels good ({}), bad ({}), unknown ({})'
+    msg = fmt.format(
+        {None: 'unknown', False: 'bad', True: 'good'}[overall_state],
+        ', '.join(k for k, v in states.items() if v is True),
+        ', '.join(k for k, v in states.items() if v is False),
+        ', '.join(k for k, v in states.items() if v is None),
     )
+
+    gracedb.client.writeLog(superevent_id, msg, tag_name=['data_quality'])
+
+    if overall_state is True:
+        gracedb.create_label('DQOK', superevent_id)
+    elif overall_state is False:
+        gracedb.create_label('DQV', superevent_id)
+        # Halt further proessing of canvas
+        raise Ignore('vetoed by state vector')
+    return event

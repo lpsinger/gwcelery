@@ -62,6 +62,17 @@ class Base:
     llhoft_dir = '/dev/shm/llhoft'
     """Low-latency h(t) directory."""
 
+    llhoft_state_vectors = {'H1:DMT-DQ_VECTOR': (0b11, 'all'),
+                            'L1:DMT-DQ_VECTOR': (0b11, 'all'),
+                            'H1:GDS-CALIB_STATE_VECTOR': (0b11, 'all'),
+                            'L1:GDS-CALIB_STATE_VECTOR': (0b11, 'all'),
+                            'V1:DQ_ANALYSIS_STATE_VECTOR': (0b11, 'all')}
+    """Low-latency h(t) state vector configuration. This is a dictionary
+    mapping channel names (e.g. ``H1:DMT-DQ_VECTOR``) to tuples consisting of a
+    bitmask to be logically ANDed with the state vector, and the string ``any``
+    or ``all`` to indicate how many samples in the segment must satisfy the
+    bitmask."""
+
 
 class Production(Base):
     """Application configuration for ``gracedb.ligo.org``."""
