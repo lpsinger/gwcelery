@@ -4,11 +4,11 @@
 
 -   Rewrite the GCN broker so that it does not require a dedicated worker.
 
+-   Send VOEvents for preliminary alerts to GCN.
+
 ## 0.0.18 (2018-07-06)
 
 -   Add detector state vector checks to the preliminary alert workflow.
-
--   Send VOEvents for preliminary alerts to GCN.
 
 ## 0.0.17 (2018-07-05)
 
