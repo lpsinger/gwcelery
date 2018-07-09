@@ -20,7 +20,7 @@ class Base:
     """Address on which to listen for outbound (sending) connections to GCN;
     empty to listen on all addresses."""
 
-    gcn_bind_port = 5340
+    gcn_bind_port = 5341
     """Port on which to listen for outbound (sending) connections to GCN."""
 
     gcn_remote_address = 'capella2.gsfc.nasa.gov'
