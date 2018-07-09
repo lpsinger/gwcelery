@@ -111,7 +111,7 @@ def test_send(monkeypatch):
     mock_rpush = MagicMock()
     monkeypatch.setattr('gwcelery.tasks.gcn.broker.backend.client.rpush',
                         mock_rpush, raising=False)
-    gcn.send('foo')
+    gcn.send(b'foo')
     mock_rpush.assert_called_once_with(gcn._queue_name, b'foo')
 
 
