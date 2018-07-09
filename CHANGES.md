@@ -9,6 +9,8 @@
 -   Only perform state vector checks for detectors that were online,
     according to the preferred event.
 
+-   Exclude mock data challenge events from state vector checks.
+
 ## 0.0.18 (2018-07-06)
 
 -   Add detector state vector checks to the preliminary alert workflow.

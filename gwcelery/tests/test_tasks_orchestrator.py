@@ -63,7 +63,7 @@ def test_handle_superevent(monkeypatch, group, other_group,
 
     def get_event(graceid):
         assert graceid == 'G1234'
-        return {'group': group, 'instruments': 'H1,L1,V1'}
+        return {'group': group, 'search': 'CBC', 'instruments': 'H1,L1,V1'}
 
     mock_annotate = Mock()
     mock_other_annotate = Mock()

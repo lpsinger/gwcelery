@@ -1,3 +1,5 @@
+import logging
+
 from pkg_resources import resource_filename
 import pytest
 
@@ -34,3 +36,11 @@ def test_check_vector(llhoft_glob_pass):
     end = 1214714164
     assert detchar.check_vector(channel, start, end, 0b11, 'any')
     assert not detchar.check_vector(channel, start, end, 0b1111, 'any')
+
+
+def test_check_vectors_skips_mdc(caplog):
+    """Test that state vector checks are skipped for MDC events."""
+    caplog.set_level(logging.INFO)
+    detchar.check_vectors({'search': 'MDC', 'graceid': 'M1234'}, 'S123', 0, 1)
+    messages = [record.message for record in caplog.records]
+    assert 'Skipping state vector checks because M1234 is an MDC' in messages
