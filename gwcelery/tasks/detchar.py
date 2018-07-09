@@ -69,7 +69,7 @@ def read_gwf(ifo, channel, start, end):
     This is important for if gwcelery is run locally (and not on a cluster),
     where /dev/shm is inaccessible.
     """
-    pattern = '{}/{}/*.gwf'.format(app.conf['llhoft_dir'], ifo)
+    pattern = app.conf['llhoft_glob'].format(detector=ifo)
     filenames = glob.glob(pattern)
     cache = Cache.from_urls(filenames)
     return TimeSeries.read(cache, ifo + ':' + channel, start=start, end=end)

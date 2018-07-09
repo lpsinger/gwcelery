@@ -59,8 +59,8 @@ class Base:
     to let the superevent manager's decision on the preferred event
     stabilize."""
 
-    llhoft_dir = '/dev/shm/llhoft'
-    """Low-latency h(t) directory."""
+    llhoft_glob = '/dev/shm/llhoft/{detector}_O2/*.gwf'
+    """File glob for low-latency h(t) frames."""
 
     llhoft_state_vectors = {'H1:DMT-DQ_VECTOR': (0b11, 'all'),
                             'L1:DMT-DQ_VECTOR': (0b11, 'all'),
