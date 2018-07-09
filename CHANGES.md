@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.20 (unreleased)
+## 0.0.20 (2018-07-09)
 
 -   After fixing some minor bugs in code that had not yet been tested live,
     sending VOEvents to GCN now works.
