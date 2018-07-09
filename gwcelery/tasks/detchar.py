@@ -156,7 +156,7 @@ def check_vectors(event, superevent_id, start, end):
     if event['search'] == 'MDC':
         log.info('Skipping state vector checks because %s is an MDC',
                  event['graceid'])
-        return
+        return event
 
     instruments = event['instruments'].split(',')
 
