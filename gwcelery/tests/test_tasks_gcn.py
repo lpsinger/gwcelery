@@ -42,9 +42,9 @@ def broker_thread(monkeypatch):
         except IndexError:
             return None
 
-    monkeypatch.setattr('gwcelery.tasks.gcn.broker.backend.lindex',
+    monkeypatch.setattr('gwcelery.tasks.gcn.broker.backend.client.lindex',
                         lindex, raising=False)
-    monkeypatch.setattr('gwcelery.tasks.gcn.broker.backend.lpop',
+    monkeypatch.setattr('gwcelery.tasks.gcn.broker.backend.client.lpop',
                         lpop, raising=False)
 
     monkeypatch.setattr('gwcelery.tasks.gcn.broker.is_aborted', lambda: False)
@@ -109,7 +109,7 @@ def test_broker(connection_to_broker, broker_thread):
 
 def test_send(monkeypatch):
     mock_rpush = MagicMock()
-    monkeypatch.setattr('gwcelery.tasks.gcn.broker.backend.rpush',
+    monkeypatch.setattr('gwcelery.tasks.gcn.broker.backend.client.rpush',
                         mock_rpush, raising=False)
     gcn.send('foo')
     mock_rpush.assert_called_once_with(gcn._queue_name, b'foo')

@@ -56,7 +56,7 @@ def broker(self):
 
         while not self.is_aborted():
             # Get next payload from queue in first-in, first-out fashion
-            payload = self.backend.lindex(_queue_name, 0)
+            payload = self.backend.client.lindex(_queue_name, 0)
             if payload is None:
                 time.sleep(1)
                 continue
@@ -64,7 +64,7 @@ def broker(self):
 
             log.info('sending payload of %d bytes', nbytes)
             conn.sendall(struct.pack('!I', nbytes) + payload)
-            self.backend.lpop(_queue_name)
+            self.backend.client.lpop(_queue_name)
 
 
 _queue_name = broker.name + '.voevent-queue'
@@ -76,7 +76,7 @@ def send(self, payload):
 
     Under the hood, this task just pushes the payload onto a Redis queue,
     and :func:`~gwcelery.tasks.gcn.broker` sends it."""
-    self.backend.rpush(_queue_name, payload.encode('utf-8'))
+    self.backend.client.rpush(_queue_name, payload.encode('utf-8'))
 
 
 class _VOEventDispatchHandler(DispatchHandler):
