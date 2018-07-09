@@ -30,6 +30,7 @@ def broker(self):
     connection from address :obj:`~gwcelery.celery.Base.gcn_bind_address` and
     port :obj:`~gwcelery.celery.Base.gcn_bind_port`.
     """
+    remote_ip_address = socket.gethostbyname(app.conf['gcn_remote_address'])
     with contextlib.closing(socket.socket(socket.AF_INET)) as sock:
         sock.settimeout(1.0)
         sock.bind((app.conf['gcn_bind_address'], app.conf['gcn_bind_port']))
@@ -39,7 +40,7 @@ def broker(self):
                 conn, (addr, _) = sock.accept()
             except socket.timeout:
                 continue
-            if addr == app.conf['gcn_remote_address']:
+            if addr == remote_ip_address:
                 log.info('accepted connection from remote host %s', addr)
                 break
             else:
