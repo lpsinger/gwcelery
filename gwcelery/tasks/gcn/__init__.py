@@ -76,7 +76,7 @@ def send(self, payload):
 
     Under the hood, this task just pushes the payload onto a Redis queue,
     and :func:`~gwcelery.tasks.gcn.broker` sends it."""
-    self.backend.client.rpush(_queue_name, payload.encode('utf-8'))
+    self.backend.client.rpush(_queue_name, payload)
 
 
 class _VOEventDispatchHandler(DispatchHandler):
