@@ -2,7 +2,8 @@
 
 ## 0.0.20 (unreleased)
 
--   No changes yet.
+-   After fixing some minor bugs in code that had not yet been tested live,
+    sending VOEvents to GCN now works.
 
 ## 0.0.19 (2018-07-09)
 
