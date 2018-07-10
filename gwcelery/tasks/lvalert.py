@@ -57,7 +57,7 @@ Declare a new handler like this::
 
     @lvalert.handler('cbc_gstlal',
                      'cbc_pycbc',
-                     'cbc_mbta')
+                     'cbc_mbtaonline')
     def handle_cbc(alert_content):
         # do work here...
 """

@@ -107,7 +107,7 @@ LVAlert message handler tasks are declared using the
 
     @lvalert.handler('cbc_gstlal',
                      'cbc_pycbc',
-                     'cbc_mbta')
+                     'cbc_mbtaonline')
     def handle_cbc(alert):
         # do work here...
 
