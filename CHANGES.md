@@ -6,6 +6,8 @@
     in ``gwcelery.tasks.detchar.check_vectors`` where we expected the field
     to be present.
 
+-   Track change in GraceDb JSON response for VOEvent creation.
+
 ## 0.0.20 (2018-07-09)
 
 -   After fixing some minor bugs in code that had not yet been tested live,

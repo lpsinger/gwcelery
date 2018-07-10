@@ -63,7 +63,7 @@ def create_voevent(graceid, voevent_type, **kwargs):
         The filename of the new VOEvent.
     """
     response = client.createVOEvent(graceid, voevent_type, **kwargs).json()
-    return response['file']
+    return response['filename']
 
 
 @task(shared=False)
