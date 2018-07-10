@@ -153,7 +153,7 @@ def check_vector(channel, start, end, bitmask, logic_type):
 def check_vectors(event, superevent_id, start, end):
     """Perform data quality checks for an event."""
     # Skip MDC events.
-    if event['search'] == 'MDC':
+    if event.get('search') == 'MDC':
         log.info('Skipping state vector checks because %s is an MDC',
                  event['graceid'])
         return event

@@ -2,7 +2,9 @@
 
 ## 0.0.21 (unreleased)
 
--   No changes yet.
+-   MBTA events in GraceDb leave the ``search`` field blank. Work around this
+    in ``gwcelery.tasks.detchar.check_vectors`` where we expected the field
+    to be present.
 
 ## 0.0.20 (2018-07-09)
 
