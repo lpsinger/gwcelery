@@ -59,6 +59,10 @@ class Base:
     to let the superevent manager's decision on the preferred event
     stabilize."""
 
+    check_vector_prepost = [2, 2]
+    """Seconds before and after the superevent start and end times which the DQ
+    vector check will include in its check"""
+
     llhoft_glob = '/dev/shm/llhoft/{detector}_O2/*.gwf'
     """File glob for low-latency h(t) frames."""
 

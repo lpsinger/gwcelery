@@ -104,33 +104,9 @@ def check_vector(channel, start, end, bitmask, logic_type):
 
     Notes
     -----
-
     For timeseries of under ~300 samples, it is slightly more
     efficient to check each sample in the series instead of checking the
     entire series, as is done here.
-
-    In addition, with the current configuration of start and end, this
-    code would have missed the glitch in L1 just before GW170817, since it
-    occurred ~0.5 seconds before the start time. Currently, this code is
-    called in orchestrator.py with the start and end times of the superevent,
-    which would not encompass the pre-GW170817 glitch. Here is how a fix
-    would be implemented:
-
-    :func:`check_vector` would gain two parameters:
-    ``check_vector(..., start, end, ..., prepeek=0, postpeek=0)``
-    where ``prepeek`` and ``postpeek`` refer to durations before and after the
-    superevent respectively. These would be configured as "vector_prepeek"
-    and "vector_postpeek" in gwcelery/gwcelery/celery.py, and would be
-    forced to be positive ints or floats. Note that the default will be
-    zero, i.e. taking the superevent's start and end times.
-
-    In the code of :func:`check_vector`, :func:`read_gwf` will read
-    ``read_gwf(channel, start - prepeek, end + postpeek)``.
-
-    In orchestrator.py, where this function is called, two new parameters
-    will be called. They would sit after the bitmask ``0b11``
-    and would be ``app.conf['vector_prepeek']`` and
-    ``app.conf['vector_postpeek']`` respectively.
     """
     if logic_type not in ('any', 'all'):
         raise ValueError("logic_type must be either 'all' or 'any'.")

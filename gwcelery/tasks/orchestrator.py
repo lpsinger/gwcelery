@@ -37,6 +37,7 @@ def handle_superevent(alert):
     superevent_id = alert['object']['superevent_id']
     start = alert['object']['t_start']
     end = alert['object']['t_end']
+    pre, post = app.conf['check_vector_prepost']
 
     (
         get_preferred_event.si(superevent_id).set(
@@ -45,7 +46,7 @@ def handle_superevent(alert):
         |
         gracedb.get_event.s()
         |
-        detchar.check_vectors.s(superevent_id, start, end)
+        detchar.check_vectors.s(superevent_id, start-pre, end+post)
         |
         group(
             continue_if_group_is.s('CBC')
