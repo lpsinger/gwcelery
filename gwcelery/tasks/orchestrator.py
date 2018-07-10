@@ -50,11 +50,11 @@ def handle_superevent(alert):
         detchar.check_vectors.s(superevent_id, start-pre, end+post)
         |
         group(
-            continue_if_group_is.s('CBC')
+            continue_if.s(group='CBC')
             |
             annotate_cbc_superevent.s(superevent_id),
 
-            continue_if_group_is.s('Burst')
+            continue_if.s(group='Burst')
             |
             annotate_burst_superevent.s(superevent_id)
         )
@@ -162,10 +162,23 @@ def get_preferred_event(superevent_id):
 
 
 @app.task(shared=False)
-def continue_if_group_is(event, group):
-    """Continue processing if an event's group matches `group`, else halt
-    the rest of the canvas."""
-    if event['group'].lower() == group.lower():
+def continue_if(event, **kwargs):
+    """Continue processing if an event's properties match given values, else
+    halt the rest of the canvas.
+
+    Example
+    -------
+    .. code-block:: python
+
+        (
+            gracedb.get_event.s('G28048')
+            |
+            continue_if(group='CBC')
+            |
+            ...
+        ).apply_async()
+    """
+    if all(event.get(key) == value for key, value in kwargs.items()):
         return event
     else:
         raise Ignore('This is not a {} event.'.format(group))

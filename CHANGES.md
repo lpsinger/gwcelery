@@ -8,6 +8,10 @@
     upload to GraceDb superevent page. Also upload the original external
     trigger sky map to the external trigger GraceDb page.
 
+-   Generalize conditional processing of complex canvases by replacing the
+    `continue_if_group_is()` task with a more general task that can be used
+    like `continue_if(group='CBC')`.
+
 ## 0.0.21 (2018-07-10)
 
 -   MBTA events in GraceDb leave the ``search`` field blank. Work around this
