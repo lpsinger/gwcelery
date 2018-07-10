@@ -106,6 +106,7 @@ LVAlert message handler tasks are declared using the
     from gwcelery.tasks import lvalert
 
     @lvalert.handler('cbc_gstlal',
+                     'cbc_gstlal-spiir',
                      'cbc_pycbc',
                      'cbc_mbtaonline')
     def handle_cbc(alert):

@@ -2,7 +2,7 @@
 
 ## 0.0.22 (unreleased)
 
--   No changes yet.
+-   Process gstlal-spiir events.
 
 ## 0.0.21 (2018-07-10)
 
