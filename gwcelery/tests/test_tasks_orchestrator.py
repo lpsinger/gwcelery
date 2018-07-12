@@ -1,3 +1,4 @@
+import os
 from unittest.mock import Mock, patch
 
 from ligo.gracedb import rest
@@ -92,19 +93,22 @@ def test_handle_superevent(monkeypatch, group, other_group,
 
 def mock_download(filename, graceid, *args, **kwargs):
     assert graceid == 'T250822'
-    if filename == 'coinc.xml':
-        return pkg_resources.resource_string(__name__, 'data/coinc.xml')
-    elif filename == 'psd.xml.gz':
-        return pkg_resources.resource_string(__name__, 'data/psd.xml.gz')
-    else:
-        raise ValueError
+    filenames = {'coinc.xml': 'coinc.xml',
+                 'psd.xml.gz': 'psd.xml.gz',
+                 'ranking_data.xml.gz': 'ranking_data_G322589.xml.gz'}
+    return pkg_resources.resource_string(
+        __name__, os.path.join('data', filenames[filename]))
 
 
+@patch(
+    'gwcelery.tasks.gracedb.get_event.run',
+    return_value={'graceid': 'T250822', 'group': 'CBC', 'pipeline': 'gstlal'})
 @patch('gwcelery.tasks.gracedb.download.run', mock_download)
 @patch('gwcelery.tasks.em_bright.classifier.run')
 @patch('gwcelery.tasks.bayestar.localize.run')
 @patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
-def test_handle_cbc_event(mock_gracedb, mock_localize, mock_classifier):
+def test_handle_cbc_event(mock_gracedb, mock_localize, mock_classifier,
+                          mock_get_event):
     """Test that an LVAlert message for a newly uploaded PSD file triggers
     BAYESTAR."""
     alert = resource_json(__name__, 'data/lvalert_psd.json')

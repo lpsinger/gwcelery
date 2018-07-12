@@ -21,6 +21,9 @@
     *   Consume and ignore all keepalive and ack packets from the client so
         that the receive buffer does not overrun.
 
+-   Add ``p_astro`` computation for ``gstlal`` pipeline. The copmutation is
+    launched for all cbc_gstlal triggers.
+
 ## 0.0.24 (2018-07-18)
 
 -   Revert pipeline-dependent pre/post peeks for ``check_vector`` because they

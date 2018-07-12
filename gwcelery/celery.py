@@ -88,6 +88,15 @@ class Base:
     or ``all`` to indicate how many samples in the segment must satisfy the
     bitmask."""
 
+    p_astro_gstlal_trigger_db = '/home/gstlalcbc/observing/3/online/trigs/H1L1-ALL_LLOID-0-2000000000.sqlite'  # noqa: E501
+    """Gstlal trigger database location in CIT"""
+
+    p_astro_gstlal_ln_likelihood_threshold = 6
+    """log likelihood threshold"""
+
+    p_astro_gstlal_prior_type = "Uniform"
+    """Prior type to be used. Options: Uniform, Jeffreys"""
+
 
 class Production(Base):
     """Application configuration for ``gracedb.ligo.org``."""

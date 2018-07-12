@@ -18,6 +18,7 @@ from . import ligo_fermi_skymaps
 from . import lvalert
 from . import raven
 from . import skymaps
+from . import p_astro_gstlal
 
 
 @lvalert.handler('superevent',
@@ -94,7 +95,7 @@ def handle_cbc_event(alert):
 
     graceid = alert['uid']
 
-    (
+    group(
         group(
             gracedb.download.s('coinc.xml', graceid),
             gracedb.download.s('psd.xml.gz', graceid)
@@ -122,7 +123,25 @@ def handle_cbc_event(alert):
             )
             |
             gracedb.create_label.si('EMBRIGHT_READY', graceid)
+        ),
+
+        gracedb.get_event.s(graceid)
+        |
+        continue_if.s(group='CBC', pipeline='gstlal')
+        |
+        group(
+            download.si('coinc.xml', graceid),
+            download.si('ranking_data.xml.gz', graceid)
         )
+        |
+        p_astro_gstlal.compute_p_astro.s()
+        |
+        gracedb.upload.s(
+            'p_astro_gstlal.json', graceid,
+            'p_astro computation complete'
+        )
+        |
+        gracedb.create_label.si('P_ASTRO_READY', graceid)
     ).delay()
 
 

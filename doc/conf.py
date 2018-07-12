@@ -110,6 +110,7 @@ for mod in ['astropy',
             'lalxml',
             'ligo',
             'ligo.followup_advocate',
+            'ligo.p_astro'
             'ligo.raven',
             'ligo.skymap',
             'lxml',
