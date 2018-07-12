@@ -12,6 +12,13 @@
     `continue_if_group_is()` task with a more general task that can be used
     like `continue_if(group='CBC')`.
 
+-   Add a `check_vector_prepost` configuration variable to control how much
+    padding is added around an event for querying the state vector time series.
+
+    This should have the beneficial side effect of fixing some crashes for
+    burst events, for which the bare duration of the superevent segment was
+    less than one sample.
+
 ## 0.0.21 (2018-07-10)
 
 -   MBTA events in GraceDb leave the ``search`` field blank. Work around this
