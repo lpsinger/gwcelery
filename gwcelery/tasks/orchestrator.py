@@ -151,7 +151,7 @@ def download(*args, **kwargs):
     return gracedb.download(*args, **kwargs)
 
 
-@gracedb.task
+@gracedb.task(shared=False)
 def get_preferred_event(superevent_id):
     """Determine preferred event for a superevent by querying GraceDb.
 
@@ -184,7 +184,7 @@ def continue_if(event, **kwargs):
         raise Ignore('This is not a {} event.'.format(group))
 
 
-@gracedb.task
+@gracedb.task(shared=False)
 def create_voevent_for_em_bright(em_bright_json, *args, **kwargs):
     """Create a VOEvent record from an EM bright JSON file."""
     data = json.loads(em_bright_json)
