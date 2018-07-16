@@ -7,6 +7,7 @@ References
 .. [GCN] https://gcn.gsfc.nasa.gov
 """
 import contextlib
+import datetime
 import socket
 import struct
 import time
@@ -22,6 +23,16 @@ from ..core import DispatchHandler
 log = get_task_logger(__name__)
 
 
+IAMALIVE = '''<?xml version="1.0" encoding="UTF-8"?>
+<trn:Transport role="iamalive" version="1.0"
+xmlns:trn="http://telescope-networks.org/schema/Transport/v1.1"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://telescope-networks.org/schema/Transport/v1.1
+http://telescope-networks.org/schema/Transport-v1.1.xsd">
+<Origin>{}</Origin><TimeStamp>{}</TimeStamp>
+</trn:Transport>'''
+
+
 @app.task(base=EternalTask, bind=True)
 def broker(self):
     """Single-client VOEvent broker for sending notices to GCN.
@@ -31,6 +42,8 @@ def broker(self):
     port :obj:`~gwcelery.celery.Base.gcn_bind_port`.
     """
     remote_ip_address = socket.gethostbyname(app.conf['gcn_remote_address'])
+    hostname = socket.getfqdn()
+
     with contextlib.closing(socket.socket(socket.AF_INET)) as sock:
         sock.settimeout(1.0)
         sock.bind((app.conf['gcn_bind_address'], app.conf['gcn_bind_port']))
@@ -50,6 +63,7 @@ def broker(self):
             return
 
     with contextlib.closing(conn):
+        conn.settimeout(1.0)
         conn.setsockopt(socket.SOL_SOCKET, socket.SO_LINGER,
                         struct.pack('ii', 1, 0))
         conn.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 1)
@@ -59,7 +73,8 @@ def broker(self):
             payload = self.backend.client.lindex(_queue_name, 0)
             if payload is None:
                 time.sleep(1)
-                continue
+                now = datetime.datetime.now().isoformat()
+                payload = IAMALIVE.format(hostname, now).encode('utf-8')
             nbytes = len(payload)
 
             log.info('sending payload of %d bytes', nbytes)
