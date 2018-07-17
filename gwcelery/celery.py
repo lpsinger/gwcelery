@@ -26,15 +26,17 @@ class Base:
     gcn_remote_address = 'capella2.gsfc.nasa.gov'
     """Address to listen for inbound (receiving) connections to GCN."""
 
-    superevent_d_t_start = dict(gstlal=1.0,
-                                pycbc=1.0,
-                                mbtaonline=1.0)
+    superevent_d_t_start = {'gstlal': 1.0,
+                            'gstlal-spiir': 1.0,
+                            'pycbc': 1.0,
+                            'mbtaonline': 1.0}
     """Pipeline based lower extent of superevent segments.
     For cwb and lib this is decided from extra attributes."""
 
-    superevent_d_t_end = dict(gstlal=1.0,
-                              pycbc=1.0,
-                              mbtaonline=1.0)
+    superevent_d_t_end = {'gstlal': 1.0,
+                          'gstal-spiir': 1.0,
+                          'pycbc': 1.0,
+                          'mbtaonline': 1.0}
     """Pipeline based upper extent of superevent segments
     For cwb and lib this is decided from extra attributes."""
 
