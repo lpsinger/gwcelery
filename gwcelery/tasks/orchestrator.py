@@ -171,7 +171,7 @@ def continue_if(event, **kwargs):
         (
             gracedb.get_event.s('G28048')
             |
-            continue_if(group='CBC')
+            continue_if.s(group='CBC')
             |
             ...
         ).apply_async()
