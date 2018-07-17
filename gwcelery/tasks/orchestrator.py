@@ -75,7 +75,7 @@ def handle_cbc_event(alert):
     matched-filter parameter estimates, including preliminary sky localization
     with BAYESTAR (via the :meth:`gwcelery.tasks.bayestar.localize` task) and
     preliminary source classification (via the
-    :meth:`gwcelery.tasks.em_bright.em_bright` task)."""
+    :meth:`gwcelery.tasks.em_bright.classifier` task)."""
 
     # Only handle alerts for the upload of a PSD file.
     if alert['alert_type'] != 'update' or alert.get('file') != 'psd.xml.gz':
