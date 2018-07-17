@@ -153,8 +153,8 @@ def _get_dts(event_info):
     if pipeline.lower() == 'cwb':
         d_t_start = d_t_end = event_info['duration']
     elif pipeline.lower() == 'lib':
-        d_t_start = d_t_end \
-            = event_info['quality_mean']/event_info['frequency_mean']
+        d_t_start = d_t_end = (event_info['quality_mean'] /
+                               event_info['frequency_mean'])
     elif group.lower() == 'cbc':
         d_t_start = app.conf['superevent_d_t_start'][pipeline.lower()]
         d_t_end = app.conf['superevent_d_t_end'][pipeline.lower()]
