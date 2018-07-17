@@ -61,12 +61,21 @@ class Base:
     to let the superevent manager's decision on the preferred event
     stabilize."""
 
-    check_vector_prepost = [2, 2]
-    """Seconds before and after the superevent start and end times which the DQ
-    vector check will include in its check"""
-
     llhoft_glob = '/dev/shm/llhoft/{detector}_O2/*.gwf'
     """File glob for low-latency h(t) frames."""
+
+    check_vector_prepost = {'gstlal': [2, 2],
+                            'gstlal-spiir': [2, 2],
+                            'pycbc': [2, 2],
+                            'MBTAOnline': [2, 2],
+                            'LIB': [0.5, 0.5],
+                            'CWB': [0.5, 0.5],
+                            'HardwareInjection': [2, 2],
+                            'Swift': [2, 2],
+                            'Fermi': [2, 2],
+                            'SNEWS': [2, 2]}
+    """Seconds before and after the superevent start and end times which the DQ
+    vector check will include in its check. Pipeline dependent."""
 
     llhoft_state_vectors = {'H1:DMT-DQ_VECTOR': (0b11, 'all'),
                             'L1:DMT-DQ_VECTOR': (0b11, 'all'),

@@ -38,7 +38,7 @@ def handle_superevent(alert):
     superevent_id = alert['object']['superevent_id']
     start = alert['object']['t_start']
     end = alert['object']['t_end']
-    pre, post = app.conf['check_vector_prepost']
+    pre, post = app.conf['check_vector_prepost'][alert['object']['pipeline']]
 
     (
         get_preferred_event.si(superevent_id).set(
