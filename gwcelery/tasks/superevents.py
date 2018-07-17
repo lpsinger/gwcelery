@@ -148,19 +148,17 @@ def _get_dts(event_info):
     Returns the d_t_start and d_t_end values based on CBC/Burst
     type alerts
     """
-    group = event_info['group']
-    pipeline = event_info['pipeline']
-    if pipeline.lower() == 'cwb':
+    pipeline = event_info['pipeline'].lower()
+    if pipeline == 'cwb':
         d_t_start = d_t_end = event_info['duration']
-    elif pipeline.lower() == 'lib':
+    elif pipeline == 'lib':
         d_t_start = d_t_end = (event_info['quality_mean'] /
                                event_info['frequency_mean'])
-    elif group.lower() == 'cbc':
-        d_t_start = app.conf['superevent_d_t_start'][pipeline.lower()]
-        d_t_end = app.conf['superevent_d_t_end'][pipeline.lower()]
     else:
-        d_t_start = app.conf['superevent_default_d_t_start']
-        d_t_end = app.conf['superevent_default_d_t_end']
+        d_t_start = app.conf['superevent_d_t_start'].get(
+            pipeline, app.conf['superevent_default_d_t_start'])
+        d_t_end = app.conf['superevent_d_t_end'].get(
+            pipeline, app.conf['superevent_default_d_t_end'])
     return d_t_start, d_t_end
 
 

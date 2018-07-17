@@ -8,6 +8,8 @@
 
 -   Add superevent duration for gstlal-spiir pipeline.
 
+-   Fix fallback for determining superevent duration for unknown pipelines.
+
 ## 0.0.22 (2018-07-11)
 
 -   Process gstlal-spiir events.
