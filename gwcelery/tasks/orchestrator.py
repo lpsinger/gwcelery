@@ -143,8 +143,9 @@ def download(*args, **kwargs):
     """Download a file from GraceDb.
 
     This works just like :func:`gwcelery.tasks.gracedb.download`, except that
-    it is retried for both `TimeoutError` and `URLError`. In particular, it
-    will be retried for 404 (not found) errors.
+    it is retried for both :class:`TimeoutError` and
+    :class:`~urllib.error.URLError`. In particular, it will be retried for 404
+    (not found) errors.
 
     FIXME: Is there a way to change retry settings when calling a task,
     instead of creating an entirely new task?"""
