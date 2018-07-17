@@ -4,6 +4,8 @@
 
 -   Add timeout and keepalive messages to GCN broker.
 
+-   Update ligo-gracedb to 2.0.0.dev0.
+
 ## 0.0.22 (2018-07-11)
 
 -   Process gstlal-spiir events.
