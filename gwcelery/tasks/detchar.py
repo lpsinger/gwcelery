@@ -4,10 +4,14 @@ These tasks are mostly focused on checking interferometer state vectors. By
 design, the [LIGO]_ and [Virgo]_ state vectors share the same definitions for
 the first 8 fields.
 
+LIGO also has a [DMT]_ DQ vector that provides some additional instrumental
+checks.
+
 References
 ----------
 .. [LIGO] https://wiki.ligo.org/Calibration/TDCalibReview
 .. [Virgo] https://dcc.ligo.org/G1801125/
+.. [DMT] https://wiki.ligo.org/DetChar/DmtDqVector
 """
 import glob
 
