@@ -2,7 +2,9 @@
 
 ## 0.0.25 (unreleased)
 
--   No changes yet.
+-   Reintroduce pipeline-dependent pre/post peeks for ``check_vector`` after
+    fixing issue where pipeline information was being looked for in the wrong
+    dictionary.
 
 ## 0.0.24 (2018-07-18)
 

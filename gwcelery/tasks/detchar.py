@@ -150,6 +150,8 @@ def check_vectors(event, superevent_id, start, end):
         return event
 
     instruments = event['instruments'].split(',')
+    pre, post = app.conf['check_vector_prepost'][event['pipeline']]
+    start, end = start - pre, end + post
 
     states = {key: check_vector(key, start, end, *value)
               for key, value in app.conf['llhoft_state_vectors'].items()

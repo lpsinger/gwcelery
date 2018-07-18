@@ -53,7 +53,8 @@ def test_handle_superevent(monkeypatch, group, other_group,
         'object': {
             'superevent_id': 'S1234',
             't_start': 1214714160,
-            't_end': 1214714164
+            't_end': 1214714164,
+            'preferred_event': 'G1234'
         }
     }
 
@@ -63,7 +64,8 @@ def test_handle_superevent(monkeypatch, group, other_group,
 
     def get_event(graceid):
         assert graceid == 'G1234'
-        return {'group': group, 'search': 'CBC', 'instruments': 'H1,L1,V1'}
+        return {'group': group, 'search': 'CBC', 'instruments': 'H1,L1,V1',
+                'pipeline': 'gstlal'}
 
     mock_annotate = Mock()
     mock_other_annotate = Mock()
