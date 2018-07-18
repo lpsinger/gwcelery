@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.25 (unreleased)
+
+-   No changes yet.
+
 ## 0.0.24 (2018-07-18)
 
 -   Revert pipeline-dependent pre/post peeks for ``check_vector`` because they
