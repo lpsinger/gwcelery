@@ -4,7 +4,7 @@
 
 -   Add timeout and keepalive messages to GCN broker.
 
--   Update ligo-gracedb to 2.0.0.dev0.
+-   Update ligo-gracedb to 2.0.0.dev0 and ligo.skymap to 0.0.12.
 
 -   Add superevent duration for gstlal-spiir pipeline.
 
