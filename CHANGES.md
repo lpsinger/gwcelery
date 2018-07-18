@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.24 (unreleased)
+## 0.0.24 (2018-07-18)
 
 -   Revert pipeline-dependent pre/post peeks for ``check_vector`` because they
     introduced a regression: it caused the orchestrator failed without running
