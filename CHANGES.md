@@ -10,7 +10,7 @@
 
 -   Fix fallback for determining superevent duration for unknown pipelines.
 
--   Make ``check_vector`` pre/post peeks pipeline dependent
+-   Make ``check_vector`` pre/post peeks pipeline dependent.
 
 ## 0.0.22 (2018-07-11)
 
