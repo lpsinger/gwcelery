@@ -53,8 +53,7 @@ def test_handle_superevent(monkeypatch, group, other_group,
         'object': {
             'superevent_id': 'S1234',
             't_start': 1214714160,
-            't_end': 1214714164,
-            'pipeline': 'gstlal'
+            't_end': 1214714164
         }
     }
 
