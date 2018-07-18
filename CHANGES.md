@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.23 (unreleased)
+## 0.0.23 (2018-07-18)
 
 -   Add timeout and keepalive messages to GCN broker.
 
