@@ -6,6 +6,9 @@
     fixing issue where pipeline information was being looked for in the wrong
     dictionary.
 
+-   ``check_vector`` checks all detectors regardless of instruments used, but
+    only appends labels based on active instruments.
+
 ## 0.0.24 (2018-07-18)
 
 -   Revert pipeline-dependent pre/post peeks for ``check_vector`` because they

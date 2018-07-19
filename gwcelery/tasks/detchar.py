@@ -154,20 +154,23 @@ def check_vectors(event, superevent_id, start, end):
     start, end = start - pre, end + post
 
     states = {key: check_vector(key, start, end, *value)
-              for key, value in app.conf['llhoft_state_vectors'].items()
-              if key.split(':')[0] in instruments}
+              for key, value in app.conf['llhoft_state_vectors'].items()}
 
-    if None in states.values():
-        overall_state = None
-    elif False in states.values():
-        overall_state = False
+    active_states = {key: value for key, value in states.items()
+                     if key.split(':')[0] in instruments}
+
+    if None in active_states.values():
+        overall_active_state = None
+    elif False in active_states.values():
+        overall_active_state = False
     else:
-        assert all(states.values())
-        overall_state = True
+        assert all(active_states.values())
+        overall_active_state = True
 
-    fmt = 'detector state is {}: channels good ({}), bad ({}), unknown ({})'
+    fmt = """detector state for active instruments is {}. For all instruments,
+    channels good ({}), bad ({}), unknown ({})"""
     msg = fmt.format(
-        {None: 'unknown', False: 'bad', True: 'good'}[overall_state],
+        {None: 'unknown', False: 'bad', True: 'good'}[overall_active_state],
         ', '.join(k for k, v in states.items() if v is True),
         ', '.join(k for k, v in states.items() if v is False),
         ', '.join(k for k, v in states.items() if v is None),
@@ -175,9 +178,9 @@ def check_vectors(event, superevent_id, start, end):
 
     gracedb.client.writeLog(superevent_id, msg, tag_name=['data_quality'])
 
-    if overall_state is True:
+    if overall_active_state is True:
         gracedb.create_label('DQOK', superevent_id)
-    elif overall_state is False:
+    elif overall_active_state is False:
         gracedb.create_label('DQV', superevent_id)
         # Halt further proessing of canvas
         raise Ignore('vetoed by state vector')
