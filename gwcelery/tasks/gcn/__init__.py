@@ -32,6 +32,9 @@ http://telescope-networks.org/schema/Transport-v1.1.xsd">
 </trn:Transport>'''
 
 
+KEEPALIVE_TIME = 60  # Time in seconds between keepalives
+
+
 @app.task(base=EternalTask, bind=True)
 def broker(self):
     """Single-client VOEvent broker for sending notices to GCN.
@@ -67,19 +70,25 @@ def broker(self):
                         struct.pack('ii', 1, 0))
         conn.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 1)
 
+        last_sent = float('inf')
+
         while not self.is_aborted():
             # Get next payload from queue in first-in, first-out fashion
             payload = self.backend.client.lindex(_queue_name, 0)
-            if payload is None:
-                time.sleep(1)
-                now = _get_now_iso8601()
-                payload = IAMALIVE.format(hostname, now).encode('utf-8')
-                log.info('sending keepalive')
-                _send_packet(conn, payload)
-            else:
+            now = time.monotonic()
+            if payload is not None:
                 log.info('sending payload of %d bytes', len(payload))
                 _send_packet(conn, payload)
+                last_sent = now
                 self.backend.client.lpop(_queue_name)
+            elif now - last_sent > KEEPALIVE_TIME:
+                timestamp = _get_now_iso8601()
+                payload = IAMALIVE.format(hostname, timestamp).encode('utf-8')
+                log.info('sending keepalive')
+                _send_packet(conn, payload)
+                last_sent = now
+            else:
+                time.sleep(1)
 
 
 _queue_name = broker.name + '.voevent-queue'
