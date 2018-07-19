@@ -77,72 +77,76 @@ def handle_cbc_event(alert):
     Notes
     -----
 
-    This LVAlert message handler is triggered by uploading a file called
-    ``psd.xml.gz`` to any CBC event. The table below lists which files are
-    uploaded, and which tasks generate them.
+    This LVAlert message handler is triggered by updates that include the files
+    ``psd.xml.gz`` and ``ranking_data.xml.gz``. The table below lists which
+    files are created as a result, and which tasks generate them.
 
-    ============================== ===========================================
+    ============================== =====================================================
     File                           Task
-    ============================== ===========================================
+    ============================== =====================================================
     ``bayestar.fits.gz``           :meth:`gwcelery.tasks.bayestar.localize`
     ``source_classification.json`` :meth:`gwcelery.tasks.em_bright.classifier`
-    ============================== ===========================================
-    """
+    ``p_astro_gstlal.json``        :meth:`gwcelery.tasks.p_astro_gstlal.compute_p_astro`
+    ============================== =====================================================
+    """  # noqa: E501
 
-    # Only handle alerts for the upload of a PSD file.
-    if alert['alert_type'] != 'update' or alert.get('file') != 'psd.xml.gz':
+    if alert['alert_type'] != 'update':
         return
 
     graceid = alert['uid']
+    filename = alert.get('file')
 
-    group(
-        group(
-            gracedb.download.s('coinc.xml', graceid),
-            gracedb.download.s('psd.xml.gz', graceid)
-        )
-        |
-        # FIXME: group(A, B) | group(C, D) does not pass the results from
-        # tasks A and B to tasks C and D without this.
-        identity.s()
-        |
-        group(
-            bayestar.localize.s(graceid)
-            |
-            gracedb.upload.s(
-                'bayestar.fits.gz', graceid,
-                'sky localization complete', ['sky_loc', 'lvem']
+    if filename == 'psd.xml.gz':
+        (
+            group(
+                gracedb.download.s('coinc.xml', graceid),
+                gracedb.download.s('psd.xml.gz', graceid)
             )
             |
-            gracedb.create_label.si('SKYMAP_READY', graceid),
-
-            em_bright.classifier.s(graceid)
+            # FIXME: group(A, B) | group(C, D) does not pass the results from
+            # tasks A and B to tasks C and D without this.
+            identity.s()
             |
-            gracedb.upload.s(
-                'source_classification.json', graceid,
-                'source classification complete', ['em_bright', 'lvem']
+            group(
+                bayestar.localize.s(graceid)
+                |
+                gracedb.upload.s(
+                    'bayestar.fits.gz', graceid,
+                    'sky localization complete', ['sky_loc', 'lvem']
+                )
+                |
+                gracedb.create_label.si('SKYMAP_READY', graceid),
+
+                em_bright.classifier.s(graceid)
+                |
+                gracedb.upload.s(
+                    'source_classification.json', graceid,
+                    'source classification complete', ['em_bright', 'lvem']
+                )
+                |
+                gracedb.create_label.si('EMBRIGHT_READY', graceid)
+            )
+        ).delay()
+    elif filename == 'ranking_data.xml.gz':
+        (
+            gracedb.get_event.s(graceid)
+            |
+            continue_if.s(group='CBC', pipeline='gstlal')
+            |
+            group(
+                gracedb.download.si('coinc.xml', graceid),
+                gracedb.download.si('ranking_data.xml.gz', graceid)
             )
             |
-            gracedb.create_label.si('EMBRIGHT_READY', graceid)
-        ),
-
-        gracedb.get_event.s(graceid)
-        |
-        continue_if.s(group='CBC', pipeline='gstlal')
-        |
-        group(
-            download.si('coinc.xml', graceid),
-            download.si('ranking_data.xml.gz', graceid)
-        )
-        |
-        p_astro_gstlal.compute_p_astro.s()
-        |
-        gracedb.upload.s(
-            'p_astro_gstlal.json', graceid,
-            'p_astro computation complete'
-        )
-        |
-        gracedb.create_label.si('P_ASTRO_READY', graceid)
-    ).delay()
+            p_astro_gstlal.compute_p_astro.s()
+            |
+            gracedb.upload.s(
+                'p_astro_gstlal.json', graceid,
+                'p_astro computation complete'
+            )
+            |
+            gracedb.create_label.si('P_ASTRO_READY', graceid)
+        ).delay()
 
 
 @lvalert.handler('superevent',
