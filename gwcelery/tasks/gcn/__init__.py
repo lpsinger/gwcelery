@@ -6,13 +6,13 @@ References
 
 .. [GCN] https://gcn.gsfc.nasa.gov
 """
-import datetime
 import socket
 import struct
 import time
 
 from celery.utils.log import get_task_logger
 from celery_eternal import EternalTask, EternalProcessTask
+from gcn.voeventclient import _get_now_iso8601, _send_packet
 from gcn import get_notice_type, NoticeType
 import gcn
 
@@ -72,12 +72,11 @@ def broker(self):
             payload = self.backend.client.lindex(_queue_name, 0)
             if payload is None:
                 time.sleep(1)
-                now = datetime.datetime.now().isoformat()
+                now = _get_now_iso8601()
                 payload = IAMALIVE.format(hostname, now).encode('utf-8')
-            nbytes = len(payload)
 
-            log.info('sending payload of %d bytes', nbytes)
-            conn.sendall(struct.pack('!I', nbytes) + payload)
+            log.info('sending payload of %d bytes', len(payload))
+            _send_packet(conn, payload)
             self.backend.client.lpop(_queue_name)
 
 
