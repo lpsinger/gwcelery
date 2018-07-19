@@ -9,6 +9,18 @@
 -   ``check_vector`` checks all detectors regardless of instruments used, but
     only appends labels based on active instruments.
 
+-   Fix a few issues in the GCN broker:
+
+    *   Decrease the frequency of keepalive ("iamalive" in VOEvent Transport
+        Protocol parlance) packets from once a second to once a minute at the
+        request of Scott Barthelmey.
+
+    *   Fix a possible race condition that might have caused queued VOEvents to
+        be thrown away unsent shortly after a scheduled keepalive packet.
+
+    *   Consume and ignore all keepalive and ack packets from the client so
+        that the receive buffer does not overrun.
+
 ## 0.0.24 (2018-07-18)
 
 -   Revert pipeline-dependent pre/post peeks for ``check_vector`` because they
