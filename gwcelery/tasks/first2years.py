@@ -58,7 +58,7 @@ def pick_coinc():
                 if int(row.coinc_event_id) == target_coinc_event_id]
     target_end_time = table[0].get_end()
 
-    table = get_table(xmldoc, lsctables.CoincTable.tableName)
+    coinc_table = table = get_table(xmldoc, lsctables.CoincTable.tableName)
     table[:] = [row for row in table
                 if int(row.coinc_event_id) == target_coinc_event_id]
 
@@ -93,6 +93,20 @@ def pick_coinc():
         row.end += delta_t
         row.end_time_gmst = lal.GreenwichMeanSiderealTime(row.end)
 
+    # In our old coinc.xml file, the coinc_event.likelihood table had values
+    # of the order of 1e12. These must be likelihood ratios, but from the
+    # magnitudes of the values of this column for the p_astro unit tests,
+    # it seems like these are probably now supposed to be *natural log*
+    # of likelihood.
+    for row in coinc_table:
+        row.likelihood = np.log(row.likelihood)
+
+    # Gstlal stores the template's SVD bank index in the Gamma1 column.
+    # Fill this in so that we can calculate p_astro
+    # (see :module:`gwcelery.tasks.p_astro_gstlal`).
+    for row in sngl_inspiral_table:
+        row.Gamma1 = 16
+
     coinc_xml = io.BytesIO()
     utils.write_fileobj(xmldoc, coinc_xml)
     return coinc_xml.getvalue()
@@ -104,6 +118,10 @@ def upload_event():
     coinc = pick_coinc()
     psd = pkg_resources.resource_string(
         __name__, '../data/first2years/2016/psd.xml.gz')
+    ranking_data = pkg_resources.resource_string(
+        __name__, '../tests/data/ranking_data_G322589.xml.gz')
     graceid = gracedb.create_event(coinc, 'MDC', 'gstlal', 'CBC')
     log.info('uploaded as %s', graceid)
     gracedb.upload(psd, 'psd.xml.gz', graceid, 'Noise PSD', ['psd'])
+    gracedb.upload(ranking_data, 'ranking_data.xml.gz', graceid,
+                   'Ranking data')

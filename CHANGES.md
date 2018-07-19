@@ -5,6 +5,8 @@
 -   Fix spelling of the label that is applied to events after p_astro finishes,
     changed from ``P_ASTRO_READY`` to ``PASTRO_READY``.
 
+-   Run p_astro calculation for mock events.
+
 ## 0.0.25 (2018-07-19)
 
 -   Reintroduce pipeline-dependent pre/post peeks for ``check_vector`` after
