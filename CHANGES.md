@@ -2,7 +2,8 @@
 
 ## 0.0.26 (unreleased)
 
--   No changes yet.
+-   Fix spelling of the label that is applied to events after p_astro finishes,
+    changed from ``P_ASTRO_READY`` to ``PASTRO_READY``.
 
 ## 0.0.25 (2018-07-19)
 

@@ -145,7 +145,7 @@ def handle_cbc_event(alert):
                 'p_astro computation complete'
             )
             |
-            gracedb.create_label.si('P_ASTRO_READY', graceid)
+            gracedb.create_label.si('PASTRO_READY', graceid)
         ).delay()
 
 
