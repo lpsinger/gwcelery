@@ -41,6 +41,8 @@ def broker_thread(monkeypatch):
         except IndexError:
             return None
 
+    # Decrease keepalive time so that we see keepalive packets frequently
+    monkeypatch.setattr('gwcelery.tasks.gcn.KEEPALIVE_TIME', 1)
     monkeypatch.setattr('gwcelery.tasks.gcn.broker.backend.client.lindex',
                         lindex, raising=False)
     monkeypatch.setattr('gwcelery.tasks.gcn.broker.backend.client.lpop',
@@ -101,9 +103,10 @@ def test_broker_wrong_address(capsys, wrong_remote_address,
 @pytest.mark.enable_socket
 def test_broker(connection_to_broker, broker_thread):
     """Test receiving packets from the broker."""
-    connection_to_broker.settimeout(1.0)
-    packets = [_recv_packet(connection_to_broker) for _ in range(3)]
-    assert packets == [b'foo', b'bar', b'bat']
+    connection_to_broker.settimeout(2.0)
+    packets = [_recv_packet(connection_to_broker) for _ in range(4)]
+    assert packets[:3] == [b'foo', b'bar', b'bat']
+    assert b'iamalive' in packets[3]
 
 
 def test_send(monkeypatch):
