@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.26 (unreleased)
+
+-   No changes yet.
+
 ## 0.0.25 (2018-07-19)
 
 -   Reintroduce pipeline-dependent pre/post peeks for ``check_vector`` after
