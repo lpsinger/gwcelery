@@ -38,11 +38,30 @@ def annotate_fits(versioned_filename, filebase, graceid, tags):
         gracedb.upload.s(
             filebase + '.png', graceid, allsky_msg, tags),
 
-        is_3d_fits_file.s() |
-        plot_volume.s() |
-        gracedb.upload.s(
+        annotate_fits_volume.s(
             filebase + '.volume.png', graceid, volume_msg, tags)
     )
+
+
+def is_3d_fits_file(filecontents):
+    """Determine if a FITS file has distance information."""
+    with NamedTemporaryFile(content=filecontents) as fitsfile:
+        try:
+            if fits.getval(fitsfile.name, 'TTYPE4', 1) == 'DISTNORM':
+                return True
+        except (KeyError, IndexError):
+            pass
+    return False
+
+
+@app.task(ignore_result=True, shared=False)
+def annotate_fits_volume(filecontents, *args):
+    if is_3d_fits_file(filecontents):
+        (
+            plot_volume.s(filecontents)
+            |
+            gracedb.upload.s(*args)
+        ).apply_async()
 
 
 @app.task(shared=False)
@@ -62,19 +81,6 @@ def plot_allsky(filecontents):
         ligo_skymap_plot.main([fitsfile.name, '-o', pngfile.name,
                                '--annotate', '--contour', '50', '90'])
         return pngfile.read()
-
-
-@app.task(shared=False, throws=(ValueError,))
-def is_3d_fits_file(filecontents):
-    """Determine if a FITS file has distance information. If it does, then
-    the file contents are returned. If it does not, then a :obj:`ValueError` is
-    raised."""
-    try:
-        with NamedTemporaryFile(content=filecontents) as fitsfile:
-            if fits.getval(fitsfile.name, 'TTYPE4', 1) == 'DISTNORM':
-                return filecontents
-    except (KeyError, IndexError):
-        raise ValueError('Not a 3D FITS file')
 
 
 @app.task(queue='openmp', shared=False)

@@ -82,10 +82,9 @@ def test_plot_allsky(mock_plot):
 
 def test_is_3d_fits_file(toy_fits_filecontents, toy_3d_fits_filecontents):
     # This is not a 3D FITS file.
-    with pytest.raises(ValueError):
-        skymaps.is_3d_fits_file(toy_fits_filecontents)
+    assert not skymaps.is_3d_fits_file(toy_fits_filecontents)
     # This is a 3D FITS file.
-    skymaps.is_3d_fits_file(toy_3d_fits_filecontents)
+    assert skymaps.is_3d_fits_file(toy_3d_fits_filecontents)
 
 
 @patch('ligo.skymap.tool.ligo_skymap_plot_volume.main')

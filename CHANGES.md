@@ -7,6 +7,10 @@
 
 -   Run p_astro calculation for mock events.
 
+-   Overhaul preliminary alert pipeline so that it is mostly feature complete
+    for both CBC and Burst events, and uses a common code path for both types.
+    Sky map annotations now occur for both CBC and Burst localizations.
+
 ## 0.0.25 (2018-07-19)
 
 -   Reintroduce pipeline-dependent pre/post peeks for ``check_vector`` after

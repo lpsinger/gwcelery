@@ -1,4 +1,5 @@
 import os
+import json
 from unittest.mock import Mock, patch
 
 from ligo.gracedb import rest
@@ -6,47 +7,13 @@ import pkg_resources
 import pytest
 
 from ..tasks import orchestrator
+from . import test_tasks_skymaps
 from . import resource_json
 
 
-# @patch('gwcelery.tasks.circulars.create_circular')
-# @patch('gwcelery.tasks.skymaps.annotate_fits')
-# @patch('gwcelery.tasks.bayestar.bayestar')
-# @patch('gwcelery.tasks.gcn.send.delay')
-# def test_handle_voevent(mock_send, mock_bayestar, mock_annotate_fits,
-#                         mock_create_circular):
-#     """Test dispatch of a VOEvent message."""
-#     # Test LVAlert payload.
-#     alert = resource_json(__name__, 'data/lvalert_voevent.json')
-#
-#     # text = alert['object']['text']
-#
-#     # Run function under test
-#     orchestrator.handle(alert)
-#
-#     # Check that the correct tasks were dispatched.
-#     mock_annotate_fits.assert_not_called()
-#     mock_bayestar.assert_not_called()
-#     mock_create_circular.assert_not_called()
-#     # FIXME: temporarily disable sending GCNs as per P. Brady request
-#     mock_send.assert_not_called()  # mock_send.assert_called_once_with(text)
-
-
 @pytest.mark.parametrize(
-    'group,other_group,annotate,other_annotate', [
-        [
-            'CBC', 'Burst',
-            'gwcelery.tasks.orchestrator.annotate_cbc_superevent.run',
-            'gwcelery.tasks.orchestrator.annotate_burst_superevent.run'
-        ],
-        [
-            'Burst', 'CBC',
-            'gwcelery.tasks.orchestrator.annotate_burst_superevent.run',
-            'gwcelery.tasks.orchestrator.annotate_cbc_superevent.run'
-        ]
-    ])
-def test_handle_superevent(monkeypatch, group, other_group,
-                           annotate, other_annotate):
+    'group,pipeline', [['CBC', 'gstlal'], ['Burst', 'CWB'], ['Burst', 'LIB']])
+def test_handle_superevent(monkeypatch, group, pipeline):
     """Test a superevent is dispatched to the correct annotation task based on
     its preferred event's search group."""
     alert = {
@@ -65,30 +32,48 @@ def test_handle_superevent(monkeypatch, group, other_group,
 
     def get_event(graceid):
         assert graceid == 'G1234'
-        return {'group': group, 'search': 'CBC', 'instruments': 'H1,L1,V1',
-                'pipeline': 'gstlal'}
+        return {'group': group, 'pipeline': pipeline,
+                'instruments': 'H1,L1,V1', 'graceid': 'G1234'}
 
-    mock_annotate = Mock()
-    mock_other_annotate = Mock()
+    def download(filename, graceid):
+        if '.fits' in filename:
+            return test_tasks_skymaps.toy_3d_fits_filecontents()
+        elif filename == 'source_classification.json' and group == 'CBC':
+            return json.dumps({'Prob NS2': 0, 'Prob EMbright': 0})
+        elif filename == 'psd.xml.gz':
+            return pkg_resources.resource_filename(__name__, 'data/psd.xml.gz')
+        elif filename == 'S1234-1-Preliminary.xml':
+            return b'fake VOEvent file contents'
+        else:
+            raise ValueError
 
+    def create_voevent(*args, **kwargs):
+        return 'S1234-1-Preliminary.xml'
+
+    create_circular = Mock()
+    plot_volume = Mock()
+    plot_allsky = Mock()
+    send = Mock()
+
+    monkeypatch.setattr('gwcelery.tasks.gcn.send.run', send)
+    monkeypatch.setattr('gwcelery.tasks.skymaps.plot_allsky.run', plot_allsky)
+    monkeypatch.setattr('gwcelery.tasks.skymaps.plot_volume.run', plot_volume)
+    monkeypatch.setattr('gwcelery.tasks.gracedb.download.run', download)
+    monkeypatch.setattr('gwcelery.tasks.gracedb.get_event.run', get_event)
+    monkeypatch.setattr('gwcelery.tasks.gracedb.create_voevent.run',
+                        create_voevent)
     monkeypatch.setattr('gwcelery.tasks.gracedb.get_superevent.run',
                         get_superevent)
-    monkeypatch.setattr('gwcelery.tasks.gracedb.get_event.run',
-                        get_event)
-    monkeypatch.setattr(annotate, mock_annotate)
-    monkeypatch.setattr(other_annotate, mock_other_annotate)
+    monkeypatch.setattr('gwcelery.tasks.circulars.create_circular.run',
+                        create_circular)
 
     # Run function under test
     orchestrator.handle_superevent(alert)
 
-    mock_annotate.assert_called_once_with(get_event('G1234'), 'S1234')
-
-    # FIXME: The assertion below will fail in the unit tests because of an
-    # issue in Celery with Ignore semipredicates in eager mode. However, it
-    # is fine when running live.
-    # See https://github.com/celery/celery/issues/4868.
-
-    # mock_other_annotate.assert_not_called()
+    plot_allsky.assert_called_once()
+    plot_volume.assert_called_once()
+    send.assert_called_once()
+    create_circular.assert_called_once()
 
 
 def mock_download(filename, graceid, *args, **kwargs):
