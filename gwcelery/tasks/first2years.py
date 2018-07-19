@@ -102,10 +102,8 @@ def pick_coinc():
 def upload_event():
     """Upload a random event from the "First Two Years" paper."""
     coinc = pick_coinc()
-    psd = pkg_resources.resource_filename(
+    psd = pkg_resources.resource_string(
         __name__, '../data/first2years/2016/psd.xml.gz')
-    with open(psd, 'rb') as f:
-        psd = f.read()
     graceid = gracedb.create_event(coinc, 'MDC', 'gstlal', 'CBC')
     log.info('uploaded as %s', graceid)
     gracedb.upload(psd, 'psd.xml.gz', graceid, 'Noise PSD', ['psd'])

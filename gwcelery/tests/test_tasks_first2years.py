@@ -37,10 +37,8 @@ def test_pick_coinc():
 @patch('gwcelery.tasks.gracedb.upload')
 def test_upload_event(mock_upload, mock_create_event):
     coinc = pick_coinc()
-    psd = pkg_resources.resource_filename(
+    psd = pkg_resources.resource_string(
         __name__, '../data/first2years/2016/psd.xml.gz')
-    with open(psd, 'rb') as f:
-        psd = f.read()
 
     upload_event()
     mock_create_event.assert_called_once_with(coinc, 'MDC', 'gstlal', 'CBC')
