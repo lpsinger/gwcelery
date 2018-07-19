@@ -12,7 +12,7 @@ import time
 
 from celery.utils.log import get_task_logger
 from celery_eternal import EternalTask, EternalProcessTask
-from gcn.voeventclient import _get_now_iso8601, _send_packet
+from gcn.voeventclient import _get_now_iso8601, _recv_packet, _send_packet
 from gcn import get_notice_type, NoticeType
 import gcn
 
@@ -88,7 +88,11 @@ def broker(self):
                 _send_packet(conn, payload)
                 last_sent = now
             else:
-                time.sleep(1)
+                # Read (but ignore) any inbound packet
+                try:
+                    _recv_packet(conn)
+                except socket.timeout:
+                    pass
 
 
 _queue_name = broker.name + '.voevent-queue'
