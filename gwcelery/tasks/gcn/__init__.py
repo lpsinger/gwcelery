@@ -6,7 +6,6 @@ References
 
 .. [GCN] https://gcn.gsfc.nasa.gov
 """
-import contextlib
 import datetime
 import socket
 import struct
@@ -44,7 +43,7 @@ def broker(self):
     remote_ip_address = socket.gethostbyname(app.conf['gcn_remote_address'])
     hostname = socket.getfqdn()
 
-    with contextlib.closing(socket.socket(socket.AF_INET)) as sock:
+    with socket.socket() as sock:
         sock.settimeout(1.0)
         sock.bind((app.conf['gcn_bind_address'], app.conf['gcn_bind_port']))
         sock.listen(0)
@@ -62,7 +61,7 @@ def broker(self):
         else:  # self.is_aborted()
             return
 
-    with contextlib.closing(conn):
+    with conn:
         conn.settimeout(1.0)
         conn.setsockopt(socket.SOL_SOCKET, socket.SO_LINGER,
                         struct.pack('ii', 1, 0))

@@ -1,4 +1,3 @@
-import contextlib
 import json
 import logging
 import socket
@@ -66,7 +65,7 @@ def wrong_remote_address():
 
 @pytest.fixture
 def connection_to_broker(broker_thread):
-    with contextlib.closing(socket.socket(socket.AF_INET)) as sock:
+    with socket.socket() as sock:
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_LINGER,
                         struct.pack('ii', 1, 0))
         sock.connect(('127.0.0.1', 53410))
