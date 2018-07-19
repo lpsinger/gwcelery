@@ -74,10 +74,12 @@ def broker(self):
                 time.sleep(1)
                 now = _get_now_iso8601()
                 payload = IAMALIVE.format(hostname, now).encode('utf-8')
-
-            log.info('sending payload of %d bytes', len(payload))
-            _send_packet(conn, payload)
-            self.backend.client.lpop(_queue_name)
+                log.info('sending keepalive')
+                _send_packet(conn, payload)
+            else:
+                log.info('sending payload of %d bytes', len(payload))
+                _send_packet(conn, payload)
+                self.backend.client.lpop(_queue_name)
 
 
 _queue_name = broker.name + '.voevent-queue'
