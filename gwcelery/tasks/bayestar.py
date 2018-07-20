@@ -1,4 +1,4 @@
-"""Rapid sky localization with BAYESTAR."""
+"""Rapid sky localization with :mod:`BAYESTAR <ligo.skymap.bayestar>`."""
 import io
 import logging
 import os
@@ -20,14 +20,36 @@ log = logging.getLogger('BAYESTAR')
 @app.task(queue='openmp', shared=False)
 def localize(coinc_psd, graceid, filename='bayestar.fits.gz',
              disabled_detectors=None):
-    """Do the heavy lifting of generating a rapid localization using BAYESTAR.
+    """Generate a rapid sky localization using
+    :mod:`BAYESTAR <ligo.skymap.bayestar>`.
 
-    This function runs the computationally-intensive part of BAYESTAR.
-    The `coinc.xml` and `psd.xml.gz` files should already have been downloaded
-    by :func:`bayestar`.
+    Parameters
+    ----------
+    coinc_psd : tuple
+        Tuple consisting of the byte contents of the input event's
+        ``coinc.xml`` and ``psd.xml.gz`` files.
+    graceid : str
+        The GraceDB ID, used for FITS metadata and recording log messages
+        to GraceDb.
+    filename : str, optional
+        The name of the FITS file.
+    disabled_detectors : list, optional
+        List of detectors to disable.
 
-    This task should execute in a special queue for computationally intensive
-    OpenMP parallel tasks.
+    Returns
+    -------
+    bytes
+        The byte contents of the finished FITS file.
+
+    Notes
+    -----
+
+    This task is adapted from the command-line tool
+    :doc:`bayestar-localize-lvalert
+    <ligo/skymap/tool/bayestar_localize_lvalert>`.
+
+    It should execute in a special queue for computationally intensive,
+    multithreaded, OpenMP tasks.
     """
     handler = GraceDbLogHandler(gracedb.client, graceid)
     handler.setLevel(logging.INFO)
