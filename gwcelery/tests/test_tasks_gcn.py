@@ -59,10 +59,10 @@ def broker_thread(monkeypatch):
 
 @pytest.fixture
 def wrong_remote_address():
-    old = app.conf['gcn_remote_address']
-    app.conf['gcn_remote_address'] = '192.0.2.0'
+    old = app.conf['gcn_broker_accept_addresses']
+    app.conf['gcn_broker_accept_addresses'] = ['192.0.2.0']
     yield
-    app.conf['gcn_remote_address'] = old
+    app.conf['gcn_broker_accept_addresses'] = old
 
 
 @pytest.fixture

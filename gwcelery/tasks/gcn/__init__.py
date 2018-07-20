@@ -39,23 +39,28 @@ KEEPALIVE_TIME = 60  # Time in seconds between keepalives
 def broker(self):
     """Single-client VOEvent broker for sending notices to GCN.
 
-    This is a single-client VOEvent broker (e.g. server). It listens for a
-    connection from address :obj:`~gwcelery.celery.Base.gcn_bind_address` and
-    port :obj:`~gwcelery.celery.Base.gcn_bind_port`.
+    This is a basic VOEvent broker. It binds to the address
+    :obj:`~gwcelery.celery.Base.gcn_broker_address` and accepts
+    one connection at a time from any host whose address is listed in
+    :obj:`~gwcelery.celery.Base.gcn_broker_accept_addresses`.
     """
-    remote_ip_address = socket.gethostbyname(app.conf['gcn_remote_address'])
-    hostname = socket.getfqdn()
+    fqdn = socket.getfqdn()
+    host, port = app.conf['gcn_broker_address'].split(':')
+    port = int(port)
+    accept_hosts = [socket.gethostbyname(host) for host in
+                    app.conf['gcn_broker_accept_addresses']]
 
     with socket.socket() as sock:
         sock.settimeout(1.0)
-        sock.bind((app.conf['gcn_bind_address'], app.conf['gcn_bind_port']))
+        sock.bind((host, port))
+        log.info('bound to %s', app.conf['gcn_broker_address'])
         sock.listen(0)
         while not self.is_aborted():
             try:
                 conn, (addr, _) = sock.accept()
             except socket.timeout:
                 continue
-            if addr == remote_ip_address:
+            if addr in accept_hosts:
                 log.info('accepted connection from remote host %s', addr)
                 break
             else:
@@ -83,7 +88,7 @@ def broker(self):
                 self.backend.client.lpop(_queue_name)
             elif now - last_sent > KEEPALIVE_TIME:
                 timestamp = _get_now_iso8601()
-                payload = IAMALIVE.format(hostname, timestamp).encode('utf-8')
+                payload = IAMALIVE.format(fqdn, timestamp).encode('utf-8')
                 log.info('sending keepalive')
                 _send_packet(conn, payload)
                 last_sent = now

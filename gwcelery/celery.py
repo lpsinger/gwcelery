@@ -16,15 +16,13 @@ class Base:
 
     # GWCelery-specific settings.
 
-    gcn_bind_address = ''
-    """Address on which to listen for outbound (sending) connections to GCN;
-    empty to listen on all addresses."""
+    gcn_broker_address = ':5341'
+    """The VOEvent broker will bind to this address to send GCNs.
+    This should be a string of the form `host:port`. If `host` is empty,
+    then listen on all available interfaces."""
 
-    gcn_bind_port = 5341
-    """Port on which to listen for outbound (sending) connections to GCN."""
-
-    gcn_remote_address = 'capella2.gsfc.nasa.gov'
-    """Address to listen for inbound (receiving) connections to GCN."""
+    gcn_broker_accept_addresses = ['capella2.gsfc.nasa.gov']
+    """List of hosts from which the broker will accept connections."""
 
     superevent_d_t_start = {'gstlal': 1.0,
                             'gstlal-spiir': 1.0,
