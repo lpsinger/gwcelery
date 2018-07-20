@@ -35,6 +35,11 @@ http://telescope-networks.org/schema/Transport-v1.1.xsd">
 KEEPALIVE_TIME = 60  # Time in seconds between keepalives
 
 
+def _host_port(address):
+    host, port = address.split(':')
+    return host, int(port)
+
+
 @app.task(base=EternalTask, bind=True)
 def broker(self):
     """Single-client VOEvent broker for sending notices to GCN.
@@ -45,8 +50,7 @@ def broker(self):
     :obj:`~gwcelery.celery.Base.gcn_broker_accept_addresses`.
     """
     fqdn = socket.getfqdn()
-    host, port = app.conf['gcn_broker_address'].split(':')
-    port = int(port)
+    host, port = _host_port(app.conf['gcn_broker_address'])
     accept_hosts = [socket.gethostbyname(host) for host in
                     app.conf['gcn_broker_accept_addresses']]
 
@@ -155,4 +159,5 @@ def listen():
     """Listen to GCN notices forever. GCN notices are dispatched asynchronously
     to tasks that have been registered with
     :meth:`gwcelery.tasks.gcn.handler`."""
-    gcn.listen(handler=handler.dispatch)
+    host, port = _host_port(app.conf['gcn_client_address'])
+    gcn.listen(host, port, handler=handler.dispatch)

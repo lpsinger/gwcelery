@@ -11,6 +11,15 @@
     for both CBC and Burst events, and uses a common code path for both types.
     Sky map annotations now occur for both CBC and Burst localizations.
 
+-   Switch to using the pre-registered port 8096 for receiving proprietary
+    LIGO/Virgo alerts on emfollow.ligo.caltech.edu. This means that the
+    capability to receive GCNs requires setting up a site configuration in
+    advance with Scott Barthelmey.
+
+    Once we switch to sending public alerts exclusively, then we can switch
+    back to using port 8099 for anonymous access, requiring no prior site
+    configuration.
+
 ## 0.0.25 (2018-07-19)
 
 -   Reintroduce pipeline-dependent pre/post peeks for ``check_vector`` after

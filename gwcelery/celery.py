@@ -24,6 +24,18 @@ class Base:
     gcn_broker_accept_addresses = ['capella2.gsfc.nasa.gov']
     """List of hosts from which the broker will accept connections."""
 
+    gcn_client_address = '68.169.57.253:8096'
+    """The VOEvent listener will connect to this address to receive GCNs.
+
+    We are temporarily using the pre-registered port 8096 for receiving
+    proprietary LIGO/Virgo alerts on emfollow.ligo.caltech.edu. This means that
+    the capability to receive GCNs requires setting up a site configuration in
+    advance with Scott Barthelmey.
+
+    Once we switch to sending public alerts exclusively, then we can switch
+    back to using port 8099 for anonymous access, requiring no prior site
+    configuration."""
+
     superevent_d_t_start = {'gstlal': 1.0,
                             'gstlal-spiir': 1.0,
                             'pycbc': 1.0,
