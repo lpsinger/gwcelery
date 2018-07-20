@@ -24,6 +24,9 @@
         "labels": {
         },
         "extra_attributes": {
+            "CoincInspiral": {
+                "snr": 10.0
+            }
         },
         "submitter": "deep.chatterjee@ligo.org",
         "offline": false
