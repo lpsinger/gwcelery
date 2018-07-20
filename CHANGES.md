@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.27 (unreleased)
+
+-   No changes yet.
+
 ## 0.0.26 (2018-07-20)
 
 -   Fix spelling of the label that is applied to events after p_astro finishes,
