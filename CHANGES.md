@@ -2,7 +2,8 @@
 
 ## 0.0.27 (unreleased)
 
--   No changes yet.
+-   The preferred event for superevents is now decided based on higher SNR
+    value instead of lower FAR in the case of a tie between groups.
 
 ## 0.0.26 (2018-07-20)
 

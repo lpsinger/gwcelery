@@ -16,7 +16,8 @@ def test_update_preferred_event(monkeypatch):
                         instruments="I1,J1,K1,L1,M1",
                         group="CBC",
                         superevent="some_superevent",
-                        far=1e-30)
+                        far=1e-30,
+                        snr=30.0)
 
     class FakeDb(object):
         def __init__(self):

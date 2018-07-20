@@ -118,28 +118,36 @@ def _get_event_info(payload):
     at once and reduce polling
     """
     # pull basic info
+    alert_type = payload.get('alert_type')
+    payload = payload.get('object', payload)
     event_info = dict(
-        graceid=payload['object']['graceid'],
-        gpstime=payload['object']['gpstime'],
-        far=payload['object']['far'],
-        group=payload['object']['group'],
-        pipeline=payload['object']['pipeline'],
-        search=payload['object'].get('search'),
-        alert_type=payload['alert_type'])
+        graceid=payload['graceid'],
+        gpstime=payload['gpstime'],
+        far=payload['far'],
+        group=payload['group'],
+        pipeline=payload['pipeline'],
+        search=payload.get('search'),
+        alert_type=alert_type)
     # pull pipeline based extra attributes
-    if payload['object']['pipeline'].lower() == 'cwb':
-        extra_attributes = ['duration', 'start_time']
+    if payload['group'].lower() == 'cbc':
+        event_info['snr'] = \
+             payload['extra_attributes']['CoincInspiral']['snr']
+    if payload['pipeline'].lower() == 'cwb':
+        extra_attributes = ['duration', 'start_time', 'snr']
         event_info.update(
             {attr:
-             payload['object']['extra_attributes']['MultiBurst'][attr]
+             payload['extra_attributes']['MultiBurst'][attr]
              for attr in extra_attributes})
-    elif payload['object']['pipeline'].lower() == 'lib':
+    elif payload['pipeline'].lower() == 'lib':
         extra_attributes = ['quality_mean', 'frequency_mean']
         event_info.update(
             {attr:
-             payload['object']['extra_attributes']['LalInferenceBurst'][attr]
+             payload['extra_attributes']['LalInferenceBurst'][attr]
              for attr in extra_attributes})
-    # if required, add CBC specific extra_attributes here
+        # LIB snr key has a different name, call it snr
+        event_info['snr'] = \
+            payload[
+                'extra_attributes']['LalInferenceBurst']['omicron_snr_network']
     return event_info
 
 
@@ -162,13 +170,15 @@ def _get_dts(event_info):
     return d_t_start, d_t_end
 
 
-def _keyfunc(event):
-    group = event['group'].lower()
+def _keyfunc(event_info):
+    group = event_info['group'].lower()
     try:
         group_rank = ['cbc', 'burst'].index(group)
     except ValueError:
         group_rank = float('inf')
-    return group_rank, event['far']
+    # return the index of group and negative snr in spirit
+    # of rank being lower for higher SNR
+    return group_rank, -1.0*event_info['snr']
 
 
 def _update_superevent(superevent_id, preferred_event, new_event_dict,
@@ -192,7 +202,7 @@ def _update_superevent(superevent_id, preferred_event, new_event_dict,
     t_end : float
         end time of `superevent_id`, None for no change
     """
-    preferred_event_dict = gracedb.client.event(preferred_event).json()
+    preferred_event_dict = _get_event_info(gracedb.get_event(preferred_event))
 
     kwargs = {}
     if t_start is not None:
