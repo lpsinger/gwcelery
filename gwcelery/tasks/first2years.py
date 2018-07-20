@@ -93,11 +93,10 @@ def pick_coinc():
         row.end += delta_t
         row.end_time_gmst = lal.GreenwichMeanSiderealTime(row.end)
 
-    # In our old coinc.xml file, the coinc_event.likelihood table had values
-    # of the order of 1e12. These must be likelihood ratios, but from the
-    # magnitudes of the values of this column for the p_astro unit tests,
-    # it seems like these are probably now supposed to be *natural log*
-    # of likelihood.
+    # The old version of gstlal used to produce the "First Two Years" data set
+    # stored likelihood in the coinc_event.likelihood column, but newer
+    # versions store the *natural log* of the likelihood here. The p_astro
+    # calculation requires this to be log likelihood.
     for row in coinc_table:
         row.likelihood = np.log(row.likelihood)
 
