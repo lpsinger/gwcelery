@@ -5,7 +5,6 @@ import io
 import json
 import sqlite3
 
-from celery.local import PromiseProxy
 from celery.utils.log import get_task_logger
 from glue.ligolw import ligolw
 from glue.ligolw.ligolw import LIGOLWContentHandler
@@ -21,6 +20,7 @@ import numpy as np
 import pkg_resources
 
 from ..celery import app
+from ..util import PromiseProxy
 
 log = get_task_logger(__name__)
 

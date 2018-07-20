@@ -1,27 +1,12 @@
 """Communication with GraceDB."""
-import os
-import sys
-
 from ligo.gracedb import rest
-from celery.local import PromiseProxy
 from celery.utils.log import get_task_logger
 
 from ..celery import app
+from ..util import PromiseProxy
 
-# Defer initializing the GraceDb REST client until it is needed,
-# because if the user lacks valid credentials, then the API will
-# raise an exception as soon as it is instantiated---which would
-# otherwise make it impossible to import this module without first
-# logging in.
-#
-# FIXME: sphinx gets confused by PromiseProxy and prints:
-#     Recursion error:
-#     maximum recursion depth exceeded
-# so don't create the proxy if we are being run by sphinx.
-prog = os.path.basename(sys.argv[0])
-if prog != 'sphinx-build' and 'build_sphinx' not in sys.argv:
-    client = PromiseProxy(rest.GraceDb,
-                          ('https://' + app.conf.gracedb_host + '/api/',))
+client = PromiseProxy(rest.GraceDb,
+                      ('https://' + app.conf.gracedb_host + '/api/',))
 
 log = get_task_logger(__name__)
 
