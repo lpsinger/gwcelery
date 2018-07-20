@@ -34,8 +34,10 @@ def test_check_vector(llhoft_glob_pass):
     start = 1214714160
     end = 1214714164
     cache = detchar.create_cache('H1')
-    assert detchar.check_vector(cache, channel, start, end, 0b11, 'any')
-    assert not detchar.check_vector(cache, channel, start, end, 0b1111, 'any')
+    bits = detchar.dmt_dq_vector_bits
+    assert detchar.check_vector(cache, channel, start, end, bits) == {
+        'H1:NO_OMC_DCPD_ADC_OVERFLOW': True,
+        'H1:NO_DMT-ETMY_ESD_DAC_OVERFLOW': True}
 
 
 def test_check_vectors_skips_mdc(caplog):

@@ -87,16 +87,14 @@ class Base:
     llhoft_glob = '/dev/shm/llhoft/{detector}_O2/*.gwf'
     """File glob for low-latency h(t) frames."""
 
-    llhoft_state_vectors = {'H1:DMT-DQ_VECTOR': (0b11, 'all'),
-                            'L1:DMT-DQ_VECTOR': (0b11, 'all'),
-                            'H1:GDS-CALIB_STATE_VECTOR': (0b11, 'all'),
-                            'L1:GDS-CALIB_STATE_VECTOR': (0b11, 'all'),
-                            'V1:DQ_ANALYSIS_STATE_VECTOR': (0b11, 'all')}
+    llhoft_channels = {'H1:DMT-DQ_VECTOR': 'dmt_dq_vector_bits',
+                       'L1:DMT-DQ_VECTOR': 'dmt_dq_vector_bits',
+                       'H1:GDS-CALIB_STATE_VECTOR': 'state_vector_bits',
+                       'L1:GDS-CALIB_STATE_VECTOR': 'state_vector_bits',
+                       'V1:DQ_ANALYSIS_STATE_VECTOR': 'state_vector_bits'}
     """Low-latency h(t) state vector configuration. This is a dictionary
-    mapping channel names (e.g. ``H1:DMT-DQ_VECTOR``) to tuples consisting of a
-    bitmask to be logically ANDed with the state vector, and the string ``any``
-    or ``all`` to indicate how many samples in the segment must satisfy the
-    bitmask."""
+    consisting of a channel and its bitmask, as defined in
+    :module:``detchar.py``."""
 
     p_astro_gstlal_trigger_db = '/home/gstlalcbc/observing/3/online/trigs/H1L1-ALL_LLOID-0-2000000000.sqlite'  # noqa: E501
     """Gstlal trigger database location in CIT"""
