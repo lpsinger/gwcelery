@@ -79,7 +79,7 @@ def is_3d_fits_file(filecontents):
 
 @app.task(queue='openmp', shared=False)
 def plot_volume(filecontents):
-    """Plot a Mollweide projection of a sky map."""
+    """Plot a 3D volume rendering of a sky map."""
     with NamedTemporaryFile(mode='rb', suffix='.png') as pngfile, \
             NamedTemporaryFile(content=filecontents) as fitsfile:
         ligo_skymap_plot_volume.main([fitsfile.name, '-o',
