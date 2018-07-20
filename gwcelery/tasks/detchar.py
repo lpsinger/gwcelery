@@ -29,37 +29,27 @@ __author__ = 'Geoffrey Mo <geoffrey.mo@ligo.org>'
 log = get_task_logger(__name__)
 
 
-def read_gwf(ifo, channel, start, end):
-    """Find .gwf files and create cache, then output as time series.
-    This is inclusive of the start time and exclusive of the end time, i.e.
-    [start, ..., end).
+def create_cache(ifo):
+    """Find .gwf files and create cache.
 
     Parameters
     ----------
     ifo : str
         Interferometer name (e.g. ``H1``).
-    channel : str
-        Channel to look at minus observatory code, ie 'DMT-DQ_VECTOR'.
-    start, end : int or float
-        GPS start and end times desired.
 
     Returns
     -------
-    :class:`gwpy.timeseries.TimeSeries`
+    :class:`glue.lal.Cache`
 
     Example
     -------
-    >>> read_gwf('H1', 'DMT-DQ_VECTOR', 1214606036, 1214606040)
-    <TimeSeries([7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-                 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-                 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-                 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7]
-                unit=Unit(dimensionless),
-                t0=<Quantity 1.21460604e+09 s>,
-                dt=<Quantity 0.0625 s>,
-                name='H1:DMT-DQ_VECTOR',
-                channel=<Channel("H1:DMT-DQ_VECTOR", 16.0 Hz) at 0x7f8ceef5a4a
-                8>)>
+    >>> create_cache('H1')
+    [<glue.lal.CacheEntry at 0x7fbae6b71278>,
+      <glue.lal.CacheEntry at 0x7fbae6ae5b38>,
+      <glue.lal.CacheEntry at 0x7fbae6ae5c50>,
+     ...
+      <glue.lal.CacheEntry at 0x7fbae6b15080>,
+      <glue.lal.CacheEntry at 0x7fbae6b15828>]
 
     Note that running this example will return an I/O error, since /dev/shm
     gets overwritten every 300 seconds.
@@ -86,15 +76,18 @@ def read_gwf(ifo, channel, start, end):
     """
     pattern = app.conf['llhoft_glob'].format(detector=ifo)
     filenames = glob.glob(pattern)
-    cache = Cache.from_urls(filenames)
-    return TimeSeries.read(cache, ifo + ':' + channel, start=start, end=end)
+    return Cache.from_urls(filenames)
 
 
-def check_vector(channel, start, end, bitmask, logic_type):
+def check_vector(cache, channel, start, end, bitmask, logic_type='all'):
     """Check timeseries of decimals against a bitmask.
+    This is inclusive of the start time and exclusive of the end time, i.e.
+    [start, ..., end).
 
     Parameters
     ----------
+    cache : :class:`glue.lal.Cache`
+        Cache from which to check.
     channel : str
         Channel to look at, e.g. ``H1:DMT-DQ_VECTOR``.
     start, end : int or float
@@ -102,7 +95,7 @@ def check_vector(channel, start, end, bitmask, logic_type):
     bitmask : binary integer
         Bitmask which needs to be 1 in order for the timeseries to pass.
         Example: 0b11 means the 0th and 1st bits need to be 1.
-    logic_type : str
+    logic_type : str, optional
         Type of logic to apply for vetoing.
         If ``all``, then all samples in the window must pass the bitmask.
         If ``any``, then one or more samples in the window must pass.
@@ -114,7 +107,10 @@ def check_vector(channel, start, end, bitmask, logic_type):
 
     Example
     -------
-    >>> check_vector('H1:DMT-DQ_VECTOR', 1214606036, 1214606040, 0b11, 'all')
+    Using ``cache`` as output from example in :func:`create_cache`
+
+    >>> check_vector(cache, 'H1:DMT-DQ_VECTOR', 1215370032, 1215370034,
+                     0b11, 'all')
     True
 
     Notes
@@ -127,7 +123,7 @@ def check_vector(channel, start, end, bitmask, logic_type):
         raise ValueError("logic_type must be either 'all' or 'any'.")
 
     try:
-        timeseries = read_gwf(*channel.split(':'), start, end)
+        timeseries = TimeSeries.read(cache, channel, start=start, end=end)
     except IndexError:
         # FIXME: figure out how to get access to low-latency frames outside
         # of the cluster. Until we figure that out, actual I/O errors have
@@ -142,7 +138,32 @@ def check_vector(channel, start, end, bitmask, logic_type):
 
 @app.task(shared=False)
 def check_vectors(event, superevent_id, start, end):
-    """Perform data quality checks for an event."""
+    """Perform data quality checks for an event. This includes checking the DQ
+    overflow vector (DMT-DQ_VECTOR) for LIGO and the first and second bits of
+    the calibration state vectors for LIGO (GDS-CALIB_STATE_VECTOR) and Virgo
+    (DQ_ANALYSIS_STATE_VECTOR). These vectors and the bitmasks for each are
+    defined in dictionaries in ``celery.py``.
+
+    The results of these checks are logged into the superevent specified
+    by ``superevent_id``, and ``DQOK`` or ``DQV`` labels are appended
+    as appropriate.
+
+    This skips MDC events.
+
+    Parameters
+    ----------
+    event : dict
+        Details of event.
+    superevent_id : str
+        GraceID of event to which to log.
+    start, end : int or float
+        GPS start and end times desired.
+
+    Returns
+    -------
+    event : dict
+        Details of event.
+    """
     # Skip MDC events.
     if event.get('search') == 'MDC':
         log.info('Skipping state vector checks because %s is an MDC',
@@ -153,9 +174,12 @@ def check_vectors(event, superevent_id, start, end):
     pre, post = app.conf['check_vector_prepost'][event['pipeline']]
     start, end = start - pre, end + post
 
-    states = {key: check_vector(key, start, end, *value)
+    ifos = {key.split(':')[0] for key in
+            app.conf['llhoft_state_vectors'].keys()}
+    caches = {ifo: create_cache(ifo) for ifo in ifos}
+    states = {key: check_vector(caches[key.split(':')[0]], key, start,
+                                end, *value)
               for key, value in app.conf['llhoft_state_vectors'].items()}
-
     active_states = {key: value for key, value in states.items()
                      if key.split(':')[0] in instruments}
 
