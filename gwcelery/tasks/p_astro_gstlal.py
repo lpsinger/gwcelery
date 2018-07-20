@@ -3,9 +3,11 @@
 """
 import io
 import json
+import os
 import sqlite3
 
 from celery.utils.log import get_task_logger
+from celery.exceptions import Ignore
 from glue.ligolw import ligolw
 from glue.ligolw.ligolw import LIGOLWContentHandler
 from glue.ligolw import array as ligolw_array
@@ -120,6 +122,11 @@ def get_event_ln_likelihood_ratio_svd_endtime_mass(coinc_bytes):
 
 def load_search_database():
     filename = app.conf['p_astro_gstlal_trigger_db']
+    # FIXME the gstlal trigger database path is specific to the CIT
+    # cluster. Gentle exit against opening a non-existant database outside CIT
+    if not os.path.exists(filename):
+        raise Ignore(
+            "Gstlal trigger database {} not found".format(filename))
     return sqlite3.connect('file:{}?mode=ro'.format(filename), uri=True)
 
 
@@ -245,15 +252,11 @@ def compute_p_astro(files):
         app.conf['p_astro_gstlal_ln_likelihood_threshold']
 
     log.info('Querying trigger db to fetch zerolag ln_likelihood_ratios')
-    # FIXME the gstlal trigger database path is specific to the CIT
-    # cluster. Gentle exit against opening a non-existant database outside CIT
-    try:
-        background_ln_likelihood_ratios, zerolag_ln_likelihood_ratios, \
-            svd_banks = load_search_results(event_endtime,
-                                            event_mass,
-                                            ln_likelihood_ratio_threshold)
-    except sqlite3.OperationalError:
-        return None
+
+    background_ln_likelihood_ratios, zerolag_ln_likelihood_ratios, \
+        svd_banks = load_search_results(event_endtime,
+                                        event_mass,
+                                        ln_likelihood_ratio_threshold)
 
     svd_banks = np.append(svd_banks, event_svd)
     zerolag_ln_likelihood_ratios = np.append(

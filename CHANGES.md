@@ -5,6 +5,9 @@
 -   The preferred event for superevents is now decided based on higher SNR
     value instead of lower FAR in the case of a tie between groups.
 
+-   A check for the existence of the gstlal trigger database is performed
+    so that compute_p_astro does not return None.
+
 ## 0.0.26 (2018-07-20)
 
 -   Fix spelling of the label that is applied to events after p_astro finishes,
