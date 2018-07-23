@@ -73,7 +73,7 @@ class DispatchHandler(dict):
         try:
             matching_handlers = self[key]
         except KeyError:
-            log.warn('ignoring unrecognized key: %r', key)
+            log.warning('ignoring unrecognized key: %r', key)
         else:
             log.info('calling handlers %r for key %r', matching_handlers, key)
             group([handler.s() for handler in matching_handlers]).apply_async(
