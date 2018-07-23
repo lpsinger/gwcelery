@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.28 (unreleased)
+
+-   No changes yet
+
 ## 0.0.27 (2018-07-22)
 
 -   The preferred event for superevents is now decided based on higher SNR
