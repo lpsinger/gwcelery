@@ -19,7 +19,7 @@ from . import gracedb
 from . import lalinference
 from . import lvalert
 from . import skymaps
-from . import p_astro_gstlal
+from . import p_astro_gstlal, p_astro_other
 
 
 @lvalert.handler('superevent',
@@ -98,7 +98,7 @@ def handle_cbc_event(alert):
     ============================== =====================================================
     ``bayestar.fits``              :meth:`gwcelery.tasks.bayestar.localize`
     ``source_classification.json`` :meth:`gwcelery.tasks.em_bright.classifier`
-    ``p_astro_gstlal.json``        :meth:`gwcelery.tasks.p_astro_gstlal.compute_p_astro`
+    ``p_astro.json``        :meth:`gwcelery.tasks.p_astro_gstlal.compute_p_astro`
     ============================== =====================================================
     """  # noqa: E501
 
@@ -108,6 +108,24 @@ def handle_cbc_event(alert):
     graceid = alert['uid']
     filename = alert['data']['filename']
 
+    snr = alert['object']['extra_attributes']['CoincInspiral']['snr']
+    far = alert['object']['far']
+    mass1 = alert['object']['extra_attributes']['SingleInspiral'][0]['mass1']
+    mass2 = alert['object']['extra_attributes']['SingleInspiral'][0]['mass2']
+
+    # p_astro calculation for other pipelines
+    if filename == 'coinc.xml' and \
+            alert['object']['pipeline'].lower() != 'gstlal':
+        (
+            p_astro_other.compute_p_astro(snr, far, mass1, mass2)
+            |
+            gracedb.upload.s(
+                'p_astro.json', graceid,
+                'p_astro computation complete'
+            )
+            |
+            gracedb.create_label.si('PASTRO_READY', graceid)
+        ).delay()
     if filename == 'psd.xml.gz':
         (
             group(
@@ -151,7 +169,7 @@ def handle_cbc_event(alert):
             p_astro_gstlal.compute_p_astro.s()
             |
             gracedb.upload.s(
-                'p_astro_gstlal.json', graceid,
+                'p_astro.json', graceid,
                 'p_astro computation complete'
             )
             |

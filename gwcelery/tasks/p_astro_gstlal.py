@@ -3,26 +3,18 @@
 """
 import io
 import json
-import os
-import sqlite3
 
 from celery.utils.log import get_task_logger
-from celery.exceptions import Ignore
 from glue.ligolw import ligolw
 from glue.ligolw.ligolw import LIGOLWContentHandler
 from glue.ligolw import array as ligolw_array
 from glue.ligolw import param as ligolw_param
-from glue.ligolw import dbtables
 from glue.ligolw import utils as ligolw_utils
 from glue.ligolw import lsctables
-from lalinspiral import thinca
 from lal import rate
-from ligo.p_astro import SourceType, MarginalizedPosterior
 import numpy as np
-import pkg_resources
 
 from ..import app
-from ..util import PromiseProxy
 
 log = get_task_logger(__name__)
 
@@ -115,125 +107,32 @@ def _get_event_ln_likelihood_ratio_svd_endtime_mass(coinc_bytes):
                 for i in range(len(sngl_inspiral)-1)]), \
         "svd bank different between ifos!"
     return (coinc_event.likelihood,
-            int(sngl_inspiral[0].Gamma1),
             coinc_inspiral.end_time,
-            coinc_inspiral.mass)
+            coinc_inspiral.mass,
+            sngl_inspiral[0].mass1,
+            sngl_inspiral[0].mass2)
 
 
-def _load_search_database():
-    filename = app.conf['p_astro_gstlal_trigger_db']
-    # FIXME the gstlal trigger database path is specific to the CIT
-    # cluster. Gentle exit against opening a non-existant database outside CIT
-    if not os.path.exists(filename):
-        raise Ignore(
-            "Gstlal trigger database {} not found".format(filename))
-    return sqlite3.connect('file:{}?mode=ro'.format(filename), uri=True)
+# This is the function that computes p-astro for a new
+# event using mean values of Poisson expected counts
+# constructed from all the previous events. This is
+# the function that will be invoked with every new
+# GraceDB entry
 
 
-# Lazily load search database
-connection = PromiseProxy(_load_search_database)
+def p_astro_update(category, event_bayesfac_dict, mean_values_dict):
 
+    if category == "Terr":
+        numerator = mean_values_dict["Terr"]
+    else:
+        numerator = \
+            event_bayesfac_dict[category]*mean_values_dict[category]
 
-def _load_search_results(end_time, mass, ln_likelihood_ratio_threshold):
-    """Queries SQLite file for background trigger data.
-    The query has an extra check to make sure the event is not
-    double counted.
-    """
-    cur = connection.cursor()
+    denominator = mean_values_dict["Terr"] + \
+        np.sum([mean_values_dict[key]*event_bayesfac_dict[key]
+                for key in event_bayesfac_dict.keys()])
 
-    xmldoc = dbtables.get_xml(connection)
-    definer_id = lsctables.CoincDefTable.get_table(xmldoc).get_coinc_def_id(
-        thinca.InspiralCoincDef.search,
-        thinca.InspiralCoincDef.search_coinc_type,
-        create_new=False)
-    cur.execute("""
-SELECT
-        coinc_event.likelihood,
-        (
-        SELECT sngl_inspiral.Gamma1
-        FROM
-                sngl_inspiral JOIN coinc_event_map ON (
-                        coinc_event_map.table_name == "sngl_inspiral"
-                        AND coinc_event_map.event_id == sngl_inspiral.event_id
-                )
-        WHERE
-        coinc_event_map.coinc_event_id == coinc_inspiral.coinc_event_id
-        LIMIT 1
-        ),
-        EXISTS (
-    SELECT
-*
-    FROM
-time_slide
-    WHERE
-time_slide.time_slide_id == coinc_event.time_slide_id
-AND time_slide.offset != 0
-        )
-FROM
-        coinc_event JOIN coinc_inspiral ON (
-    coinc_inspiral.coinc_event_id == coinc_event.coinc_event_id
-        )
-WHERE
-        coinc_event.coinc_def_id == ?
-        AND coinc_event.likelihood >= ?
-        AND coinc_inspiral.end_time != ?
-        AND coinc_inspiral.mass != ?""", (definer_id,
-                                          ln_likelihood_ratio_threshold,
-                                          end_time,
-                                          mass))
-    ln_likelihood_ratio, svd_banks, is_background = np.array(cur.fetchall()).T
-    background_ln_likelihood_ratios = \
-        ln_likelihood_ratio[is_background.astype(bool)]
-    zerolag_ln_likelihood_ratios = \
-        ln_likelihood_ratio[np.logical_not(is_background.astype(bool))]
-    svd_banks = svd_banks.astype(int)
-
-    return background_ln_likelihood_ratios, \
-        zerolag_ln_likelihood_ratios, svd_banks
-
-
-def _load_counts(name):
-    # FIXME txt files will need to be queried from sqlite dbs
-    filename = pkg_resources.resource_filename(
-        __name__, '../data/p_astro_gstlal/{}_wellfound_hits.txt'.format(name))
-
-    # Construction of the weights
-    a = np.recfromtxt(filename, names=True)['hit_count']
-    a_hat = a / a.sum()
-    return a_hat
-
-
-# Lazily load weights
-a_hat_bns = PromiseProxy(_load_counts, ('bns',))
-a_hat_nsbh = PromiseProxy(_load_counts, ('nsbh',))
-a_hat_bbh = PromiseProxy(_load_counts, ('bbh',))
-
-
-def _get_counts_instance(ln_f_over_b,
-                         svd_bank_nums,
-                         prior_type="Uniform"):
-    num_svd_bins = len(a_hat_bns)
-
-    w_bns = num_svd_bins*np.take(a_hat_bns, svd_bank_nums)
-    w_nsbh = num_svd_bins*np.take(a_hat_nsbh, svd_bank_nums)
-    w_bbh = num_svd_bins*np.take(a_hat_bbh, svd_bank_nums)
-
-    num_f_over_b = len(ln_f_over_b)
-    w_terr = np.ones(num_f_over_b)
-
-    fb = np.exp(ln_f_over_b)
-
-    return MarginalizedPosterior(f_divby_b=fb, prior_type=prior_type,
-                                 terr_source=SourceType(label="Terr",
-                                                        w_fgmc=w_terr),
-                                 fix_sources={"Terr": num_f_over_b},
-                                 bns_inst=SourceType(label="BNS",
-                                                     w_fgmc=w_bns),
-                                 bbh_inst=SourceType(label="BBH",
-                                                     w_fgmc=w_bbh),
-                                 nsbh_inst=SourceType(label="NSBH",
-                                                      w_fgmc=w_nsbh),
-                                 verbose=False)
+    return numerator/denominator
 
 
 @app.task(shared=False)
@@ -259,41 +158,56 @@ def compute_p_astro(files):
     """
     coinc_bytes, ranking_data_bytes = files
 
+    # Acquire information pertaining to the event from coinc.xml
+    # uploaded to GraceDB
     log.info(
         'Fetching ln_likelihood_ratio, svd bin, endtime, mass from coinc.xml')
-    event_ln_likelihood_ratio, event_svd, event_endtime, event_mass = \
+    event_ln_likelihood_ratio, event_endtime, \
+        event_mass, event_mass1, event_mass2 = \
         _get_event_ln_likelihood_ratio_svd_endtime_mass(coinc_bytes)
 
-    ln_likelihood_ratio_threshold = \
-        app.conf['p_astro_gstlal_ln_likelihood_threshold']
-
-    log.info('Querying trigger db to fetch zerolag ln_likelihood_ratios')
-
-    background_ln_likelihood_ratios, zerolag_ln_likelihood_ratios, \
-        svd_banks = _load_search_results(event_endtime,
-                                         event_mass,
-                                         ln_likelihood_ratio_threshold)
-
-    svd_banks = np.append(svd_banks, event_svd)
-    zerolag_ln_likelihood_ratios = np.append(
-        zerolag_ln_likelihood_ratios, event_ln_likelihood_ratio)
-
+    # Using the zerolag log likelihood ratio value event,
+    # and the foreground/background model information provided
+    # in ranking_data.xml.gz, compute the ln(f/b) value for this event
+    zerolag_ln_likelihood_ratios = np.array([event_ln_likelihood_ratio])
     log.info('Computing f_over_b from ranking_data.xml.gz')
     ln_f_over_b = _get_ln_f_over_b(ranking_data_bytes,
                                    zerolag_ln_likelihood_ratios)
 
-    log.info('Creating FGMC MarginalizedPosterior')
-    event_counts_instance = \
-        _get_counts_instance(ln_f_over_b,
-                             svd_banks,
-                             prior_type=app.conf['p_astro_gstlal_prior_type'])
+    num_bins = 3
+    mean_bns = 2.07613829518
+    mean_nsbh = 1.65747751787
+    mean_bbh = 11.8941873831
+    mean_terr = 3923
 
-    num_f_over_b = len(ln_f_over_b)
+    a_hat_bns = int(event_mass1 <= 3 and event_mass2 <= 3)
+    a_hat_bbh = int(event_mass2 > 3 and event_mass2 > 3)
+    a_hat_nsbh = int(min([event_mass1, event_mass2]) <= 3 and
+                     max([event_mass1, event_mass2]) > 3)
 
-    categories = ['BNS', 'BBH', 'NSBH', 'Terr']
+    # Fix mean values (1 per source category) from
+    mean_values_dict = {"BNS": mean_bns,
+                        "NSBH": mean_nsbh,
+                        "BBH": mean_bbh,
+                        "Terr": mean_terr}
+
+    # These are the bayes factor values that need to be
+    # constructed with every new event/GraceDB upload
+    rescaled_fb = num_bins*np.exp(ln_f_over_b)[0]
+    bns_bayesfac = a_hat_bns*rescaled_fb
+    nsbh_bayesfac = a_hat_nsbh*rescaled_fb
+    bbh_bayesfac = a_hat_bbh*rescaled_fb
+    event_bayesfac_dict = {"BNS": bns_bayesfac,
+                           "NSBH": nsbh_bayesfac,
+                           "BBH": bbh_bayesfac}
+
+    # Compute the p-astro values for each source category
+    # using the mean values
     p_astro_values = {}
-    for category in categories:
+    for category in mean_values_dict:
         p_astro_values[category] = \
-            event_counts_instance.pastro(categories=[category],
-                                         trigger_idx=num_f_over_b-1)[0]
+            p_astro_update(category=category,
+                           event_bayesfac_dict=event_bayesfac_dict,
+                           mean_values_dict=mean_values_dict)
+
     return json.dumps(p_astro_values)

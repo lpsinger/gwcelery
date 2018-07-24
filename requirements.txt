@@ -15,7 +15,6 @@ ligo.skymap >= 0.0.18
 lscsoft-glue
 lxml
 numpy
-p-astro
 pygcn >= 0.1.16
 pytest >= 3.0
 redis

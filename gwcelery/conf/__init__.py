@@ -155,8 +155,14 @@ p_astro_gstlal_trigger_db = '/home/gstlalcbc/observing/3/online/trigs/H1L1-ALL_L
 p_astro_gstlal_ln_likelihood_threshold = 6
 """log likelihood threshold"""
 
-p_astro_gstlal_prior_type = "Uniform"
-"""Prior type to be used. Options: Uniform, Jeffreys"""
+p_astro_gstlal_terr_threshold = 0.2
+"""Terrestrial threshold required to recompute means and covariances"""
+
+p_astro_gstlal_source_types = ["BNS", "NSBH", "BBH", "Terr"]
+"""Set of categories one could associate with a candidate event"""
+
+p_astro_gstlal_ranking_pdf = '/home/gstlalcbc/observing/3/online/trigs/rankingstat_pdf.xml.gz'  # noqa: E501
+
 
 frame_types = {'H1': 'H1_llhoft',
                'L1': 'L1_llhoft',

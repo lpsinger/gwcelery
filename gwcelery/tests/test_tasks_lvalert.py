@@ -53,8 +53,15 @@ def fake_lvalert():
     return node, payload
 
 
+@patch(
+    'gwcelery.tasks.gracedb.get_event.run',
+    return_value={'graceid': 'T250822', 'group': 'CBC', 'pipeline': 'gstlal',
+                  'far': 1e-7,
+                  'extra_attributes':
+                      {'CoincInspiral': {'snr': 10.},
+                       'SingleInspiral': [{'mass1': 10., 'mass2': 5.}]}})
 @patch('gwcelery.tasks.superevents.handle.run')
-def test_handle_messages(mock_superevents_handle,
+def test_handle_messages(mock_superevents_handle, mock_get_event,
                          netrc_lvalert, fake_lvalert):
     """Test handling an LVAlert message that originates from the configured
     GraceDb server."""

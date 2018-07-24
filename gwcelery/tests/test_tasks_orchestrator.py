@@ -165,7 +165,11 @@ def mock_download(filename, graceid, *args, **kwargs):
 
 @patch(
     'gwcelery.tasks.gracedb.get_event.run',
-    return_value={'graceid': 'T250822', 'group': 'CBC', 'pipeline': 'gstlal'})
+    return_value={'graceid': 'T250822', 'group': 'CBC', 'pipeline': 'gstlal',
+                  'far': 1e-7,
+                  'extra_attributes':
+                      {'CoincInspiral': {'snr': 10.},
+                       'SingleInspiral': [{'mass1': 10., 'mass2': 5.}]}})
 @patch('gwcelery.tasks.gracedb.download.run', mock_download)
 @patch('gwcelery.tasks.em_bright.classifier.run')
 @patch('gwcelery.tasks.bayestar.localize.run')
@@ -180,12 +184,20 @@ def test_handle_cbc_event(mock_gracedb, mock_localize, mock_classifier,
     mock_classifier.assert_called_once()
 
 
+@patch(
+    'gwcelery.tasks.gracedb.get_event.run',
+    return_value={'graceid': 'T250822', 'group': 'CBC', 'pipeline': 'gstlal',
+                  'far': 1e-7,
+                  'extra_attributes':
+                      {'CoincInspiral': {'snr': 10.},
+                       'SingleInspiral': [{'mass1': 10., 'mass2': 5.}]}})
 @patch('gwcelery.tasks.gracedb.download.run', mock_download)
 @patch('gwcelery.tasks.em_bright.classifier.run')
 @patch('gwcelery.tasks.bayestar.localize.run')
 @patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
 def test_handle_cbc_event_ignored(mock_gracedb, mock_localize,
-                                  mock_classifier):
+                                  mock_classifier,
+                                  mock_get_event):
     """Test that unrelated LVAlert messages do not trigger BAYESTAR."""
     alert = resource_json(__name__, 'data/lvalert_detchar.json')
     orchestrator.handle_cbc_event(alert)
