@@ -13,6 +13,7 @@ GWCelery is a simple and reliable package for annotating and orchestrating LIGO/
    :caption: Contents:
 
    quickstart
+   configuration
    monitoring
    htcondor
    contributing

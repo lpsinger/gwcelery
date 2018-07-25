@@ -19,5 +19,5 @@ See the [quick start installation instructions](https://emfollow.docs.ligo.org/g
  - Tasks are defined by [small, self-contained Python functions](https://git.ligo.org/emfollow/gwcelery/tree/master/gwcelery/tasks)
  - [Lightweight test suite](https://git.ligo.org/emfollow/gwcelery/tree/master/gwcelery/tests) using mocks of external services
  - [Continuous integration](https://git.ligo.org/emfollow/gwcelery/pipelines)
- - [One line of code to switch from test to production GraceDB server](https://git.ligo.org/emfollow/gwcelery/blob/master/gwcelery/celery.py)
+ - [One environment variable to switch from playground to production GraceDB server](https://emfollow.docs.ligo.org/gwcelery/configuration.html)
  - [Browser-based monitoring console](https://emfollow.docs.ligo.org/gwcelery/monitoring.html)

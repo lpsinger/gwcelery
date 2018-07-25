@@ -45,9 +45,9 @@ def broker(self):
     """Single-client VOEvent broker for sending notices to GCN.
 
     This is a basic VOEvent broker. It binds to the address
-    :obj:`~gwcelery.celery.Base.gcn_broker_address` and accepts
+    :obj:`~gwcelery.config.gcn_broker_address` and accepts
     one connection at a time from any host whose address is listed in
-    :obj:`~gwcelery.celery.Base.gcn_broker_accept_addresses`.
+    :obj:`~gwcelery.config.gcn_broker_accept_addresses`.
     """
     fqdn = socket.getfqdn()
     host, port = _host_port(app.conf['gcn_broker_address'])

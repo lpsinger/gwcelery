@@ -76,6 +76,9 @@
 
 -   Make ``check_vector`` pre/post peeks pipeline dependent.
 
+-   Refactor configuration so that it is possible to customize settings
+    through an environment variable.
+
 ## 0.0.22 (2018-07-11)
 
 -   Process gstlal-spiir events.
