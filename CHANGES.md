@@ -6,6 +6,9 @@
 
 -   Bitmasks are now defined symbolically in ``detchar``.
 
+-   Refactor configuration so that it is possible to customize settings
+    through an environment variable.
+
 ## 0.0.27 (2018-07-22)
 
 -   The preferred event for superevents is now decided based on higher SNR
@@ -75,9 +78,6 @@
 -   Fix fallback for determining superevent duration for unknown pipelines.
 
 -   Make ``check_vector`` pre/post peeks pipeline dependent.
-
--   Refactor configuration so that it is possible to customize settings
-    through an environment variable.
 
 ## 0.0.22 (2018-07-11)
 
