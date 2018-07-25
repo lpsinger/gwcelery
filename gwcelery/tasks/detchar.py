@@ -165,7 +165,7 @@ def check_vector(cache, channel, start, end, bits, logic_type='all'):
                 None for key in bits if key is not None}
     else:
         return {bitname.format(channel.split(':')[0], key):
-                getattr(np, logic_type)(getattr(value, 'value'))
+                bool(getattr(np, logic_type)(getattr(value, 'value')))
                 for key, value in statevector.get_bit_series().items()}
 
 
@@ -249,7 +249,7 @@ def check_vectors(event, superevent_id, start, end):
         assert all(active_dq_states.values())
         overall_dq_active_state = True
     fmt = ("detector state for active instruments is {}."
-           " For all instruments, channels good ({}), bad ({}), unknown({}).")
+           " For all instruments, bits good ({}), bad ({}), unknown({}).")
     msg = fmt.format(
         {None: 'unknown', False: 'bad', True: 'good'}[overall_dq_active_state],
         ', '.join(k for k, v in active_dq_states.items() if v is True),
