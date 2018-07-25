@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.28 (unreleased)
+## 0.0.28 (2018-07-25)
 
 -   Add injection checks to ``check_vector``.
 
