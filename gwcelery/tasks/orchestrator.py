@@ -125,8 +125,6 @@ def handle_cbc_event(alert):
         (
             gracedb.get_event.s(graceid)
             |
-            continue_if.s(group='CBC', pipeline='gstlal')
-            |
             group(
                 gracedb.download.si('coinc.xml', graceid),
                 gracedb.download.si('ranking_data.xml.gz', graceid)
