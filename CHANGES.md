@@ -2,7 +2,7 @@
 
 ## 0.0.28 (unreleased)
 
--   Add injection checks to ``check_vector``. 
+-   Add injection checks to ``check_vector``.
 
 -   Bitmasks are now defined symbolically in ``detchar``.
 
