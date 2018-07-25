@@ -56,6 +56,7 @@ def is_3d_fits_file(filecontents):
 
 @app.task(ignore_result=True, shared=False)
 def annotate_fits_volume(filecontents, *args):
+    """Perform annotations that are specific to 3D sky maps."""
     if is_3d_fits_file(filecontents):
         (
             plot_volume.s(filecontents)
