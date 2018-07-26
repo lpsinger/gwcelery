@@ -41,6 +41,7 @@ def get_setup_output(*args):
 extensions = [
     'celery.contrib.sphinx',
     'sphinx.ext.autodoc',
+    'sphinx.ext.graphviz',
     'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',

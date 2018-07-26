@@ -2,7 +2,7 @@
 
 ## 0.0.29 (unreleased)
 
--   No changes yet.
+-   Add a workflow graph to superevents module documentation.
 
 ## 0.0.28 (2018-07-25)
 

@@ -96,6 +96,8 @@ doc:
   stage: test
   variables:
     GIT_STRATEGY: none
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq graphviz
   script:
     - tar --strip-components 1 -xf *.tar.*
     - python setup.py build_sphinx -W
