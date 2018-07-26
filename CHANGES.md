@@ -17,6 +17,9 @@
 
 -   Update the LVAlert host for gracedb-playground.ligo.org.
 
+-   Add experimental integration with [Sentry](https://sentry.io/) for log
+    aggregation and error reporting.
+
 ## 0.0.31 (2018-09-04)
 
 -   Refactor external trigger handling to separate it from the orchestrator.

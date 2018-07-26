@@ -4,6 +4,7 @@ from celery import Celery
 import pkg_resources
 
 from .conf import playground
+from . import sentry
 
 __all__ = ('app',)
 
@@ -25,3 +26,5 @@ app.config_from_envvar('CELERY_CONFIG_MODULE', silent=True)
 
 # Use the same URL for both the result backend and the broker.
 app.conf['result_backend'] = app.conf.broker_url
+
+sentry.configure()
