@@ -6,9 +6,9 @@
 
 ## 0.0.28 (2018-07-25)
 
--   Add injection checks to ``check_vector``.
+-   Add injection checks to `check_vector`.
 
--   Bitmasks are now defined symbolically in ``detchar``.
+-   Bitmasks are now defined symbolically in `detchar`.
 
 -   Refactor configuration so that it is possible to customize settings
     through an environment variable.
@@ -24,7 +24,7 @@
 ## 0.0.26 (2018-07-20)
 
 -   Fix spelling of the label that is applied to events after p_astro finishes,
-    changed from ``P_ASTRO_READY`` to ``PASTRO_READY``.
+    changed from `P_ASTRO_READY` to `PASTRO_READY`.
 
 -   Run p_astro calculation for mock events.
 
@@ -43,11 +43,11 @@
 
 ## 0.0.25 (2018-07-19)
 
--   Reintroduce pipeline-dependent pre/post peeks for ``check_vector`` after
+-   Reintroduce pipeline-dependent pre/post peeks for `check_vector` after
     fixing issue where pipeline information was being looked for in the wrong
     dictionary.
 
--   ``check_vector`` checks all detectors regardless of instruments used, but
+-   `check_vector` checks all detectors regardless of instruments used, but
     only appends labels based on active instruments.
 
 -   Fix a few issues in the GCN broker:
@@ -62,12 +62,12 @@
     *   Consume and ignore all keepalive and ack packets from the client so
         that the receive buffer does not overrun.
 
--   Add ``p_astro`` computation for ``gstlal`` pipeline. The copmutation is
+-   Add `p_astro` computation for `gstlal` pipeline. The copmutation is
     launched for all cbc_gstlal triggers.
 
 ## 0.0.24 (2018-07-18)
 
--   Revert pipeline-dependent pre/post peeks for ``check_vector`` because they
+-   Revert pipeline-dependent pre/post peeks for `check_vector` because they
     introduced a regression: it caused the orchestrator failed without running
     any annotations.
 
@@ -81,7 +81,7 @@
 
 -   Fix fallback for determining superevent duration for unknown pipelines.
 
--   Make ``check_vector`` pre/post peeks pipeline dependent.
+-   Make `check_vector` pre/post peeks pipeline dependent.
 
 ## 0.0.22 (2018-07-11)
 
@@ -104,8 +104,8 @@
 
 ## 0.0.21 (2018-07-10)
 
--   MBTA events in GraceDb leave the ``search`` field blank. Work around this
-    in ``gwcelery.tasks.detchar.check_vectors`` where we expected the field
+-   MBTA events in GraceDb leave the `search` field blank. Work around this
+    in `gwcelery.tasks.detchar.check_vectors` where we expected the field
     to be present.
 
 -   Track change in GraceDb JSON response for VOEvent creation.
@@ -299,10 +299,10 @@
 ## 0.0.6 (2018-05-26)
 
 -   Generate GCN Circular drafts using
-    [``ligo-followup-advocate``](https://git.ligo.org/emfollow/ligo-followup-advocate).
+    [`ligo-followup-advocate`](https://git.ligo.org/emfollow/ligo-followup-advocate).
 
 -   In the continuous integration pipeline, validate PEP8 naming conventions
-    using [``pep8-naming``](https://pypi.org/project/pep8-naming/).
+    using [`pep8-naming`](https://pypi.org/project/pep8-naming/).
 
 -   Add instructions for measuring test coverage and running the linter locally
     to the contributing guide.
@@ -353,7 +353,7 @@
     that we don't accidentally interact with production servers during the unit
     tests.
 
--   Ignore BAYESTAR jobs that raise a ``DetectorDisabled`` error. These
+-   Ignore BAYESTAR jobs that raise a `DetectorDisabled` error. These
     exceptions are used for control flow and do not constitute a real error.
     Ignoring these jobs avoids polluting logs and the Flower monitor.
 
@@ -363,14 +363,14 @@
 
 -   Adjust error reporting for some tasks.
 
--   Depend on newer version of ``ligo.skymap``.
+-   Depend on newer version of `ligo.skymap`.
 
--   Add unit tests for the ``gwcelery condor submit`` subcommand.
+-   Add unit tests for the `gwcelery condor submit` subcommand.
 
 ## 0.0.3 (2018-04-27)
 
--   Fix some compatibility issues between the ``gwcelery condor submit``
-    subcommand and the format of ``condor_q -totals -xml`` with older versions
+-   Fix some compatibility issues between the `gwcelery condor submit`
+    subcommand and the format of `condor_q -totals -xml` with older versions
     of HTCondor.
 
 ## 0.0.2 (2018-04-27)
