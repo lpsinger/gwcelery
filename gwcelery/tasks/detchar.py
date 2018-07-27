@@ -21,7 +21,7 @@ from glue.lal import Cache
 from gwpy.timeseries import Bits, StateVector
 import numpy as np
 
-from ..celery import app
+from ..import app
 from . import gracedb
 
 __author__ = 'Geoffrey Mo <geoffrey.mo@ligo.org>'

@@ -2,7 +2,7 @@
 import ligo.raven.gracedb_events
 import ligo.raven.search
 
-from ..celery import app
+from ..import app
 from . import gracedb
 
 

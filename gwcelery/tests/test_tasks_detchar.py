@@ -4,7 +4,7 @@ from unittest.mock import patch
 from pkg_resources import resource_filename
 import pytest
 
-from ..celery import app
+from ..import app
 from ..tasks import detchar
 
 

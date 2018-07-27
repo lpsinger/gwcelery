@@ -21,7 +21,7 @@ from ligo.p_astro import SourceType, MarginalizedPosterior
 import numpy as np
 import pkg_resources
 
-from ..celery import app
+from ..import app
 from ..util import PromiseProxy
 
 log = get_task_logger(__name__)

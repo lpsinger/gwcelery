@@ -6,7 +6,7 @@ from celery import chain, group
 from celery.exceptions import Ignore
 from ligo.gracedb.rest import HTTPError
 
-from ..celery import app
+from ..import app
 from . import bayestar
 from . import circulars
 from .core import identity

@@ -15,7 +15,7 @@ import tempfile
 
 import lxml.etree
 
-from ..celery import app
+from .. import app
 
 
 def _escape_arg(arg):

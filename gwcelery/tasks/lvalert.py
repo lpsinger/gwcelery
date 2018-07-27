@@ -6,7 +6,7 @@ from celery_eternal import EternalTask
 from celery.utils.log import get_task_logger
 import sleek_lvalert
 
-from ..celery import app
+from ..import app
 from .core import DispatchHandler
 from . import gracedb
 

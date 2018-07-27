@@ -3,7 +3,7 @@
 from celery import group
 from celery.utils.log import get_task_logger
 
-from ..celery import app
+from .. import app
 
 log = get_task_logger(__name__)
 

@@ -11,7 +11,7 @@ from ligo.skymap import bayestar as _bayestar
 from ligo.skymap.io import events
 from ligo.skymap.io import fits
 
-from ..celery import app
+from .. import app
 from . import gracedb
 
 log = logging.getLogger('BAYESTAR')

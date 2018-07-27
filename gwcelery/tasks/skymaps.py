@@ -5,7 +5,7 @@ from ligo.skymap.tool import ligo_skymap_plot
 from ligo.skymap.tool import ligo_skymap_plot_volume
 
 from . import gracedb
-from ..celery import app
+from ..import app
 from ..jinja import env
 from ..util.tempfile import NamedTemporaryFile
 

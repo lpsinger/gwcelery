@@ -11,7 +11,7 @@ from ligo.skymap.io.events.ligolw import ContentHandler
 import numpy as np
 import pkg_resources
 
-from ..celery import app
+from ..import app
 from . import gracedb
 
 log = get_task_logger(__name__)

@@ -10,7 +10,7 @@ superevents.
 from celery.utils.log import get_task_logger
 from glue.segments import segment, segmentlist
 
-from ..celery import app
+from ..import app
 from . import gracedb, lvalert
 
 log = get_task_logger(__name__)

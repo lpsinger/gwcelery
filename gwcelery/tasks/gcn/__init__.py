@@ -16,7 +16,7 @@ from gcn.voeventclient import _get_now_iso8601, _recv_packet, _send_packet
 from gcn import get_notice_type, NoticeType
 import gcn
 
-from ...celery import app
+from ...import app
 from ..core import DispatchHandler
 
 log = get_task_logger(__name__)

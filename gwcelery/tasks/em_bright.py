@@ -4,7 +4,7 @@ import json
 
 from ligo.skymap.io import events
 
-from ..celery import app
+from ..import app
 
 
 def source_classification(m1, m2, c1, threshold=3.0):

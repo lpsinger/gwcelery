@@ -2,7 +2,7 @@
 from ligo.gracedb import rest
 from celery.utils.log import get_task_logger
 
-from ..celery import app
+from ..import app
 from ..util import PromiseProxy
 
 client = PromiseProxy(rest.GraceDb,

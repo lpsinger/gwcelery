@@ -8,7 +8,7 @@ from ligo.skymap.tool import ligo_skymap_combine
 import lxml.etree
 
 from . import gracedb
-from ..celery import app
+from ..import app
 from ..util.tempfile import NamedTemporaryFile
 
 
