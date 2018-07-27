@@ -236,25 +236,25 @@ def check_vectors(event, superevent_id, start, end):
             ', '.join(k for k, v in inj_states.items() if v is False))
         gracedb.client.writeLog(superevent_id, inj_msg,
                                 tag_name=['data_quality'])
-    elif all(inj_states.values()):
+    elif all(inj_states.values()) and len(inj_states.values()) > 0:
         gracedb.client.writeLog(superevent_id, 'No HW injections found.',
                                 tag_name=['data_quality'])
 
     # Determining overall_dq_active_state
-    if None in active_dq_states.values():
+    if None in active_dq_states.values() or len(
+            active_dq_states.values()) == 0:
         overall_dq_active_state = None
     elif False in active_dq_states.values():
         overall_dq_active_state = False
-    else:
-        assert all(active_dq_states.values())
+    elif all(active_dq_states.values()):
         overall_dq_active_state = True
     fmt = ("detector state for active instruments is {}."
            " For all instruments, bits good ({}), bad ({}), unknown({}).")
     msg = fmt.format(
         {None: 'unknown', False: 'bad', True: 'good'}[overall_dq_active_state],
-        ', '.join(k for k, v in active_dq_states.items() if v is True),
-        ', '.join(k for k, v in active_dq_states.items() if v is False),
-        ', '.join(k for k, v in active_dq_states.items() if v is None),
+        ', '.join(k for k, v in dq_states.items() if v is True),
+        ', '.join(k for k, v in dq_states.items() if v is False),
+        ', '.join(k for k, v in dq_states.items() if v is None),
     )
     # Labeling DQOK/DQV to GraceDb
     gracedb.client.writeLog(superevent_id, msg, tag_name=['data_quality'])
