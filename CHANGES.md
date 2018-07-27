@@ -4,6 +4,9 @@
 
 -   Add a workflow graph to superevents module documentation.
 
+-   Add `gwcelery condor resubmit` as a shortcut for
+    `gwcelery condor rm; gwcelery condor submit`.
+
 ## 0.0.28 (2018-07-25)
 
 -   Add injection checks to `check_vector`.

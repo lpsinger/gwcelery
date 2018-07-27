@@ -37,5 +37,10 @@ The following commands are provided as shortcuts for the above operations:
     $ gwcelery condor hold
     $ gwcelery condor release
 
+The following command is a shortcut for
+`gwcelery condor rm; gwcelery condor submit`:
+
+    $ gwcelery condor resubmit
+
 [HTCondor]: https://research.cs.wisc.edu/htcondor/
 [`gwcelery.sub`]: https://git.ligo.org/emfollow/gwcelery/blob/master/gwcelery/data/gwcelery.sub
