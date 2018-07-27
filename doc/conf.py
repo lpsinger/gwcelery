@@ -122,7 +122,7 @@ for mod in ['astropy',
         importlib.import_module(mod)
     except ImportError:
         autodoc_mock_imports.append(mod)
-autodoc_default_flags = ['members', 'show-inheritance']
+autodoc_default_flags = ['members', 'undoc-members', 'show-inheritance']
 autosummary_generate = True
 
 
