@@ -13,6 +13,8 @@
 -   Change the preferred event selection criteria for burst events
     to be FAR instead of SNR.
 
+-   Add `gwcelery nagios` subcommand for Nagios monitoring.
+
 ## 0.0.29 (2018-07-31)
 
 -   Add a workflow graph to superevents module documentation.
