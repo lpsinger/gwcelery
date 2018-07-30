@@ -170,15 +170,15 @@ def check_vector(cache, channel, start, end, bits, logic_type='all'):
 
 
 @app.task(shared=False)
-def check_vectors(event, superevent_id, start, end):
+def check_vectors(event, graceid, start, end):
     """Perform data quality checks for an event. This includes checking the DQ
     overflow vector (DMT-DQ_VECTOR) for LIGO and the first and second bits of
     the calibration state vectors for LIGO (GDS-CALIB_STATE_VECTOR) and Virgo
     (DQ_ANALYSIS_STATE_VECTOR), as well as the injection states for all three
     detectors.
 
-    The results of these checks are logged into the superevent specified
-    by ``superevent_id``, and ``DQOK``, ``DQV``, and ``INJ`` labels are
+    The results of these checks are logged into the event/superevent specified
+    by ``graceid``, and ``DQOK``, ``DQV``, and ``INJ`` labels are
     appended as appropriate.
 
     This skips MDC events.
@@ -187,7 +187,7 @@ def check_vectors(event, superevent_id, start, end):
     ----------
     event : dict
         Details of event.
-    superevent_id : str
+    graceid : str
         GraceID of event to which to log.
     start, end : int or float
         GPS start and end times desired.
@@ -227,17 +227,17 @@ def check_vectors(event, superevent_id, start, end):
     # Labeling INJ to GraceDb
     if False in active_inj_states.values():
         # Label 'INJ' if injection found in active IFOs
-        gracedb.create_label('INJ', superevent_id)
+        gracedb.create_label('INJ', graceid)
     if False in inj_states.values():
         # Write all found injections into GraceDb log
         inj_fmt = ("Looking across all ifos, {} is False. No other HW"
                    " injections found.")
         inj_msg = inj_fmt.format(
             ', '.join(k for k, v in inj_states.items() if v is False))
-        gracedb.client.writeLog(superevent_id, inj_msg,
+        gracedb.client.writeLog(graceid, inj_msg,
                                 tag_name=['data_quality'])
     elif all(inj_states.values()) and len(inj_states.values()) > 0:
-        gracedb.client.writeLog(superevent_id, 'No HW injections found.',
+        gracedb.client.writeLog(graceid, 'No HW injections found.',
                                 tag_name=['data_quality'])
 
     # Determining overall_dq_active_state
@@ -257,11 +257,11 @@ def check_vectors(event, superevent_id, start, end):
         ', '.join(k for k, v in dq_states.items() if v is None),
     )
     # Labeling DQOK/DQV to GraceDb
-    gracedb.client.writeLog(superevent_id, msg, tag_name=['data_quality'])
+    gracedb.client.writeLog(graceid, msg, tag_name=['data_quality'])
     if overall_dq_active_state is True:
-        gracedb.create_label('DQOK', superevent_id)
+        gracedb.create_label('DQOK', graceid)
     elif overall_dq_active_state is False:
-        gracedb.create_label('DQV', superevent_id)
+        gracedb.create_label('DQV', graceid)
         # Halt further proessing of canvas
         raise Ignore('vetoed by state vector')
 

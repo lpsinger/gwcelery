@@ -8,6 +8,8 @@
 
 -   Remove now-unused task `gwcelery.tasks.orchestartor.continue_if`.
 
+-   Add `check_vectors` run for external triggers.
+
 ## 0.0.29 (2018-07-31)
 
 -   Add a workflow graph to superevents module documentation.

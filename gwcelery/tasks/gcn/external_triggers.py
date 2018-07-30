@@ -5,6 +5,7 @@ from celery.utils.log import get_task_logger
 
 from .. import gcn
 from .. import gracedb
+from .. import detchar
 
 log = get_task_logger(__name__)
 
@@ -43,7 +44,11 @@ def handle(payload):
         gracedb.replace_event(graceid, payload)
 
     else:
-        gracedb.create_event(filecontents=payload,
-                             search='GRB',
-                             group='External',
-                             pipeline=event_observatory)
+        graceid = gracedb.create_event(filecontents=payload,
+                                       search='GRB',
+                                       group='External',
+                                       pipeline=event_observatory)
+        event = gracedb.get_event(graceid)
+        start = event['gpstime']
+        end = start + event['extra_attributes']['GRB']['trigger_duration']
+        detchar.check_vectors(event, event['graceid'], start, end)
