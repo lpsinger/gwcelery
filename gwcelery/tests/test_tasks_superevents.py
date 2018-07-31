@@ -324,7 +324,8 @@ def test_parse_trigger_burst_3(monkeypatch):
         p.assert_called_once_with(pytest.approx(1163905248.5),
                                   pytest.approx(1163905249.5),
                                   pytest.approx(1163905250.5),
-                                  preferred_event='G000007')
+                                  preferred_event='G000007',
+                                  category='production')
 
 
 def test_parse_trigger_burst_4(monkeypatch):

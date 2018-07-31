@@ -48,13 +48,20 @@ def handle(payload):
 
     event_info = _get_event_info(payload)
 
+    if event_info['search'] == 'MDC':
+        category = 'mdc'
+    elif event_info['group'] == 'Test':
+        category = 'test'
+    else:
+        category = 'production'
+
     query_times = (event_info['gpstime'] -
                    app.conf['superevent_query_d_t_start'],
                    event_info['gpstime'] +
                    app.conf['superevent_query_d_t_end'])
 
     sid, preferred_flag, superevents = gracedb.get_superevents(
-        gid, query='''{} .. {}'''.format(*query_times))
+        gid, query='''category: {} {} .. {}'''.format(category, *query_times))
 
     d_t_start, d_t_end = _get_dts(event_info)
 
@@ -78,7 +85,8 @@ def handle(payload):
             gracedb.create_superevent(event_info['graceid'],
                                       event_info['gpstime'],
                                       d_t_start,
-                                      d_t_end)
+                                      d_t_end,
+                                      category)
             return
 
         log.info('Event %s in window of %s. Adding event to superevent',

@@ -163,7 +163,7 @@ def update_superevent(superevent_id, t_start=None,
 
 
 @task(ignore_result=True, shared=False)
-def create_superevent(graceid, t0, d_t_start, d_t_end):
+def create_superevent(graceid, t0, d_t_start, d_t_end, category):
     """Create new superevent in GraceDb with `graceid`
 
     Parameters
@@ -176,10 +176,13 @@ def create_superevent(graceid, t0, d_t_start, d_t_end):
         superevent `t_start` = `t0 - d_t_start`
     d_t_end : float
         superevent `t_end` = `t0 + t_end`
+    category : str
+        superevent category
     """
     ts = t0 - d_t_start
     te = t0 + d_t_end
-    client.createSuperevent(ts, t0, te, preferred_event=graceid)
+    client.createSuperevent(ts, t0, te, preferred_event=graceid,
+                            category=category)
 
 
 @task(ignore_result=True, shared=False)
