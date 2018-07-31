@@ -117,7 +117,8 @@ for mod in ['astropy',
             'lxml',
             'lxml.etree',
             'numpy',
-            'sleek_lvalert']:
+            'sleek_lvalert',
+            'pytest']:
     try:
         importlib.import_module(mod)
     except ImportError:

@@ -4,6 +4,8 @@
 
 -   Manage superevents for production, test, and MDC events separately.
 
+-   Add some more validation of LIGO/Virgo VOEvents from GCN.
+
 ## 0.0.29 (2018-07-31)
 
 -   Add a workflow graph to superevents module documentation.

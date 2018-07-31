@@ -46,10 +46,10 @@
     <Param name="Group"        dataType="string" value="CBC"  unit="" ucd="meta.code" >
                                  <Description>Data analysis working group</Description> 
                                  </Param>
-    <Param name="Search"       dataType="string" value="illegal value" unit="" ucd="meta.code" >
+    <Param name="Search"       dataType="string" value="O2VirgoTest" unit="" ucd="meta.code" >
                                  <Description>Specific low-latency search</Description> 
                                  </Param>
-    <Param name="Pipeline"     dataType="string" value="GSTLAL" unit="" ucd="meta.code" >
+    <Param name="Pipeline"     dataType="string" value="gstlal" unit="" ucd="meta.code" >
                                  <Description>Low-latency data analysis pipeline</Description>
                                  </Param>
     <Param name="Internal"     dataType="string" value="0" unit=""  ucd="meta.code" >
@@ -58,10 +58,10 @@
     <Param name="FAR"          dataType="float"  value="3.478e-12" unit="Hz"  ucd="arith.rate,stat.falsealarm" >
                                  <Description>False alarm rate for GW candidates with this strength or greater</Description>
                                  </Param>
-    <Param name="ProbHasNS"    dataType="string" value="1.00" unit=""  ucd="stat.probability" >
+    <Param name="ProbHasNS"    dataType="float" value="1.00" unit=""  ucd="stat.probability" >
                                  <Description>Probability that at least one object in the binary is less than 3 solar masses. Range is 0.0-1.0.</Description> 
                                  </Param>
-    <Param name="ProbHasRemnant" dataType="string" value="1.00" unit=""  ucd="stat.probability" >
+    <Param name="ProbHasRemnant" dataType="float" value="1.00" unit=""  ucd="stat.probability" >
                                  <Description>Probability that there is matter in the surroundings of the central object. Range is 0.0-1.0.</Description> 
                                  </Param>
     <Param name="Trigger_ID"   value="0x8" />
