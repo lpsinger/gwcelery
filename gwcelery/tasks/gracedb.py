@@ -35,7 +35,7 @@ def create_label(label, graceid):
 @task(ignore_result=True, shared=False)
 def create_tag(tag, n, graceid):
     """Create a tag in GraceDb."""
-    client.createTag(graceid, n, tag)
+    client.addTag(graceid, n, tag)
 
 
 @task(shared=False)

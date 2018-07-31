@@ -47,7 +47,7 @@ def test_create_tag(mock_gracedb):
     gracedb.create_tag('tag', 'n', 'graceid')
 
     # Check that one file was downloaded.
-    mock_gracedb.createTag.assert_called_once_with('graceid', 'n', 'tag')
+    mock_gracedb.addTag.assert_called_once_with('graceid', 'n', 'tag')
 
 
 @patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
