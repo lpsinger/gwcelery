@@ -3,7 +3,6 @@ from unittest.mock import call, patch
 
 from glue.ligolw import utils
 from glue.ligolw import lsctables
-from glue.ligolw import table
 from ligo.skymap.io.events.ligolw import ContentHandler
 import pkg_resources
 import pytest
@@ -24,8 +23,7 @@ def test_pick_coinc():
     xmldoc, _ = utils.load_fileobj(io.BytesIO(coinc),
                                    contenthandler=ContentHandler)
 
-    coinc_inspiral_table = table.get_table(
-        xmldoc, lsctables.CoincInspiralTable.tableName)
+    coinc_inspiral_table = lsctables.CoincInspiralTable.get_table(xmldoc)
 
     assert len(coinc_inspiral_table) == 1
     coinc_inspiral, = coinc_inspiral_table
