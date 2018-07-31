@@ -11,6 +11,8 @@
     `ligo.gracedb.rest.Gracedb.createTag` to
     `ligo.gracedb.rest.Gracedb.addTag`.
 
+-   Update ligo-gracedb to 2.0.0.dev1.
+
 ## 0.0.28 (2018-07-25)
 
 -   Add injection checks to `check_vector`.
