@@ -15,6 +15,10 @@ from .. import gracedb
 def validate_voevent(payload):
     """Check that the contents of a public LIGO/Virgo GCN matches the original
     VOEvent in GraceDB."""
+    if not __debug__:
+        raise RuntimeError('This task will not function correctly because '
+                           'Python assertions are disabled.')
+
     root = lxml.etree.fromstring(payload)
 
     # Which GraceDB ID does this refer to?
