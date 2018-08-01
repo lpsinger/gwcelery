@@ -43,7 +43,7 @@ DETECTOR_MAPPING = (('H1', 'LHO'),
                     ('I1', 'LIO'))
 
 
-def to_bool(s):
+def _to_bool(s):
     if s in {'true', '1', 1}:
         return True
     elif s in {'false', '0', 0}:
@@ -107,7 +107,7 @@ def validate_voevent(payload):
                 'GCN is missing parameter: {!r}'.format(root_name))
 
             if orig_name in FLAGS:
-                tp = to_bool
+                tp = _to_bool
             else:
                 orig_type = orig_elem.attrib.get('dataType', 'string')
                 root_type = root_elem.attrib.get('dataType', 'string')
@@ -136,7 +136,7 @@ def validate_voevent(payload):
     for orig_prefix, root_prefix in DETECTOR_MAPPING:
         sel = xpath.format(root_prefix + '_participated')
         orig_on = (orig_prefix in orig_prefixes)
-        root_on = to_bool(root.find(sel).attrib['value'])
+        root_on = _to_bool(root.find(sel).attrib['value'])
         assert orig_on == root_on, (
             'GCN VOEvent claims that detector {} state is {!r}, but original '
             'VOEvent states that state is {!r}'.format(
