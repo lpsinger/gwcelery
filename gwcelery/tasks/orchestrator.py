@@ -44,7 +44,7 @@ def handle_superevent(alert):
     end = alert['object']['t_end']
 
     (
-        get_preferred_event.si(superevent_id).set(
+        _get_preferred_event.si(superevent_id).set(
             countdown=app.conf['orchestrator_timeout']
         )
         |
@@ -181,7 +181,7 @@ def handle_superevents_externaltriggers(alert):
 @app.task(autoretry_for=(HTTPError, URLError, TimeoutError),
           default_retry_delay=20.0, retry_backoff=True,
           retry_kwargs=dict(max_retries=500), shared=False)
-def download(*args, **kwargs):
+def _download(*args, **kwargs):
     """Download a file from GraceDb.
 
     This works just like :func:`gwcelery.tasks.gracedb.download`, except that
@@ -192,7 +192,7 @@ def download(*args, **kwargs):
 
 
 @gracedb.task(shared=False)
-def get_preferred_event(superevent_id):
+def _get_preferred_event(superevent_id):
     """Determine preferred event for a superevent by querying GraceDb.
 
     This works just like :func:`gwcelery.tasks.gracedb.get_superevent`, except
@@ -225,7 +225,7 @@ def continue_if(event, **kwargs):
 
 
 @gracedb.task(shared=False)
-def create_voevent(em_bright_json, *args, **kwargs):
+def _create_voevent(em_bright_json, *args, **kwargs):
     """Create a VOEvent record from an EM bright JSON file.
 
     Parameters
@@ -291,7 +291,7 @@ def preliminary_alert(event, superevent_id):
     # If there is a sky map, then copy it to the superevent and create plots.
     if skymap_filename is not None:
         canvas |= (
-            download.s(skymap_filename, preferred_event_id)
+            _download.s(skymap_filename, preferred_event_id)
             |
             group(
                 gracedb.upload.s(
@@ -316,7 +316,7 @@ def preliminary_alert(event, superevent_id):
     # If this is a CBC event, then copy the EM bright classification.
     if event['group'] == 'CBC':
         canvas |= (
-            download.si('source_classification.json', preferred_event_id)
+            _download.si('source_classification.json', preferred_event_id)
             |
             gracedb.upload.s(
                 'source_classification.json',
@@ -328,14 +328,14 @@ def preliminary_alert(event, superevent_id):
             |
             gracedb.create_label.si('EMBRIGHT_READY', superevent_id)
             |
-            download.si('source_classification.json', superevent_id)
+            _download.si('source_classification.json', superevent_id)
         )
     else:
         canvas |= identity.si(None)
 
     # Send GCN notice and upload GCN circular draft.
     canvas |= (
-        create_voevent.s(
+        _create_voevent.s(
             superevent_id, 'preliminary',
             skymap_type=skymap_type,
             skymap_filename=skymap_filename,
