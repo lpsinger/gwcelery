@@ -185,8 +185,11 @@ def _keyfunc(event_info):
     except ValueError:
         group_rank = float('inf')
     # return the index of group and negative snr in spirit
-    # of rank being lower for higher SNR
-    return group_rank, -1.0*event_info['snr']
+    # of rank being lower for higher SNR for CBC
+    if group == 'cbc':
+        return group_rank, -1.0*event_info['snr']
+    else:
+        return group_rank, event_info['far']
 
 
 def _update_superevent(superevent_id, preferred_event, new_event_dict,

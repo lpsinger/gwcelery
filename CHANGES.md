@@ -10,6 +10,9 @@
 
 -   Add `check_vectors` run for external triggers.
 
+-   Change the preferred event selection criteria for burst events
+    to be FAR instead of SNR.
+
 ## 0.0.29 (2018-07-31)
 
 -   Add a workflow graph to superevents module documentation.
