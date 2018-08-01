@@ -29,7 +29,7 @@ log = get_task_logger(__name__)
 # adapted from gstlal far.py RankingStatPDF
 
 
-class RankingStatPDF(object):
+class _RankingStatPDF(object):
     ligo_lw_name_suffix = "gstlal_inspiral_rankingstatpdf"
 
     @classmethod
@@ -53,9 +53,9 @@ class RankingStatPDF(object):
         return self
 
 
-def parse_likelihood_control_doc(xmldoc):
+def _parse_likelihood_control_doc(xmldoc):
     name = "gstlal_inspiral_likelihood"
-    rankingstatpdf = RankingStatPDF.from_xml(xmldoc, name)
+    rankingstatpdf = _RankingStatPDF.from_xml(xmldoc, name)
     if rankingstatpdf is None:
         raise ValueError("document does not contain likelihood ratio data")
     return rankingstatpdf
@@ -64,14 +64,14 @@ def parse_likelihood_control_doc(xmldoc):
 @ligolw_array.use_in
 @ligolw_param.use_in
 @lsctables.use_in
-class ContentHandler(LIGOLWContentHandler):
+class _ContentHandler(LIGOLWContentHandler):
     pass
 
 
-def get_ln_f_over_b(ranking_data_bytes, ln_likelihood_ratios):
+def _get_ln_f_over_b(ranking_data_bytes, ln_likelihood_ratios):
     ranking_data_xmldoc, _ = ligolw_utils.load_fileobj(
-        io.BytesIO(ranking_data_bytes), contenthandler=ContentHandler)
-    rankingstatpdf = parse_likelihood_control_doc(ranking_data_xmldoc)
+        io.BytesIO(ranking_data_bytes), contenthandler=_ContentHandler)
+    rankingstatpdf = _parse_likelihood_control_doc(ranking_data_xmldoc)
     # affect the zeroing of the PDFs below threshold by hacking the
     # histograms. Do the indexing ourselves to not 0 the bin @ threshold
     ln_likelihood_ratio_threshold = \
@@ -104,9 +104,9 @@ def get_ln_f_over_b(ranking_data_bytes, ln_likelihood_ratios):
     return ln_f_over_b
 
 
-def get_event_ln_likelihood_ratio_svd_endtime_mass(coinc_bytes):
+def _get_event_ln_likelihood_ratio_svd_endtime_mass(coinc_bytes):
     coinc_xmldoc, _ = ligolw_utils.load_fileobj(
-        io.BytesIO(coinc_bytes), contenthandler=ContentHandler)
+        io.BytesIO(coinc_bytes), contenthandler=_ContentHandler)
     coinc_event, = lsctables.CoincTable.get_table(coinc_xmldoc)
     coinc_inspiral, = lsctables.CoincInspiralTable.get_table(coinc_xmldoc)
     sngl_inspiral = lsctables.SnglInspiralTable.get_table(coinc_xmldoc)
@@ -120,7 +120,7 @@ def get_event_ln_likelihood_ratio_svd_endtime_mass(coinc_bytes):
             coinc_inspiral.mass)
 
 
-def load_search_database():
+def _load_search_database():
     filename = app.conf['p_astro_gstlal_trigger_db']
     # FIXME the gstlal trigger database path is specific to the CIT
     # cluster. Gentle exit against opening a non-existant database outside CIT
@@ -131,10 +131,10 @@ def load_search_database():
 
 
 # Lazily load search database
-connection = PromiseProxy(load_search_database)
+connection = PromiseProxy(_load_search_database)
 
 
-def load_search_results(end_time, mass, ln_likelihood_ratio_threshold):
+def _load_search_results(end_time, mass, ln_likelihood_ratio_threshold):
     """Queries SQLite file for background trigger data.
     The query has an extra check to make sure the event is not
     double counted.
@@ -192,7 +192,7 @@ WHERE
         zerolag_ln_likelihood_ratios, svd_banks
 
 
-def load_counts(name):
+def _load_counts(name):
     # FIXME txt files will need to be queried from sqlite dbs
     filename = pkg_resources.resource_filename(
         __name__, '../data/p_astro_gstlal/{}_wellfound_hits.txt'.format(name))
@@ -204,14 +204,14 @@ def load_counts(name):
 
 
 # Lazily load weights
-a_hat_bns = PromiseProxy(load_counts, ('bns',))
-a_hat_nsbh = PromiseProxy(load_counts, ('nsbh',))
-a_hat_bbh = PromiseProxy(load_counts, ('bbh',))
+a_hat_bns = PromiseProxy(_load_counts, ('bns',))
+a_hat_nsbh = PromiseProxy(_load_counts, ('nsbh',))
+a_hat_bbh = PromiseProxy(_load_counts, ('bbh',))
 
 
-def get_counts_instance(ln_f_over_b,
-                        svd_bank_nums,
-                        prior_type="Uniform"):
+def _get_counts_instance(ln_f_over_b,
+                         svd_bank_nums,
+                         prior_type="Uniform"):
     num_svd_bins = len(a_hat_bns)
 
     w_bns = num_svd_bins*np.take(a_hat_bns, svd_bank_nums)
@@ -240,13 +240,29 @@ def get_counts_instance(ln_f_over_b,
 def compute_p_astro(files):
     """
     Task to compute `p_astro` by source category.
+
+    Parameters
+    ----------
+    files : tuple
+        Tuple of byte content from (coinc.xml, ranking_data.xml.gz)
+
+    Returns
+    -------
+    p_astros : str
+        JSON dump of the p_astro by source category
+
+    Example
+    -------
+    >>> p_astros = json.loads(compute_p_astro(files))
+    >>> p_astros
+    {'BNS': 0.999, 'BBH': 0.0, 'NSBH': 0.0, 'Terr': 0.001}
     """
     coinc_bytes, ranking_data_bytes = files
 
     log.info(
         'Fetching ln_likelihood_ratio, svd bin, endtime, mass from coinc.xml')
     event_ln_likelihood_ratio, event_svd, event_endtime, event_mass = \
-        get_event_ln_likelihood_ratio_svd_endtime_mass(coinc_bytes)
+        _get_event_ln_likelihood_ratio_svd_endtime_mass(coinc_bytes)
 
     ln_likelihood_ratio_threshold = \
         app.conf['p_astro_gstlal_ln_likelihood_threshold']
@@ -254,23 +270,23 @@ def compute_p_astro(files):
     log.info('Querying trigger db to fetch zerolag ln_likelihood_ratios')
 
     background_ln_likelihood_ratios, zerolag_ln_likelihood_ratios, \
-        svd_banks = load_search_results(event_endtime,
-                                        event_mass,
-                                        ln_likelihood_ratio_threshold)
+        svd_banks = _load_search_results(event_endtime,
+                                         event_mass,
+                                         ln_likelihood_ratio_threshold)
 
     svd_banks = np.append(svd_banks, event_svd)
     zerolag_ln_likelihood_ratios = np.append(
         zerolag_ln_likelihood_ratios, event_ln_likelihood_ratio)
 
     log.info('Computing f_over_b from ranking_data.xml.gz')
-    ln_f_over_b = get_ln_f_over_b(ranking_data_bytes,
-                                  zerolag_ln_likelihood_ratios)
+    ln_f_over_b = _get_ln_f_over_b(ranking_data_bytes,
+                                   zerolag_ln_likelihood_ratios)
 
     log.info('Creating FGMC MarginalizedPosterior')
     event_counts_instance = \
-        get_counts_instance(ln_f_over_b,
-                            svd_banks,
-                            prior_type=app.conf['p_astro_gstlal_prior_type'])
+        _get_counts_instance(ln_f_over_b,
+                             svd_banks,
+                             prior_type=app.conf['p_astro_gstlal_prior_type'])
 
     num_f_over_b = len(ln_f_over_b)
 
