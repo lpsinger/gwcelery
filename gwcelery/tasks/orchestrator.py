@@ -22,6 +22,7 @@ from . import p_astro_gstlal
 
 
 @lvalert.handler('superevent',
+                 'mdc_superevent',
                  'test_superevent',
                  shared=False)
 def handle_superevent(alert):
@@ -142,6 +143,8 @@ def handle_cbc_event(alert):
 
 
 @lvalert.handler('superevent',
+                 'mdc_superevent',
+                 'test_superevent',
                  'external_fermi',
                  'external_fermi_grb',
                  'external_grb',
