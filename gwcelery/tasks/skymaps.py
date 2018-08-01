@@ -76,7 +76,8 @@ def fits_header(filecontents, filename):
 
 @app.task(shared=False)
 def plot_allsky(filecontents):
-    """Plot a Mollweide projection of a sky map."""
+    """Plot a Mollweide projection of a sky map using the command-line tool
+    :doc:`ligo-skymap-plot <ligo/skymap/tool/ligo_skymap_plot>`."""
     with NamedTemporaryFile(mode='rb', suffix='.png') as pngfile, \
             NamedTemporaryFile(content=filecontents) as fitsfile:
         ligo_skymap_plot.main([fitsfile.name, '-o', pngfile.name,
@@ -86,7 +87,9 @@ def plot_allsky(filecontents):
 
 @app.task(queue='openmp', shared=False)
 def plot_volume(filecontents):
-    """Plot a 3D volume rendering of a sky map."""
+    """Plot a 3D volume rendering of a sky map using the command-line tool
+    :doc:`ligo-skymap-plot-volume <ligo/skymap/tool/ligo_skymap_plot_volume>`.
+    """
     with NamedTemporaryFile(mode='rb', suffix='.png') as pngfile, \
             NamedTemporaryFile(content=filecontents) as fitsfile:
         ligo_skymap_plot_volume.main([fitsfile.name, '-o',
