@@ -3,7 +3,6 @@ import json
 from urllib.error import URLError
 
 from celery import chain, group
-from celery.exceptions import Ignore
 from ligo.gracedb.rest import HTTPError
 
 from ..import app
@@ -199,29 +198,6 @@ def _get_preferred_event(superevent_id):
     that it returns only the preferred event, and not the entire GraceDb JSON
     response."""
     return gracedb.get_superevent(superevent_id)['preferred_event']
-
-
-@app.task(shared=False)
-def continue_if(event, **kwargs):
-    """Continue processing if an event's properties match given values, else
-    halt the rest of the canvas by raising :class:`celery.exceptions.Ignore`.
-
-    Example
-    -------
-    .. code-block:: python
-
-        (
-            gracedb.get_event.s('G28048')
-            |
-            continue_if.s(group='CBC')
-            |
-            ...
-        ).apply_async()
-    """
-    if all(event.get(key) == value for key, value in kwargs.items()):
-        return event
-    else:
-        raise Ignore('This is not a {} event.'.format(group))
 
 
 @gracedb.task(shared=False)

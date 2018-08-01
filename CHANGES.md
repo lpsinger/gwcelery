@@ -6,6 +6,8 @@
 
 -   Add some more validation of LIGO/Virgo VOEvents from GCN.
 
+-   Remove now-unused task `gwcelery.tasks.orchestartor.continue_if`.
+
 ## 0.0.29 (2018-07-31)
 
 -   Add a workflow graph to superevents module documentation.
