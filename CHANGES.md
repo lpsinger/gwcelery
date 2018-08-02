@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.30 (unreleased)
+## 0.0.30 (2018-08-02)
 
 -   Manage superevents for production, test, and MDC events separately.
 
