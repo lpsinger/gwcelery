@@ -101,11 +101,18 @@ vector check will include in its check. Pipeline dependent."""
 llhoft_glob = '/dev/shm/llhoft/{detector}_O2/*.gwf'
 """File glob for low-latency h(t) frames."""
 
-llhoft_channels = {'H1:DMT-DQ_VECTOR': 'dmt_dq_vector_bits',
-                   'L1:DMT-DQ_VECTOR': 'dmt_dq_vector_bits',
-                   'H1:GDS-CALIB_STATE_VECTOR': 'state_vector_bits',
-                   'L1:GDS-CALIB_STATE_VECTOR': 'state_vector_bits',
-                   'V1:DQ_ANALYSIS_STATE_VECTOR': 'state_vector_bits'}
+llhoft_channels = {
+    'H1:DMT-DQ_VECTOR': 'dmt_dq_vector_bits',
+    'L1:DMT-DQ_VECTOR': 'dmt_dq_vector_bits',
+    'H1:GDS-CALIB_STATE_VECTOR': 'state_vector_bits',
+    'L1:GDS-CALIB_STATE_VECTOR': 'state_vector_bits',
+    'V1:DQ_ANALYSIS_STATE_VECTOR': 'state_vector_bits',
+    'V1:DQ_VETO_MBTA': 'no_dq_veto_mbta_bits',
+    'V1:DQ_VETO_CWB': 'no_dq_veto_cwb_bits',
+    'V1:DQ_VETO_GSTLAL': 'no_dq_veto_gstlal_bits',
+    'V1:DQ_VETO_OLIB': 'no_dq_veto_olib_bits',
+    'V1:DQ_VETO_PYCBC': 'no_dq_veto_pycbc_bits',
+                  }
 """Low-latency h(t) state vector configuration. This is a dictionary
 consisting of a channel and its bitmask, as defined in
 :module:``detchar.py``."""

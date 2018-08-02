@@ -15,6 +15,8 @@
 
 -   Add `gwcelery nagios` subcommand for Nagios monitoring.
 
+-   Incorporate Virgo DQ veto streams into `check_vectors`
+
 ## 0.0.29 (2018-07-31)
 
 -   Add a workflow graph to superevents module documentation.
