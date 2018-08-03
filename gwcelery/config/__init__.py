@@ -107,11 +107,12 @@ llhoft_channels = {
     'H1:GDS-CALIB_STATE_VECTOR': 'state_vector_bits',
     'L1:GDS-CALIB_STATE_VECTOR': 'state_vector_bits',
     'V1:DQ_ANALYSIS_STATE_VECTOR': 'state_vector_bits',
-    'V1:DQ_VETO_MBTA': 'no_dq_veto_mbta_bits',
-    'V1:DQ_VETO_CWB': 'no_dq_veto_cwb_bits',
-    'V1:DQ_VETO_GSTLAL': 'no_dq_veto_gstlal_bits',
-    'V1:DQ_VETO_OLIB': 'no_dq_veto_olib_bits',
-    'V1:DQ_VETO_PYCBC': 'no_dq_veto_pycbc_bits',
+    #  Virgo DQ veto streams, should be implemented before September O2 replay
+    #  'V1:DQ_VETO_MBTA': 'no_dq_veto_mbta_bits',
+    #  'V1:DQ_VETO_CWB': 'no_dq_veto_cwb_bits',
+    #  'V1:DQ_VETO_GSTLAL': 'no_dq_veto_gstlal_bits',
+    #  'V1:DQ_VETO_OLIB': 'no_dq_veto_olib_bits',
+    #  'V1:DQ_VETO_PYCBC': 'no_dq_veto_pycbc_bits',
                   }
 """Low-latency h(t) state vector configuration. This is a dictionary
 consisting of a channel and its bitmask, as defined in
