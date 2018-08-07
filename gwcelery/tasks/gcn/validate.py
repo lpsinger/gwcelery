@@ -59,7 +59,7 @@ def _to_bool(s):
 def validate_voevent(payload):
     """Check that the contents of a public LIGO/Virgo GCN matches the original
     VOEvent in GraceDB."""
-    if not __debug__:
+    if not __debug__:  # pragma: no cover
         raise RuntimeError('This task will not function correctly because '
                            'Python assertions are disabled.')
 
