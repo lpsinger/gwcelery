@@ -68,6 +68,8 @@ test:
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
   variables:
     GIT_STRATEGY: none
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq redis-server
   script:
     - tar --strip-components 1 -xf *.tar.*
     - pip install pytest-cov
