@@ -1,4 +1,4 @@
-gwcelery\.util package
-======================
+gwcelery\.util module
+=====================
 
 .. automodule:: gwcelery.util
