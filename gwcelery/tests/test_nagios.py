@@ -1,4 +1,5 @@
 import subprocess
+from unittest.mock import patch
 
 import pytest
 
@@ -32,7 +33,20 @@ def redis(unix_domain_socket):
 # Note: the names of these unit tests must be very short because there is a
 # very strict limit on the length of a Unix domain socket path.
 # See https://unix.stackexchange.com/questions/367008
-def test0(capsys, unix_domain_socket):
+
+
+@patch('gwcelery.app.connection', side_effect=RuntimeError)
+def test0(mock_connection, capsys):
+    """Test that we generate the correct message when there is an unexpected
+    exception."""
+    with pytest.raises(SystemExit) as excinfo:
+        app.start(['gwcelery', 'nagios'])
+    assert excinfo.value.code == nagios.NagiosPluginStatus.UNKNOWN
+    out, err = capsys.readouterr()
+    assert out.startswith('UNKNOWN: Unexpected error')
+
+
+def test1(capsys, unix_domain_socket):
     """Test that we generate the correct message when the broker is not
     running."""
     with pytest.raises(SystemExit) as excinfo:
@@ -43,7 +57,7 @@ def test0(capsys, unix_domain_socket):
 
 
 @pytest.mark.skipif(not HAS_REDIS, reason='redis-server is not installed')
-def test1(capsys, redis):
+def test2(capsys, redis):
     """Test that we generate the correct message when the broker is running but
     none of the workers are."""
     with pytest.raises(SystemExit) as excinfo:
