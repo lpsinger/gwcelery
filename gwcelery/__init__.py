@@ -6,9 +6,9 @@ from .config import playground
 
 __all__ = ('app',)
 
-# Celery application object.
 # Use redis broker, because it supports locks (and thus singleton tasks).
 app = Celery(__name__, broker='redis://', autofinalize=False)
+"""Celery application object."""
 
 # Register all tasks.
 app.autodiscover_tasks([__name__])

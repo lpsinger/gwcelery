@@ -1,6 +1,8 @@
 API Reference
 =============
 
+.. automodule:: gwcelery
+
 .. toctree::
 
     gwcelery.config
