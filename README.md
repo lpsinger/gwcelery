@@ -11,7 +11,7 @@ See the [quick start installation instructions](https://emfollow.docs.ligo.org/g
 
  - [Easy installation with `pip`](https://emfollow.docs.ligo.org/gwcelery/quickstart.html)
  - Lightning fast distributed task queue powered by
-   [Celery](http://celeryproject.org) and Redis (https://redis.io)
+   [Celery](http://celeryproject.org) and [Redis](https://redis.io)
  - Tasks are defined by [small, self-contained Python functions](https://git.ligo.org/emfollow/gwcelery/tree/master/gwcelery/tasks)
  - [Lightweight test suite](https://git.ligo.org/emfollow/gwcelery/tree/master/gwcelery/tests) using mocks of external services
  - [Continuous integration](https://git.ligo.org/emfollow/gwcelery/pipelines)
