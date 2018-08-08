@@ -4,6 +4,9 @@
 
 -   Refactor external trigger handling to separate it from the orchestrator.
 
+-   Fixed a bug in the VOEvent broker to only issue "iamalive" messages after
+    sending the first VOEvent.
+
 ## 0.0.30 (2018-08-02)
 
 -   Manage superevents for production, test, and MDC events separately.

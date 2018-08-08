@@ -79,7 +79,7 @@ def broker(self):
                         struct.pack('ii', 1, 0))
         conn.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 1)
 
-        last_sent = float('inf')
+        last_sent = time.monotonic()
 
         while not self.is_aborted():
             # Get next payload from queue in first-in, first-out fashion
