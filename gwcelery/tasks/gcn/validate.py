@@ -127,6 +127,8 @@ def validate_voevent(payload):
             # Some special cases where GCN uses a different string from us...
             if root_name == 'Search' and root_value == 'MockDataChallenge':
                 root_value = 'MDC'
+            elif root_name == 'Pipeline' and root_value == 'GSTLAL':
+                root_value = 'gstlal'
 
             assert root_value == orig_value, (
                 'GCN parameter {!r} has value {!r}, but '
