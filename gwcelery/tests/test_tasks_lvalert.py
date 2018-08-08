@@ -24,7 +24,7 @@ def netrc_lvalert(tmpdir):
 
 
 @patch('sleek_lvalert.LVAlertClient')
-@patch('gwcelery.tasks.lvalert.listen.is_aborted', return_value=True)
+@patch('gwcelery.tasks.lvalert.listen.is_aborted', side_effect=[False, True])
 def test_listen(mock_is_aborted, mock_client, netrc_lvalert):
     client_instance = mock_client.return_value
     client_instance.get_subscriptions.return_value = ['superevent']
