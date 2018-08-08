@@ -10,9 +10,9 @@ gwcelery\.tasks module
     gwcelery.tasks.condor
     gwcelery.tasks.detchar
     gwcelery.tasks.em_bright
+    gwcelery.tasks.external_triggers
     gwcelery.tasks.ligo_fermi_skymaps
     gwcelery.tasks.gcn
-    gwcelery.tasks.gcn.external_triggers
     gwcelery.tasks.gcn.validate
     gwcelery.tasks.gracedb
     gwcelery.tasks.lvalert

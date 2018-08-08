@@ -50,7 +50,7 @@ of several processes:
     alerts received from Fermi, Swift and neutrino alerts received from SNEWS 
     and create/modify external trigger events in *GraceDb*:
 
-    *  :meth:`gwcelery.tasks.gcn.external_triggers.handle`
+    *  :meth:`gwcelery.tasks.external_triggers.handle_gcn`
 
 7.  **General-Purpose Worker**
 

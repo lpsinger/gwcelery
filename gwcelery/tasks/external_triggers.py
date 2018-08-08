@@ -3,9 +3,12 @@ from urllib.parse import urlparse
 
 from celery.utils.log import get_task_logger
 
-from .. import gcn
-from .. import gracedb
-from .. import detchar
+from . import detchar
+from . import gcn
+from . import gracedb
+from . import ligo_fermi_skymaps
+from . import lvalert
+from . import raven
 
 log = get_task_logger(__name__)
 
@@ -19,7 +22,7 @@ log = get_task_logger(__name__)
              gcn.NoticeType.SNEWS,
              queue='exttrig',
              shared=False)
-def handle(payload):
+def handle_gcn(payload):
     """Handles the payload from the Fermi, Swift and SNEWS alerts.
     Prepares the alert to be sent to graceDB as 'E' events."""
     root = etree.fromstring(payload)
@@ -52,3 +55,39 @@ def handle(payload):
         start = event['gpstime']
         end = start + event['extra_attributes']['GRB']['trigger_duration']
         detchar.check_vectors(event, event['graceid'], start, end)
+
+
+@lvalert.handler('superevent',
+                 'mdc_superevent',
+                 'test_superevent',
+                 'external_fermi',
+                 'external_fermi_grb',
+                 'external_grb',
+                 'external_snews',
+                 'external_snews_supernova',
+                 'external_swift',
+                 shared=False)
+def handle_lvalert(alert):
+    """Parse an LVAlert message related to superevents/external triggers and
+    dispatch it to other tasks.
+
+    Notes
+    -----
+
+    This LVAlert message handler is triggered by creating a new superevent or
+    external trigger event, or applying the ``EM_COINC`` label to any
+    superevent:
+
+    * Any new event triggers a coincidence search with
+      :meth:`gwcelery.tasks.raven.coincidence_search`.
+    * The ``EM_COINC`` label triggers the creation of a combined GW-GRB sky map
+      using :meth:`gwcelery.tasks.ligo_fermi_skymaps.create_combined_skymap`.
+    """
+    # Determine GraceDb ID
+    graceid = alert['uid']
+
+    if alert['alert_type'] == 'new':
+        raven.coincidence_search(graceid, alert['object']).delay()
+    elif alert['alert_type'] == 'label':
+        if 'EM_COINC' in alert['description'] and graceid.startswith('S'):
+            ligo_fermi_skymaps.create_combined_skymap(graceid).delay()

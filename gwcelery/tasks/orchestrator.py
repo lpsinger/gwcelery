@@ -13,9 +13,7 @@ from . import detchar
 from . import em_bright
 from . import gcn
 from . import gracedb
-from . import ligo_fermi_skymaps
 from . import lvalert
-from . import raven
 from . import skymaps
 from . import p_astro_gstlal
 
@@ -139,42 +137,6 @@ def handle_cbc_event(alert):
             |
             gracedb.create_label.si('PASTRO_READY', graceid)
         ).delay()
-
-
-@lvalert.handler('superevent',
-                 'mdc_superevent',
-                 'test_superevent',
-                 'external_fermi',
-                 'external_fermi_grb',
-                 'external_grb',
-                 'external_snews',
-                 'external_snews_supernova',
-                 'external_swift',
-                 shared=False)
-def handle_superevents_externaltriggers(alert):
-    """Parse an LVAlert message related to superevents/external triggers and
-    dispatch it to other tasks.
-
-    Notes
-    -----
-
-    This LVAlert message handler is triggered by creating a new superevent or
-    external trigger event, or applying the ``EM_COINC`` label to any
-    superevent:
-
-    * Any new event triggers a coincidence search with
-      :meth:`gwcelery.tasks.raven.coincidence_search`.
-    * The ``EM_COINC`` label triggers the creation of a combined GW-GRB sky map
-      using :meth:`gwcelery.tasks.ligo_fermi_skymaps.create_combined_skymap`.
-    """
-    # Determine GraceDb ID
-    graceid = alert['uid']
-
-    if alert['alert_type'] == 'new':
-        raven.coincidence_search(graceid, alert['object']).delay()
-    elif alert['alert_type'] == 'label':
-        if 'EM_COINC' in alert['description'] and graceid.startswith('S'):
-            ligo_fermi_skymaps.create_combined_skymap(graceid).delay()
 
 
 @app.task(autoretry_for=(HTTPError, URLError, TimeoutError),

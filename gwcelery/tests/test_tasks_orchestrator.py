@@ -113,26 +113,3 @@ def test_handle_cbc_event_ignored(mock_gracedb, mock_localize,
     orchestrator.handle_cbc_event(alert)
     mock_localize.assert_not_called()
     mock_classifier.assert_not_called()
-
-
-@patch('gwcelery.tasks.raven.coincidence_search')
-def test_handle_superevent_creation(mock_raven_coincidence_search):
-    """Test dispatch of an LVAlert message for a superevent creation."""
-    # Test LVAlert payload.
-    alert = resource_json(__name__, 'data/lvalert_superevent_creation.json')
-
-    # Run function under test
-    orchestrator.handle_superevents_externaltriggers(alert)
-
-    # Check that the correct tasks were dispatched.
-    mock_raven_coincidence_search.assert_called_once_with('S180616h',
-                                                          alert['object'])
-
-
-@patch('gwcelery.tasks.ligo_fermi_skymaps.create_combined_skymap')
-def test_handle_superevent_emcoinc_label(mock_create_combined_skymap):
-    """Test dispatch of an LVAlert message for a superevent EM_COINC label
-    application."""
-    alert = resource_json(__name__, 'data/lvalert_superevent_label.json')
-    orchestrator.handle_superevents_externaltriggers(alert)
-    mock_create_combined_skymap.assert_called_once_with('S180616h')

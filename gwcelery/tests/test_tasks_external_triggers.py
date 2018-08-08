@@ -2,7 +2,8 @@ from unittest.mock import patch
 
 from pkg_resources import resource_string
 
-from ..tasks.gcn import external_triggers
+from ..tasks import external_triggers
+from . import resource_json
 
 
 @patch('gwcelery.tasks.gracedb.create_label')
@@ -14,7 +15,7 @@ from ..tasks.gcn import external_triggers
 def test_handle_create_event(mock_create_event, mock_get_event, mock_write_log,
                              mock_create_label):
     text = resource_string(__name__, 'data/fermi_grb_gcn.xml')
-    external_triggers.handle(payload=text)
+    external_triggers.handle_gcn(payload=text)
     mock_create_event.assert_called_once_with(filecontents=text,
                                               search='GRB',
                                               pipeline='Fermi',
@@ -37,5 +38,28 @@ def test_handle_create_event(mock_create_event, mock_get_event, mock_write_log,
 @patch('gwcelery.tasks.gracedb.get_events', return_value=[{'graceid': 'E1'}])
 def test_handle_replace_event(mock_get_events, mock_replace_event):
     text = resource_string(__name__, 'data/fermi_grb_gcn.xml')
-    external_triggers.handle(payload=text)
+    external_triggers.handle_gcn(payload=text)
     mock_replace_event.assert_called_once_with('E1', text)
+
+
+@patch('gwcelery.tasks.raven.coincidence_search')
+def test_handle_superevent_creation(mock_raven_coincidence_search):
+    """Test dispatch of an LVAlert message for a superevent creation."""
+    # Test LVAlert payload.
+    alert = resource_json(__name__, 'data/lvalert_superevent_creation.json')
+
+    # Run function under test
+    external_triggers.handle_lvalert(alert)
+
+    # Check that the correct tasks were dispatched.
+    mock_raven_coincidence_search.assert_called_once_with('S180616h',
+                                                          alert['object'])
+
+
+@patch('gwcelery.tasks.ligo_fermi_skymaps.create_combined_skymap')
+def test_handle_superevent_emcoinc_label(mock_create_combined_skymap):
+    """Test dispatch of an LVAlert message for a superevent EM_COINC label
+    application."""
+    alert = resource_json(__name__, 'data/lvalert_superevent_label.json')
+    external_triggers.handle_lvalert(alert)
+    mock_create_combined_skymap.assert_called_once_with('S180616h')

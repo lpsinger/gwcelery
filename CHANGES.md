@@ -2,7 +2,7 @@
 
 ## 0.0.31 (unreleased)
 
--   No changes yet.
+-   Refactor external trigger handling to separate it from the orchestrator.
 
 ## 0.0.30 (2018-08-02)
 
