@@ -1,4 +1,6 @@
-"""Routing of LVAlert messages to other tasks."""
+"""Tasks that comprise the alert orchestrator, which responsible for the
+vetting and annotation workflow to produce preliminary, initial, and update
+alerts for gravitational-wave event candidates."""
 import json
 from urllib.error import URLError
 
