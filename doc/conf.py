@@ -241,3 +241,8 @@ intersphinx_mapping = {
 # celery.contrib.sphinx does not show source links for tasks if this is set
 # to the default value of True
 viewcode_import = False
+
+
+# -- Options for graphviz extension ---------------------------------------
+
+graphviz_output_format = 'svg'
