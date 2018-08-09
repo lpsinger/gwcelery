@@ -84,18 +84,17 @@ def broker(self):
         while not self.is_aborted():
             # Get next payload from queue in first-in, first-out fashion
             payload = self.backend.client.lindex(_queue_name, 0)
-            now = time.monotonic()
             if payload is not None:
                 log.info('sending payload of %d bytes', len(payload))
                 _send_packet(conn, payload)
-                last_sent = now
+                last_sent = time.monotonic()
                 self.backend.client.lpop(_queue_name)
-            elif now - last_sent > KEEPALIVE_TIME:
+            elif time.monotonic() - last_sent > KEEPALIVE_TIME:
                 timestamp = _get_now_iso8601()
                 payload = IAMALIVE.format(fqdn, timestamp).encode('utf-8')
                 log.info('sending keepalive')
                 _send_packet(conn, payload)
-                last_sent = now
+                last_sent = time.monotonic()
             else:
                 # Read (but ignore) any inbound packet
                 try:
