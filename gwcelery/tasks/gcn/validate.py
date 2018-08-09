@@ -123,7 +123,7 @@ def validate_voevent(payload):
             root_value = tp(root_elem.attrib.get('value'))
 
             if tp is float:
-                orig_value = approx(orig_value)
+                orig_value = approx(orig_value, rel=1e-3)
 
             # Some special cases where GCN uses a different string from us...
             if root_name == 'Search' and root_value == 'MockDataChallenge':
