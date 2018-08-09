@@ -4,6 +4,7 @@ gwcelery\.tasks module
 .. automodule:: gwcelery.tasks
 
 .. toctree::
+    :maxdepth: 1
 
     gwcelery.tasks.bayestar
     gwcelery.tasks.circulars

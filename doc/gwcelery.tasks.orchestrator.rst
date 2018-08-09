@@ -26,6 +26,9 @@ The orchestrator consists of two LVAlert message handlers:
   burst searches (cWB, LIB) have integrated source localization and have no
   other annotations.
 
+Flow chart
+~~~~~~~~~~
+
 The flow chart below illustrates the operation of these two tasks.
 
 .. digraph:: orchestrator
@@ -164,5 +167,8 @@ The flow chart below illustrates the operation of these two tasks.
     ]
     download_psd -> download_coinc_psd -> bayestar -> source_classification
     download_ranking_data -> download_coinc_ranking_data -> p_astro
+
+Tasks
+~~~~~
 
 .. automodule:: gwcelery.tasks.orchestrator
