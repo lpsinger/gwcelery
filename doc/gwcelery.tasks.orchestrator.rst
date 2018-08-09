@@ -26,7 +26,7 @@ The orchestrator consists of two LVAlert message handlers:
   burst searches (cWB, LIB) have integrated source localization and have no
   other annotations.
 
-Flow chart
+Flow Chart
 ~~~~~~~~~~
 
 The flow chart below illustrates the operation of these two tasks.
