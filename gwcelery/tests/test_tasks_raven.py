@@ -27,11 +27,11 @@ def test_raven_search(monkeypatch, event_type, event_id):
     if event_id == 'S1234':
         mock_search.assert_called_once_with(
             mock_se_object(event_id, gracedb=gracedb.client), -5, 5,
-            gracedb=gracedb.client)
+            gracedb=gracedb.client, group=None)
     elif event_id == 'E1234':
         mock_search.assert_called_once_with(
             mock_exttrig_object(event_id, gracedb=gracedb.client), -5, 5,
-            gracedb=gracedb.client)
+            gracedb=gracedb.client, group=None)
     else:
         raise ValueError
 

@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import Mock, patch, call
 
 from pkg_resources import resource_string
 
@@ -43,17 +43,43 @@ def test_handle_replace_event(mock_get_events, mock_replace_event):
 
 
 @patch('gwcelery.tasks.raven.coincidence_search')
-def test_handle_superevent_creation(mock_raven_coincidence_search):
-    """Test dispatch of an LVAlert message for a superevent creation."""
+def test_handle_exttrig_creation(mock_raven_coincidence_search):
+    """Test dispatch of an LVAlert message for an exttrig creation."""
     # Test LVAlert payload.
-    alert = resource_json(__name__, 'data/lvalert_superevent_creation.json')
+    alert = resource_json(__name__, 'data/lvalert_exttrig_creation.json')
 
     # Run function under test
     external_triggers.handle_lvalert(alert)
 
     # Check that the correct tasks were dispatched.
-    mock_raven_coincidence_search.assert_called_once_with('S180616h',
-                                                          alert['object'])
+    mock_raven_coincidence_search.assert_has_calls([
+        call('E1234', alert['object'], group='CBC'),
+        call().delay(),
+        call('E1234', alert['object'], group='Burst'),
+        call().delay()])
+
+
+def test_handle_superevent_creation(monkeypatch):
+    """Test dispatch of an LVAlert message for a superevent creation."""
+    # Test LVAlert payload.
+    alert = resource_json(__name__, 'data/lvalert_superevent_creation.json')
+
+    def get_event(graceid):
+        assert graceid == 'M4634'
+        return {'group': 'CBC'}
+
+    mock_raven_coincidence_search = Mock()
+
+    monkeypatch.setattr('gwcelery.tasks.raven.coincidence_search',
+                        mock_raven_coincidence_search)
+    monkeypatch.setattr('gwcelery.tasks.gracedb.get_event', get_event)
+
+    # Run function under test
+    external_triggers.handle_lvalert(alert)
+
+    # Check that the correct tasks were dispatched.
+    mock_raven_coincidence_search.assert_called_once_with(
+        'S180616h', alert['object'], group='CBC')
 
 
 @patch('gwcelery.tasks.ligo_fermi_skymaps.create_combined_skymap')

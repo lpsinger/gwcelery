@@ -6,7 +6,7 @@ from ..import app
 from . import gracedb
 
 
-def coincidence_search(gracedb_id, alert_object):
+def coincidence_search(gracedb_id, alert_object, group=None):
     """Perform ligo-raven search for coincidences.
     The ligo.raven.search.search method applies EM_COINC label on its own.
 
@@ -16,16 +16,24 @@ def coincidence_search(gracedb_id, alert_object):
         ID of the trigger used by GraceDb
     alert_object: dict
         lvalert['object']
+    group: str
+        Burst or CBC
     """
+    if group == 'CBC':
+        tl = -5
+        th = 1
+    elif group == 'Burst':
+        tl = -600
+        th = 60
     return (
-        search.s(gracedb_id, alert_object)
+        search.s(gracedb_id, alert_object, tl, th, group=group)
         |
         add_exttrig_to_superevent.s(gracedb_id)
     )
 
 
 @app.task(shared=False)
-def search(gracedb_id, alert_object):
+def search(gracedb_id, alert_object, tl=-5, th=5, group=None):
     """Perform ligo-raven search for coincidences.
     The ligo.raven.search.search method applies EM_COINC label on its own.
 
@@ -35,16 +43,24 @@ def search(gracedb_id, alert_object):
         ID of the trigger used by GraceDb
     alert_object: dict
         lvalert['object']
+    tl: int
+        number of seconds to search before
+    th: int
+        number of seconds to search after
+    group: str
+        Burst or CBC
     Returns
     -------
         list with the dictionaries of related gracedb events
     """
     if alert_object.get('superevent_id'):
         cls = ligo.raven.gracedb_events.SE
+        group = None
     else:
         cls = ligo.raven.gracedb_events.ExtTrig
     event = cls(gracedb_id, gracedb=gracedb.client)
-    return ligo.raven.search.search(event, -5, 5, gracedb=gracedb.client)
+    return ligo.raven.search.search(event, tl, th, gracedb=gracedb.client,
+                                    group=group)
 
 
 @app.task(shared=False)

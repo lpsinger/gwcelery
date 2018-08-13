@@ -7,6 +7,10 @@
 -   Fixed a bug in the VOEvent broker to only issue "iamalive" messages after
     sending the first VOEvent.
 
+-   Pass group argument to set time windows appropriately when performing raven
+    coincidence searches. Search in the [-600, 60]s range for Burst events and
+    [-5, 1]s for CBC.
+
 ## 0.0.30 (2018-08-02)
 
 -   Manage superevents for production, test, and MDC events separately.
