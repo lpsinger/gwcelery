@@ -91,10 +91,13 @@ def handle_lvalert(alert):
         raven.coincidence_search(graceid, alert['object'], group='CBC').delay()
         raven.coincidence_search(graceid, alert['object'],
                                  group='Burst').delay()
-    elif alert['alert_type'] == 'new' and graceid.startswith('S'):
-        preferred_event_id = alert['object']['preferred_event']
+    elif graceid.startswith('S'):
+        preferred_event_id = gracedb.get_superevent(graceid)['preferred_event']
         group = gracedb.get_event(preferred_event_id)['group']
-        raven.coincidence_search(graceid, alert['object'], group=group).delay()
-    elif alert['alert_type'] == 'label':
-        if 'EM_COINC' in alert['description'] and graceid.startswith('S'):
-            ligo_fermi_skymaps.create_combined_skymap(graceid).delay()
+        if alert['alert_type'] == 'new':
+            raven.coincidence_search(graceid, alert['object'],
+                                     group=group).delay()
+        elif alert['alert_type'] == 'label':
+            if 'EM_COINC' in alert['description']:
+                ligo_fermi_skymaps.create_combined_skymap(graceid).delay()
+                raven.calculate_coincidence_far(graceid, group).delay()

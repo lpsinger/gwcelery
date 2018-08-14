@@ -1,4 +1,4 @@
-from unittest.mock import Mock, call
+from unittest.mock import call, patch
 
 import pytest
 
@@ -7,30 +7,25 @@ from ..tasks import gracedb, raven
 
 @pytest.mark.parametrize(
     'event_type,event_id', [['SE', 'S1234'], ['ExtTrig', 'E1234']])
-def test_raven_search(monkeypatch, event_type, event_id):
+@patch('ligo.raven.gracedb_events.ExtTrig')
+@patch('ligo.raven.gracedb_events.SE')
+@patch('ligo.raven.search.search')
+def test_raven_search(mock_raven_search, mock_se_cls, mock_exttrig_cls,
+                      event_type, event_id):
     """Test that correct input parameters are used for raven."""
     alert_object = {}
     if event_type == 'SE':
         alert_object['superevent_id'] = event_id
 
-    mock_exttrig_object = Mock()
-    mock_se_object = Mock()
-    mock_search = Mock()
-
-    monkeypatch.setattr('ligo.raven.search.search', mock_search)
-    monkeypatch.setattr('ligo.raven.gracedb_events.SE', mock_se_object)
-    monkeypatch.setattr('ligo.raven.gracedb_events.ExtTrig',
-                        mock_exttrig_object)
-
     # call raven search
     raven.search(event_id, alert_object)
     if event_id == 'S1234':
-        mock_search.assert_called_once_with(
-            mock_se_object(event_id, gracedb=gracedb.client), -5, 5,
+        mock_raven_search.assert_called_once_with(
+            mock_se_cls(event_id, gracedb=gracedb.client), -5, 5,
             gracedb=gracedb.client, group=None)
     elif event_id == 'E1234':
-        mock_search.assert_called_once_with(
-            mock_exttrig_object(event_id, gracedb=gracedb.client), -5, 5,
+        mock_raven_search.assert_called_once_with(
+            mock_exttrig_cls(event_id, gracedb=gracedb.client), -5, 5,
             gracedb=gracedb.client, group=None)
     else:
         raise ValueError

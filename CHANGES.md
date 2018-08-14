@@ -8,8 +8,13 @@
     sending the first VOEvent.
 
 -   Pass group argument to set time windows appropriately when performing raven
-    coincidence searches. Search in the [-600, 60]s range for Burst events and
-    [-5, 1]s for CBC.
+    coincidence searches. Search in the [-600, 60]s range and [-5, 1]s range
+    around external triggers for Burst events and CBC events respectively.
+    Similarly, search in the [-60, 600]s and [-1, 5]s range around Burst and
+    CBC events for external triggers.
+
+-   Compute and upload FAR for GRB external trigger/superevent coincidence upon
+    receipt of the EM_COINC label application to a superevent.
 
 ## 0.0.30 (2018-08-02)
 

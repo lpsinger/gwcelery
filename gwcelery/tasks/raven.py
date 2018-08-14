@@ -1,9 +1,47 @@
 """Search for GRB-GW coincidences with ligo-raven."""
-import ligo.raven.gracedb_events
 import ligo.raven.search
+from celery import chain
+from ligo.raven import gracedb_events
 
 from ..import app
 from . import gracedb
+
+
+tl_cbc, th_cbc = -5, 1
+tl_burst, th_burst = -600, 60
+
+
+def calculate_coincidence_far(gracedb_id, group):
+    """Compute FAR for external trigger and superevent coincidence by calling
+    ligo.raven.search.calc_signif_gracedb.
+
+    Parameters
+    ----------
+    gracedb_id: str
+        ID of the superevent trigger used by GraceDb
+    group: str
+        CBC or Burst; group of the preferred_event associated with the
+        gracedb_id superevent
+    """
+
+    se = gracedb_events.SE(gracedb_id, gracedb=gracedb.client)
+    em_events = gracedb.get_superevent(gracedb_id)['em_events']
+
+    if group == 'CBC':
+        tl, th = tl_cbc, th_cbc
+    elif group == 'Burst':
+        tl, th = tl_burst, th_burst
+
+    canvas = chain()
+    for exttrig_id in em_events:
+        if gracedb.get_event(exttrig_id)['search'] == 'GRB':
+            exttrig = gracedb_events.ExtTrig(exttrig_id,
+                                             gracedb=gracedb.client)
+            canvas |= (
+                ligo.raven.search.calc_signif_gracedb.si(se, exttrig, tl, th,
+                                                         incl_sky=False))
+
+    return canvas
 
 
 def coincidence_search(gracedb_id, alert_object, group=None):
@@ -19,8 +57,6 @@ def coincidence_search(gracedb_id, alert_object, group=None):
     group: str
         Burst or CBC
     """
-    tl_cbc, th_cbc = -5, 1
-    tl_burst, th_burst = -600, 60
     if group == 'CBC' and gracedb_id.startswith('E'):
         tl, th = tl_cbc, th_cbc
     elif group == 'CBC' and gracedb_id.startswith('S'):
@@ -61,11 +97,10 @@ def search(gracedb_id, alert_object, tl=-5, th=5, group=None):
         list with the dictionaries of related gracedb events
     """
     if alert_object.get('superevent_id'):
-        cls = ligo.raven.gracedb_events.SE
+        event = gracedb_events.SE(gracedb_id, gracedb=gracedb.client)
         group = None
     else:
-        cls = ligo.raven.gracedb_events.ExtTrig
-    event = cls(gracedb_id, gracedb=gracedb.client)
+        event = gracedb_events.ExtTrig(gracedb_id, gracedb=gracedb.client)
     return ligo.raven.search.search(event, tl, th, gracedb=gracedb.client,
                                     group=group)
 

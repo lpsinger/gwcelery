@@ -8,7 +8,7 @@ jinja2
 lalsuite
 ligo-followup-advocate >= 0.0.11
 ligo-gracedb >= 2.0.0.dev1
-ligo-raven >= 1.4
+ligo-raven >= 1.5
 ligo.skymap >= 0.0.12
 lscsoft-glue
 lxml

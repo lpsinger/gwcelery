@@ -1,4 +1,4 @@
-from unittest.mock import Mock, patch, call
+from unittest.mock import patch, call
 
 from pkg_resources import resource_string
 
@@ -59,20 +59,16 @@ def test_handle_exttrig_creation(mock_raven_coincidence_search):
         call().delay()])
 
 
-def test_handle_superevent_creation(monkeypatch):
+@patch('gwcelery.tasks.gracedb.get_superevent',
+       return_value={'preferred_event': 'M4634'})
+@patch('gwcelery.tasks.gracedb.get_event', return_value={'group': 'CBC'})
+@patch('gwcelery.tasks.raven.coincidence_search')
+def test_handle_superevent_creation(mock_raven_coincidence_search,
+                                    mock_get_event,
+                                    mock_get_superevent):
     """Test dispatch of an LVAlert message for a superevent creation."""
     # Test LVAlert payload.
     alert = resource_json(__name__, 'data/lvalert_superevent_creation.json')
-
-    def get_event(graceid):
-        assert graceid == 'M4634'
-        return {'group': 'CBC'}
-
-    mock_raven_coincidence_search = Mock()
-
-    monkeypatch.setattr('gwcelery.tasks.raven.coincidence_search',
-                        mock_raven_coincidence_search)
-    monkeypatch.setattr('gwcelery.tasks.gracedb.get_event', get_event)
 
     # Run function under test
     external_triggers.handle_lvalert(alert)
@@ -82,10 +78,21 @@ def test_handle_superevent_creation(monkeypatch):
         'S180616h', alert['object'], group='CBC')
 
 
+@patch('ligo.raven.gracedb_events.ExtTrig')
+@patch('ligo.raven.gracedb_events.SE')
+@patch('gwcelery.tasks.gracedb.get_superevent',
+       return_value={'preferred_event': 'M4634'})
+@patch('gwcelery.tasks.gracedb.get_event', return_value={'group': 'CBC'})
+@patch('gwcelery.tasks.raven.calculate_coincidence_far')
 @patch('gwcelery.tasks.ligo_fermi_skymaps.create_combined_skymap')
-def test_handle_superevent_emcoinc_label(mock_create_combined_skymap):
+def test_handle_superevent_emcoinc_label(mock_create_combined_skymap,
+                                         mock_calculate_coincidence_far,
+                                         mock_get_event, mock_get_superevent,
+                                         mock_se_cls, mock_exttrig_cls):
     """Test dispatch of an LVAlert message for a superevent EM_COINC label
     application."""
     alert = resource_json(__name__, 'data/lvalert_superevent_label.json')
+
     external_triggers.handle_lvalert(alert)
     mock_create_combined_skymap.assert_called_once_with('S180616h')
+    mock_calculate_coincidence_far.assert_called_once_with('S180616h', 'CBC')
