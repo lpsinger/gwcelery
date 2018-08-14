@@ -5,6 +5,8 @@
 -   Pin the `redis` package version at <3 because the latest version of redis
     breaks the Nagios unit tests.
 
+-   Ditch our own homebrew VOEvent broker and use Comet instead.
+
 ## 0.1.6 (2018-11-14)
 
 -   Update URL for static example event.

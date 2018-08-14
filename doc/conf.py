@@ -97,6 +97,7 @@ todo_include_todos = False
 
 autodoc_mock_imports = []
 for mod in ['astropy',
+            'comet',
             'gcn',
             'glue',
             'gwpy',
@@ -127,7 +128,9 @@ for mod in ['astropy',
             'scipy',
             'sentry_sdk',
             'sleek_lvalert',
-            'pytest']:
+            'twisted',
+            'pytest',
+            'zope']:
     try:
         importlib.import_module(mod)
     except ImportError:
@@ -245,6 +248,7 @@ intersphinx_mapping = {
     'celery': ('https://celery.readthedocs.io/en/latest/', None),
     'celery_eternal': ('https://celery-eternal.readthedocs.io/en/latest/',
                        None),
+    'comet': ('https://comet.readthedocs.io/en/stable/', None),
     'data-quality-report': (
         'https://docs.ligo.org/detchar/data-quality-report/', None),
     'gwpy': ('https://gwpy.github.io/docs/stable/', None),

@@ -1,6 +1,7 @@
 astropy
 celery[redis] >= 4.2.0
 celery_eternal >= 0.0.3
+comet
 flower
 gwpy
 healpy
