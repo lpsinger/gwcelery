@@ -19,12 +19,19 @@ def coincidence_search(gracedb_id, alert_object, group=None):
     group: str
         Burst or CBC
     """
-    if group == 'CBC':
-        tl = -5
-        th = 1
-    elif group == 'Burst':
-        tl = -600
-        th = 60
+    tl_cbc, th_cbc = -5, 1
+    tl_burst, th_burst = -600, 60
+    if group == 'CBC' and gracedb_id.startswith('E'):
+        tl, th = tl_cbc, th_cbc
+    elif group == 'CBC' and gracedb_id.startswith('S'):
+        tl, th = -th_cbc, -tl_cbc
+    elif group == 'Burst' and gracedb_id.startswith('E'):
+        tl, th = tl_burst, th_burst
+    elif group == 'Burst' and gracedb_id.startswith('S'):
+        tl, th = -th_burst, -tl_burst
+    else:
+        raise ValueError('Invalid RAVEN search request for {0}'.format(
+            gracedb_id))
     return (
         search.s(gracedb_id, alert_object, tl, th, group=group)
         |
