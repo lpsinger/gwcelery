@@ -25,7 +25,7 @@ add the following lines to the file ``~/public_html/.htaccess``::
 
 Some additional firewall configuration may be required.
 
-.. figure: screenshot.png
+.. image:: _static/screenshot.png
    :alt: Screenshot of Flower
 
 Nagios
