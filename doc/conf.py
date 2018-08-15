@@ -136,14 +136,25 @@ autosummary_generate = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'alabaster'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
+html_theme_options = {
+    'description': description,
+    'github_button': False,
+    'logo': 'logo.png',
+    'logo_name': True
+}
+
+# Integrate GitLab readthedocs links
 html_context = {
-    'logo': 'logo.png'
+    'display_gitlab': True,
+    'gitlab_host': 'git.ligo.org',
+    'gitlab_user': 'emfollow',
+    'gitlab_repo': 'gwcelery'
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
