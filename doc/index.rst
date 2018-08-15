@@ -6,7 +6,8 @@
 GWCelery
 ========
 
-GWCelery is a simple and reliable package for annotating and orchestrating LIGO/Virgo alerts, built from widely used open source components.
+GWCelery is a simple and reliable package for annotating and orchestrating
+LIGO/Virgo alerts, built from widely used open source components.
 
 .. toctree::
    :maxdepth: 2
@@ -34,4 +35,5 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-GWCelery is open source and is licensed under the :doc:`GNU General Public License v2 or later <license>`.
+GWCelery is open source and is licensed under the :doc:`GNU General Public
+License v2 or later <license>`.
