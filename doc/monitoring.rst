@@ -1,7 +1,9 @@
-Monitoring
-==========
+Monitoring and Management
+=========================
 
-There are several options for monitoring GWCelery.
+:doc:`Like all Celery applications <celery:userguide/monitoring>`, GWCelery
+supports a rich selection of management and monitoring tools. Here is an
+introduction to a few of them.
 
 Flower
 ------
@@ -28,8 +30,43 @@ Some additional firewall configuration may be required.
 .. image:: _static/screenshot.png
    :alt: Screenshot of Flower
 
+Command-Line Tools
+------------------
+
+All Celery application provide :ref:`command-line monitoring and management
+utilities <celery:monitoring-control>`, including the following:
+
+*   ``gwcelery shell``: Start an interactive Python or IPython interpreter for
+    interacting with Celery. All tasks as well as the :obj:`~gwcelery.app`
+    application instance are automatically imported and available as globals.
+    Example::
+
+        $ gwcelery shell
+        Python 3.6.6 (default, Jun 28 2018, 05:43:53)
+        Type 'copyright', 'credits' or 'license' for more information
+        IPython 6.5.0 -- An enhanced Interactive Python. Type '?' for help.
+
+        In [1]: download.s('coinc.xml', 'M6757').delay().get()
+
+*   ``gwcelery call``: Call a task from the command line by passing it arguments
+    in JSON format. The output is the unique identifier of the result.
+    Example::
+
+        $ gwcelery call gwcelery.tasks.gracedb.download --args='["coinc.xml", "M6757"]'
+        d11099e7-75e5-4aa3-800b-b122b667757c
+
+*   ``gwcelery result``: Get the result of a previously called task. Example::
+
+        $ gwcelery result ab4aa6d7-9f21-420c-8401-cbe6863cf7dc
+        (b'<?xml version=\'1.0\' encoding=\'utf-8\'?>\n<!DOCTYPE LIGO_LW SYSTEM "htt'
+         b'p://ldas-sw.ligo.caltech.edu/doc/ligolwAPI/html/ligolw_dtd.txt">\n<LIGO_L'
+         ...
+         b'\t</Stream>\n\t</Table>\n</LIGO_LW>\n')
+
 Nagios
 ------
+
+This tool is specific to GWCelery.
 
 The dashboard.ligo.org_ and monitor.ligo.org_ services use Nagios_ to monitor
 and report on the health of all of the components of the low-latency analysis
