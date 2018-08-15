@@ -1,4 +1,4 @@
-![GWCelery logo](doc/_static/logo-0.5x.png)
+![GWCelery logo](https://emfollow.docs.ligo.org/gwcelery/_static/logo-0.5x.png)
 
 # GWCelery
 
