@@ -2,9 +2,11 @@
 
 # GWCelery
 
-GWCelery is a simple and reliable package for annotating and orchestrating LIGO/Virgo alerts, built from widely used open source components.
+GWCelery is a simple and reliable package for annotating and orchestrating
+LIGO/Virgo alerts, built from widely used open source components.
 
-See the [quick start installation instructions](https://emfollow.docs.ligo.org/gwcelery/quickstart.html), the full [documentation](https://emfollow.docs.ligo.org/gwcelery/), or the
+See the [quick start installation instructions](https://emfollow.docs.ligo.org/gwcelery/quickstart.html),
+the full [documentation](https://emfollow.docs.ligo.org/gwcelery/), or the
 [contributing guide](https://emfollow.docs.ligo.org/gwcelery/contributing.html).
 
 ## Features
