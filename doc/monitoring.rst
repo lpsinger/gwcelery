@@ -8,7 +8,7 @@ Flower
 
 Flower_ is a dashboard for monitoring Celery tasks. To start Flower for
 monitoring during local development, run the following command and then
-navigate to http://localhost:5555/ in your browser:
+navigate to http://localhost:5555/ in your browser::
 
 	$ gwcelery flower
 
