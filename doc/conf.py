@@ -142,6 +142,11 @@ html_theme = 'sphinx_rtd_theme'
 # documentation.
 #
 html_context = {
+    'conf_py_path': '/doc/',
+    'display_gitlab': True,
+    'gitlab_host': 'git.ligo.org',
+    'gitlab_user': 'emfollow',
+    'gitlab_repo': 'gwcelery',
     'logo': 'logo.png'
 }
 
