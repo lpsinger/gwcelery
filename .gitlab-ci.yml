@@ -100,15 +100,11 @@ doc:
     - python setup.py build_sphinx -W
   dependencies:
     - dist
-  artifacts:
-    paths:
-      - build/sphinx/html
 
-# Publish docs and coverage
+# Publish coverage
 pages:
   stage: deploy
   script:
-    - mv build/sphinx/html public/
     - mv htmlcov public/
   artifacts:
     paths:
@@ -116,6 +112,8 @@ pages:
     expire_in: 30 days
   only:
     - master
+  dependencies:
+    - test
 
 # Upload package to PyPI
 pypi:
