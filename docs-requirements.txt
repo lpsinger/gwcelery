@@ -1,0 +1,4 @@
+celery>=4.2.0
+celery_eternal>=0.0.2
+recommonmark
+sphinx
