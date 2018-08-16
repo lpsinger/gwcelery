@@ -116,6 +116,7 @@ for mod in ['astropy',
             'ligo.followup_advocate',
             'ligo.p_astro'
             'ligo.raven',
+            'ligo.segments',
             'ligo.skymap',
             'lxml',
             'lxml.etree',
