@@ -120,6 +120,7 @@ for mod in ['astropy',
             'lxml',
             'lxml.etree',
             'numpy',
+            'scipy',
             'sleek_lvalert',
             'pytest']:
     try:
