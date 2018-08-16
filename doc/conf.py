@@ -234,8 +234,8 @@ texinfo_documents = [
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
-    'celery': ('http://celery.readthedocs.org/en/latest/', None),
-    'celery_eternal': ('http://celery-eternal.readthedocs.io/en/latest/',
+    'celery': ('https://celery.readthedocs.org/en/latest/', None),
+    'celery_eternal': ('https://celery-eternal.readthedocs.io/en/latest/',
                        None),
     'gwpy': ('https://gwpy.github.io/docs/stable/', None),
     'ligo.skymap': ('https://leo-singer.docs.ligo.org/ligo.skymap/', None)
