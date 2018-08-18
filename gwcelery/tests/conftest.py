@@ -5,6 +5,7 @@ import pytest
 from pytest_socket import disable_socket
 
 from .. import app
+from .process import starter  # noqa: F401
 
 
 @pytest.fixture(scope='session', autouse=True)

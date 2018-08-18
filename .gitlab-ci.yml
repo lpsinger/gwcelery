@@ -16,6 +16,10 @@ dist:
       - '*.tar.gz'
       - '*.whl'
 
+# Allow Celery to run as root, because everything runs as root under Docker.
+variables:
+  C_FORCE_ROOT: 'true'
+
 # Build Docker container for dependencies
 dependencies:
   stage: dist
