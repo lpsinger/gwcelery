@@ -38,10 +38,16 @@ def calculate_coincidence_far(gracedb_id, group):
             exttrig = gracedb_events.ExtTrig(exttrig_id,
                                              gracedb=gracedb.client)
             canvas |= (
-                ligo.raven.search.calc_signif_gracedb.si(se, exttrig, tl, th,
-                                                         incl_sky=False))
+                calc_signif.si(se, exttrig, tl, th))
 
     return canvas
+
+
+@app.task(shared=False)
+def calc_signif(se, exttrig, tl, th):
+    """Calculate FAR of GRB exttrig-GW coincidence"""
+    return ligo.raven.search.calc_signif_gracedb(se, exttrig, tl, th,
+                                                 incl_sky=False)
 
 
 def coincidence_search(gracedb_id, alert_object, group=None):

@@ -49,3 +49,51 @@ def test_add_exttrig_to_superevent(monkeypatch, graceid, raven_search_results):
         gracedb.client.addEventToSuperevent.assert_has_calls([
              call(graceid, exttrig['graceid'])
              for exttrig in raven_search_results])
+
+
+def mock_get_event(exttrig_id):
+    if exttrig_id == 'E1':
+        return {'search': 'GRB'}
+    elif exttrig_id == 'E2':
+        return {'search': 'SNEWS'}
+    elif exttrig_id == 'E3':
+        return {'search': 'GRB'}
+    else:
+        raise RuntimeError('Asked for search of unexpected exttrig')
+
+
+@pytest.mark.parametrize('group', ['CBC', 'Burst'])
+@patch('gwcelery.tasks.gracedb.get_event', mock_get_event)
+@patch('gwcelery.tasks.gracedb.get_superevent',
+       return_value={'em_events': ['E1', 'E2', 'E3']})
+@patch('gwcelery.tasks.raven.calc_signif')
+@patch('ligo.raven.gracedb_events.ExtTrig')
+@patch('ligo.raven.gracedb_events.SE')
+def test_calculate_coincidence_far(
+        mock_se_cls, mock_exttrig_cls, mock_calc_signif,
+        mock_get_superevent, group):
+    raven.calculate_coincidence_far('S1234', group).delay().get()
+
+
+@patch('ligo.raven.gracedb_events.ExtTrig')
+@patch('ligo.raven.gracedb_events.SE')
+@patch('ligo.raven.search.calc_signif_gracedb')
+def test_calc_signif(
+        mock_raven_calc_signif, mock_se_cls, mock_exttrig_cls):
+    se = mock_se_cls('S1', gracedb=gracedb.client)
+    exttrig = mock_exttrig_cls('E1', gracedb=gracedb.client)
+    tl, th = -1, 5
+    raven.calc_signif(se, exttrig, tl, th)
+
+    mock_raven_calc_signif.assert_called_once_with(
+        se, exttrig, tl, th, incl_sky=False)
+
+
+@pytest.mark.parametrize('graceid,group', [['E1', 'CBC'], ['S1', 'CBC'],
+                                           ['E1', 'Burst'], ['S1', 'Burst']])
+@patch('gwcelery.tasks.raven.search')
+@patch('gwcelery.tasks.raven.add_exttrig_to_superevent')
+def test_coincidence_search(mock_add_exttrig, mock_raven_search,
+                            graceid, group):
+    raven.coincidence_search(graceid, {'superevent_id': graceid},
+                             group).delay().get()
