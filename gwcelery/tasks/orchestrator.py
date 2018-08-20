@@ -2,6 +2,7 @@
 vetting and annotation workflow to produce preliminary, initial, and update
 alerts for gravitational-wave event candidates."""
 import json
+import re
 from urllib.error import URLError
 
 from celery import chain, group
@@ -35,24 +36,30 @@ def handle_superevent(alert):
     preliminary GCN notice.
     """
 
-    if alert['alert_type'] != 'new':
-        return
-
     superevent_id = alert['object']['superevent_id']
-    start = alert['object']['t_start']
-    end = alert['object']['t_end']
 
-    (
-        _get_preferred_event.si(superevent_id).set(
-            countdown=app.conf['orchestrator_timeout']
-        )
-        |
-        gracedb.get_event.s()
-        |
-        detchar.check_vectors.s(superevent_id, start, end)
-        |
-        preliminary_alert.s(superevent_id)
-    ).apply_async()
+    if alert['alert_type'] == 'new':
+        start = alert['object']['t_start']
+        end = alert['object']['t_end']
+
+        (
+            _get_preferred_event.si(superevent_id).set(
+                countdown=app.conf['orchestrator_timeout']
+            )
+            |
+            gracedb.get_event.s()
+            |
+            detchar.check_vectors.s(superevent_id, start, end)
+            |
+            preliminary_alert.s(superevent_id)
+            |
+            gracedb.create_label.si('ADVREQ', superevent_id)
+        ).apply_async()
+    elif alert['alert_type'] == 'label':
+        if 'ADVOK' in alert['description']:
+            initial_alert(superevent_id)
+        elif 'ADVNO' in alert['description'] or 'DQV' in alert['description']:
+            retraction_alert(superevent_id)
 
 
 @lvalert.handler('cbc_gstlal',
@@ -190,6 +197,14 @@ def _create_voevent(em_bright_json, *args, **kwargs):
         data = json.loads(em_bright_json)
         kwargs['ProbHasNS'] = 0.01 * data['Prob NS2']
         kwargs['ProbHasRemnant'] = 0.01 * data['Prob EMbright']
+    try:
+        skymap_filename = kwargs['skymap_filename']
+    except KeyError:
+        pass
+    else:
+        skymap_type = re.sub(r'\.fits(\..+)?$', '', skymap_filename)
+        kwargs.setdefault('skymap_type', skymap_type)
+        kwargs.setdefault('skymap_image_filename', skymap_type + '.png')
     return gracedb.create_voevent(*args, **kwargs)
 
 
@@ -212,18 +227,12 @@ def preliminary_alert(event, superevent_id):
 
     if event['group'] == 'CBC':
         skymap_filename = 'bayestar.fits.gz'
-        skymap_image_filename = 'bayestar.png'
-        skymap_type = 'BAYESTAR'
     elif event['pipeline'] == 'CWB':
         skymap_filename = 'skyprobcc_cWB.fits'
-        skymap_image_filename = 'skyprobcc_cWB.png'
-        skymap_type = 'CWB'
     elif event['pipeline'] == 'oLIB':
         skymap_filename = 'oLIB.fits.gz'
-        skymap_image_filename = 'oLIB.png'
-        skymap_type = 'oLIB'
     else:
-        skymap_filename = skymap_type = skymap_image_filename = None
+        skymap_filename = None
 
     # Start with a blank canvas (literally).
     canvas = chain()
@@ -237,8 +246,8 @@ def preliminary_alert(event, superevent_id):
                 gracedb.upload.s(
                     skymap_filename,
                     superevent_id,
-                    message='{} localization copied from {}'.format(
-                        skymap_type, preferred_event_id),
+                    message='Localization copied from {}'.format(
+                        preferred_event_id),
                     tags=['sky_loc', 'lvem']
                 )
                 |
@@ -246,7 +255,6 @@ def preliminary_alert(event, superevent_id):
 
                 skymaps.annotate_fits(
                     skymap_filename,
-                    skymap_filename.partition('.fits')[0],
                     superevent_id,
                     ['sky_loc', 'lvem']
                 )
@@ -276,10 +284,7 @@ def preliminary_alert(event, superevent_id):
     # Send GCN notice and upload GCN circular draft.
     canvas |= (
         _create_voevent.s(
-            superevent_id, 'preliminary',
-            skymap_type=skymap_type,
-            skymap_filename=skymap_filename,
-            skymap_image_filename=skymap_image_filename
+            superevent_id, 'preliminary', skymap_filename=skymap_filename
         )
         |
         group(
@@ -300,3 +305,52 @@ def preliminary_alert(event, superevent_id):
     )
 
     canvas.apply_async()
+
+
+def _initial_or_update_alert(superevent_id, alert_type, skymap_filename=None):
+    # Start with a blank canvas (literally).
+    canvas = chain()
+
+    if skymap_filename is not None:
+        canvas |= skymaps.annotate_fits(
+            skymap_filename,
+            superevent_id,
+            ['sky_loc', 'lvem'],
+            vetted=True
+        )
+
+    canvas |= _create_voevent.si(
+        None,
+        superevent_id,
+        alert_type,
+        skymap_filename=skymap_filename
+    )
+    canvas |= gcn.send.s()
+    return canvas
+
+
+@app.task(ignore_result=True, shared=False)
+def initial_alert(superevent_id, skymap_filename=None):
+    """Produce an initial alert. This is currently just a stub and does nothing
+    more than create and send a VOEvent."""
+    _initial_or_update_alert(
+        superevent_id, 'initial', skymap_filename).apply_async()
+
+
+@app.task(ignore_result=True, shared=False)
+def update_alert(superevent_id, skymap_filename=None):
+    """Produce an update alert. This is currently just a stub and does nothing
+    more than create and send a VOEvent."""
+    _initial_or_update_alert(
+        superevent_id, 'update', skymap_filename).apply_async()
+
+
+@app.task(ignore_result=True, shared=False)
+def retraction_alert(superevent_id):
+    """Produce a retraction alert. This is currently just a stub and does
+    nothing more than create and send a VOEvent."""
+    (
+        gracedb.create_voevent.s(superevent_id, 'retraction', vetted=True)
+        |
+        gcn.send.s()
+    ).apply_async()

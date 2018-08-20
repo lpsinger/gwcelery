@@ -38,6 +38,7 @@ sys.path.insert(0, os.path.abspath('..'))
 extensions = [
     'celery.contrib.sphinx',
     'sphinx.ext.autodoc',
+    'sphinx.ext.autosectionlabel',
     'sphinx.ext.graphviz',
     'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
@@ -256,3 +257,8 @@ viewcode_import = False
 # -- Options for graphviz extension ---------------------------------------
 
 graphviz_output_format = 'svg'
+
+
+# -- Options for autosectionlabel extension -------------------------------
+
+autosectionlabel_prefix_document = True

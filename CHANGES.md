@@ -8,6 +8,13 @@
 -   Fixed calls to the raven temporal coincidence search so that search results
     separate SNEWS triggers from Fermi and Swift.
 
+-   Add human vetting for initial GCN notices. For each new superevent that
+    passes state vector checks, the ``ADVREQ`` label is applied. Rapid response
+    team users should set their GraceDb notification preferences to alert
+    them on ``ADVREQ`` labels. If a user sets the ``ADVOK`` label, then an
+    initial notice is issued. If a user sets the ``ADVNO`` label, then a
+    retraction notice is issued.
+
 ## 0.0.31 (2018-09-04)
 
 -   Refactor external trigger handling to separate it from the orchestrator.

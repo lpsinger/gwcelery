@@ -26,12 +26,12 @@ The orchestrator consists of two LVAlert message handlers:
   burst searches (cWB, LIB) have integrated source localization and have no
   other annotations.
 
-Flow Chart
-~~~~~~~~~~
+Preliminary Alerts
+~~~~~~~~~~~~~~~~~~
 
 The flow chart below illustrates the operation of these two tasks.
 
-.. digraph:: orchestrator
+.. digraph:: preliminary_alert
 
     compound = true
     nodesep = 0.1
@@ -86,6 +86,10 @@ The flow chart below illustrates the operation of these two tasks.
                 label = "Copy classification\n(if CBC) and\nsky map from\npreferred event"
             ]
 
+            annotate_skymaps [
+                label = "Make sky\nmap plots"
+            ]
+
             send_gcn [
                 label = "Send preliminary\nGCN notice"
             ]
@@ -104,7 +108,7 @@ The flow chart below illustrates the operation of these two tasks.
     -> dqv
 
     dqv -> copy_from_preferred_event [label = No, lhead = cluster_preliminary_alert]
-    copy_from_preferred_event -> send_gcn -> circular
+    copy_from_preferred_event -> annotate_skymaps -> send_gcn -> circular
 
     cbc_event [
         label = "LVAlert for\nfile added\nto CBC event"
@@ -167,6 +171,84 @@ The flow chart below illustrates the operation of these two tasks.
     ]
     download_psd -> download_coinc_psd -> bayestar -> source_classification
     download_ranking_data -> download_coinc_ranking_data -> p_astro
+
+Initial and Update Alerts
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The :meth:`~gwcelery.tasks.initial_alert` and
+:meth:`~gwcelery.tasks.update_alert` tasks create Initial and Update alerts
+respectively. At the moment, there is no handler or user interface to trigger
+these tasks, and they must be invoked manually (see
+:ref:`monitoring:Command-Line Tools`). A flow chart for the initial alerts is
+shown below; the flow chart for update alerts is the same.
+
+.. digraph:: initial_alert
+
+    compound = true
+    nodesep = 0.1
+    ranksep = 0.1
+
+    node [
+        fillcolor = white
+        shape = box
+        style = filled
+        target = "_top"
+    ]
+
+    graph [
+        labeljust = "left"
+        style = filled
+        target = "_top"
+    ]
+
+    subgraph cluster_initial_alert {
+        href = "../gwcelery.tasks.orchestrator.html#gwcelery.tasks.orchestrator.initial_alert"
+        label = <<B><FONT face="monospace">initial_alert</FONT></B>>
+
+        annotate_skymaps [
+            label = "If sky map provided,\nthen make sky map plots"
+        ]
+
+        send_gcn [
+            label = "Send\nGCN notice"
+        ]
+    }
+
+    annotate_skymaps -> send_gcn
+
+Retraction Alerts
+~~~~~~~~~~~~~~~~~
+
+Likewise, the :meth:`~gwcelery.tasks.retraction_alert` task creates Retraction
+alerts, and at the moment must be invoked manually. A flow chart is shown below.
+
+.. digraph:: retraction_alert
+
+    compound = true
+    nodesep = 0.1
+    ranksep = 0.1
+
+    node [
+        fillcolor = white
+        shape = box
+        style = filled
+        target = "_top"
+    ]
+
+    graph [
+        labeljust = "left"
+        style = filled
+        target = "_top"
+    ]
+
+    subgraph cluster_initial_alert {
+        href = "../gwcelery.tasks.orchestrator.html#gwcelery.tasks.orchestrator.retraction_alert"
+        label = <<B><FONT face="monospace">retraction_alert</FONT></B>>
+
+        send_gcn [
+            label = "Send\nGCN notice"
+        ]
+    }
 
 Tasks
 ~~~~~

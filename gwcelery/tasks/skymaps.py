@@ -10,12 +10,13 @@ from ..jinja import env
 from ..util.tempfile import NamedTemporaryFile
 
 
-def annotate_fits(versioned_filename, filebase, graceid, tags):
+def annotate_fits(versioned_filename, graceid, tags):
     """Perform annotations on a sky map.
 
     This function downloads a FITS file and then generates and uploads all
     derived images as well as an HTML dump of the FITS header.
     """
+    filebase = versioned_filename.partition('.fits')[0]
     header_msg = (
         'FITS headers for <a href="/apiweb/events/{graceid}/files/'
         '{versioned_filename}">{versioned_filename}</a>').format(
