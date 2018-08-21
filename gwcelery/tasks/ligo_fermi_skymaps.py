@@ -2,9 +2,9 @@
 import re
 import urllib
 
-from astropy.utils.data import get_file_contents
 from celery import group
 from ligo.skymap.tool import ligo_skymap_combine
+import astropy.utils.data
 import lxml.etree
 
 from . import gracedb
@@ -100,4 +100,5 @@ def get_external_skymap(heasarc_link):
     trigger_id = re.sub(r'.*\/(\D+?)(\d+)(\D+)\/.*', r'\2', heasarc_link)
     skymap_name = 'glg_healpix_all_bn{0}_v00.fit'.format(trigger_id)
     skymap_link = heasarc_link + skymap_name
-    return get_file_contents((skymap_link), encoding='binary', cache=False)
+    return astropy.utils.data.get_file_contents(
+        (skymap_link), encoding='binary', cache=False)
