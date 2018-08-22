@@ -39,7 +39,7 @@ of several processes:
 5.  **Superevent Worker**
 
     A Celery worker that is dedicated to serially process triggers from low
-    latency pipelines and create/modify superevents in *GraceDb*. There is only
+    latency pipelines and create/modify superevents in GraceDb. There is only
     one task that runs on the Superevent queue:
 
     *  :meth:`gwcelery.tasks.superevents.handle`
@@ -48,7 +48,7 @@ of several processes:
 
     A Celery worker that is dedicated to serially process external triggers from GRB
     alerts received from Fermi, Swift and neutrino alerts received from SNEWS 
-    and create/modify external trigger events in *GraceDb*:
+    and create/modify external trigger events in GraceDb:
 
     *  :meth:`gwcelery.tasks.external_triggers.handle_gcn`
 
