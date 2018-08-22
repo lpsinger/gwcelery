@@ -6,7 +6,7 @@ By default, GWCelery will talk to the playground GraceDb server,
 server, ``gracedb.ligo.org``, set the following environment variable before
 starting GWCelery::
 
-    CELERY_CONFIG_MODULE=gwcelery.config.production
+    CELERY_CONFIG_MODULE=gwcelery.conf.production
 
 For further customization, see the API documentation for the
-:mod:`gwcelery.config` module.
+:mod:`gwcelery.conf` module.

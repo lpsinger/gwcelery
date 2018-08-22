@@ -2,7 +2,7 @@
 
 from celery import Celery
 
-from .config import playground
+from .conf import playground
 
 __all__ = ('app',)
 

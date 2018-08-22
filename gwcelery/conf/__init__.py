@@ -8,10 +8,10 @@ To override the configuration, define the ``CELERY_CONFIG_MODULE`` environment
 variable to the fully qualified name of any Python module that can be located
 in :obj:`sys.path`, including any of the following presets:
 
- * :mod:`gwcelery.config.development`
- * :mod:`gwcelery.config.playground` (the default)
- * :mod:`gwcelery.config.production`
- * :mod:`gwcelery.config.test`
+ * :mod:`gwcelery.conf.development`
+ * :mod:`gwcelery.conf.playground` (the default)
+ * :mod:`gwcelery.conf.production`
+ * :mod:`gwcelery.conf.test`
 """
 
 # Celery application settings.

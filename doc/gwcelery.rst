@@ -5,6 +5,6 @@ API Reference
 
 .. toctree::
 
-    gwcelery.config
+    gwcelery.conf
     gwcelery.tasks
     gwcelery.util

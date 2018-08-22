@@ -9,7 +9,7 @@ The orchestrator consists of two LVAlert message handlers:
 
 * :meth:`~gwcelery.tasks.orchestrator.handle_superevent` is called for each
   superevent. It waits for a short duration of
-  :obj:`~gwcelery.config.orchestrator_timeout` seconds for the selection of the
+  :obj:`~gwcelery.conf.orchestrator_timeout` seconds for the selection of the
   superevent by the :mod:`superevent manager <gwcelery.tasks.superevents>` to
   stabilize, then performs data quality checks. If the data quality checks
   pass, then it calls :meth:`~gwcelery.tasks.orchestrator.preliminary_alert` to
@@ -60,7 +60,7 @@ The flow chart below illustrates the operation of these two tasks.
         label = <<B><FONT face="monospace">handle_superevent</FONT></B>>
 
         orchestrator_timeout [
-            href = "../gwcelery.config.html#gwcelery.config.orchestrator_timeout"
+            href = "../gwcelery.conf.html#gwcelery.conf.orchestrator_timeout"
             label = <Wait<BR/><B><FONT face="monospace">orchestrator_timeout</FONT></B><BR/>seconds>
         ]
 
