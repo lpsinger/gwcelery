@@ -203,15 +203,29 @@ def check_vector(cache, channel, start, end, bits, logic_type='all'):
 
 @app.task(shared=False)
 def check_vectors(event, graceid, start, end):
-    """Perform data quality checks for an event. This includes checking the DQ
-    overflow vector (DMT-DQ_VECTOR) for LIGO and the first and second bits of
-    the calibration state vectors for LIGO (GDS-CALIB_STATE_VECTOR) and Virgo
-    (DQ_ANALYSIS_STATE_VECTOR), as well as the injection states for all three
-    detectors.
+    """Perform data quality checks for an event and labels/logs results to
+    GraceDb.
 
-    The results of these checks are logged into the event/superevent specified
-    by ``graceid``, and ``DQOK``, ``DQV``, and ``INJ`` labels are
-    appended as appropriate.
+    Depending on the pipeline, a certain amount of time (specified in
+    :obj:`~gwcelery.conf.check_vector_prepost`) is appended to either side of
+    the superevent start and end time. This is to catch DQ issues slightly
+    before and after the event, such as that appearing in L1 just before
+    GW170817.
+
+    A cache is then created for H1, L1, and V1, regardless of the detectors
+    involved in the event. Then, the bits and channels specified in the
+    configuration file (:obj:`~gwcelery.conf.llhoft_channels`) are checked.
+    If an injection is found in the active detectors, 'INJ' is labeled to
+    GraceDb. If an injection is found in any detector, a message with the
+    injection found is logged to GraceDb. If no injections are found across
+    all detectors, this is logged to GraceDb.
+
+    A similar task is performed for the DQ states described in the
+    DMT-DQ_VECTOR, LIGO GDS-CALIB_STATE_VECTOR, and Virgo
+    DQ_ANALYSIS_STATE_VECTOR. If no DQ issues are found in active detectors,
+    'DQOK' is labeled to GraceDb. Otherwise, 'DQV' is labeled and further
+    processing of the event in gwcelery is halted. In all cases, the DQ states
+    of all the state vectors checked are logged to GraceDb.
 
     This skips MDC events.
 
