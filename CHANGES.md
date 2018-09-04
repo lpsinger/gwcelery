@@ -19,6 +19,8 @@
 -   Add continuous integration testing for Python 3.7, and run test suite
     against all supported Python versions (3.6, 3.7).
 
+-   Update ligo.skymap to 0.0.15.
+
 ## 0.0.30 (2018-08-02)
 
 -   Manage superevents for production, test, and MDC events separately.
