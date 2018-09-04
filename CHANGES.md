@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.31 (unreleased)
+## 0.0.31 (2018-09-04)
 
 -   Refactor external trigger handling to separate it from the orchestrator.
 
