@@ -36,8 +36,6 @@ variables:
       EOF
     - docker build -t $IMAGE_TAG .
     - docker push $IMAGE_TAG
-dependencies/python3.5:
-  <<: *dependencies
 dependencies/python3.6:
   <<: *dependencies
 dependencies/python3.7:
@@ -65,8 +63,6 @@ dependencies/python3.7:
     - docker push $IMAGE_TAG
   dependencies:
     - dist
-docker/python3.5:
-  <<: *docker
 docker/python3.6:
   <<: *docker
 docker/python3.7:
@@ -89,9 +85,6 @@ docker/python3.7:
   artifacts:
     paths:
       - htmlcov/
-test/python3.5:
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.5:$CI_COMMIT_REF_NAME
-  <<: *test
 test/python3.6:
   image: $CI_REGISTRY_IMAGE/dependencies/python3.6:$CI_COMMIT_REF_NAME
   <<: *test

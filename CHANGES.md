@@ -17,7 +17,7 @@
     receipt of the EM_COINC label application to a superevent.
 
 -   Add continuous integration testing for Python 3.7, and run test suite
-    against all supported Python versions (3.5, 3.6, 3.7).
+    against all supported Python versions (3.6, 3.7).
 
 ## 0.0.30 (2018-08-02)
 
