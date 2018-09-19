@@ -86,9 +86,11 @@ to let the superevent manager's decision on the preferred event
 stabilize."""
 
 check_vector_prepost = {'gstlal': [2, 2],
+                        'spiir': [2, 2],
                         'gstlal-spiir': [2, 2],
                         'pycbc': [2, 2],
                         'MBTAOnline': [2, 2],
+                        'oLIB': [0.5, 0.5],
                         'LIB': [0.5, 0.5],
                         'CWB': [0.5, 0.5],
                         'HardwareInjection': [2, 2],

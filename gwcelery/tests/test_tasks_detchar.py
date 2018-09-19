@@ -62,7 +62,7 @@ def test_check_vectors_skips_mdc(caplog):
 @patch('gwcelery.tasks.gracedb.create_label')
 def test_check_vectors(mock_create_label, mock_write_log,
                        llhoft_glob_pass, ifo_h1):
-    event = {'search': 'AllSky', 'instruments': 'H1', 'pipeline': 'LIB'}
+    event = {'search': 'AllSky', 'instruments': 'H1', 'pipeline': 'oLIB'}
     superevent_id = 'S12345a'
     start, end = 1216577977, 1216577979
     detchar.check_vectors(event, superevent_id, start, end)
