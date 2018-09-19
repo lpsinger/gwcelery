@@ -153,7 +153,7 @@ def _get_event_info(payload):
             {attr:
              payload['extra_attributes']['LalInferenceBurst'][attr]
              for attr in extra_attributes})
-        # LIB snr key has a different name, call it snr
+        # oLIB snr key has a different name, call it snr
         event_info['snr'] = \
             payload[
                 'extra_attributes']['LalInferenceBurst']['omicron_snr_network']

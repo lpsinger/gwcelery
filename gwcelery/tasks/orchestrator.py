@@ -218,10 +218,10 @@ def preliminary_alert(event, superevent_id):
         skymap_filename = 'skyprobcc_cWB.fits'
         skymap_image_filename = 'skyprobcc_cWB.png'
         skymap_type = 'CWB'
-    elif event['pipeline'] == 'LIB':
-        skymap_filename = 'LIB.fits.gz'
-        skymap_image_filename = 'LIB.png'
-        skymap_type = 'LIB'
+    elif event['pipeline'] == 'oLIB':
+        skymap_filename = 'oLIB.fits.gz'
+        skymap_image_filename = 'oLIB.png'
+        skymap_type = 'oLIB'
     else:
         skymap_filename = skymap_type = skymap_image_filename = None
 

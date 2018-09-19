@@ -12,7 +12,7 @@ from . import resource_json
 
 
 @pytest.mark.parametrize(
-    'group,pipeline', [['CBC', 'gstlal'], ['Burst', 'CWB'], ['Burst', 'LIB']])
+    'group,pipeline', [['CBC', 'gstlal'], ['Burst', 'CWB'], ['Burst', 'oLIB']])
 def test_handle_superevent(monkeypatch, group, pipeline):
     """Test a superevent is dispatched to the correct annotation task based on
     its preferred event's search group."""

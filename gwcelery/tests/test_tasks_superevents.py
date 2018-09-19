@@ -256,7 +256,7 @@ def test_parse_trigger_burst_1(monkeypatch):
 
 
 def test_parse_trigger_burst_2(monkeypatch):
-    """New LIB trigger G000006 with gpstime lying partially in
+    """New oLIB trigger G000006 with gpstime lying partially in
     S0039 window, more significant than already existing preferred
     event. superevent window changed
     """
@@ -299,7 +299,7 @@ def test_parse_trigger_burst_2(monkeypatch):
 
 
 def test_parse_trigger_burst_3(monkeypatch):
-    """New LIB trigger G000007, not present among superevents
+    """New oLIB trigger G000007, not present among superevents
     New superevent created.
     Q_mean = frequency_mean = 100., hence d_t_start = d_t_end = 1s
     """
