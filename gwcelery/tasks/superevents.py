@@ -100,6 +100,7 @@ def handle(payload):
                      "extending superevent window",
                      event_segment.gid, superevent.superevent_id)
             new_t_start, new_t_end = new_superevent[0], new_superevent[1]
+
         else:
             log.info("%s is completely contained in %s",
                      event_segment.gid, superevent.superevent_id)
@@ -146,7 +147,7 @@ def _get_event_info(payload):
             {attr:
              payload['extra_attributes']['MultiBurst'][attr]
              for attr in extra_attributes})
-    elif payload['pipeline'].lower() == 'lib':
+    elif payload['pipeline'].lower() == 'olib':
         extra_attributes = ['quality_mean', 'frequency_mean']
         event_info.update(
             {attr:
@@ -167,7 +168,7 @@ def _get_dts(event_info):
     pipeline = event_info['pipeline'].lower()
     if pipeline == 'cwb':
         d_t_start = d_t_end = event_info['duration']
-    elif pipeline == 'lib':
+    elif pipeline == 'olib':
         d_t_start = d_t_end = (event_info['quality_mean'] /
                                event_info['frequency_mean'])
     else:

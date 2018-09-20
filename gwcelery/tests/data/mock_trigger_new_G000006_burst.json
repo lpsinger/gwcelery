@@ -2,7 +2,7 @@
 	"object": {
 		"graceid": "G000006",
 		"gpstime": 1163905239.5,
-		"pipeline": "LIB",
+		"pipeline": "oLIB",
 		"group": "Burst",
 		"links": {
 			"neighbors": "",
