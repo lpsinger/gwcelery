@@ -50,7 +50,7 @@ def calc_signif(se, exttrig, tl, th):
                                                  incl_sky=False)
 
 
-def coincidence_search(gracedb_id, alert_object, group=None):
+def coincidence_search(gracedb_id, alert_object, group=None, pipelines=[]):
     """Perform ligo-raven search for coincidences.
     The ligo.raven.search.search method applies EM_COINC label on its own.
 
@@ -62,7 +62,11 @@ def coincidence_search(gracedb_id, alert_object, group=None):
         lvalert['object']
     group: str
         Burst or CBC
+    pipelines: list
+        list of external trigger pipeline names
     """
+    if 'SNEWS' in pipelines:
+        tl, th = -10, 10
     if group == 'CBC' and gracedb_id.startswith('E'):
         tl, th = tl_cbc, th_cbc
     elif group == 'CBC' and gracedb_id.startswith('S'):
@@ -75,14 +79,16 @@ def coincidence_search(gracedb_id, alert_object, group=None):
         raise ValueError('Invalid RAVEN search request for {0}'.format(
             gracedb_id))
     return (
-        search.s(gracedb_id, alert_object, tl, th, group=group)
+        search.s(gracedb_id, alert_object, tl, th, group=group,
+                 pipelines=pipelines)
         |
         add_exttrig_to_superevent.s(gracedb_id)
     )
 
 
 @app.task(shared=False)
-def search(gracedb_id, alert_object, tl=-5, th=5, group=None):
+def search(gracedb_id, alert_object, tl=-5, th=5, group=None,
+           pipelines=[]):
     """Perform ligo-raven search for coincidences.
     The ligo.raven.search.search method applies EM_COINC label on its own.
 
@@ -98,6 +104,9 @@ def search(gracedb_id, alert_object, tl=-5, th=5, group=None):
         number of seconds to search after
     group: str
         Burst or CBC
+    pipelines: list
+        list of external trigger pipelines for performing coincidence search
+        against
     Returns
     -------
         list with the dictionaries of related gracedb events
@@ -107,8 +116,9 @@ def search(gracedb_id, alert_object, tl=-5, th=5, group=None):
         group = None
     else:
         event = gracedb_events.ExtTrig(gracedb_id, gracedb=gracedb.client)
+        pipelines = []
     return ligo.raven.search.search(event, tl, th, gracedb=gracedb.client,
-                                    group=group)
+                                    group=group, pipelines=pipelines)
 
 
 @app.task(shared=False)

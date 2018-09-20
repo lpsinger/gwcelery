@@ -13,6 +13,10 @@ true_heasarc_link = ('http://heasarc.gsfc.nasa.gov/FTP/fermi/data/gbm/'
 true_skymap_link = true_heasarc_link + 'glg_healpix_all_bn170817529_v00.fit'
 
 
+def mock_get_event(exttrig):
+    return {'search': 'GRB'}
+
+
 def mock_get_superevent(graceid):
     return resource_json(__name__, 'data/mock_superevent_object.json')
 
@@ -47,6 +51,7 @@ def mock_get_file_contents(heasarc_link):
 
 
 @patch('gwcelery.tasks.gracedb.get_superevent', mock_get_superevent)
+@patch('gwcelery.tasks.gracedb.get_event', mock_get_event)
 @patch('gwcelery.tasks.gracedb.get_log', mock_get_log)
 @patch('gwcelery.tasks.gracedb.download', mock_download)
 @patch('astropy.utils.data.get_file_contents', mock_get_file_contents)
@@ -63,6 +68,7 @@ def test_get_preferred_skymap():
     ligo_fermi_skymaps.get_preferred_skymap('S12345')
 
 
+@patch('gwcelery.tasks.gracedb.get_event', mock_get_event)
 @patch('gwcelery.tasks.gracedb.get_superevent',
        return_value={'em_events': ['E12345']})
 def test_external_trigger(mock_get_superevent):

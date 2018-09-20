@@ -2,7 +2,11 @@
 
 ## 0.0.32 (unreleased)
 
--   No changes yet.
+-   Separated the external GCN listening handlers into two: one that listens
+    to GCNs about SNEWS triggers and another that listens to Fermi and Swift.
+
+-   Fixed calls to the raven temporal coincidence search so that search results
+    separate SNEWS triggers from Fermi and Swift.
 
 ## 0.0.31 (2018-09-04)
 

@@ -22,11 +22,11 @@ def test_raven_search(mock_raven_search, mock_se_cls, mock_exttrig_cls,
     if event_id == 'S1234':
         mock_raven_search.assert_called_once_with(
             mock_se_cls(event_id, gracedb=gracedb.client), -5, 5,
-            gracedb=gracedb.client, group=None)
+            gracedb=gracedb.client, group=None, pipelines=[])
     elif event_id == 'E1234':
         mock_raven_search.assert_called_once_with(
             mock_exttrig_cls(event_id, gracedb=gracedb.client), -5, 5,
-            gracedb=gracedb.client, group=None)
+            gracedb=gracedb.client, group=None, pipelines=[])
     else:
         raise ValueError
 

@@ -69,8 +69,10 @@ def external_trigger(graceid):
     """Returns the associated external trigger GraceDB ID."""
     em_events = gracedb.get_superevent(graceid)['em_events']
     if len(em_events):
-        return em_events[0]
-    raise ValueError('No associated EM event(s) for {0}.'.format(graceid))
+        for exttrig in em_events:
+            if gracedb.get_event(exttrig)['search'] == 'GRB':
+                return exttrig
+    raise ValueError('No associated GRB EM event(s) for {0}.'.format(graceid))
 
 
 @app.task(shared=False)
