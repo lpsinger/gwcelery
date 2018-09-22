@@ -4,6 +4,10 @@
 
 -   Add tasks for submitting HTCondor DAGs.
 
+-   Add a new module, `gwcelery.tasks.lalinference`, which provides tasks to
+    start Parameter Estimation with LALInference and upload the results to
+    GraceDB.
+
 ## 0.1.4 (2018-10-29)
 
 -   Work around a bug in astropy.visualization.wcsaxes that affected all-sky

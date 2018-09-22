@@ -17,6 +17,7 @@ gwcelery\.tasks module
     gwcelery.tasks.gcn
     gwcelery.tasks.gcn.validate
     gwcelery.tasks.gracedb
+    gwcelery.tasks.lalinference
     gwcelery.tasks.lvalert
     gwcelery.tasks.orchestrator
     gwcelery.tasks.p_astro_gstlal
