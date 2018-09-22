@@ -1,10 +1,13 @@
 """Celery application initialization."""
 
 from celery import Celery
+import pkg_resources
 
 from .conf import playground
 
 __all__ = ('app',)
+
+__version__ = pkg_resources.get_distribution(__package__).version
 
 # Use redis broker, because it supports locks (and thus singleton tasks).
 app = Celery(__name__, broker='redis://', autofinalize=False)
