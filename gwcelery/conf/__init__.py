@@ -119,6 +119,14 @@ llhoft_channels = {
 consisting of a channel and its bitmask, as defined in
 :module:``detchar.py``."""
 
+idq_channels = ['H1:IDQ-PGLITCH_OVL_32_2048',
+                'L1:IDQ-PGLITCH_OVL_32_2048']
+"""Low-latency iDQ p(glitch) channel names"""
+
+idq_pglitch_thresh = 0.95
+"""Minimum p(glitch) reported by iDQ required before notice is posted to
+GraceDb"""
+
 p_astro_gstlal_trigger_db = '/home/gstlalcbc/observing/3/online/trigs/H1L1-ALL_LLOID-0-2000000000.sqlite'  # noqa: E501
 """Gstlal trigger database location in CIT"""
 

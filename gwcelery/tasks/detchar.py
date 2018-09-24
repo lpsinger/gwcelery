@@ -14,11 +14,12 @@ References
 .. [DMT] https://wiki.ligo.org/DetChar/DmtDqVector
 """
 import glob
+import json
 
 from celery.exceptions import Ignore
 from celery.utils.log import get_task_logger
 from glue.lal import Cache
-from gwpy.timeseries import Bits, StateVector
+from gwpy.timeseries import Bits, StateVector, TimeSeries
 import numpy as np
 
 from ..import app
@@ -146,6 +147,44 @@ def create_cache(ifo):
     return Cache.from_urls(filenames)
 
 
+def check_idq(cache, channel, start, end):
+    """Looks for iDQ frame and reads them.
+
+    Parameters
+    ----------
+    cache : :class:`glue.lal.Cache`
+        Cache from which to check.
+    channel : str
+        which idq channel (pglitch)
+    start, end: int or float
+        GPS start and end times desired.
+
+    Returns
+    -------
+    tuple
+        Tuple mapping iDQ channel to its minimum P(glitch). In
+        check_vectors, if this P(glitch) is under a certain threshold, it will
+        be logged to GraceDb.
+
+    Example
+    -------
+    >>> check_idq(cache, 'H1:IDQ-PGLITCH-OVL-100-1000',
+                  1216496260, 1216496262)
+    ('H1:IDQ-PGLITCH-OVL-100-1000', 0.87)
+    """
+    try:
+        idq_prob = TimeSeries.read(
+            cache, channel, start=start, end=end)
+    except IndexError:
+        # FIXME: figure out how to get access to low-latency frames outside
+        # of the cluster. Until we figure that out, actual I/O errors have
+        # to be non-fatal.
+        log.exception('Failed to read from low-latency iDQ frame files')
+        return (channel, None)
+    else:
+        return (channel, getattr(idq_prob, 'min')())
+
+
 def check_vector(cache, channel, start, end, bits, logic_type='all'):
     """Check timeseries of decimals against a bitmask.
     This is inclusive of the start time and exclusive of the end time, i.e.
@@ -249,6 +288,7 @@ def check_vectors(event, graceid, start, end):
                  event['graceid'])
         return event
 
+    # Create caches for all detectors
     instruments = event['instruments'].split(',')
     pre, post = app.conf['check_vector_prepost'][event['pipeline']]
     start, end = start - pre, end + post
@@ -256,6 +296,8 @@ def check_vectors(event, graceid, start, end):
     ifos = {key.split(':')[0] for key, val in
             app.conf['llhoft_channels'].items()}
     caches = {ifo: create_cache(ifo) for ifo in ifos}
+
+    # Examine injection and DQ states
     states = {}
     for channel, bits in app.conf['llhoft_channels'].items():
         states.update(check_vector(caches[channel.split(':')[0]], channel,
@@ -263,7 +305,7 @@ def check_vectors(event, graceid, start, end):
         #  Hard coded not() of Virgo DQ_VETO_* streams
         states.update({key: not(value) for key, value in states.items()
                        if key[:10] == 'V1:DQ_VETO'})
-
+    # Pick out DQ and injection states, then filter for active detectors
     dq_states = {key: value for key, value in states.items()
                  if key.split('_')[-1] != 'INJ'}
     inj_states = {key: value for key, value in states.items()
@@ -272,6 +314,22 @@ def check_vectors(event, graceid, start, end):
                         if key.split(':')[0] in instruments}
     active_inj_states = {key: value for key, value in inj_states.items()
                          if key.split(':')[0] in instruments}
+
+    # Check iDQ states
+    idq_probs = dict(check_idq(caches[channel.split(':')[0]],
+                               channel, start, end)
+                     for channel in app.conf['idq_channels'])
+
+    # Logging iDQ to GraceDb
+    if None not in idq_probs.values():
+        if max(idq_probs.values()) >= app.conf['idq_pglitch_thresh']:
+            idq_msg = "iDQ glitch probabilies: {}".format(
+                json.dumps(idq_probs)[2:-1])
+        else:
+            idq_msg = ("iDQ glitch probabilities at both H1 and L1"
+                       " are good (below {}).").format(
+                           app.conf['idq_pglitch_thresh'])
+        gracedb.client.writeLog(graceid, idq_msg, tag_name=['data_quality'])
 
     # Labeling INJ to GraceDb
     if False in active_inj_states.values():

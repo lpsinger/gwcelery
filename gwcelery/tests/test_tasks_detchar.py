@@ -36,8 +36,25 @@ def ifo_h1():
     app.conf['llhoft_channels'] = old
 
 
+@pytest.fixture
+def ifo_h1_idq():
+    old = app.conf['idq_channels']
+    app.conf['idq_channels'] = [
+        'H1:IDQ-PGLITCH_OVL_32_2048']
+    yield
+    app.conf['idq_channels'] = old
+
+
 def test_create_cache(llhoft_glob_fail):
     assert len(detchar.create_cache('L1')) == 1
+
+
+def test_check_idq(llhoft_glob_pass):
+    channel = 'H1:IDQ-PGLITCH_OVL_32_2048'
+    start, end = 1216577976, 1216577980
+    cache = detchar.create_cache('H1')
+    assert detchar.check_idq(cache, channel, start, end) == (
+        'H1:IDQ-PGLITCH_OVL_32_2048', 0)
 
 
 def test_check_vector(llhoft_glob_pass):
@@ -61,7 +78,7 @@ def test_check_vectors_skips_mdc(caplog):
 @patch('gwcelery.tasks.gracedb.client.writeLog')
 @patch('gwcelery.tasks.gracedb.create_label')
 def test_check_vectors(mock_create_label, mock_write_log,
-                       llhoft_glob_pass, ifo_h1):
+                       llhoft_glob_pass, ifo_h1, ifo_h1_idq):
     event = {'search': 'AllSky', 'instruments': 'H1', 'pipeline': 'oLIB'}
     superevent_id = 'S12345a'
     start, end = 1216577977, 1216577979
