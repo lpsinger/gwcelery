@@ -114,7 +114,7 @@ doc:
     - apt-get update -qq && apt-get install -y -qq graphviz
   script:
     - tar --strip-components 1 -xf *.tar.*
-    - python setup.py build_sphinx -W
+    - python setup.py build_sphinx
   dependencies:
     - dist
 
