@@ -15,6 +15,8 @@
     initial notice is issued. If a user sets the ``ADVNO`` label, then a
     retraction notice is issued.
 
+-   Update the LVAlert host for gracedb-playground.ligo.org.
+
 ## 0.0.31 (2018-09-04)
 
 -   Refactor external trigger handling to separate it from the orchestrator.
