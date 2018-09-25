@@ -20,7 +20,7 @@ log = get_task_logger(__name__)
                  'cbc_gstlal-spiir',
                  'cbc_pycbc',
                  'cbc_mbtaonline',
-                 'burst_lib',
+                 'burst_olib',
                  'burst_cwb',
                  'test_gstlal',
                  'test_pycbc',
