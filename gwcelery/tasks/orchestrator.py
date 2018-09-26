@@ -36,7 +36,7 @@ def handle_superevent(alert):
     preliminary GCN notice.
     """
 
-    superevent_id = alert['object']['superevent_id']
+    superevent_id = alert['uid']
 
     if alert['alert_type'] == 'new':
         start = alert['object']['t_start']

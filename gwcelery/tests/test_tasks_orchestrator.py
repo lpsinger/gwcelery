@@ -18,6 +18,7 @@ def test_handle_superevent(monkeypatch, group, pipeline):
     its preferred event's search group."""
     alert = {
         'alert_type': 'new',
+        'uid': 'S1234',
         'object': {
             'superevent_id': 'S1234',
             't_start': 1214714160,
