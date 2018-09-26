@@ -32,8 +32,13 @@ def handle(payload):
     Recieves payload from test and production nodes and
     serially processes them to create/modify superevents
     """
-    gid = payload['uid']
     alert_type = payload['alert_type']
+
+    if alert_type != 'new':
+        log.critical('Unhandled by parse_trigger, passing...')
+        return
+
+    gid = payload['uid']
 
     try:
         far = payload['object']['far']
@@ -66,7 +71,7 @@ def handle(payload):
     d_t_start, d_t_end = _get_dts(event_info)
 
     # Condition 1/2
-    if sid is None and alert_type == 'new':
+    if sid is None:
         log.debug('Entered 1st if')
         event_segment = _Event(event_info['gpstime'],
                                event_info['gpstime'] - d_t_start,
@@ -112,14 +117,11 @@ def handle(payload):
                            t_start=new_t_start,
                            t_end=new_t_end)
 
-    elif sid and alert_type == 'new':
+    else:
         # ERROR SITUATION
         log.debug('3rd if: SID returned and new alert')
         log.critical('Superevent %s exists for alert_type new for %s',
                      sid, gid)
-    # Condition else
-    else:
-        log.critical('Unhandled by parse_trigger, passing...')
 
 
 def _get_event_info(payload):
