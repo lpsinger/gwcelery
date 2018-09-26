@@ -56,7 +56,7 @@ def localize(coinc_psd, graceid, filename='bayestar.fits.gz',
     log.addHandler(handler)
 
     # Determine the base URL for event pages.
-    scheme, netloc, *_ = urllib.parse.urlparse(gracedb.client.service_url)
+    scheme, netloc, *_ = urllib.parse.urlparse(gracedb.client._service_url)
     base_url = urllib.parse.urlunparse((scheme, netloc, 'events', '', '', ''))
 
     try:

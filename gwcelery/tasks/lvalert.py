@@ -30,10 +30,10 @@ class _LVAlertDispatchHandler(DispatchHandler):
         base, api, _ = self_link.partition('/api/')
         service = base + api
 
-        if service != gracedb.client.service_url:
+        if service != gracedb.client._service_url:
             log.warning('ignoring LVAlert message because it is intended for '
                         'GraceDb server %s, but we are set up for server %s',
-                        service, gracedb.client.service_url)
+                        service, gracedb.client._service_url)
             return None, None, None
 
         return super().process_args(node, alert)

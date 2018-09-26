@@ -29,7 +29,7 @@ def celeryconf():
 @pytest.fixture(autouse=True)
 def fake_gracedb_client(monkeypatch):
     mock_client = unittest.mock.create_autospec(rest.GraceDb)
-    mock_client.service_url = 'https://gracedb.invalid/api/'
+    mock_client._service_url = 'https://gracedb.invalid/api/'
     monkeypatch.setattr('gwcelery.tasks.gracedb.client', mock_client)
     yield
 

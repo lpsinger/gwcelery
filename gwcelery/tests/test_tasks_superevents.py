@@ -21,7 +21,7 @@ def test_update_preferred_event(monkeypatch):
 
     class FakeDb(object):
         def __init__(self):
-            self.service_url = 'service_url'
+            self._service_url = 'service_url'
 
         def event(self, gid):
                 return T0212TTPResponse()
@@ -45,7 +45,7 @@ def test_update_preferred_event(monkeypatch):
 def test_get_superevents(monkeypatch):
     class FakeDb(object):
         def __init__(self):
-            self.service_url = 'service_url'
+            self._service_url = 'service_url'
 
         def superevents(self, **kwargs):
             response = resource_json(__name__, 'data/superevents.json')
@@ -82,7 +82,7 @@ def test_parse_trigger_cbc_1(monkeypatch):
 
     class FakeDb(object):
         def __init__(self):
-            self.service_url = 'service_url'
+            self._service_url = 'service_url'
 
         def superevents(self, **kwargs):
             response = resource_json(__name__, 'data/superevents.json')
@@ -123,7 +123,7 @@ def test_parse_trigger_cbc_2(monkeypatch):
 
     class FakeDb(object):
         def __init__(self):
-            self.service_url = 'service_url'
+            self._service_url = 'service_url'
 
         def superevents(self, **kwargs):
             response = resource_json(__name__, 'data/superevents.json')
@@ -160,7 +160,7 @@ def test_parse_trigger_cbc_3(monkeypatch):
     New superevent created"""
     class FakeDb(object):
         def __init__(self):
-            self.service_url = 'service_url'
+            self._service_url = 'service_url'
 
         def createSuperevent(self, *args, **kwargs):    # noqa: N802
             pass
@@ -184,7 +184,7 @@ def test_parse_trigger_cbc_4(monkeypatch):
     """New trigger G000002, doesn't pass far threshold"""
     class FakeDb(object):
         def __init__(self):
-            self.service_url = 'service_url'
+            self._service_url = 'service_url'
 
         def superevents(self, **kwargs):
             response = resource_json(__name__, 'data/superevents.json')
@@ -223,7 +223,7 @@ def test_parse_trigger_burst_1(monkeypatch):
 
     class FakeDb(object):
         def __init__(self):
-            self.service_url = 'service_url'
+            self._service_url = 'service_url'
 
         def superevents(self, **kwargs):
             response = resource_json(__name__, 'data/superevents.json')
@@ -266,7 +266,7 @@ def test_parse_trigger_burst_2(monkeypatch):
 
     class FakeDb(object):
         def __init__(self):
-            self.service_url = 'service_url'
+            self._service_url = 'service_url'
 
         def superevents(self, **kwargs):
             response = resource_json(__name__, 'data/superevents.json')
@@ -305,7 +305,7 @@ def test_parse_trigger_burst_3(monkeypatch):
     """
     class FakeDb(object):
         def __init__(self):
-            self.service_url = 'service_url'
+            self._service_url = 'service_url'
 
         def createSuperevent(self, *args, **kwargs):    # noqa: N802
             pass
@@ -335,7 +335,7 @@ def test_parse_trigger_burst_4(monkeypatch):
     """
     class FakeDb(object):
         def __init__(self):
-            self.service_url = 'service_url'
+            self._service_url = 'service_url'
 
         def createSuperevent(self, *args, **kwargs):    # noqa: N802
             self._create_superevent_called += 1
