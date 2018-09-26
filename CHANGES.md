@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.32 (unreleased)
+## 0.1.0 (2018-09-26)
 
 -   Separated the external GCN listening handlers into two: one that listens
     to GCNs about SNEWS triggers and another that listens to Fermi and Swift.
