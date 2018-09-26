@@ -1,9 +1,7 @@
 {
-    "labels": [
-        "DQV"
-    ],
-    "alert_type": "label",
+    "alert_type": "label_added",
     "uid": "T251135",
-    "file": "",
-    "description": "DQV"
+    "data": {
+        "name": "DQV"
+    }
 }

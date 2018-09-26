@@ -1,10 +1,7 @@
 {
     "uid": "S180616h",
-    "alert_type": "label",
-    "description": "LABEL: EM_COINC",
-    "file": "",
-    "labels": [
-        "EMBRIGHT_READY",
-        "SKYMAP_READY",
-        "EM_COINC"]
+    "alert_type": "label_added",
+    "data": {
+        "name": "EM_COINC"
+    }
 }

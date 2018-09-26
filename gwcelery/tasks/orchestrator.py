@@ -55,10 +55,11 @@ def handle_superevent(alert):
             |
             gracedb.create_label.si('ADVREQ', superevent_id)
         ).apply_async()
-    elif alert['alert_type'] == 'label':
-        if 'ADVOK' in alert['description']:
+    elif alert['alert_type'] == 'label_added':
+        label_name = alert['data']['name']
+        if label_name == 'ADVOK':
             initial_alert(superevent_id)
-        elif 'ADVNO' in alert['description'] or 'DQV' in alert['description']:
+        elif label_name in {'ADVNO', 'DQV'}:
             retraction_alert(superevent_id)
 
 
