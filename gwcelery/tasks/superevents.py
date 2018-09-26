@@ -8,7 +8,7 @@ superevents.
       in :meth:`handle` function.
 """
 from celery.utils.log import get_task_logger
-from glue.segments import segment, segmentlist
+from ligo.segments import segment, segmentlist
 
 from ..import app
 from . import gracedb, lvalert
