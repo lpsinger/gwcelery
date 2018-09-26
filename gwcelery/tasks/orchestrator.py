@@ -63,11 +63,11 @@ def handle_superevent(alert):
 
 
 @lvalert.handler('cbc_gstlal',
-                 'cbc_gstlal-spiir',
+                 'cbc_spiir',
                  'cbc_pycbc',
                  'cbc_mbtaonline',
                  'test_gstlal',
-                 'test_gstlal-spiir',
+                 'test_spiir',
                  'test_pycbc',
                  'test_mbtaonline',
                  shared=False)

@@ -51,14 +51,14 @@ back to using port 8099 for anonymous access, requiring no prior site
 configuration."""
 
 superevent_d_t_start = {'gstlal': 1.0,
-                        'gstlal-spiir': 1.0,
+                        'spiir': 1.0,
                         'pycbc': 1.0,
                         'mbtaonline': 1.0}
 """Pipeline based lower extent of superevent segments.
 For cwb and lib this is decided from extra attributes."""
 
 superevent_d_t_end = {'gstlal': 1.0,
-                      'gstal-spiir': 1.0,
+                      'spiir': 1.0,
                       'pycbc': 1.0,
                       'mbtaonline': 1.0}
 """Pipeline based upper extent of superevent segments
@@ -87,7 +87,6 @@ stabilize."""
 
 check_vector_prepost = {'gstlal': [2, 2],
                         'spiir': [2, 2],
-                        'gstlal-spiir': [2, 2],
                         'pycbc': [2, 2],
                         'MBTAOnline': [2, 2],
                         'oLIB': [0.5, 0.5],

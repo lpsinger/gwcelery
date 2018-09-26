@@ -17,7 +17,7 @@ log = get_task_logger(__name__)
 
 
 @lvalert.handler('cbc_gstlal',
-                 'cbc_gstlal-spiir',
+                 'cbc_spiir',
                  'cbc_pycbc',
                  'cbc_mbtaonline',
                  'burst_olib',
