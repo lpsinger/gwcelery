@@ -22,6 +22,10 @@ Changelog
     GWCelery by deploying them under two separate user accounts on the Caltech
     cluster.
 
+-   Add functionality for em_bright task to query ``emfollow/data``
+    for trained machine learning classifier and report probabilities
+    based on it.
+
 0.2.6 (2019-02-12)
 ------------------
 

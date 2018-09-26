@@ -252,16 +252,43 @@ def mock_download(filename, graceid, *args, **kwargs):
                       {'CoincInspiral': {'snr': 10.},
                        'SingleInspiral': [{'mass1': 10., 'mass2': 5.}]}})
 @patch('gwcelery.tasks.gracedb.download.run', mock_download)
-@patch('gwcelery.tasks.em_bright.classifier.run')
 @patch('gwcelery.tasks.bayestar.localize.run')
 @patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
-def test_handle_cbc_event(mock_gracedb, mock_localize, mock_classifier,
-                          mock_get_event):
+def test_handle_cbc_event(mock_gracedb, mock_localize, mock_get_event):
     """Test that an LVAlert message for a newly uploaded PSD file triggers
     BAYESTAR."""
     alert = resource_json(__name__, 'data/lvalert_psd.json')
     orchestrator.handle_cbc_event(alert)
     mock_localize.assert_called_once()
+
+
+@patch('gwcelery.tasks.em_bright.classifier_gstlal.run')
+def test_handle_cbc_event_new_event(mock_classifier):
+    payload = {
+        "uid": "G000003",
+        "alert_type": "new",
+        "description": "",
+        "object": {
+            "graceid": "G000003",
+            "gpstime": 100.0,
+            "pipeline": "gstlal",
+            "group": "CBC",
+            "search": "AllSky",
+            "far": 1.e-31,
+            "instruments": "H1,L1",
+            "extra_attributes": {
+                "CoincInspiral": {"snr": 20},
+                "SingleInspiral": [{
+                    "mass1": 3.0,
+                    "mass2": 1.0,
+                    "spin1z": 0.0,
+                    "spin2z": 0.0
+                }]
+            },
+            "offline": False
+        }
+    }
+    orchestrator.handle_cbc_event(payload)
     mock_classifier.assert_called_once()
 
 
@@ -273,7 +300,7 @@ def test_handle_cbc_event(mock_gracedb, mock_localize, mock_classifier,
                       {'CoincInspiral': {'snr': 10.},
                        'SingleInspiral': [{'mass1': 10., 'mass2': 5.}]}})
 @patch('gwcelery.tasks.gracedb.download.run', mock_download)
-@patch('gwcelery.tasks.em_bright.classifier.run')
+@patch('gwcelery.tasks.em_bright.classifier_gstlal.run')
 @patch('gwcelery.tasks.bayestar.localize.run')
 @patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
 def test_handle_cbc_event_ignored(mock_gracedb, mock_localize,

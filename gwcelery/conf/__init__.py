@@ -162,6 +162,11 @@ is computed. (Used by :mod:`gwcelery.tasks.p_astro_gstlal` and
 :mod:`gwcelery.tasks.p_astro_other`)
 """
 
+em_bright_url = 'http://emfollow.ldas.cit/data/em_bright_classifier.pickle'
+"""URL for trained RandomForestClassifier based on which em_bright
+classification is conducted. (Used by :mod:`gwcelery.tasks.em_bright`)
+"""
+
 low_latency_frame_types = {'H1': 'H1_O2_llhoft',
                            'L1': 'L1_O2_llhoft',
                            'V1': 'V1_O2_llhoft'}

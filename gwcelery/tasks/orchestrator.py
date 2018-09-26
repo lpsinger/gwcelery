@@ -107,26 +107,44 @@ def handle_cbc_event(alert):
     """  # noqa: E501
 
     graceid = alert['uid']
-
-    # p_astro calculation for other pipelines
-    if alert['alert_type'] == 'new' \
-            and (alert['object']['pipeline'].lower() != 'gstlal'
-                 or alert['object']['search'] == 'MDC'):
+    # em_bright and p_astro calculation
+    if alert['alert_type'] == 'new':
+        pipeline = alert['object']['pipeline'].lower()
         extra_attributes = alert['object']['extra_attributes']
         snr = extra_attributes['CoincInspiral']['snr']
         far = alert['object']['far']
         mass1 = extra_attributes['SingleInspiral'][0]['mass1']
         mass2 = extra_attributes['SingleInspiral'][0]['mass2']
+        chi1 = extra_attributes['SingleInspiral'][0]['spin1z']
+        chi2 = extra_attributes['SingleInspiral'][0]['spin2z']
+
+        # em_bright task based on pipeline
+        em_bright_task = em_bright.classifier_gstlal if pipeline == 'gstlal' \
+            else em_bright.classifier_other
+
         (
-            p_astro_other.compute_p_astro.s(snr, far, mass1, mass2)
-            |
-            gracedb.upload.s(
-                'p_astro.json', graceid,
-                'p_astro computation complete', ['p_astro', 'public']
-            )
-            |
-            gracedb.create_label.si('PASTRO_READY', graceid)
+                em_bright_task.si((mass1, mass2, chi1, chi2, snr), graceid)
+                |
+                gracedb.upload.s(
+                    'source_classification.json', graceid,
+                    'source classification complete', ['em_bright', 'public']
+                )
+                |
+                gracedb.create_label.si('EMBRIGHT_READY', graceid)
         ).delay()
+
+        # p_astro calculation for other pipelines
+        if pipeline != 'gstlal' or alert['object']['search'] == 'MDC':
+            (
+                p_astro_other.compute_p_astro.s(snr, far, mass1, mass2)
+                |
+                gracedb.upload.s(
+                    'p_astro.json', graceid,
+                    'p_astro computation complete', ['p_astro', 'public']
+                )
+                |
+                gracedb.create_label.si('PASTRO_READY', graceid)
+            ).delay()
 
     if alert['alert_type'] != 'log':
         return
@@ -140,25 +158,14 @@ def handle_cbc_event(alert):
                 gracedb.download.s('psd.xml.gz', graceid)
             )
             |
-            group(
-                bayestar.localize.s(graceid)
-                |
-                gracedb.upload.s(
-                    'bayestar.fits', graceid,
-                    'sky localization complete', ['sky_loc', 'public']
-                )
-                |
-                gracedb.create_label.si('SKYMAP_READY', graceid),
-
-                em_bright.classifier.s(graceid)
-                |
-                gracedb.upload.s(
-                    'source_classification.json', graceid,
-                    'source classification complete', ['em_bright', 'public']
-                )
-                |
-                gracedb.create_label.si('EMBRIGHT_READY', graceid)
+            bayestar.localize.s(graceid)
+            |
+            gracedb.upload.s(
+                'bayestar.fits', graceid,
+                'sky localization complete', ['sky_loc', 'public']
             )
+            |
+            gracedb.create_label.si('SKYMAP_READY', graceid)
         ).delay()
     elif filename == 'ranking_data.xml.gz':
         (

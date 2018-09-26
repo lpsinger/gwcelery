@@ -1,52 +1,110 @@
 """Qualitative source classification for CBC events."""
-import io
 import json
+import pickle
+from urllib import error, request
 
-from ligo.skymap.io import events
+from ligo import computeDiskMass, em_bright
 
+from celery.utils.log import get_task_logger
 from ..import app
 
+log = get_task_logger(__name__)
 
-def source_classification(m1, m2, c1, threshold=3.0):
+
+def _source_classification(m1, m2, c1, c2, threshold=2.83):
     """This is the place-holder function for the source classfication pipeline.
-    In the future, the actual source classification pipeline will be integrated
-    in three steps. First step will be the simple integration of the
-    point-estimate code that will be using the em_progenitors code from PyCBC.
-    In the second step, rapid_pe needs to be made Python3 compatible so that
-    the ambiguity ellipsoid feature can be brough back into action. And,
-    finally the O3 implementation will be incorporated which is currently a
-    work in progress. This placeholder code will only act upon the mass2 point
-    estimate value and classify the systems as whether they have a neutron or
-    not. It does not attempt to classify for the remnant mass, returns a NaN
-    value for that probability."""
-    if m2 <= threshold:
-        return([100.0, 100.0])
-    else:
-        return([0.0, 0.0])
+    This placeholder code will only act upon the mass2 point estimate value and
+    classify the systems as whether they have a neutron or not."""
+    disk_mass = computeDiskMass.computeDiskMass(m1, m2, c1, c2)
+    p_ns = 1.0 if m2 <= threshold else 0.0
+    p_emb = 1.0 if disk_mass > 0.0 or m1 < threshold else 0.0
+    return p_ns, p_emb
 
 
 @app.task(shared=False)
-def classifier(coinc_psd, graceid):
-    """This function is currently actually calculating the simple source
-    classification probability (m1 < 3.0 M_sun). In the future this code will
-    call a classification code that will be put on lalinference. """
-    # Parse event
-    coinc, psd = coinc_psd
-    coinc = io.BytesIO(coinc)
-    psd = io.BytesIO(psd)
-    event_source = events.ligolw.open(coinc, psd_file=psd, coinc_def=None)
-    event, = event_source.values()
+def classifier_other(args, graceid):
+    """
+    Returns the boolean probability of having a NS component
+    and the probability of having non-zero disk mass. This
+    method is used for pipelines that do not provide the data
+    products necessary for computation of the source properties
+    probabilities.
 
-    # Run EM_Bright
-    template_args = event.template_args
-    mass1 = template_args['mass1']  # primary object mass
-    mass2 = template_args['mass2']  # secondary object mass
-    chi1 = template_args['spin1z']  # primary object aligned spin
-    [p_ns, p_em] = source_classification(mass1, mass2, chi1)
+    Parameters
+    ----------
+    args : tuple
+        Tuple containing (m1, m2, spin1z, spin2z, snr)
+    graceid : str
+        The graceid of the event
 
-    data = {
-        'Prob NS2': p_ns,
-        'Prob EMbright': p_em
-    }
+    Returns
+    -------
+    str
+        JSON formatted string storing ``HasNS`` and ``HasRemnant``
+        probabilities
 
-    return json.dumps(data)
+    Example
+    -------
+    >>> em_bright.classifier_other((2.0, 1.0, 0.0, 0.0, 10.), 'S123456')
+    '{"HasNS": 1.0, "HasRemnant": 1.0}'
+    """
+    mass1, mass2, chi1, chi2, snr = args
+    p_ns, p_em = _source_classification(mass1, mass2, chi1, chi2)
+
+    data = json.dumps({
+        'HasNS': p_ns,
+        'HasRemnant': p_em
+    })
+    return data
+
+
+@app.task(shared=False)
+def classifier_gstlal(args, graceid):
+    """
+    Returns the probability of having a NS component and the probability
+    of having non-zero disk mass in the detected event.
+    This method will be using the data products obtained from the weekly
+    supervised learning runs for injections campaigns.
+    The data products are in pickle formatted RandomForestClassifier objects.
+    The method predict_proba of these objects provides us the probabilities
+    of the coalesence being EM-Bright and existence of neutron star in the
+    binary.
+
+    Parameters
+    ----------
+    args : tuple
+        Tuple containing (m1, m2, spin1z, spin2z, snr)
+    graceid : str
+        The graceid of the event
+
+    Returns
+    -------
+    str
+        JSON formatted string storing ``HasNS`` and ``HasRemnant``
+        probabilities
+
+    Notes
+    -----
+    This task would only work from within the CIT cluster.
+    """
+    mass1, mass2, chi1, chi2, snr = args
+    try:
+        response = request.urlopen(app.conf['em_bright_url'])
+        ns_classifier, emb_classifier, scaler, filename = \
+            pickle.loads(response.read())
+        kwargs = {'ns_classifier': ns_classifier,
+                  'emb_classifier': emb_classifier,
+                  'scaler': scaler}
+    except (pickle.UnpicklingError, error.HTTPError):
+        kwargs = {}
+        log.exception("Error in unpickling classifier or 404. Using defaults.")
+
+    p_ns, p_em = em_bright.source_classification(mass1, mass2,
+                                                 chi1, chi2,
+                                                 snr, **kwargs)
+
+    data = json.dumps({
+        'HasNS': p_ns,
+        'HasRemnant': p_em
+    })
+    return data
