@@ -8,6 +8,9 @@
 -   Fixed calls to the raven temporal coincidence search so that search results
     separate SNEWS triggers from Fermi and Swift.
 
+-   Add spatiotemporal FAR calculation for GRB and GW superevent coincidences.
+    This only runs when skymaps from both triggers are available to download.
+
 -   Add human vetting for initial GCN notices. For each new superevent that
     passes state vector checks, the ``ADVREQ`` label is applied. Rapid response
     team users should set their GraceDb notification preferences to alert

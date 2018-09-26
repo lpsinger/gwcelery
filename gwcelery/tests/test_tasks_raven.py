@@ -2,6 +2,7 @@ from unittest.mock import call, patch
 
 import pytest
 
+from . import test_tasks_skymaps
 from ..tasks import gracedb, raven
 
 
@@ -62,6 +63,10 @@ def mock_get_event(exttrig_id):
         raise RuntimeError('Asked for search of unexpected exttrig')
 
 
+def mock_download_skymap(skymapfilename, exttrig_id):
+    return test_tasks_skymaps.toy_fits_filecontents()
+
+
 @pytest.mark.parametrize('group', ['CBC', 'Burst'])
 @patch('gwcelery.tasks.gracedb.get_event', mock_get_event)
 @patch('gwcelery.tasks.gracedb.get_superevent',
@@ -75,6 +80,22 @@ def test_calculate_coincidence_far(
     raven.calculate_coincidence_far('S1234', group).delay().get()
 
 
+@pytest.mark.parametrize('group', ['CBC', 'Burst'])
+@patch('gwcelery.tasks.gracedb.download', mock_download_skymap)
+@patch('gwcelery.tasks.gracedb.get_superevent',
+       return_value={'em_events': ['E1', 'E2', 'E3']})
+@patch('gwcelery.tasks.ligo_fermi_skymaps.get_preferred_skymap',
+       return_value='bayestar.fits.gz')
+@patch('gwcelery.tasks.raven.calc_signif')
+@patch('ligo.raven.gracedb_events.ExtTrig')
+@patch('ligo.raven.gracedb_events.SE')
+def test_calculate_spacetime_coincidence_far(
+        mock_se_cls, mock_exttrig_cls, mock_calc_signif,
+        mock_get_preferred_skymap, mock_get_superevent, group):
+    raven.calculate_spacetime_coincidence_far(
+        'S1234', group).delay().get()
+
+
 @patch('ligo.raven.gracedb_events.ExtTrig')
 @patch('ligo.raven.gracedb_events.SE')
 @patch('ligo.raven.search.calc_signif_gracedb')
@@ -83,10 +104,24 @@ def test_calc_signif(
     se = mock_se_cls('S1', gracedb=gracedb.client)
     exttrig = mock_exttrig_cls('E1', gracedb=gracedb.client)
     tl, th = -1, 5
-    raven.calc_signif(se, exttrig, tl, th)
+    raven.calc_signif(se, exttrig, tl, th, incl_sky=False)
 
     mock_raven_calc_signif.assert_called_once_with(
         se, exttrig, tl, th, incl_sky=False)
+
+
+@patch('ligo.raven.gracedb_events.ExtTrig')
+@patch('ligo.raven.gracedb_events.SE')
+@patch('ligo.raven.search.calc_signif_gracedb')
+def test_calc_signif_skymaps(
+        mock_raven_calc_signif, mock_se_cls, mock_exttrig_cls):
+    se = mock_se_cls('S1', fitsfile='bayestar.fits.gz', gracedb=gracedb.client)
+    exttrig = mock_exttrig_cls('E1', gracedb=gracedb.client)
+    tl, th = -1, 5
+    raven.calc_signif(se, exttrig, tl, th, incl_sky=True)
+
+    mock_raven_calc_signif.assert_called_once_with(
+        se, exttrig, tl, th, incl_sky=True)
 
 
 @pytest.mark.parametrize('graceid,group', [['E1', 'CBC'], ['S1', 'CBC'],

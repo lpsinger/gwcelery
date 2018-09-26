@@ -131,6 +131,8 @@ def handle_grb_lvalert(alert):
             if 'EM_COINC' in alert['description']:
                 ligo_fermi_skymaps.create_combined_skymap(graceid).delay()
                 raven.calculate_coincidence_far(graceid, group).delay()
+                raven.calculate_spacetime_coincidence_far(graceid,
+                                                          group).delay()
 
 
 @lvalert.handler('superevent',
