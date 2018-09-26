@@ -23,6 +23,8 @@
 -   Add experimental integration with [Sentry](https://sentry.io/) for log
     aggregation and error reporting.
 
+-   Track API and LVAlert schema changes in ligo-gracedb 2.0.0.
+
 ## 0.0.31 (2018-09-04)
 
 -   Refactor external trigger handling to separate it from the orchestrator.
