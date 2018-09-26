@@ -104,7 +104,7 @@ def handle(payload):
                                         event_segment.gid)
         # extend the time window of the superevent
         new_superevent = superevent | event_segment
-        if new_superevent is not superevent:
+        if new_superevent != superevent:
             log.info("%s not completely contained in %s, "
                      "extending superevent window",
                      event_segment.gid, superevent.superevent_id)
