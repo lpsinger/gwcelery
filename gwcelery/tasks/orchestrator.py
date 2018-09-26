@@ -92,11 +92,11 @@ def handle_cbc_event(alert):
     ============================== =====================================================
     """  # noqa: E501
 
-    if alert['alert_type'] != 'update':
+    if alert['alert_type'] != 'log':
         return
 
     graceid = alert['uid']
-    filename = alert.get('file')
+    filename = alert['data']['filename']
 
     if filename == 'psd.xml.gz':
         (
