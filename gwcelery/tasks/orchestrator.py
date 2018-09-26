@@ -197,11 +197,8 @@ def _create_voevent(em_bright_json, *args, **kwargs):
         data = json.loads(em_bright_json)
         kwargs['ProbHasNS'] = 0.01 * data['Prob NS2']
         kwargs['ProbHasRemnant'] = 0.01 * data['Prob EMbright']
-    try:
-        skymap_filename = kwargs['skymap_filename']
-    except KeyError:
-        pass
-    else:
+    skymap_filename = kwargs.get('skymap_filename')
+    if skymap_filename is not None:
         skymap_type = re.sub(r'\.fits(\..+)?$', '', skymap_filename)
         kwargs.setdefault('skymap_type', skymap_type)
         kwargs.setdefault('skymap_image_filename', skymap_type + '.png')
