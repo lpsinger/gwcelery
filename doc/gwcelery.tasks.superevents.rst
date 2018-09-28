@@ -18,7 +18,7 @@ preferred event.
 
     compound = true
     nodesep = 0.1
-    ranksep = 0.1
+    ranksep = 0.5
 
     node [
         fillcolor = white
@@ -61,6 +61,34 @@ preferred event.
 
             create_superevent [
                 label = "Create\nsuperevent"
+            ]
+        }
+
+        {
+            rank = same
+
+            preferred_event_multi_ifo [
+                label = "Preferred event\n#detectors > 1"
+                shape = diamond
+
+            ]
+
+            new_event_multi_ifo [
+               label = "New event\n#detectors > 1"
+               shape = diamond
+            ]
+        }
+
+        {
+            rank = same
+
+            d1 [
+                label="New event\npreferred"
+            ]
+
+            d2 [
+                shape=point
+                margin = "3.20,0.05"
             ]
         }
 
@@ -107,7 +135,15 @@ preferred event.
     fetch_superevents -> associated_superevent
     associated_superevent -> create_superevent [label = No]
     associated_superevent -> add_to_superevent [label = Yes]
-    add_to_superevent -> group_tie
+    add_to_superevent -> preferred_event_multi_ifo
+    add_to_superevent -> new_event_multi_ifo
+    new_event_multi_ifo -> d1 [label = Yes]
+    preferred_event_multi_ifo -> d1 [label = No]
+    d1 -> set_preferred
+    new_event_multi_ifo -> d2 [label = Yes]
+    preferred_event_multi_ifo -> d2 [label = Yes]
+    d2 -> group_tie
+
     group_tie -> cbc_preferred [label = No]
     group_tie -> cbc_burst [label = Yes]
     cbc_burst -> snr_tie_breaker [label = CBC]
