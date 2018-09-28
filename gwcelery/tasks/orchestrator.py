@@ -305,9 +305,30 @@ def preliminary_alert(event, superevent_id):
     canvas.apply_async()
 
 
-def _initial_or_update_alert(superevent_id, alert_type, skymap_filename=None):
+@app.task(ignore_result=True, shared=False)
+def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None):
+    """
+    Create and send initial or update GCN notice.
+
+    Parameters
+    ----------
+    superevent_id : str
+        The superevent ID.
+    alert_type : {'initial', 'update'}
+        The alert type.
+    skymap_filename :str, optional
+        The sky map to send. If None, then most recent public sky map is used.
+    """
     # Start with a blank canvas (literally).
     canvas = chain()
+
+    if skymap_filename is None:
+        for message in gracedb.get_log(superevent_id):
+            t = message['tag_names']
+            f = message['filename']
+            if {'sky_loc', 'public'}.issubset(t) and f \
+                    and (f.endswith('.fits') or f.endswith('.fits.gz')):
+                skymap_filename = f
 
     if skymap_filename is not None:
         canvas |= skymaps.annotate_fits(
@@ -324,23 +345,43 @@ def _initial_or_update_alert(superevent_id, alert_type, skymap_filename=None):
         skymap_filename=skymap_filename
     )
     canvas |= gcn.send.s()
-    return canvas
+    canvas.apply_async()
 
 
 @app.task(ignore_result=True, shared=False)
 def initial_alert(superevent_id, skymap_filename=None):
-    """Produce an initial alert. This is currently just a stub and does nothing
-    more than create and send a VOEvent."""
-    _initial_or_update_alert(
-        superevent_id, 'initial', skymap_filename).apply_async()
+    """Produce an initial alert.
+
+    This does nothing more than call
+    :meth:`~gwcelery.tasks.orchestrator.initial_or_update_alert` with
+    ``alert_type='initial'``.
+
+    Parameters
+    ----------
+    superevent_id : str
+        The superevent ID.
+    skymap_filename :str, optional
+        The sky map to send. If None, then most recent public sky map is used.
+    """
+    initial_or_update_alert(superevent_id, 'initial', skymap_filename)
 
 
 @app.task(ignore_result=True, shared=False)
 def update_alert(superevent_id, skymap_filename=None):
-    """Produce an update alert. This is currently just a stub and does nothing
-    more than create and send a VOEvent."""
-    _initial_or_update_alert(
-        superevent_id, 'update', skymap_filename).apply_async()
+    """Produce an update alert.
+
+    This does nothing more than call
+    :meth:`~gwcelery.tasks.orchestrator.initial_or_update_alert` with
+    ``alert_type='update'``.
+
+    Parameters
+    ----------
+    superevent_id : str
+        The superevent ID.
+    skymap_filename :str, optional
+        The sky map to send. If None, then most recent public sky map is used.
+    """
+    initial_or_update_alert(superevent_id, 'update', skymap_filename)
 
 
 @app.task(ignore_result=True, shared=False)

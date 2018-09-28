@@ -18,6 +18,9 @@
     both source type (CBC versus burst). Any remaining tie is broken by using
     SNR for CBC and FAR for Burst triggers.
 
+-   By default, initial and update alerts will find and send the most recently
+    added public sky map.
+
 ## 0.1.0 (2018-09-26)
 
 -   Separated the external GCN listening handlers into two: one that listens
