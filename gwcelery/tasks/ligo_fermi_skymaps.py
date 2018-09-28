@@ -31,7 +31,7 @@ def create_combined_skymap(graceid):
                 gracedb.upload.s('glg_healpix_all_bn_v00.fit',
                                  external_trigger_id,
                                  'Sky map from HEASARC.',
-                                 ['sky_loc']))
+                                 ['sky_loc', 'public']))
             )
 
 
