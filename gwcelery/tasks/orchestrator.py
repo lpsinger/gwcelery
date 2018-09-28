@@ -59,7 +59,7 @@ def handle_superevent(alert):
         label_name = alert['data']['name']
         if label_name == 'ADVOK':
             initial_alert(superevent_id)
-        elif label_name in {'ADVNO', 'DQV'}:
+        elif label_name == 'ADVNO':
             retraction_alert(superevent_id)
 
 
