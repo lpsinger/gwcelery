@@ -21,6 +21,10 @@
 -   By default, initial and update alerts will find and send the most recently
     added public sky map.
 
+-   The initial and update sky maps no longer perform sky map annotations,
+    because they would only be duplicating the annotations performed as part
+    of the preliminary alert.
+
 ## 0.1.0 (2018-09-26)
 
 -   Separated the external GCN listening handlers into two: one that listens

@@ -319,9 +319,6 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None):
     skymap_filename :str, optional
         The sky map to send. If None, then most recent public sky map is used.
     """
-    # Start with a blank canvas (literally).
-    canvas = chain()
-
     if skymap_filename is None:
         for message in gracedb.get_log(superevent_id):
             t = message['tag_names']
@@ -330,22 +327,16 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None):
                     and (f.endswith('.fits') or f.endswith('.fits.gz')):
                 skymap_filename = f
 
-    if skymap_filename is not None:
-        canvas |= skymaps.annotate_fits(
-            skymap_filename,
+    (
+        _create_voevent.s(
+            None,
             superevent_id,
-            ['sky_loc', 'public'],
-            vetted=True
+            alert_type,
+            skymap_filename=skymap_filename
         )
-
-    canvas |= _create_voevent.si(
-        None,
-        superevent_id,
-        alert_type,
-        skymap_filename=skymap_filename
-    )
-    canvas |= gcn.send.s()
-    canvas.apply_async()
+        |
+        gcn.send.s()
+    ).apply_async()
 
 
 @app.task(ignore_result=True, shared=False)
