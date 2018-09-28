@@ -26,7 +26,7 @@ def create_combined_skymap(graceid):
                 combine_skymaps.s(gracedb.download(preferred_skymap,
                                                    graceid)) |
                 gracedb.upload.s(
-                    new_skymap, graceid, message, ['sky_loc', 'lvem']),
+                    new_skymap, graceid, message, ['sky_loc', 'public']),
 
                 gracedb.upload.s('glg_healpix_all_bn_v00.fit',
                                  external_trigger_id,

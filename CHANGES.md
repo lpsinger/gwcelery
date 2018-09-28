@@ -2,7 +2,10 @@
 
 ## 0.1.1 (unreleased)
 
--   No changes yet.
+-   Use the `public` tag instead of the `lvem` tag to mark preliminary sky maps
+    for public access rather than LV-EM partner access. Note that GraceDb has
+    not yet actually implemented unauthenticated access, so this should have no
+    effect during our ongoing software engineering runs.
 
 ## 0.1.0 (2018-09-26)
 

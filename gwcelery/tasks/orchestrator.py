@@ -114,7 +114,7 @@ def handle_cbc_event(alert):
                 |
                 gracedb.upload.s(
                     'bayestar.fits.gz', graceid,
-                    'sky localization complete', ['sky_loc', 'lvem']
+                    'sky localization complete', ['sky_loc', 'public']
                 )
                 |
                 gracedb.create_label.si('SKYMAP_READY', graceid),
@@ -123,7 +123,7 @@ def handle_cbc_event(alert):
                 |
                 gracedb.upload.s(
                     'source_classification.json', graceid,
-                    'source classification complete', ['em_bright', 'lvem']
+                    'source classification complete', ['em_bright', 'public']
                 )
                 |
                 gracedb.create_label.si('EMBRIGHT_READY', graceid)
@@ -246,7 +246,7 @@ def preliminary_alert(event, superevent_id):
                     superevent_id,
                     message='Localization copied from {}'.format(
                         preferred_event_id),
-                    tags=['sky_loc', 'lvem']
+                    tags=['sky_loc', 'public']
                 )
                 |
                 gracedb.create_label.si('SKYMAP_READY', superevent_id),
@@ -254,7 +254,7 @@ def preliminary_alert(event, superevent_id):
                 skymaps.annotate_fits(
                     skymap_filename,
                     superevent_id,
-                    ['sky_loc', 'lvem']
+                    ['sky_loc', 'public']
                 )
             )
         )
@@ -269,7 +269,7 @@ def preliminary_alert(event, superevent_id):
                 superevent_id,
                 message='Source classification copied from {}'.format(
                     preferred_event_id),
-                tags=['em_bright', 'lvem']
+                tags=['em_bright', 'public']
             )
             |
             gracedb.create_label.si('EMBRIGHT_READY', superevent_id)
@@ -313,7 +313,7 @@ def _initial_or_update_alert(superevent_id, alert_type, skymap_filename=None):
         canvas |= skymaps.annotate_fits(
             skymap_filename,
             superevent_id,
-            ['sky_loc', 'lvem'],
+            ['sky_loc', 'public'],
             vetted=True
         )
 
