@@ -37,18 +37,16 @@
             ],
             "superevent_id": "S0040",
             "submitter": "deep.chatterjee@LIGO.ORG",
-            "preferred_event": "T0213",
-            "t_start": 1078515564.09,
+            "preferred_event": "G000012",
+            "t_start": 1078515564.0,
             "em_events": [
 
             ],
-            "t_0": 1078515569.09,
+            "t_0": 1078515565.0,
             "gw_events": [
-                "T0215",
-                "T0214",
-                "T0213"
+                "G000012"
             ],
-            "t_end": 1078515574.09,
+            "t_end": 1078515566.0,
             "created": "2018-05-10 18:29:02 UTC",
             "links": {
                 "self": "https://gracedb-dev1.ligo.org/api/superevents/S0040/",

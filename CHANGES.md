@@ -13,6 +13,11 @@
 -   Automated `DQV` labels should not trigger retraction notices because they
     prevent preliminary notices from being sent in the first place.
 
+-   The criterion for selecting a superevent's preferred event now prefers
+    multiple-detector events to single-detector events, with precedence over
+    both source type (CBC versus burst). Further tie is broken by using SNR
+    for CBC and FAR for Burst triggers.
+
 ## 0.1.0 (2018-09-26)
 
 -   Separated the external GCN listening handlers into two: one that listens

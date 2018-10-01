@@ -135,6 +135,7 @@ def _get_event_info(payload):
         graceid=payload['graceid'],
         gpstime=payload['gpstime'],
         far=payload['far'],
+        instruments=payload['instruments'],
         group=payload['group'],
         pipeline=payload['pipeline'],
         search=payload.get('search'),
@@ -183,6 +184,8 @@ def _get_dts(event_info):
 
 def _keyfunc(event_info):
     group = event_info['group'].lower()
+    num_ifos = len(event_info['instruments'].split(","))
+    ifo_rank = (num_ifos <= 1)
     try:
         group_rank = ['cbc', 'burst'].index(group)
     except ValueError:
@@ -190,18 +193,21 @@ def _keyfunc(event_info):
     # return the index of group and negative snr in spirit
     # of rank being lower for higher SNR for CBC
     if group == 'cbc':
-        return group_rank, -1.0*event_info['snr']
+        return ifo_rank, group_rank, -1.0*event_info['snr']
     else:
-        return group_rank, event_info['far']
+        return ifo_rank, group_rank, event_info['far']
 
 
 def _update_superevent(superevent_id, preferred_event, new_event_dict,
                        t_start, t_end):
     """
     Update preferred event and/or change time window.
-    Decision between `preferred_event` and `new_event`
-    based on FAR values if groups match, else CBC takes
-    precedence over burst
+    Events with multiple detectors take precedence over
+    single-detector events, then CBC events take precedence
+    over burst events, and any remaining tie is broken by SNR/FAR
+    values for CBC/Burst. Single detector are not promoted
+    to preferred event status, if existing preferred event is
+    multi-detector
 
     Parameters
     ----------

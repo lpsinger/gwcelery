@@ -1,7 +1,7 @@
 {
 	"object": {
-		"graceid": "G000007",
-		"gpstime": 1163905249.5,
+		"graceid": "G000012",
+		"gpstime": 1078515565.0,
 		"pipeline": "oLIB",
 		"group": "Burst",
 		"links": {
@@ -36,9 +36,5 @@
 		},
 		"submitter": "deep.chatterjee@ligo.org",
 		"offline": false
-	},
-	"alert_type": "new",
-	"uid": "G000007",
-	"file": "",
-	"description": ""
+	}
 }
