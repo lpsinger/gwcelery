@@ -100,42 +100,20 @@ def upload(filecontents, filename, graceid, message, tags=None):
 
 
 @app.task(shared=False)
-def get_superevents(gid, query=None):
-    """Iterate through superevents in gracedb and return sid if
-    gid exists in the association.
+def get_superevents(query):
+    """List matching superevents in gracedb.
 
     Parameters
     ----------
-    gid : str
-        uid of the trigger to be checked
-
     query : str
-        optional query to be passed to :meth:`superevents`
+        query to be passed to :meth:`superevents`
 
     Returns
     -------
-    superevent_id : str
-        uid of the superevent. None if not found
-    preferred_flag : bool
-        True if gid is found and it is preferred. None if not found.
     superevents : list
         The list of the superevents.
     """
-    superevents = list(client.superevents(query=query, orderby='t_0'))
-    for superevent in superevents:
-        preferred_flag = False
-        # check preferred_event first
-        if gid == superevent['preferred_event']:
-            preferred_flag = True
-            log.info('Found association (Preferred) %s <-> %s',
-                     gid, superevent['superevent_id'])
-            return superevent['superevent_id'], preferred_flag, superevents
-        # then check the gw_events
-        elif gid in superevent['gw_events']:
-            log.info('Found association (NOT Preferred) %s <-> %s',
-                     gid, superevent['superevent_id'])
-            return superevent['superevent_id'], preferred_flag, superevents
-    return None, False, superevents
+    return list(client.superevents(query=query, orderby='t_0'))
 
 
 @task(ignore_result=True, shared=False)

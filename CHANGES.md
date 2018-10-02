@@ -25,6 +25,11 @@
     because they would only be duplicating the annotations performed as part
     of the preliminary alert.
 
+-   Mock events now include example initial and retraction notices. Two minutes
+    after each mock event is uploaded, there will be either an `ADVOK` or an
+    `ADVNO` label applied at random, triggering either an initial or a
+    retraction notice respectively.
+
 ## 0.1.0 (2018-09-26)
 
 -   Separated the external GCN listening handlers into two: one that listens

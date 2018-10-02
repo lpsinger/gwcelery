@@ -97,19 +97,6 @@ def test_update_preferred_event(mock_db):
                              t_start=None, t_end=None, t_0=None)
 
 
-def test_get_superevents(mock_db):
-    gid_1 = 'T0212'  # present in fake superevent queue
-    gid_2 = 'T0219'  # present but not preferred event
-    gid_3 = 'T9999'  # absent in fake superevent queue
-    superevent_id_1, preferred_flag_1, r_1 = gracedb.get_superevents(gid_1)
-    superevent_id_2, preferred_flag_2, r_2 = gracedb.get_superevents(gid_2)
-    superevent_id_3, preferred_flag_3, r_3 = gracedb.get_superevents(gid_3)
-
-    assert superevent_id_1 == 'S0039' and preferred_flag_1
-    assert superevent_id_2 == 'S0041' and not preferred_flag_2
-    assert superevent_id_3 is None
-
-
 def test_parse_trigger_raising():
     garbage_payload = dict(some_value=999, something_else=99)
     with pytest.raises(KeyError):

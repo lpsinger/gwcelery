@@ -32,8 +32,12 @@ def test_pick_coinc():
 
 @patch('lal.GPSTimeNow', mock_now)
 @patch('gwcelery.tasks.gracedb.create_event', return_value='M1234')
-@patch('gwcelery.tasks.gracedb.upload')
-def test_upload_event(mock_upload, mock_create_event):
+@patch('gwcelery.tasks.gracedb.upload.run')
+@patch('gwcelery.tasks.gracedb.get_superevents.run',
+       return_value=[{'superevent_id': 'S1234'}])
+@patch('gwcelery.tasks.gracedb.create_label.run')
+def test_upload_event(mock_create_label, mock_get_superevents,
+                      mock_upload, mock_create_event):
     coinc = pick_coinc()
     psd = pkg_resources.resource_string(
         __name__, '../data/first2years/2016/psd.xml.gz')
@@ -47,3 +51,7 @@ def test_upload_event(mock_upload, mock_create_event):
         call(psd, 'psd.xml.gz', 'M1234', 'Noise PSD', ['psd']),
         call(ranking_data, 'ranking_data.xml.gz', 'M1234', 'Ranking data')
     ])
+    mock_get_superevents.assert_called_once_with('MDC event: M1234')
+    mock_create_label.assert_called_once()
+    assert mock_create_label.call_args in (
+        call('ADVOK', 'S1234'), call('ADVNO', 'S1234'))

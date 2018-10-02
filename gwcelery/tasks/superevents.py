@@ -60,13 +60,17 @@ def handle(payload):
     else:
         category = 'production'
 
-    query_times = (event_info['gpstime'] -
-                   app.conf['superevent_query_d_t_start'],
-                   event_info['gpstime'] +
-                   app.conf['superevent_query_d_t_end'])
+    superevents = gracedb.get_superevents('category: {} {} .. {}'.format(
+        category,
+        event_info['gpstime'] - app.conf['superevent_query_d_t_start'],
+        event_info['gpstime'] + app.conf['superevent_query_d_t_end']))
 
-    sid, preferred_flag, superevents = gracedb.get_superevents(
-        gid, query='''category: {} {} .. {}'''.format(category, *query_times))
+    for superevent in superevents:
+        if gid in superevent['gw_events']:
+            sid = superevent['superevent_id']
+            break  # Found matching superevent
+    else:
+        sid = None  # No matching superevent
 
     d_t_start, d_t_end = _get_dts(event_info)
 

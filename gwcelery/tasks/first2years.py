@@ -1,6 +1,8 @@
 """Create mock events from the "First Two Years" paper."""
 import io
+import random
 
+from celery import group
 from celery.task import PeriodicTask
 from celery.utils.log import get_task_logger
 from glue.ligolw import utils
@@ -109,9 +111,21 @@ def pick_coinc():
     return coinc_xml.getvalue()
 
 
+@app.task(shared=False)
+def _vet_event(superevents):
+    gracedb.create_label.s(
+        random.choice(['ADVNO', 'ADVOK']),
+        superevents[0]['superevent_id']
+    ).apply_async()
+
+
 @app.task(base=PeriodicTask, shared=False, run_every=3600)
 def upload_event():
-    """Upload a random event from the "First Two Years" paper."""
+    """Upload a random event from the "First Two Years" paper.
+
+    After 2 minutes, randomly either retract or confirm the event to send a
+    retraction or initial notice respectively.
+    """
     coinc = pick_coinc()
     psd = pkg_resources.resource_string(
         __name__, '../data/first2years/2016/psd.xml.gz')
@@ -119,6 +133,17 @@ def upload_event():
         __name__, '../tests/data/ranking_data_G322589.xml.gz')
     graceid = gracedb.create_event(coinc, 'MDC', 'gstlal', 'CBC')
     log.info('uploaded as %s', graceid)
-    gracedb.upload(psd, 'psd.xml.gz', graceid, 'Noise PSD', ['psd'])
-    gracedb.upload(ranking_data, 'ranking_data.xml.gz', graceid,
-                   'Ranking data')
+    (
+        group(
+            gracedb.upload.si(psd, 'psd.xml.gz',
+                              graceid, 'Noise PSD', ['psd']),
+            gracedb.upload.si(ranking_data, 'ranking_data.xml.gz',
+                              graceid, 'Ranking data')
+        )
+        |
+        gracedb.get_superevents.si(
+            'MDC event: {}'.format(graceid)
+        ).set(countdown=120)
+        |
+        _vet_event.s()
+    ).apply_async()
