@@ -15,8 +15,8 @@
 
 -   The criterion for selecting a superevent's preferred event now prefers
     multiple-detector events to single-detector events, with precedence over
-    both source type (CBC versus burst). Any remaining tie is broken by using
-    SNR for CBC and FAR for Burst triggers.
+    source type (CBC versus burst). Any remaining tie is broken by using SNR
+    for CBC and FAR for Burst triggers.
 
 -   By default, initial and update alerts will find and send the most recently
     added public sky map.
