@@ -122,9 +122,9 @@ for mod in ['astropy',
             'lxml',
             'lxml.etree',
             'numpy',
-            'raven',
             'safe_netrc',
             'scipy',
+            'sentry-sdk',
             'sleek_lvalert',
             'pytest']:
     try:
@@ -245,8 +245,7 @@ intersphinx_mapping = {
     'celery_eternal': ('https://celery-eternal.readthedocs.io/en/latest/',
                        None),
     'gwpy': ('https://gwpy.github.io/docs/stable/', None),
-    'ligo.skymap': ('https://leo-singer.docs.ligo.org/ligo.skymap/', None),
-    'sentry': ('https://docs.sentry.io/', None)
+    'ligo.skymap': ('https://leo-singer.docs.ligo.org/ligo.skymap/', None)
 }
 
 

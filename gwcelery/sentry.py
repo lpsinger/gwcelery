@@ -4,9 +4,9 @@ Integration of the Celery logging system with `Sentry <https://sentry.io>`_.
 from urllib.parse import urlparse, urlunparse
 
 from celery.utils.log import get_logger
-import raven
-import raven.contrib.celery
 from safe_netrc import netrc, NetrcParseError
+import sentry_sdk
+from sentry_sdk.integrations import celery
 
 from .util import SPHINX
 
@@ -14,14 +14,13 @@ log = get_logger(__name__)
 
 __all__ = ('configure', 'DSN')
 
-DSN = 'http://emfollow.ldas.cit:9000//2'
-"""Sentry :ref:`data source name <configure-the-dsn>`."""
+DSN = 'http://emfollow.ldas.cit:9000/2'
+"""Sentry data source name (DSN)."""
 
 
 def configure():
     """Configure Sentry logging integration for Celery according to the
-    `official instructions
-    <https://docs.sentry.io/clients/python/integrations/celery/>`_.
+    `official instructions <https://docs.sentry.io/platforms/python/celery/>`_.
 
     Add the API key username/pasword pair to your netrc file.
     """
@@ -41,9 +40,10 @@ def configure():
                       netloc)
         return
 
-    username, _, password = auth
+    # The "legacy" Sentry DSN requires a "public key" and a "private key",
+    # which are transmitted as the username and password in the URL.
+    # However, as of Sentry 9, then "private key" part is no longer required.
+    username, _, _ = auth
     dsn = urlunparse(
-        (scheme, '{}:{}@{}'.format(username, password, netloc), *rest))
-    client = raven.Client(dsn)
-    raven.contrib.celery.register_logger_signal(client)
-    raven.contrib.celery.register_signal(client)
+        (scheme, '{}@{}'.format(username, netloc), *rest))
+    sentry_sdk.init(dsn, integrations=[celery.CeleryIntegration()])
