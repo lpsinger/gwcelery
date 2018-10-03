@@ -105,8 +105,12 @@ class JobFailed(subprocess.CalledProcessError):
 
 @app.task(bind=True, autoretry_for=(JobRunning,), default_retry_delay=1,
           max_retries=None, retry_backoff=True, shared=False)
-def submit(self, args, log=None, error=None, output=None, **kwargs):
-    """Submit a job to HTCondor.
+def check_output(self, args, log=None, error=None, output=None, **kwargs):
+    """Call a process using HTCondor.
+
+    Call an external process using HTCondor, in a manner patterned after
+    :meth:`subprocess.check_output`. If successful, returns its output on
+    stdout. On failure, raise an exception.
 
     Parameters
     ----------

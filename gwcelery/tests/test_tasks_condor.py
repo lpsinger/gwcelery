@@ -82,7 +82,7 @@ def mock_condor_submit(monkeypatch):
     monkeypatch.setattr('subprocess.check_call', mock_check_call)
 
 
-def test_condor_submit_error_on_submit(monkeypatch):
+def test_check_output_error_on_submit(monkeypatch):
     """Test capturing an error from condor_submit."""
 
     accounting_group = 'foo.bar'
@@ -95,36 +95,36 @@ def test_condor_submit_error_on_submit(monkeypatch):
     monkeypatch.setattr('subprocess.check_call', mock_check_call)
 
     with pytest.raises(subprocess.CalledProcessError) as exc_info:
-        condor.submit.delay(cmd, accounting_group=accounting_group)
+        condor.check_output.delay(cmd, accounting_group=accounting_group)
     assert 'accounting_group=' + accounting_group in exc_info.value.cmd
     assert exc_info.value.output == msg
 
 
-def test_condor_submit_aborted(mock_condor_submit_aborted):
+def test_check_output_aborted(mock_condor_submit_aborted):
     """Test a job that is aborted."""
 
     with pytest.raises(condor.JobAborted):
-        condor.submit.delay(['sleep', '1'])
+        condor.check_output.delay(['sleep', '1'])
 
 
-def test_condor_submit_fails(mock_condor_submit):
+def test_check_output_fails(mock_condor_submit):
     """Test a job that immediately fails."""
 
     with pytest.raises(condor.JobFailed) as exc_info:
-        condor.submit.delay(['sleep', '--foo="bar bat"', '1'])
+        condor.check_output.delay(['sleep', '--foo="bar bat"', '1'])
     assert exc_info.value.returncode == 1
 
 
 # FIXME: this test doesn't work in eager mode.
-# def test_condor_submit_running(mock_condor_submit_running):
+# def test_check_output_running(mock_condor_submit_running):
 #
 #     with pytest.raises(condor.JobRunning):
-#         condor.submit.delay(['sleep', '1'])
+#         condor.check_output.delay(['sleep', '1'])
 
 
 # FIXME: this test doesn't work in eager mode.
 # See https://github.com/celery/celery/issues/4661.
-# def test_condor_submit_succeeds(mock_condor_submit):
+# def test_check_output_succeeds(mock_condor_submit):
 #     """Test a job that immediately succeeds."""
 #
-#     condor.submit.delay(['sleep', '1'])
+#     condor.check_output.delay(['sleep', '1'])
