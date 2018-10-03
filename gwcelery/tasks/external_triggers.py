@@ -161,7 +161,7 @@ def handle_sn_lvalert(alert):
     if alert['alert_type'] == 'new' and \
             alert['object'].get('group', '') == 'External':
         raven.coincidence_search(graceid, alert['object'],
-                                 group='Burst').delay()
+                                 group='Burst', pipelines=['SNEWS']).delay()
     elif graceid.startswith('S'):
         preferred_event_id = gracedb.get_superevent(graceid)['preferred_event']
         group = gracedb.get_event(preferred_event_id)['group']
