@@ -85,10 +85,15 @@ def _read_last_event(log):
     return dict(_parse_classad(tree.find('c[last()]')))
 
 
-def _submit(**kwargs):
-    subprocess.check_call(['condor_submit'] +
-                          ['{}={}'.format(k, v) for k, v in kwargs.items()] +
-                          ['/dev/null', '-queue', '1'])
+def _submit(submit_file=None, **kwargs):
+    args = ['condor_submit']
+    for key, value in kwargs.items():
+        args += ['-append', '{}={}'.format(key, value)]
+    if submit_file is None:
+        args += ['/dev/null', '-queue', '1']
+    else:
+        args += [submit_file]
+    subprocess.check_call(args)
 
 
 class JobAborted(Exception):
@@ -101,6 +106,55 @@ class JobRunning(Exception):
 
 class JobFailed(subprocess.CalledProcessError):
     """Raised if an HTCondor job fails."""
+
+
+@app.task(bind=True, autoretry_for=(JobRunning,), default_retry_delay=1,
+          ignore_result=True, max_retries=None, retry_backoff=True,
+          shared=False)
+def submit(self, submit_file, log=None):
+    """Submit a job using HTCondor.
+
+    Parameters
+    ----------
+    submit_file : str
+        Path of the submit file.
+    log: str
+        Used internally to track job state. Caller should not set.
+
+    Raises
+    ------
+    :class:`JobAborted`
+        If the job was aborted (e.g. by running ``condor_rm``).
+    :class:`JobFailed`
+        If the job terminates and returns a nonzero exit code.
+    :class:`JobRunning`
+        If the job is still running. Causes the task to be re-queued until the
+        job is complete.
+
+    Example
+    -------
+    >>> submit.s('example.sub',
+    ...          accounting_group='ligo.dev.o3.cbc.explore.test')
+    """
+    if log is None:
+        log = _mklog('.log')
+        try:
+            _submit(submit_file, log_xml='true', log=log)
+        except subprocess.CalledProcessError:
+            _rm_f(log)
+            raise
+        self.retry((submit_file,), dict(log=log))
+    else:
+        event = _read_last_event(log)
+        if event.get('MyType') == 'JobTerminatedEvent':
+            _rm_f(log)
+            if event['TerminatedNormally'] and event['ReturnValue'] != 0:
+                raise JobFailed(event['ReturnValue'], (submit_file,))
+        elif event.get('MyType') == 'JobAbortedEvent':
+            _rm_f(log)
+            raise JobAborted(event)
+        else:
+            raise JobRunning(event)
 
 
 @app.task(bind=True, autoretry_for=(JobRunning,), default_retry_delay=1,
@@ -139,9 +193,12 @@ def check_output(self, args, log=None, error=None, output=None, **kwargs):
 
     Example
     -------
-    >>> submit.s(['sleep', '10'],
-    ...          accounting_group='ligo.dev.o3.cbc.explore.test')
+    >>> check_output.s(['sleep', '10'],
+    ...                accounting_group='ligo.dev.o3.cbc.explore.test')
     """
+    # FIXME: Refactor to reuse common code from this task and
+    # gwcelery.tasks.condor.submit.
+
     if log is None:
         log = _mklog('.log')
         error = _mklog('.err')
