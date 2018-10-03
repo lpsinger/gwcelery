@@ -162,9 +162,7 @@ def check_idq(cache, channel, start, end):
     Returns
     -------
     tuple
-        Tuple mapping iDQ channel to its minimum P(glitch). In
-        check_vectors, if this P(glitch) is under a certain threshold, it will
-        be logged to GraceDb.
+        Tuple mapping iDQ channel to its maximum P(glitch).
 
     Example
     -------
@@ -182,7 +180,7 @@ def check_idq(cache, channel, start, end):
         log.exception('Failed to read from low-latency iDQ frame files')
         return (channel, None)
     else:
-        return (channel, getattr(idq_prob, 'min')())
+        return (channel, getattr(idq_prob, 'max')())
 
 
 def check_vector(cache, channel, start, end, bits, logic_type='all'):
