@@ -30,6 +30,9 @@
     `ADVNO` label applied at random, triggering either an initial or a
     retraction notice respectively.
 
+-   Depend on ligo-gracedb >= 2.0.1 in order to pull in a bug fix for VOEvents
+    with ProbHasNS or ProbHasRemnant set to 0.0.
+
 ## 0.1.0 (2018-09-26)
 
 -   Separated the external GCN listening handlers into two: one that listens
