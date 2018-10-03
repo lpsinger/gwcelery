@@ -244,6 +244,8 @@ intersphinx_mapping = {
     'celery': ('https://celery.readthedocs.io/en/latest/', None),
     'celery_eternal': ('https://celery-eternal.readthedocs.io/en/latest/',
                        None),
+    'data-quality-report': (
+        'https://docs.ligo.org/detchar/data-quality-report/', None),
     'gwpy': ('https://gwpy.github.io/docs/stable/', None),
     'ligo.skymap': ('https://leo-singer.docs.ligo.org/ligo.skymap/', None)
 }

@@ -13,8 +13,11 @@ References
 .. [Virgo] https://dcc.ligo.org/G1801125/
 .. [DMT] https://wiki.ligo.org/DetChar/DmtDqVector
 """
+import getpass
 import glob
 import json
+import socket
+import time
 
 from celery.exceptions import Ignore
 from celery.utils.log import get_task_logger
@@ -145,6 +148,51 @@ def create_cache(ifo):
     pattern = app.conf['llhoft_glob'].format(detector=ifo)
     filenames = glob.glob(pattern)
     return Cache.from_urls(filenames)
+
+
+def dqr_json(state, summary):
+    """Generate DQR-compatible json-ready dictionary from process results, as
+    described in :class:`data-quality-report.design`.
+
+    Parameters
+    ----------
+    state : {'pass', 'fail'}
+        State of the detchar checks.
+    summary : str
+        Summary of results from the process.
+
+    Returns
+    -------
+    dict
+        Ready to be converted into json.
+
+    """
+    links = [
+        {
+            "href":
+            "https://gwcelery.readthedocs.io/en/latest/gwcelery.tasks.detchar.html#gwcelery.tasks.detchar.check_vectors", # noqa
+            "innerHTML": "a link to the documentation for this process"
+        },
+        {
+            "href":
+            "https://git.ligo.org/emfollow/gwcelery/blob/master/gwcelery/tasks/detchar.py",  # noqa
+            "innerHTML": "a link to the source code in the gwcelery repo"
+        }
+    ],
+    return dict(
+        state=state,
+        process_name=__name__,
+        process_version='unknown',
+        librarian='Geoffrey Mo (geoffrey.mo@ligo.org)',
+        date=time.strftime("%H:%M:%S UTC %a %d %b %Y", time.gmtime()),
+        hostname=socket.gethostname(),
+        username=getpass.getuser(),
+        summary=summary,
+        figures=[],
+        tables=[],
+        links=links,
+        extra=[],
+    )
 
 
 def check_idq(cache, channel, start, end):
@@ -328,6 +376,8 @@ def check_vectors(event, graceid, start, end):
                        " are good (below {}).").format(
                            app.conf['idq_pglitch_thresh'])
         gracedb.client.writeLog(graceid, idq_msg, tag_name=['data_quality'])
+    else:
+        idq_msg = "iDQ glitch probabilities unknown"
 
     # Labeling INJ to GraceDb
     if False in active_inj_states.values():
@@ -342,8 +392,11 @@ def check_vectors(event, graceid, start, end):
         gracedb.client.writeLog(graceid, inj_msg,
                                 tag_name=['data_quality'])
     elif all(inj_states.values()) and len(inj_states.values()) > 0:
-        gracedb.client.writeLog(graceid, 'No HW injections found.',
+        inj_msg = 'No HW injections found.'
+        gracedb.client.writeLog(graceid, inj_msg,
                                 tag_name=['data_quality'])
+    else:
+        inj_msg = 'Injection state unknown.'
 
     # Determining overall_dq_active_state
     if None in active_dq_states.values() or len(
@@ -364,10 +417,23 @@ def check_vectors(event, graceid, start, end):
     # Labeling DQOK/DQV to GraceDb
     gracedb.client.writeLog(graceid, msg, tag_name=['data_quality'])
     if overall_dq_active_state is True:
+        state = "pass"
         gracedb.create_label('DQOK', graceid)
     elif overall_dq_active_state is False:
+        state = "fail"
         gracedb.create_label('DQV', graceid)
         # Halt further proessing of canvas
         raise Ignore('vetoed by state vector')
+    else:
+        state = "unknown"
+
+    # Create and upload DQR-compatible json
+    state_summary = '{} {}'.format(inj_msg, idq_msg, msg)
+    file = dqr_json(state, state_summary)
+    filename = 'gwcelerydetcharcheckvectors-{}.json'.format(graceid)
+    message = "DQR-compatible json generated from check_vectors results"
+    gracedb.upload(
+        json.dumps(file), filename, graceid, message, tags=['data_quality']
+    )
 
     return event

@@ -4,6 +4,9 @@
 
 -   Preliminary GCN is not sent for superevents created from offline gw events.
 
+-   Add `dqr_json` function to `gwcelery.tasks.detchar`, which uploads a 
+    DQR-compatible json to GraceDb with the results of the detchar checks.
+
 ## 0.1.2 (2018-10-11)
 
 -   Setted `vetted` flag to true for all initial, update, and retraction alerts

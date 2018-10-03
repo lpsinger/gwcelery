@@ -6,32 +6,43 @@ from ..tasks import external_triggers
 from . import resource_json
 
 
-@patch('gwcelery.tasks.gracedb.create_label')
+@patch('gwcelery.tasks.detchar.dqr_json', return_value='dqrjson')
 @patch('gwcelery.tasks.gracedb.client.writeLog')
 @patch('gwcelery.tasks.gracedb.get_event', return_value={
     'graceid': 'E1', 'gpstime': 1, 'instruments': '', 'pipeline': 'Fermi',
     'extra_attributes': {'GRB': {'trigger_duration': 1}}})
 @patch('gwcelery.tasks.gracedb.create_event')
 def test_handle_create_grb_event(mock_create_event, mock_get_event,
-                                 mock_write_log, mock_create_label):
+                                 mock_write_log, mock_json):
     text = resource_string(__name__, 'data/fermi_grb_gcn.xml')
     external_triggers.handle_grb_gcn(payload=text)
     mock_create_event.assert_called_once_with(filecontents=text,
                                               search='GRB',
                                               pipeline='Fermi',
                                               group='External')
-    mock_write_log.assert_called_with(
-        'E1',
-        ('detector state for active instruments is unknown. For all'
-         ' instruments, bits good (), bad (),'
-         ' unknown(H1:NO_OMC_DCPD_ADC_OVERFLOW,'
-         ' H1:NO_DMT-ETMY_ESD_DAC_OVERFLOW, L1:NO_OMC_DCPD_ADC_OVERFLOW,'
-         ' L1:NO_DMT-ETMY_ESD_DAC_OVERFLOW, H1:HOFT_OK, H1:OBSERVATION_INTENT,'
-         ' L1:HOFT_OK, L1:OBSERVATION_INTENT, V1:HOFT_OK,'
-         ' V1:OBSERVATION_INTENT).'),
-        #  , V1:NO_DQ_VETO_MBTA, V1:NO_DQ_VETO_CWB,'
-        #  ' V1:NO_DQ_VETO_GSTLAL, V1:NO_DQ_VETO_OLIB, V1:NO_DQ_VETO_PYCBC).'),
-        tag_name=['data_quality'])
+    calls = [
+        call(
+            'E1',
+            'DQR-compatible json generated from check_vectors results',
+            'gwcelerydetcharcheckvectors-E1.json',
+            '"dqrjson"',
+            ['data_quality']),
+        call(
+            'E1',
+            ('detector state for active instruments is unknown. For all'
+             ' instruments, bits good (), bad (),'
+             ' unknown(H1:NO_OMC_DCPD_ADC_OVERFLOW,'
+             ' H1:NO_DMT-ETMY_ESD_DAC_OVERFLOW, L1:NO_OMC_DCPD_ADC_OVERFLOW,'
+             ' L1:NO_DMT-ETMY_ESD_DAC_OVERFLOW, H1:HOFT_OK,'
+             ' H1:OBSERVATION_INTENT,'
+             ' L1:HOFT_OK, L1:OBSERVATION_INTENT, V1:HOFT_OK,'
+             ' V1:OBSERVATION_INTENT).'),
+            #  , V1:NO_DQ_VETO_MBTA, V1:NO_DQ_VETO_CWB,'
+            #  ' V1:NO_DQ_VETO_GSTLAL, V1:NO_DQ_VETO_OLIB,'
+            #  ' V1:NO_DQ_VETO_PYCBC).'),
+            tag_name=['data_quality'])
+    ]
+    mock_write_log.assert_has_calls(calls, any_order=True)
 
 
 @patch('gwcelery.tasks.gracedb.replace_event')
@@ -42,31 +53,42 @@ def test_handle_replace_grb_event(mock_get_events, mock_replace_event):
     mock_replace_event.assert_called_once_with('E1', text)
 
 
-@patch('gwcelery.tasks.gracedb.create_label')
+@patch('gwcelery.tasks.detchar.dqr_json', return_value='dqrjson')
 @patch('gwcelery.tasks.gracedb.client.writeLog')
 @patch('gwcelery.tasks.gracedb.get_event', return_value={
     'graceid': 'E1', 'gpstime': 1, 'instruments': '', 'pipeline': 'SNEWS'})
 @patch('gwcelery.tasks.gracedb.create_event')
 def test_handle_create_sn_event(mock_create_event, mock_get_event,
-                                mock_write_log, mock_create_label):
+                                mock_write_log, mock_json):
     text = resource_string(__name__, 'data/snews_gcn.xml')
     external_triggers.handle_sn_gcn(payload=text)
     mock_create_event.assert_called_once_with(filecontents=text,
                                               search='Supernova',
                                               pipeline='SNEWS',
                                               group='External')
-    mock_write_log.assert_called_with(
-        'E1',
-        ('detector state for active instruments is unknown. For all'
-         ' instruments, bits good (), bad (),'
-         ' unknown(H1:NO_OMC_DCPD_ADC_OVERFLOW,'
-         ' H1:NO_DMT-ETMY_ESD_DAC_OVERFLOW, L1:NO_OMC_DCPD_ADC_OVERFLOW,'
-         ' L1:NO_DMT-ETMY_ESD_DAC_OVERFLOW, H1:HOFT_OK, H1:OBSERVATION_INTENT,'
-         ' L1:HOFT_OK, L1:OBSERVATION_INTENT, V1:HOFT_OK,'
-         ' V1:OBSERVATION_INTENT).'),
-        #  , V1:NO_DQ_VETO_MBTA, V1:NO_DQ_VETO_CWB,'
-        #  ' V1:NO_DQ_VETO_GSTLAL, V1:NO_DQ_VETO_OLIB, V1:NO_DQ_VETO_PYCBC).'),
-        tag_name=['data_quality'])
+    calls = [
+        call(
+            'E1',
+            'DQR-compatible json generated from check_vectors results',
+            'gwcelerydetcharcheckvectors-E1.json',
+            '"dqrjson"',
+            ['data_quality']),
+        call(
+            'E1',
+            ('detector state for active instruments is unknown. For all'
+             ' instruments, bits good (), bad (),'
+             ' unknown(H1:NO_OMC_DCPD_ADC_OVERFLOW,'
+             ' H1:NO_DMT-ETMY_ESD_DAC_OVERFLOW, L1:NO_OMC_DCPD_ADC_OVERFLOW,'
+             ' L1:NO_DMT-ETMY_ESD_DAC_OVERFLOW, H1:HOFT_OK,'
+             ' H1:OBSERVATION_INTENT,'
+             ' L1:HOFT_OK, L1:OBSERVATION_INTENT, V1:HOFT_OK,'
+             ' V1:OBSERVATION_INTENT).'),
+            #  , V1:NO_DQ_VETO_MBTA, V1:NO_DQ_VETO_CWB,'
+            #  ' V1:NO_DQ_VETO_GSTLAL, V1:NO_DQ_VETO_OLIB,'
+            #  ' V1:NO_DQ_VETO_PYCBC).'),
+            tag_name=['data_quality'])
+    ]
+    mock_write_log.assert_has_calls(calls, any_order=True)
 
 
 @patch('gwcelery.tasks.gracedb.replace_event')
