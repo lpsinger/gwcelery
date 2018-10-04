@@ -4,9 +4,9 @@
 
 GWCelery requires Python >= 3.6.
 
-The easiest way to install it is with `virtualenv` and `pip`:
+The easiest way to install it is with `venv` and `pip`:
 
-	$ virtualenv --system-site-packages ~/gwcelery
+	$ python -m venv --system-site-packages ~/gwcelery
 	$ source ~/gwcelery/bin/activate
 	$ pip install git+https://git.ligo.org/emfollow/gwcelery
 
