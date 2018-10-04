@@ -8,7 +8,7 @@ The easiest way to install it is with `venv` and `pip`:
 
 	$ python -m venv --system-site-packages ~/gwcelery
 	$ source ~/gwcelery/bin/activate
-	$ pip install git+https://git.ligo.org/emfollow/gwcelery
+	$ pip install gwcelery
 
 *  **Note:** GWCelery requires a fairly new version of `setuptools`. If you get
    an error message that looks like this:
