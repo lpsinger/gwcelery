@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2 (unreleased)
+
+-   No changes yet.
+
 ## 0.1.1 (2018-10-04)
 
 -   Use the `public` tag instead of the `lvem` tag to mark preliminary sky maps
