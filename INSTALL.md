@@ -2,7 +2,7 @@
 
 ## To install
 
-GWCelery requires Python >= 3.5.
+GWCelery requires Python >= 3.6.
 
 The easiest way to install it is with `virtualenv` and `pip`:
 
