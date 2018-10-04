@@ -47,8 +47,8 @@ dependencies/python3.7:
   stage: test
   variables:
     GIT_STRATEGY: none
-    IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
   script:
+    - IMAGE_TAG=$CI_REGISTRY_IMAGE/${CI_JOB_NAME#*/}:$CI_COMMIT_REF_NAME
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - |
       cat <<EOF > Dockerfile
