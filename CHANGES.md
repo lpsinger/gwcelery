@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.1 (unreleased)
+## 0.1.1 (2018-10-04)
 
 -   Use the `public` tag instead of the `lvem` tag to mark preliminary sky maps
     for public access rather than LV-EM partner access. Note that GraceDb has
