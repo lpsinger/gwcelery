@@ -35,8 +35,8 @@ def test_pick_coinc():
 @patch('gwcelery.tasks.gracedb.upload.run')
 @patch('gwcelery.tasks.gracedb.get_superevents.run',
        return_value=[{'superevent_id': 'S1234'}])
-@patch('gwcelery.tasks.gracedb.create_label.run')
-def test_upload_event(mock_create_label, mock_get_superevents,
+@patch('gwcelery.tasks.gracedb.create_signoff.run')
+def test_upload_event(mock_create_signoff, mock_get_superevents,
                       mock_upload, mock_create_event):
     coinc = pick_coinc()
     psd = pkg_resources.resource_string(
@@ -52,6 +52,9 @@ def test_upload_event(mock_create_label, mock_get_superevents,
         call(ranking_data, 'ranking_data.xml.gz', 'M1234', 'Ranking data')
     ])
     mock_get_superevents.assert_called_once_with('MDC event: M1234')
-    mock_create_label.assert_called_once()
-    assert mock_create_label.call_args in (
-        call('ADVOK', 'S1234'), call('ADVNO', 'S1234'))
+    mock_create_signoff.assert_called_once()
+    msg = ('If this had been a real gravitational-wave event candidate, '
+           'then an on-duty scientist would have left a comment here on '
+           'data quality and the status of the detectors.')
+    assert mock_create_signoff.call_args in (
+        call('NO', msg, 'ADV', 'S1234'), call('OK', msg, 'ADV', 'S1234'))

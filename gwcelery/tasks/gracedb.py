@@ -33,6 +33,12 @@ def create_label(label, graceid):
 
 
 @task(ignore_result=True, shared=False)
+def create_signoff(status, comment, signoff_type, graceid):
+    """Create a label in GraceDb."""
+    client.create_signoff(graceid, signoff_type, status, comment)
+
+
+@task(ignore_result=True, shared=False)
 def create_tag(tag, n, graceid):
     """Create a tag in GraceDb."""
     client.addTag(graceid, n, tag)

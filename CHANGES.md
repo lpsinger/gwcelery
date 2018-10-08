@@ -5,6 +5,11 @@
 -   Setted `vetted` flag to true for all initial, update, and retraction alerts
     that are triggered by GraceDb signoffs.
 
+-   Write GraceDb signoffs, instead of just labels, to simulate initial and
+    retraction alerts for mock events, because merely creating the `ADVNO`
+    or `ADVOK` label does not cause GraceDb to erase the `ADVREQ` label. This
+    change makes mock alerts more realistic.
+
 ## 0.1.1 (2018-10-04)
 
 -   Use the `public` tag instead of the `lvem` tag to mark preliminary sky maps
