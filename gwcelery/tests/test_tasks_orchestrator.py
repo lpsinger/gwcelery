@@ -97,7 +97,7 @@ def test_handle_superevent_initial_alert(mock_send, mock_create_voevent,
 
     mock_create_voevent.assert_called_once_with(
         'S1234', 'initial', skymap_filename='foobar.fits.gz',
-        skymap_image_filename='foobar.png', skymap_type='foobar')
+        skymap_image_filename='foobar.png', skymap_type='foobar', vetted=True)
     mock_send.assert_called_once_with('S1234-Initial-1.xml')
 
 

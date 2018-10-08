@@ -332,7 +332,8 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None):
             None,
             superevent_id,
             alert_type,
-            skymap_filename=skymap_filename
+            skymap_filename=skymap_filename,
+            vetted=True
         )
         |
         gcn.send.s()

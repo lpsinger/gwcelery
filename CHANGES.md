@@ -2,7 +2,8 @@
 
 ## 0.1.2 (unreleased)
 
--   No changes yet.
+-   Setted `vetted` flag to true for all initial, update, and retraction alerts
+    that are triggered by GraceDb signoffs.
 
 ## 0.1.1 (2018-10-04)
 
