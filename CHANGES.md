@@ -10,6 +10,9 @@
     or `ADVOK` label does not cause GraceDb to erase the `ADVREQ` label. This
     change makes mock alerts more realistic.
 
+-   Change filename of cWB sky maps from `skyprobcc_cWB.fits` to
+    `cWB.fits.gz` for consistency with other pipelines.
+
 ## 0.1.1 (2018-10-04)
 
 -   Use the `public` tag instead of the `lvem` tag to mark preliminary sky maps

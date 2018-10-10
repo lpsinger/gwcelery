@@ -226,7 +226,7 @@ def preliminary_alert(event, superevent_id):
     if event['group'] == 'CBC':
         skymap_filename = 'bayestar.fits.gz'
     elif event['pipeline'] == 'CWB':
-        skymap_filename = 'skyprobcc_cWB.fits'
+        skymap_filename = 'cWB.fits.gz'
     elif event['pipeline'] == 'oLIB':
         skymap_filename = 'oLIB.fits.gz'
     else:
