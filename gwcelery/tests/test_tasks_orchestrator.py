@@ -52,6 +52,7 @@ def test_handle_superevent(monkeypatch, group, pipeline):
         return 'S1234-1-Preliminary.xml'
 
     create_circular = Mock()
+    expose = Mock()
     plot_volume = Mock()
     plot_allsky = Mock()
     send = Mock()
@@ -60,6 +61,7 @@ def test_handle_superevent(monkeypatch, group, pipeline):
     monkeypatch.setattr('gwcelery.tasks.skymaps.plot_allsky.run', plot_allsky)
     monkeypatch.setattr('gwcelery.tasks.skymaps.plot_volume.run', plot_volume)
     monkeypatch.setattr('gwcelery.tasks.gracedb.download.run', download)
+    monkeypatch.setattr('gwcelery.tasks.gracedb.expose.run', expose)
     monkeypatch.setattr('gwcelery.tasks.gracedb.get_event.run', get_event)
     monkeypatch.setattr('gwcelery.tasks.gracedb.create_voevent.run',
                         create_voevent)
@@ -71,6 +73,7 @@ def test_handle_superevent(monkeypatch, group, pipeline):
     # Run function under test
     orchestrator.handle_superevent(alert)
 
+    expose.assert_called_once()
     plot_allsky.assert_called_once()
     plot_volume.assert_called_once()
     send.assert_called_once()
@@ -82,9 +85,10 @@ def test_handle_superevent(monkeypatch, group, pipeline):
                       'filename': 'foobar.fits.gz'}])
 @patch('gwcelery.tasks.gracedb.create_voevent.run',
        return_value='S1234-Initial-1.xml')
+@patch('gwcelery.tasks.gracedb.expose.run')
 @patch('gwcelery.tasks.gcn.send.run')
-def test_handle_superevent_initial_alert(mock_send, mock_create_voevent,
-                                         mock_get_log):
+def test_handle_superevent_initial_alert(mock_send, mock_expose,
+                                         mock_create_voevent, mock_get_log):
     """Test that the ``ADVOK`` label triggers an initial alert."""
     alert = {
         'alert_type': 'label_added',
@@ -95,6 +99,7 @@ def test_handle_superevent_initial_alert(mock_send, mock_create_voevent,
     # Run function under test
     orchestrator.handle_superevent(alert)
 
+    mock_expose.assert_called_once_with('S1234')
     mock_create_voevent.assert_called_once_with(
         'S1234', 'initial', skymap_filename='foobar.fits.gz',
         skymap_image_filename='foobar.png', skymap_type='foobar', vetted=True)

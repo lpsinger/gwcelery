@@ -13,6 +13,11 @@
 -   Change filename of cWB sky maps from `skyprobcc_cWB.fits` to
     `cWB.fits.gz` for consistency with other pipelines.
 
+-   Any time that we send a VOEvent, first change the GraceDb permissions on
+    the corresponding superevent so that it is visible to the public. Note that
+    this has no effect during the ongoing software engineering runs because
+    LVEM and unauthenticated access are currently disabled in GraceDb.
+
 ## 0.1.1 (2018-10-04)
 
 -   Use the `public` tag instead of the `lvem` tag to mark preliminary sky maps

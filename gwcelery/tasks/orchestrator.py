@@ -5,7 +5,7 @@ import json
 import re
 from urllib.error import URLError
 
-from celery import chain, group
+from celery import group
 from ligo.gracedb.rest import HTTPError
 
 from ..import app
@@ -232,13 +232,13 @@ def preliminary_alert(event, superevent_id):
     else:
         skymap_filename = None
 
-    # Start with a blank canvas (literally).
-    canvas = chain()
+    # Make the event public.
+    canvas = gracedb.expose.s(superevent_id)
 
     # If there is a sky map, then copy it to the superevent and create plots.
     if skymap_filename is not None:
         canvas |= (
-            _download.s(skymap_filename, preferred_event_id)
+            _download.si(skymap_filename, preferred_event_id)
             |
             group(
                 gracedb.upload.s(
@@ -328,7 +328,9 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None):
                 skymap_filename = f
 
     (
-        _create_voevent.s(
+        gracedb.expose.s(superevent_id)
+        |
+        _create_voevent.si(
             None,
             superevent_id,
             alert_type,
@@ -381,7 +383,9 @@ def retraction_alert(superevent_id):
     """Produce a retraction alert. This is currently just a stub and does
     nothing more than create and send a VOEvent."""
     (
-        gracedb.create_voevent.s(superevent_id, 'retraction', vetted=True)
+        gracedb.expose.s(superevent_id)
+        |
+        gracedb.create_voevent.si(superevent_id, 'retraction', vetted=True)
         |
         gcn.send.s()
     ).apply_async()

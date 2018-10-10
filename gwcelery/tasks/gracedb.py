@@ -63,6 +63,12 @@ def download(filename, graceid):
     return client.files(graceid, filename, raw=True).read()
 
 
+@task(ignore_result=True, shared=False)
+def expose(graceid):
+    """Expose an event to the public."""
+    client.modify_permissions(graceid, 'expose')
+
+
 @task(shared=False)
 def get_events(query=None, orderby=None, count=None, columns=None):
     """Get events from GraceDb."""

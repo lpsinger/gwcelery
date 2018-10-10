@@ -81,6 +81,13 @@ def test_download(mock_gracedb):
     mock_gracedb.files.assert_called_once_with('graceid', 'filename', raw=True)
 
 
+@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
+def test_expose(mock_gracedb):
+    gracedb.expose('graceid')
+    mock_gracedb.modify_permissions.assert_called_once_with(
+        'graceid', 'expose')
+
+
 def test_get_log(monkeypatch):
 
     class logs(object):  # noqa: N801
