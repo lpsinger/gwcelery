@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3 (unreleased)
+
+-   No changes yet.
+
 ## 0.1.2 (2018-10-11)
 
 -   Setted `vetted` flag to true for all initial, update, and retraction alerts
