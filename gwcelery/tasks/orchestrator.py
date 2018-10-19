@@ -279,28 +279,29 @@ def preliminary_alert(event, superevent_id):
     else:
         canvas |= identity.si(None)
 
-    # Send GCN notice and upload GCN circular draft.
-    canvas |= (
-        _create_voevent.s(
-            superevent_id, 'preliminary', skymap_filename=skymap_filename
-        )
-        |
-        group(
-            gracedb.download.s(superevent_id)
+    # Send GCN notice and upload GCN circular draft for online events.
+    if not event['offline']:
+        canvas |= (
+            _create_voevent.s(
+                superevent_id, 'preliminary', skymap_filename=skymap_filename
+            )
             |
-            gcn.send.s()
-            |
-            gracedb.create_label.si('GCN_PRELIM_SENT', superevent_id),
+            group(
+                gracedb.download.s(superevent_id)
+                |
+                gcn.send.s()
+                |
+                gracedb.create_label.si('GCN_PRELIM_SENT', superevent_id),
 
-            circulars.create_circular.si(superevent_id)
-            |
-            gracedb.upload.s(
-                'circular.txt',
-                superevent_id,
-                'Automated circular'
+                circulars.create_circular.si(superevent_id)
+                |
+                gracedb.upload.s(
+                    'circular.txt',
+                    superevent_id,
+                    'Automated circular'
+                )
             )
         )
-    )
 
     canvas.apply_async()
 

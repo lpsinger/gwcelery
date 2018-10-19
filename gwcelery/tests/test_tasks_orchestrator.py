@@ -12,8 +12,12 @@ from . import resource_json
 
 
 @pytest.mark.parametrize(
-    'group,pipeline', [['CBC', 'gstlal'], ['Burst', 'CWB'], ['Burst', 'oLIB']])
-def test_handle_superevent(monkeypatch, group, pipeline):
+    'group,pipeline,offline', [['CBC', 'gstlal', False],
+                               ['Burst', 'CWB', False],
+                               ['Burst', 'oLIB', False],
+                               ['CBC', 'gstlal', True],
+                               ['Burst', 'CWB', True]])
+def test_handle_superevent(monkeypatch, group, pipeline, offline):
     """Test a superevent is dispatched to the correct annotation task based on
     its preferred event's search group."""
     alert = {
@@ -34,7 +38,8 @@ def test_handle_superevent(monkeypatch, group, pipeline):
     def get_event(graceid):
         assert graceid == 'G1234'
         return {'group': group, 'pipeline': pipeline,
-                'instruments': 'H1,L1,V1', 'graceid': 'G1234'}
+                'instruments': 'H1,L1,V1', 'graceid': 'G1234',
+                'offline': offline}
 
     def download(filename, graceid):
         if '.fits' in filename:
@@ -76,8 +81,12 @@ def test_handle_superevent(monkeypatch, group, pipeline):
     expose.assert_called_once()
     plot_allsky.assert_called_once()
     plot_volume.assert_called_once()
-    send.assert_called_once()
-    create_circular.assert_called_once()
+    if not offline:
+        send.assert_called_once()
+        create_circular.assert_called_once()
+    else:
+        send.assert_not_called()
+        create_circular.assert_not_called()
 
 
 @patch('gwcelery.tasks.gracedb.get_log',
