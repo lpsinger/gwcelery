@@ -17,7 +17,7 @@ def identity(arg):
 class DispatchHandler(dict):
 
     def process_args(self, *args, **kwargs):
-        """Determine key and callback arguments.
+        r"""Determine key and callback arguments.
 
         The default implementation treats the first positional argument as the
         key.
@@ -42,7 +42,7 @@ class DispatchHandler(dict):
         return key, args, kwargs
 
     def __call__(self, *keys, **kwargs):
-        """Create a new task and register it as a callback for handling the
+        r"""Create a new task and register it as a callback for handling the
         given keys.
 
         Parameters

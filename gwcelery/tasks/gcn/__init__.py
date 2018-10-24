@@ -130,7 +130,7 @@ class _VOEventDispatchHandler(DispatchHandler):
 
 
 handler = _VOEventDispatchHandler()
-"""Function decorator to register a handler callback for specified GCN notice
+r"""Function decorator to register a handler callback for specified GCN notice
 types. The decorated function is turned into a Celery task, which will be
 automatically called whenever a matching GCN notice is received.
 

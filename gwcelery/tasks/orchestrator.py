@@ -174,7 +174,7 @@ def _get_preferred_event(superevent_id):
 
 @gracedb.task(shared=False)
 def _create_voevent(em_bright_json, *args, **kwargs):
-    """Create a VOEvent record from an EM bright JSON file.
+    r"""Create a VOEvent record from an EM bright JSON file.
 
     Parameters
     ----------

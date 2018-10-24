@@ -40,7 +40,7 @@ class _LVAlertDispatchHandler(DispatchHandler):
 
 
 handler = _LVAlertDispatchHandler()
-"""Function decorator to register a handler callback for specified LVAlert
+r"""Function decorator to register a handler callback for specified LVAlert
 message types. The decorated function is turned into a Celery task, which will
 be automatically called whenever a matching LVAlert message is received.
 
