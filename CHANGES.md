@@ -7,6 +7,8 @@
 -   Add `dqr_json` function to `gwcelery.tasks.detchar`, which uploads a 
     DQR-compatible json to GraceDb with the results of the detchar checks.
 
+-   Depend on ligo.skymap >= 0.0.17.
+
 ## 0.1.2 (2018-10-11)
 
 -   Setted `vetted` flag to true for all initial, update, and retraction alerts
