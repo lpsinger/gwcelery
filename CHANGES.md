@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.3 (unreleased)
+## 0.1.3 (2018-10-26)
 
 -   Preliminary GCN is not sent for superevents created from offline gw events.
 
