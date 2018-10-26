@@ -124,7 +124,7 @@ for mod in ['astropy',
             'numpy',
             'safe_netrc',
             'scipy',
-            'sentry-sdk',
+            'sentry_sdk',
             'sleek_lvalert',
             'pytest']:
     try:
