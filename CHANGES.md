@@ -9,6 +9,9 @@
 
 -   Depend on ligo.skymap >= 0.0.17.
 
+-   Fix a bug in sending initial, update, and retraction GCN notices: we were
+    sending the VOEvent filenames instead of the file contents.
+
 ## 0.1.2 (2018-10-11)
 
 -   Setted `vetted` flag to true for all initial, update, and retraction alerts

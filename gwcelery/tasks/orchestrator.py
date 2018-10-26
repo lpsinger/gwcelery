@@ -339,6 +339,8 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None):
             vetted=True
         )
         |
+        gracedb.download.s(superevent_id)
+        |
         gcn.send.s()
     ).apply_async()
 
@@ -387,6 +389,8 @@ def retraction_alert(superevent_id):
         gracedb.expose.s(superevent_id)
         |
         gracedb.create_voevent.si(superevent_id, 'retraction', vetted=True)
+        |
+        gracedb.download.s(superevent_id)
         |
         gcn.send.s()
     ).apply_async()
