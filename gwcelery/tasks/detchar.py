@@ -422,8 +422,6 @@ def check_vectors(event, graceid, start, end):
     elif overall_dq_active_state is False:
         state = "fail"
         gracedb.create_label('DQV', graceid)
-        # Halt further proessing of canvas
-        raise Ignore('vetoed by state vector')
     else:
         state = "unknown"
 
@@ -435,5 +433,9 @@ def check_vectors(event, graceid, start, end):
     gracedb.upload(
         json.dumps(file), filename, graceid, message, tags=['data_quality']
     )
+
+    if overall_dq_active_state is False:
+        # Halt further proessing of canvas
+        raise Ignore('vetoed by state vector')
 
     return event
