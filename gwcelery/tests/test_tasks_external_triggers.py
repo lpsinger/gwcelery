@@ -36,7 +36,8 @@ def test_handle_create_grb_event(mock_create_event, mock_get_event,
              ' L1:NO_DMT-ETMY_ESD_DAC_OVERFLOW, H1:HOFT_OK,'
              ' H1:OBSERVATION_INTENT,'
              ' L1:HOFT_OK, L1:OBSERVATION_INTENT, V1:HOFT_OK,'
-             ' V1:OBSERVATION_INTENT).'),
+             ' V1:OBSERVATION_INTENT)'
+             ' within -2/+2 seconds of superevent'),
             #  , V1:NO_DQ_VETO_MBTA, V1:NO_DQ_VETO_CWB,'
             #  ' V1:NO_DQ_VETO_GSTLAL, V1:NO_DQ_VETO_OLIB,'
             #  ' V1:NO_DQ_VETO_PYCBC).'),
@@ -82,7 +83,8 @@ def test_handle_create_sn_event(mock_create_event, mock_get_event,
              ' L1:NO_DMT-ETMY_ESD_DAC_OVERFLOW, H1:HOFT_OK,'
              ' H1:OBSERVATION_INTENT,'
              ' L1:HOFT_OK, L1:OBSERVATION_INTENT, V1:HOFT_OK,'
-             ' V1:OBSERVATION_INTENT).'),
+             ' V1:OBSERVATION_INTENT)'
+             ' within -2/+2 seconds of superevent'),
             #  , V1:NO_DQ_VETO_MBTA, V1:NO_DQ_VETO_CWB,'
             #  ' V1:NO_DQ_VETO_GSTLAL, V1:NO_DQ_VETO_OLIB,'
             #  ' V1:NO_DQ_VETO_PYCBC).'),

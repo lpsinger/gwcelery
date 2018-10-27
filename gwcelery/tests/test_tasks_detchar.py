@@ -125,16 +125,18 @@ def test_check_vectors(mock_create_label, mock_write_log, mock_json,
              ' For all instruments,'
              ' bits good (H1:NO_OMC_DCPD_ADC_OVERFLOW,'
              ' H1:NO_DMT-ETMY_ESD_DAC_OVERFLOW, H1:HOFT_OK,'
-             ' H1:OBSERVATION_INTENT), bad (), unknown().'),
+             ' H1:OBSERVATION_INTENT), bad (), unknown()'
+             ' within -0.5/+0.5 seconds of superevent'),
             tag_name=['data_quality']),
         call(
             'S12345a',
-            'No HW injections found.',
+            'No HW injections found within -0.5/+0.5 seconds of superevent',
             tag_name=['data_quality']),
         call(
             'S12345a',
             ('iDQ glitch probabilities at both H1 and L1'
-             ' are good (below {}).').format(
+             ' are good (below {})'
+             ' within -0.5/+0.5 seconds of superevent').format(
                  app.conf['idq_pglitch_thresh']),
             tag_name=['data_quality']),
         call(

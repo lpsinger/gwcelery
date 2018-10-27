@@ -338,6 +338,7 @@ def check_vectors(event, graceid, start, end):
     instruments = event['instruments'].split(',')
     pre, post = app.conf['check_vector_prepost'][event['pipeline']]
     start, end = start - pre, end + post
+    prepost_msg = " within -{}/+{} seconds of superevent".format(pre, post)
 
     ifos = {key.split(':')[0] for key, val in
             app.conf['llhoft_channels'].items()}
@@ -373,9 +374,10 @@ def check_vectors(event, graceid, start, end):
                 json.dumps(idq_probs)[2:-1])
         else:
             idq_msg = ("iDQ glitch probabilities at both H1 and L1"
-                       " are good (below {}).").format(
+                       " are good (below {})").format(
                            app.conf['idq_pglitch_thresh'])
-        gracedb.client.writeLog(graceid, idq_msg, tag_name=['data_quality'])
+        gracedb.client.writeLog(graceid, idq_msg + prepost_msg,
+                                tag_name=['data_quality'])
     else:
         idq_msg = "iDQ glitch probabilities unknown"
 
@@ -386,17 +388,17 @@ def check_vectors(event, graceid, start, end):
     if False in inj_states.values():
         # Write all found injections into GraceDb log
         inj_fmt = ("Looking across all ifos, {} is False. No other HW"
-                   " injections found.")
+                   " injections found")
         inj_msg = inj_fmt.format(
             ', '.join(k for k, v in inj_states.items() if v is False))
-        gracedb.client.writeLog(graceid, inj_msg,
+        gracedb.client.writeLog(graceid, inj_msg + prepost_msg,
                                 tag_name=['data_quality'])
     elif all(inj_states.values()) and len(inj_states.values()) > 0:
-        inj_msg = 'No HW injections found.'
-        gracedb.client.writeLog(graceid, inj_msg,
+        inj_msg = 'No HW injections found'
+        gracedb.client.writeLog(graceid, inj_msg + prepost_msg,
                                 tag_name=['data_quality'])
     else:
-        inj_msg = 'Injection state unknown.'
+        inj_msg = 'Injection state unknown'
 
     # Determining overall_dq_active_state
     if None in active_dq_states.values() or len(
@@ -407,7 +409,7 @@ def check_vectors(event, graceid, start, end):
     elif all(active_dq_states.values()):
         overall_dq_active_state = True
     fmt = ("detector state for active instruments is {}."
-           " For all instruments, bits good ({}), bad ({}), unknown({}).")
+           " For all instruments, bits good ({}), bad ({}), unknown({})")
     msg = fmt.format(
         {None: 'unknown', False: 'bad', True: 'good'}[overall_dq_active_state],
         ', '.join(k for k, v in dq_states.items() if v is True),
@@ -415,7 +417,8 @@ def check_vectors(event, graceid, start, end):
         ', '.join(k for k, v in dq_states.items() if v is None),
     )
     # Labeling DQOK/DQV to GraceDb
-    gracedb.client.writeLog(graceid, msg, tag_name=['data_quality'])
+    gracedb.client.writeLog(
+        graceid, msg + prepost_msg, tag_name=['data_quality'])
     if overall_dq_active_state is True:
         state = "pass"
         gracedb.create_label('DQOK', graceid)
