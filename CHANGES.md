@@ -2,7 +2,12 @@
 
 ## 0.1.4 (unreleased)
 
--   No changes yet.
+-   Work around a bug in astropy.visualization.wcsaxes that affected all-sky
+    plots when Matplotlib's `text.usetex` rcparam is set to `True`
+    (https://github.com/astropy/astropy/issues/8004). This bug has evidently
+    been present since at least astropy 1.3, but was not being triggered until
+    recently: it is likely that some other package that we import
+    (e.g. lalsuite) is now globally setting `text.usetex` to `True`.
 
 ## 0.1.3 (2018-10-26)
 

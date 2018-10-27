@@ -3,6 +3,7 @@ from astropy.io import fits
 from celery import group
 from ligo.skymap.tool import ligo_skymap_plot
 from ligo.skymap.tool import ligo_skymap_plot_volume
+from matplotlib import pyplot as plt
 
 from . import gracedb
 from ..import app
@@ -79,8 +80,11 @@ def fits_header(filecontents, filename):
 def plot_allsky(filecontents):
     """Plot a Mollweide projection of a sky map using the command-line tool
     :doc:`ligo-skymap-plot <ligo/skymap/tool/ligo_skymap_plot>`."""
+    # Note: plt.style.context added as workaround for
+    # https://github.com/astropy/astropy/issues/8004.
     with NamedTemporaryFile(mode='rb', suffix='.png') as pngfile, \
-            NamedTemporaryFile(content=filecontents) as fitsfile:
+            NamedTemporaryFile(content=filecontents) as fitsfile, \
+            plt.style.context({'text.usetex': False}):
         ligo_skymap_plot.main([fitsfile.name, '-o', pngfile.name,
                                '--annotate', '--contour', '50', '90'])
         return pngfile.read()
@@ -91,8 +95,11 @@ def plot_volume(filecontents):
     """Plot a 3D volume rendering of a sky map using the command-line tool
     :doc:`ligo-skymap-plot-volume <ligo/skymap/tool/ligo_skymap_plot_volume>`.
     """
+    # Note: plt.style.context added as workaround for
+    # https://github.com/astropy/astropy/issues/8004.
     with NamedTemporaryFile(mode='rb', suffix='.png') as pngfile, \
-            NamedTemporaryFile(content=filecontents) as fitsfile:
+            NamedTemporaryFile(content=filecontents) as fitsfile, \
+            plt.style.context({'text.usetex': False}):
         ligo_skymap_plot_volume.main([fitsfile.name, '-o',
                                       pngfile.name, '--annotate'])
         return pngfile.read()
