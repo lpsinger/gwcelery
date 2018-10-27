@@ -9,6 +9,10 @@
     recently: it is likely that some other package that we import
     (e.g. lalsuite) is now globally setting `text.usetex` to `True`.
 
+-   A try except is added around updateSuperevent to handle a bad
+    request error from server side when updating superevent parameters
+    which have nearby values.
+
 ## 0.1.3 (2018-10-26)
 
 -   Preliminary GCN is not sent for superevents created from offline gw events.

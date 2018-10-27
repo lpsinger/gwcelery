@@ -97,6 +97,69 @@ def test_update_preferred_event(mock_db):
                              t_start=None, t_end=None, t_0=None)
 
 
+def _mock_superevents(*args, **kwargs):
+    return [
+        {
+            "superevent_id": "S123456",
+            "preferred_event": "G000002",
+            "t_start": 99.0,
+            "t_0": 100.0,
+            "gw_events": [
+                "G000002",
+            ],
+            "t_end": 101.0
+        }
+    ]
+
+
+def _mock_event(event):
+    if event == "G000002":
+        return {
+            "graceid": "G000002",
+            "gpstime": 100.0,
+            "pipeline": "gstlal",
+            "group": "CBC",
+            "far": 1.e-31,
+            "instruments": "H1,L1",
+            "extra_attributes": {
+                "CoincInspiral": {"snr": 20}
+            },
+            "offline": False
+        }
+
+
+@patch('gwcelery.tasks.gracedb.get_superevents', _mock_superevents)
+@patch('gwcelery.tasks.gracedb.get_event', _mock_event)
+def test_upload_same_event():
+    """New event uploaded with the same coinc file as an
+    existing event G000002. This could happen during testing
+    the superevent manager.
+    """
+    # payload same as _mock_event except graceid
+    payload = {
+        "uid": "G000003",
+        "alert_type": "new",
+        "description": "",
+        "object": {
+            "graceid": "G000003",
+            "gpstime": 100.0,
+            "pipeline": "gstlal",
+            "group": "CBC",
+            "far": 1.e-31,
+            "instruments": "H1,L1",
+            "extra_attributes": {
+                "CoincInspiral": {"snr": 20}
+            },
+            "offline": False
+        }
+    }
+    with patch.object(gracedb.client, 'addEventToSuperevent') as p1, \
+            patch.object(gracedb.client, 'updateSuperevent') as p2:
+        superevents.handle(payload)
+        p1.assert_called_once()
+        p2.assert_not_called()
+
+
 def test_parse_trigger_raising():
     garbage_payload = dict(some_value=999, something_else=99)
     with pytest.raises(KeyError):

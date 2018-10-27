@@ -8,6 +8,7 @@ superevents.
       in :meth:`handle` function.
 """
 from celery.utils.log import get_task_logger
+from ligo.gracedb.exceptions import HTTPError
 from ligo.segments import segment, segmentlist
 
 from ..import app
@@ -114,12 +115,18 @@ def handle(payload):
             log.info("%s is completely contained in %s",
                      event_segment.gid, superevent.superevent_id)
             new_t_start = new_t_end = None
-
-        _update_superevent(superevent.superevent_id,
-                           superevent.preferred_event,
-                           event_info,
-                           t_start=new_t_start,
-                           t_end=new_t_end)
+        # FIXME handle the 400 properly when arises
+        try:
+            _update_superevent(superevent.superevent_id,
+                               superevent.preferred_event,
+                               event_info,
+                               t_start=new_t_start,
+                               t_end=new_t_end)
+        except HTTPError as err:
+            if err.status == 400 and err.reason == "Bad Request":
+                log.exception("Server returned bad request")
+            else:
+                raise err
 
     else:
         # ERROR SITUATION
