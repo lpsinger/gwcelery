@@ -39,7 +39,8 @@ def test_handle_superevent(monkeypatch, group, pipeline, offline):
         assert graceid == 'G1234'
         return {'group': group, 'pipeline': pipeline,
                 'instruments': 'H1,L1,V1', 'graceid': 'G1234',
-                'offline': offline}
+                'offline': offline,
+                'far': 1e-9}
 
     def download(filename, graceid):
         if '.fits' in filename:

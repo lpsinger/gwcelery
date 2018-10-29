@@ -79,6 +79,9 @@ superevent_default_d_t_end = 1.0
 superevent_far_threshold = 1 / 3600
 """Maximum false alarm rate to consider events superevents."""
 
+preliminary_alert_far_threshold = 1 / 3600
+"""Maximum false alarm rate to consider sending preliminary alerts."""
+
 orchestrator_timeout = 15.0
 """The orchestrator will wait this many seconds from the time of the
 creation of a new superevent to the time that annotations begin, in order

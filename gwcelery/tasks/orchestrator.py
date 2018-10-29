@@ -280,7 +280,8 @@ def preliminary_alert(event, superevent_id):
         canvas |= identity.si(None)
 
     # Send GCN notice and upload GCN circular draft for online events.
-    if not event['offline']:
+    if not event['offline'] \
+            and event['far'] <= app.conf['preliminary_alert_far_threshold']:
         canvas |= (
             _create_voevent.s(
                 superevent_id, 'preliminary', skymap_filename=skymap_filename

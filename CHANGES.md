@@ -13,6 +13,10 @@
     request error from server side when updating superevent parameters
     which have nearby values.
 
+-   Send automatic preliminary alerts only for events with a false alarm rate
+    below a maximum value specified by a new configuration variable,
+    `preliminary_alert_far_threshold`.
+
 ## 0.1.3 (2018-10-26)
 
 -   Preliminary GCN is not sent for superevents created from offline gw events.
