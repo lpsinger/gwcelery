@@ -21,6 +21,8 @@
     and source classification. They will still suppress sending preliminary
     alerts.
 
+-   Set `open_alert` to `True` for all automated VOEvents.
+
 ## 0.1.3 (2018-10-26)
 
 -   Preliminary GCN is not sent for superevents created from offline gw events.
