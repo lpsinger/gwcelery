@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.5 (unreleased)
+
+-   No changes yet.
+
 ## 0.1.4 (2018-10-29)
 
 -   Work around a bug in astropy.visualization.wcsaxes that affected all-sky
