@@ -149,6 +149,24 @@ def test_get_events(mock_gracedb):
                                                 columns=None)
 
 
+def test_get_labels(monkeypatch):
+
+    class MockResponse(object):
+
+        def json(self):
+            return {'labels': [{'name': 'LABEL1'}, {'name': 'LABEL2'}]}
+
+    class MockGraceDb(object):
+
+        def labels(self, graceid):
+            assert graceid == 'S1234'
+            return MockResponse()
+
+    monkeypatch.setattr('gwcelery.tasks.gracedb.client', MockGraceDb())
+    labels = gracedb.get_labels('S1234')
+    assert labels == {'LABEL1', 'LABEL2'}
+
+
 @patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
 def test_replace_event(mock_gracedb):
     text = resource_string(__name__, 'data/fermi_grb_gcn.xml')

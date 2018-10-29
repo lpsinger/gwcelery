@@ -42,6 +42,8 @@ def handle_superevent(alert):
         start = alert['object']['t_start']
         end = alert['object']['t_end']
 
+        gracedb.create_label.s('ADVREQ', superevent_id).apply_async()
+
         (
             _get_preferred_event.si(superevent_id).set(
                 countdown=app.conf['orchestrator_timeout']
@@ -49,11 +51,10 @@ def handle_superevent(alert):
             |
             gracedb.get_event.s()
             |
-            detchar.check_vectors.s(superevent_id, start, end)
-            |
-            preliminary_alert.s(superevent_id)
-            |
-            gracedb.create_label.si('ADVREQ', superevent_id)
+            group(
+                detchar.check_vectors.s(superevent_id, start, end),
+                preliminary_alert.s(superevent_id)
+            )
         ).apply_async()
     elif alert['alert_type'] == 'label_added':
         label_name = alert['data']['name']
@@ -281,7 +282,8 @@ def preliminary_alert(event, superevent_id):
 
     # Send GCN notice and upload GCN circular draft for online events.
     if not event['offline'] \
-            and event['far'] <= app.conf['preliminary_alert_far_threshold']:
+            and event['far'] <= app.conf['preliminary_alert_far_threshold'] \
+            and 'DQV' not in gracedb.get_labels(superevent_id):
         canvas |= (
             _create_voevent.s(
                 superevent_id, 'preliminary', skymap_filename=skymap_filename

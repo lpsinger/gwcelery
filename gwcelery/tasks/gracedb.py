@@ -83,6 +83,12 @@ def get_event(graceid):
 
 
 @task(shared=False)
+def get_labels(graceid):
+    """Get all labels for an event in GraceDb."""
+    return {row['name'] for row in client.labels(graceid).json()['labels']}
+
+
+@task(shared=False)
 def get_log(graceid):
     """Get all log messages for an event in GraceDb."""
     return client.logs(graceid).json()['log']

@@ -17,6 +17,10 @@
     below a maximum value specified by a new configuration variable,
     `preliminary_alert_far_threshold`.
 
+-   State vector vetoes will not suppress processing of preliminary sky maps
+    and source classification. They will still suppress sending preliminary
+    alerts.
+
 ## 0.1.3 (2018-10-26)
 
 -   Preliminary GCN is not sent for superevents created from offline gw events.

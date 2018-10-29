@@ -19,7 +19,6 @@ import json
 import socket
 import time
 
-from celery.exceptions import Ignore
 from celery.utils.log import get_task_logger
 from glue.lal import Cache
 from gwpy.timeseries import Bits, StateVector, TimeSeries
@@ -286,7 +285,7 @@ def check_vector(cache, channel, start, end, bits, logic_type='all'):
                 for key, value in statevector.get_bit_series().items()}
 
 
-@app.task(shared=False)
+@app.task(ignore_result=True, shared=False)
 def check_vectors(event, graceid, start, end):
     """Perform data quality checks for an event and labels/logs results to
     GraceDb.
@@ -308,9 +307,8 @@ def check_vectors(event, graceid, start, end):
     A similar task is performed for the DQ states described in the
     DMT-DQ_VECTOR, LIGO GDS-CALIB_STATE_VECTOR, and Virgo
     DQ_ANALYSIS_STATE_VECTOR. If no DQ issues are found in active detectors,
-    'DQOK' is labeled to GraceDb. Otherwise, 'DQV' is labeled and further
-    processing of the event in gwcelery is halted. In all cases, the DQ states
-    of all the state vectors checked are logged to GraceDb.
+    'DQOK' is labeled to GraceDb. Otherwise, 'DQV' is labeled. In all cases,
+    the DQ states of all the state vectors checked are logged to GraceDb.
 
     This skips MDC events.
 
@@ -322,17 +320,12 @@ def check_vectors(event, graceid, start, end):
         GraceID of event to which to log.
     start, end : int or float
         GPS start and end times desired.
-
-    Returns
-    -------
-    event : dict
-        Details of event.
     """
     # Skip MDC events.
     if event.get('search') == 'MDC':
         log.info('Skipping state vector checks because %s is an MDC',
                  event['graceid'])
-        return event
+        return
 
     # Create caches for all detectors
     instruments = event['instruments'].split(',')
@@ -436,9 +429,3 @@ def check_vectors(event, graceid, start, end):
     gracedb.upload(
         json.dumps(file), filename, graceid, message, tags=['data_quality']
     )
-
-    if overall_dq_active_state is False:
-        # Halt further proessing of canvas
-        raise Ignore('vetoed by state vector')
-
-    return event
