@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.4 (unreleased)
+## 0.1.4 (2018-10-29)
 
 -   Work around a bug in astropy.visualization.wcsaxes that affected all-sky
     plots when Matplotlib's `text.usetex` rcparam is set to `True`
