@@ -12,6 +12,7 @@ gwcelery\.tasks module
     gwcelery.tasks.detchar
     gwcelery.tasks.em_bright
     gwcelery.tasks.external_triggers
+    gwcelery.tasks.first2years
     gwcelery.tasks.ligo_fermi_skymaps
     gwcelery.tasks.gcn
     gwcelery.tasks.gcn.validate
