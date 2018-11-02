@@ -286,7 +286,9 @@ def preliminary_alert(event, superevent_id):
             and 'DQV' not in gracedb.get_labels(superevent_id):
         canvas |= (
             _create_voevent.s(
-                superevent_id, 'preliminary', skymap_filename=skymap_filename,
+                superevent_id, 'preliminary',
+                skymap_filename=skymap_filename,
+                internal=True,  # FIXME: remove once GraceDb goes public
                 open_alert=True
             )
             |
@@ -340,6 +342,7 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None):
             superevent_id,
             alert_type,
             skymap_filename=skymap_filename,
+            internal=True,  # FIXME: remove once GraceDb goes public
             open_alert=True,
             vetted=True
         )
@@ -394,7 +397,10 @@ def retraction_alert(superevent_id):
         gracedb.expose.s(superevent_id)
         |
         gracedb.create_voevent.si(
-            superevent_id, 'retraction', open_alert=True, vetted=True
+            superevent_id, 'retraction',
+            internal=True,  # FIXME: remove once GraceDb goes public
+            open_alert=True,
+            vetted=True
         )
         |
         gracedb.download.s(superevent_id)

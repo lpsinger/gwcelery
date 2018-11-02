@@ -11,6 +11,10 @@
 -   Depend on lalsuite nightly build from 2018-11-04 to pick up changes to
     LALInference for Python 3 support.
 
+-   Send static example VOEvents from the Open Alert Users Guide.
+    This will provide a stream of example alerts for astronomers until GraceDb
+    is ready for public access.
+
 ## 0.1.4 (2018-10-29)
 
 -   Work around a bug in astropy.visualization.wcsaxes that affected all-sky
