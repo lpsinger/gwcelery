@@ -102,7 +102,7 @@ check_vector_prepost = {'gstlal': [2, 2],
 """Seconds before and after the superevent start and end times which the DQ
 vector check will include in its check. Pipeline dependent."""
 
-llhoft_glob = '/dev/shm/kafka/{detector}_O2/*.gwf'
+llhoft_glob = '/dev/shm/llhoft/{detector}_O2/*.gwf'
 """File glob for low-latency h(t) frames."""
 
 llhoft_channels = {
