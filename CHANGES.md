@@ -8,6 +8,9 @@
     start parameter estimation with LALInference and upload the results to
     GraceDB.
 
+-   Depend on lalsuite nightly build from 2018-11-04 to pick up changes to
+    LALInference for Python 3 support.
+
 ## 0.1.4 (2018-10-29)
 
 -   Work around a bug in astropy.visualization.wcsaxes that affected all-sky
