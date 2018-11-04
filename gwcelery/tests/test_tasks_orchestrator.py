@@ -6,18 +6,23 @@ from ligo.gracedb import rest
 import pkg_resources
 import pytest
 
+from .. import app
 from ..tasks import orchestrator
 from . import test_tasks_skymaps
 from . import resource_json
 
 
 @pytest.mark.parametrize(
-    'group,pipeline,offline', [['CBC', 'gstlal', False],
-                               ['Burst', 'CWB', False],
-                               ['Burst', 'oLIB', False],
-                               ['CBC', 'gstlal', True],
-                               ['Burst', 'CWB', True]])
-def test_handle_superevent(monkeypatch, group, pipeline, offline):
+    'group,pipeline,offline,far', [['CBC', 'gstlal', False, 1.e-9],
+                                   ['CBC', 'gstlal', False, 0.5*app.conf[
+                                    'preliminary_alert_far_threshold']],
+                                   ['Burst', 'CWB', False, 1.e-9],
+                                   ['Burst', 'CWB', False, 0.8*app.conf[
+                                    'preliminary_alert_far_threshold']],
+                                   ['Burst', 'oLIB', False, 1.e-9],
+                                   ['CBC', 'gstlal', True, 1.e-10],
+                                   ['Burst', 'CWB', True, 1.e-10]])
+def test_handle_superevent(monkeypatch, group, pipeline, offline, far):
     """Test a superevent is dispatched to the correct annotation task based on
     its preferred event's search group."""
     alert = {
@@ -40,7 +45,7 @@ def test_handle_superevent(monkeypatch, group, pipeline, offline):
         return {'group': group, 'pipeline': pipeline,
                 'instruments': 'H1,L1,V1', 'graceid': 'G1234',
                 'offline': offline,
-                'far': 1e-9}
+                'far': far}
 
     def download(filename, graceid):
         if '.fits' in filename:
@@ -82,12 +87,16 @@ def test_handle_superevent(monkeypatch, group, pipeline, offline):
     expose.assert_called_once()
     plot_allsky.assert_called_once()
     plot_volume.assert_called_once()
-    if not offline:
-        send.assert_called_once()
-        create_circular.assert_called_once()
-    else:
+    if offline:
         send.assert_not_called()
         create_circular.assert_not_called()
+    elif app.conf['preliminary_alert_trials_factor'][group.lower()] * far > \
+            app.conf['preliminary_alert_far_threshold']:
+        send.assert_not_called()
+        create_circular.assert_not_called()
+    else:
+        send.assert_called_once()
+        create_circular.assert_called_once()
 
 
 @patch('gwcelery.tasks.gracedb.get_log',

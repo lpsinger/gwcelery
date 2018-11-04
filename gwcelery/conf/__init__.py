@@ -82,6 +82,12 @@ superevent_far_threshold = 1 / 3600
 preliminary_alert_far_threshold = 1 / 3600
 """Maximum false alarm rate to consider sending preliminary alerts."""
 
+preliminary_alert_trials_factor = dict(cbc=4.0, burst=2.0)
+"""Trials factor corresponding to trigger categories.
+The trials factor is simply the number of pipelines running for each
+type of search. The value corresponds to pipelines gstlal, pycbc,
+mbtaonline, spiir for CBC and cwb and olib for Burst."""
+
 orchestrator_timeout = 15.0
 """The orchestrator will wait this many seconds from the time of the
 creation of a new superevent to the time that annotations begin, in order

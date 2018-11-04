@@ -281,8 +281,11 @@ def preliminary_alert(event, superevent_id):
         canvas |= identity.si(None)
 
     # Send GCN notice and upload GCN circular draft for online events.
+    trials_factor = \
+        app.conf['preliminary_alert_trials_factor'][event['group'].lower()]
     if not event['offline'] \
-            and event['far'] <= app.conf['preliminary_alert_far_threshold'] \
+            and trials_factor * event['far'] <= \
+            app.conf['preliminary_alert_far_threshold'] \
             and 'DQV' not in gracedb.get_labels(superevent_id):
         canvas |= (
             _create_voevent.s(

@@ -15,6 +15,9 @@
     This will provide a stream of example alerts for astronomers until GraceDb
     is ready for public access.
 
+-   Add trials factor correction to the event FAR when comparing against
+    FAR threshold to send out preliminary GCN.
+
 ## 0.1.4 (2018-10-29)
 
 -   Work around a bug in astropy.visualization.wcsaxes that affected all-sky
