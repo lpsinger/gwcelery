@@ -67,6 +67,7 @@ def test_handle_superevent(monkeypatch, group, pipeline, offline, far):
     plot_volume = Mock()
     plot_allsky = Mock()
     send = Mock()
+    lalinference = Mock()
 
     monkeypatch.setattr('gwcelery.tasks.gcn.send.run', send)
     monkeypatch.setattr('gwcelery.tasks.skymaps.plot_allsky.run', plot_allsky)
@@ -80,6 +81,8 @@ def test_handle_superevent(monkeypatch, group, pipeline, offline, far):
                         get_superevent)
     monkeypatch.setattr('gwcelery.tasks.circulars.create_circular.run',
                         create_circular)
+    monkeypatch.setattr('gwcelery.tasks.lalinference.lalinference.run',
+                        lalinference)
 
     # Run function under test
     orchestrator.handle_superevent(alert)
@@ -90,11 +93,17 @@ def test_handle_superevent(monkeypatch, group, pipeline, offline, far):
     if offline:
         send.assert_not_called()
         create_circular.assert_not_called()
+        lalinference.assert_not_called()
     elif app.conf['preliminary_alert_trials_factor'][group.lower()] * far > \
             app.conf['preliminary_alert_far_threshold']:
         send.assert_not_called()
         create_circular.assert_not_called()
+        lalinference.assert_not_called()
     else:
+        if group == 'CBC':
+            lalinference.assert_called_once()
+        else:
+            lalinference.assert_not_called()
         send.assert_called_once()
         create_circular.assert_called_once()
 

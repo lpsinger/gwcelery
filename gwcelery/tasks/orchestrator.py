@@ -16,6 +16,7 @@ from . import detchar
 from . import em_bright
 from . import gcn
 from . import gracedb
+from . import lalinference
 from . import lvalert
 from . import skymaps
 from . import p_astro_gstlal
@@ -221,6 +222,7 @@ def preliminary_alert(event, superevent_id):
     4.   Send the VOEvent to GCN.
     5.   Apply the GCN_PRELIM_SENT label to the superevent.
     6.   Create and upload a GCN Circular draft.
+    7.   Start parameter estimation with LALInference.
     """
     preferred_event_id = event['graceid']
 
@@ -311,6 +313,10 @@ def preliminary_alert(event, superevent_id):
                 )
             )
         )
+
+        if event['group'] == 'CBC':
+            # Start parameter estimation.
+            lalinference.lalinference.delay(preferred_event_id, superevent_id)
 
     canvas.apply_async()
 
