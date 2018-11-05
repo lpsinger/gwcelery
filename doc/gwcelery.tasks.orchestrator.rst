@@ -73,6 +73,16 @@ The flow chart below illustrates the operation of these two tasks.
             label = "Check state vectors"
         ]
 
+        offline_event [
+            label = "Offline event\n?"
+            shape = diamond
+        ]
+
+        far_threshold [
+            label = "N_trials * FAR \n < threshold?"
+            shape = diamond
+        ]
+
         dqv [
             label = "Vetoed by\nstate vectors?"
             shape = diamond
@@ -96,6 +106,7 @@ The flow chart below illustrates the operation of these two tasks.
 
             circular [
                 label = "Create GCN\ncircular draft"
+                shape = diamond
             ]
         }
     }
@@ -105,7 +116,10 @@ The flow chart below illustrates the operation of these two tasks.
     orchestrator_timeout
     -> get_preferred_event
     -> check_vectors
-    -> dqv
+    -> offline_event 
+
+    offline_event -> far_threshold [label = No, lhead = prelim_gcn_checks]
+    far_threshold -> dqv [label = Yes, lhead = prelim_gcn_checks]
 
     dqv -> copy_from_preferred_event [label = No, lhead = cluster_preliminary_alert]
     copy_from_preferred_event -> annotate_skymaps -> send_gcn -> circular
