@@ -144,3 +144,15 @@ p_astro_gstlal_ln_likelihood_threshold = 6
 
 p_astro_gstlal_prior_type = "Uniform"
 """Prior type to be used. Options: Uniform, Jeffreys"""
+
+frame_types = {'H1': 'H1_llhoft',
+               'L1': 'L1_llhoft',
+               'V1': 'V1Online'}
+"""Types of frames used in Parameter Estimation with LALInference (see
+:module:`gwcelery.tasks.lalinference`)"""
+
+channel_names = {'H1': 'H1:GDS-CALIB_STRAIN',
+                 'L1': 'L1:GDS-CALIB_STRAIN',
+                 'V1': 'V1:Hrec_hoft_16384Hz'}
+"""Names of h(t) channels used in Parameter Estimation with LALInference (see
+:module:`gwcelery.tasks.lalinference`)"""
