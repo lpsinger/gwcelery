@@ -2,6 +2,7 @@
 from distutils.spawn import find_executable
 from distutils.dir_util import mkpath
 import glob
+import json
 import os
 import shutil
 import subprocess
@@ -16,22 +17,6 @@ from . import gracedb
 
 
 ini_name = 'online_pe.ini'
-
-# types relates service_url to data type
-types = {"https://gracedb.ligo.org/api/":
-         "{'H1':'H1_llhoft','L1':'L1_llhoft','V1':'V1Online'}",
-         "https://gracedb-playground.ligo.org/api/":
-         "{'H1':'H1_O2_llhoft','L1':'L1_O2_llhoft','V1':'V1_O2_llhoft'}"}
-
-# channels relates service_url to data channel
-channels = {"https://gracedb.ligo.org/api/":
-            "{'H1':'H1:GDS-CALIB_STRAIN'," +
-            "'L1':'L1:GDS-CALIB_STRAIN'," +
-            "'V1':'V1:Hrec_hoft_16384Hz'}",
-            "https://gracedb-playground.ligo.org/api/":
-            "{'H1':'H1:GDS-CALIB_STRAIN_O2Replay'," +
-            "'L1':'L1:GDS-CALIB_STRAIN_O2Replay'," +
-            "'V1':'V1:Hrec_hoft_16384Hz_O2Replay'}"}
 
 executables = {'datafind': 'gw_data_find',
                'mergeNSscript': 'lalinference_nest2pos',
@@ -74,8 +59,10 @@ def _write_ini(rundir, graceid):
     # Fill service-url, data types, data channels, webdir and
     # executables' paths in the template
     ini_contents = ini_template.render({'service_url': service_url,
-                                        'types': types[service_url],
-                                        'channels': channels[service_url],
+                                        'types':
+                                        json.dumps(app.conf['frame_types']),
+                                        'channels':
+                                        json.dumps(app.conf['channel_names']),
                                         'webdir': webdir,
                                         'paths': executables_paths})
 
