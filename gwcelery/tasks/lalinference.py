@@ -75,15 +75,17 @@ def _write_ini(rundir, graceid):
 
 
 @app.task(shared=False)
-def dag_prepare(rundir, graceid):
+def dag_prepare(rundir, download_id, upload_id):
     """Create a Condor DAG to run LALInference on a given event.
 
     Parameters
     ----------
     rundir : str
-        The path to a run directory where the DAG file exits.
-    graceid : str
-        The GraceDb ID.
+        The path to a run directory where the DAG file exits
+    download_id : str
+        The GraceDb ID of an event from which xml files are downloaded
+    upload_id : str
+        The GraceDb ID of an event to which results are uploaded
 
     Returns
     -------
@@ -91,23 +93,23 @@ def dag_prepare(rundir, graceid):
         The path to the .sub file
     """
     # write down .ini file in the run directory
-    path_to_ini = _write_ini(rundir, graceid)
+    path_to_ini = _write_ini(rundir, download_id)
 
     # run lalinference_pipe
     gracedb.upload(
-        filecontents=None, filename=None, graceid=graceid,
+        filecontents=None, filename=None, graceid=upload_id,
         message='starting LALInference online parameter estimation'
     )
     try:
         subprocess.check_call(['lalinference_pipe',
                                '--run-path', rundir,
-                               '--gid', graceid,
+                               '--gid', download_id,
                                path_to_ini])
         subprocess.check_call(['condor_submit_dag', '-no_submit',
                                rundir + '/multidag.dag'])
     except subprocess.CalledProcessError:
         gracedb.upload(
-            filecontents=None, filename=None, graceid=graceid,
+            filecontents=None, filename=None, graceid=upload_id,
             message='Failed to prepare DAG'
         )
         shutil.rmtree(rundir)
@@ -142,18 +144,22 @@ def clean_up(rundir):
     Parameters
     ----------
     rundir : str
-        The path to a run directory where the DAG file exits.
+        The path to a run directory where the DAG file exits
     """
     shutil.rmtree(rundir)
 
 
-def dag_finished(rundir, graceid):
+def dag_finished(rundir, download_id, upload_id):
     """Upload PE results and clean up run directory
 
     Parameters
     ----------
-    graceid : str
-        The GraceDb ID.
+    rundir : str
+        The path to a run directory where the DAG file exits
+    download_id : str
+        The GraceDb ID of an event from which xml files are downloaded
+    upload_id : str
+        The GraceDb ID of an event to which results are uploaded
 
     Returns
     -------
@@ -161,40 +167,42 @@ def dag_finished(rundir, graceid):
         The work-flow for uploading PE results
     """
     # get webdir where the results are outputted
-    webdir = _webdir(graceid)
+    webdir = _webdir(download_id)
 
     return group(
         gracedb.upload.si(
-            filecontents=None, filename=None, graceid=graceid,
+            filecontents=None, filename=None, graceid=upload_id,
             message='LALInference online parameter estimation finished.'
         ),
         upload_result.si(
-            webdir, 'LALInference.fits.gz', graceid,
+            webdir, 'LALInference.fits.gz', upload_id,
             'LALInference FITS sky map', 'sky_loc'
         ),
         upload_result.si(
-            webdir, 'extrinsic.png', graceid,
+            webdir, 'extrinsic.png', upload_id,
             'Corner plot for extrinsic parameters', 'pe'
         ),
         upload_result.si(
-            webdir, 'intrinsic.png', graceid,
+            webdir, 'intrinsic.png', upload_id,
             'Corner plot for intrinsic parameters', 'pe'
         ),
         upload_result.si(
-            webdir, 'sourceFrame.png', graceid,
+            webdir, 'sourceFrame.png', upload_id,
             'Corner plot for source frame parameters', 'pe'
         )
     ) | clean_up.si(rundir)
 
 
 @app.task(ignore_result=True, shared=False)
-def lalinference(graceid):
+def lalinference(download_id, upload_id):
     """Run LALInference on a given event.
 
     Parameters
     ----------
-    graceid : str
-        The GraceDb ID.
+    download_id : str
+        The GraceDb ID of an event from which xml files are downloaded
+    upload_id : str
+        The GraceDb ID of an event to which results are uploaded
     """
     # make a run directory
     lalinference_dir = os.path.expanduser('~/.cache/lalinference')
@@ -202,9 +210,9 @@ def lalinference(graceid):
     rundir = tempfile.mkdtemp(dir=lalinference_dir)
 
     (
-        dag_prepare.s(rundir, graceid)
+        dag_prepare.s(rundir, download_id, upload_id)
         |
         condor.submit.s()
         |
-        dag_finished(rundir, graceid)
+        dag_finished(rundir, download_id, upload_id)
     ).delay()
