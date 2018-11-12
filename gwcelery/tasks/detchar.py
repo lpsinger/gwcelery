@@ -177,7 +177,7 @@ def dqr_json(state, summary):
             "https://git.ligo.org/emfollow/gwcelery/blob/master/gwcelery/tasks/detchar.py",  # noqa
             "innerHTML": "a link to the source code in the gwcelery repo"
         }
-    ],
+    ]
     return dict(
         state=state,
         process_name=__name__,
@@ -422,8 +422,12 @@ def check_vectors(event, graceid, start, end):
         state = "unknown"
 
     # Create and upload DQR-compatible json
-    state_summary = '{} {}'.format(inj_msg, idq_msg, msg)
-    file = dqr_json(state, state_summary)
+    state_summary = '{} {} {}'.format(inj_msg, idq_msg, msg)
+    if state == "unknown":
+        json_state = "error"
+    else:
+        json_state = state
+    file = dqr_json(json_state, state_summary)
     filename = 'gwcelerydetcharcheckvectors-{}.json'.format(graceid)
     message = "DQR-compatible json generated from check_vectors results"
     gracedb.upload(
