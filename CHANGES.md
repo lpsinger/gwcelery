@@ -18,6 +18,10 @@
 -   Add trials factor correction to the event FAR when comparing against
     FAR threshold to send out preliminary GCN.
 
+-   Require that LIGO/Virgo VOEvents that we receive from GCN match the
+    original VOEvents from GraceDb byte-for-byte, since GCN will now pass
+    through our VOEvents without modification.
+
 ## 0.1.4 (2018-10-29)
 
 -   Work around a bug in astropy.visualization.wcsaxes that affected all-sky

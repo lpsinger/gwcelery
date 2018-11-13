@@ -13,6 +13,9 @@ xsi:schemaLocation="http://www.ivoa.net/xml/VOEvent/v2.0 http://www.ivoa.net/xml
         <Param name="internal" dataType="int" value="0">
             <Description>Indicates whether this event should be distributed to LSC/Virgo members only</Description>
         </Param>
+        <Param name="Packet_Type" dataType="int" value="151">
+            <Description>The Notice Type number is assigned/used within GCN, eg type=151 is an LVC_INITIAL notice</Description>
+        </Param>
         <Param name="Pkt_Ser_Num" dataType="string" value="1"/>
         <Param name="GraceID" dataType="string" value="G298048" ucd="meta.id">
             <Description>Identifier in GraceDB</Description>

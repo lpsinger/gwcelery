@@ -1,4 +1,3 @@
-import json
 import logging
 import socket
 import struct
@@ -15,12 +14,6 @@ from ..tasks import gcn
 from .. import app
 
 logging.basicConfig(level=logging.INFO)
-
-# Test data
-with pkg_resources.resource_stream(
-        __name__, 'data/lvalert_voevent.json') as f:
-    lvalert = json.load(f)
-voevent = lvalert['object']['text']
 
 
 @pytest.fixture
@@ -129,7 +122,7 @@ def test_listen(monkeypatch):
 def fake_gcn(notice_type):
     # Check the real GCN notice, which is valid.
     payload = pkg_resources.resource_string(
-        __name__, 'data/G298048-1-Initial.gcn.xml')
+        __name__, 'data/G298048-1-Initial.xml')
     root = lxml.etree.fromstring(payload)
     notice_type = str(int(notice_type))
     root.find(".//Param[@name='Packet_Type']").attrib['value'] = notice_type
