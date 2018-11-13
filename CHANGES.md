@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.6 (unreleased)
+
+-   No changes yet.
+
 ## 0.1.5 (2018-11-13)
 
 -   Add tasks for submitting HTCondor DAGs.
