@@ -314,7 +314,7 @@ def preliminary_alert(event, superevent_id):
             )
         )
 
-        if event['group'] == 'CBC':
+        if event['group'] == 'CBC' and event['search'] != 'MDC':
             # Start parameter estimation.
             lalinference.lalinference.delay(preferred_event_id, superevent_id)
 
