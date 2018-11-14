@@ -10,7 +10,7 @@ from lxml import etree
 from ..import app
 from . import gcn
 
-URL = 'https://emfollow.docs.ligo.org/userguide/_static/MS181101abc-1-Preliminary.xml'  # noqa: E501
+URL = 'https://emfollow.docs.ligo.org/userguide/_static/MS181101ab-1-Preliminary.xml'  # noqa: E501
 
 
 @app.task(base=PeriodicTask, shared=False, run_every=crontab(minute='*/15'))
@@ -22,7 +22,7 @@ def send_static_voevent():
     num = str(int((now - start).to(u.minute).value // 15))
 
     # Read and parse the original VOEvent.
-    with data.get_readable_fileobj(URL, cache=True, encoding='binary') as f:
+    with data.get_readable_fileobj(URL, encoding='binary') as f:
         xml = etree.parse(f)
 
     # Update packet number.

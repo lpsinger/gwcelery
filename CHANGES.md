@@ -2,7 +2,7 @@
 
 ## 0.1.6 (unreleased)
 
--   No changes yet.
+-   Update URL for static example event.
 
 ## 0.1.5 (2018-11-13)
 
