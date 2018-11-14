@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.6 (unreleased)
+## 0.1.6 (2018-11-14)
 
 -   Update URL for static example event.
 
