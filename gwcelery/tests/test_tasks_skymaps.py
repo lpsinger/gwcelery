@@ -20,7 +20,8 @@ def resource_unicode(*args, **kwargs):
 def toy_fits_filecontents():
     """Generate the binary contents of a toy FITS file."""
     bytesio = io.BytesIO()
-    table = Table([[1, 2, 3], [4, 5, 6]], names=['foo', 'bar'])
+    table = Table([[1, 2, 3], [4, 5, 6]], names=['foo', 'bar'],
+                  dtype=[np.float64, np.float64])
     table.meta['comment'] = 'This is a comment.'
     table.meta['history'] = 'This is a history line. <This should be escaped.>'
     table.meta['ORDERING'] = 'NESTED'
@@ -34,7 +35,8 @@ def toy_3d_fits_filecontents():
     """Generate the binary contents of a toy FITS file."""
     bytesio = io.BytesIO()
     table = Table(
-        [np.arange(12)] * 4, names=['PROB', 'DISTMU', 'DISTSIGMA', 'DISTNORM'])
+        [np.arange(12, dtype=np.float64)] * 4,
+        names=['PROB', 'DISTMU', 'DISTSIGMA', 'DISTNORM'])
     table.meta['comment'] = 'This is a comment.'
     table.meta['history'] = 'This is a history line. <This should be escaped.>'
     table.meta['ORDERING'] = 'NESTED'

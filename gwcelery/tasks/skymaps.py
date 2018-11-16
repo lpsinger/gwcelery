@@ -1,6 +1,10 @@
 """Annotations for sky maps."""
+import os
+import tempfile
+
 from astropy.io import fits
 from celery import group
+from ligo.skymap.tool import ligo_skymap_flatten
 from ligo.skymap.tool import ligo_skymap_plot
 from ligo.skymap.tool import ligo_skymap_plot_volume
 from matplotlib import pyplot as plt
@@ -103,3 +107,15 @@ def plot_volume(filecontents):
         ligo_skymap_plot_volume.main([fitsfile.name, '-o',
                                       pngfile.name, '--annotate'])
         return pngfile.read()
+
+
+@app.task(shared=False)
+def flatten(filecontents, filename):
+    """Convert a HEALPix FITS file from multi-resolution UNIQ indexing to the
+    more common IMPLICIT indexing using the command-line tool
+    :doc:`ligo-skymap-flatten <ligo/skymap/tool/ligo_skymap_flatten>`."""
+    with NamedTemporaryFile(content=filecontents) as infile, \
+            tempfile.TemporaryDirectory() as tmpdir:
+        outfilename = os.path.join(tmpdir, filename)
+        ligo_skymap_flatten.main([infile.name, outfilename])
+        return open(outfilename, 'rb').read()

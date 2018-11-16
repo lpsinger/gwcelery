@@ -1,8 +1,6 @@
 """Rapid sky localization with :mod:`BAYESTAR <ligo.skymap.bayestar>`."""
 import io
 import logging
-import os
-import tempfile
 import urllib.parse
 
 from celery.exceptions import Ignore
@@ -75,15 +73,14 @@ def localize(coinc_psd, graceid, filename='bayestar.fits.gz',
 
         # Run BAYESTAR
         log.info("starting sky localization")
-        skymap = _bayestar.rasterize(_bayestar.localize(event))
+        skymap = _bayestar.localize(event)
         skymap.meta['objid'] = str(graceid)
         skymap.meta['url'] = '{}/{}'.format(base_url, graceid)
         log.info("sky localization complete")
 
-        with tempfile.TemporaryDirectory() as tmpdir:
-            fitspath = os.path.join(tmpdir, filename)
-            fits.write_sky_map(fitspath, skymap, nest=True)
-            return open(fitspath, 'rb').read()
+        with io.BytesIO() as f:
+            fits.write_sky_map(f, skymap, moc=True)
+            return f.getvalue()
     except events.DetectorDisabledError:
         raise Ignore()
     except:  # noqa

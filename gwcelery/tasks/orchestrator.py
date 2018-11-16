@@ -88,7 +88,7 @@ def handle_cbc_event(alert):
     ============================== =====================================================
     File                           Task
     ============================== =====================================================
-    ``bayestar.fits.gz``           :meth:`gwcelery.tasks.bayestar.localize`
+    ``bayestar.fits``              :meth:`gwcelery.tasks.bayestar.localize`
     ``source_classification.json`` :meth:`gwcelery.tasks.em_bright.classifier`
     ``p_astro_gstlal.json``        :meth:`gwcelery.tasks.p_astro_gstlal.compute_p_astro`
     ============================== =====================================================
@@ -115,7 +115,7 @@ def handle_cbc_event(alert):
                 bayestar.localize.s(graceid)
                 |
                 gracedb.upload.s(
-                    'bayestar.fits.gz', graceid,
+                    'bayestar.fits', graceid,
                     'sky localization complete', ['sky_loc', 'public']
                 )
                 |
@@ -227,7 +227,7 @@ def preliminary_alert(event, superevent_id):
     preferred_event_id = event['graceid']
 
     if event['group'] == 'CBC':
-        skymap_filename = 'bayestar.fits.gz'
+        skymap_filename = 'bayestar.fits'
     elif event['pipeline'] == 'CWB':
         skymap_filename = 'cWB.fits.gz'
     elif event['pipeline'] == 'oLIB':
@@ -235,27 +235,43 @@ def preliminary_alert(event, superevent_id):
     else:
         skymap_filename = None
 
+    original_skymap_filename = skymap_filename
+    if skymap_filename.endswith('.fits'):
+        skymap_filename += '.gz'
+
     # Make the event public.
     canvas = gracedb.expose.s(superevent_id)
 
     # If there is a sky map, then copy it to the superevent and create plots.
     if skymap_filename is not None:
         canvas |= (
-            _download.si(skymap_filename, preferred_event_id)
+            _download.si(original_skymap_filename, preferred_event_id)
             |
             group(
                 gracedb.upload.s(
-                    skymap_filename,
+                    original_skymap_filename,
                     superevent_id,
                     message='Localization copied from {}'.format(
                         preferred_event_id),
                     tags=['sky_loc', 'public']
                 )
                 |
+                _download.si(original_skymap_filename, superevent_id)
+                |
+                skymaps.flatten.s(skymap_filename)
+                |
+                gracedb.upload.s(
+                    skymap_filename,
+                    superevent_id,
+                    message='Flattened from multiresolution file {}'.format(
+                        original_skymap_filename),
+                    tags=['sky_loc', 'public']
+                )
+                |
                 gracedb.create_label.si('SKYMAP_READY', superevent_id),
 
                 skymaps.annotate_fits(
-                    skymap_filename,
+                    original_skymap_filename,
                     superevent_id,
                     ['sky_loc', 'public']
                 )

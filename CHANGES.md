@@ -7,6 +7,10 @@
 
 -   Ditch our own homebrew VOEvent broker and use Comet instead.
 
+-   In addition to traditional flat, fixed-nside sky maps, BAYESTAR will now
+    also upload an experimental multiresolution format described in
+    [LIGO-G1800186-v4](https://dcc.ligo.org/LIGO-G1800186-v4/public).
+
 ## 0.1.6 (2018-11-14)
 
 -   Update URL for static example event.
