@@ -2,7 +2,8 @@
 
 ## 0.1.7 (unreleased)
 
--   No changes yet.
+-   Pin the `redis` package version at <3 because the latest version of redis
+    breaks the Nagios unit tests.
 
 ## 0.1.6 (2018-11-14)
 
