@@ -5,7 +5,7 @@ flower
 gwpy
 healpy
 jinja2
-lalsuite >= 6.49.1.dev20181104
+lalsuite >= 6.49.1.dev20181104, < 6.49.1.dev20181115
 ligo-followup-advocate >= 0.0.11
 ligo-gracedb >= 2.0.1
 ligo-raven >= 1.8
