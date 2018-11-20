@@ -124,9 +124,8 @@ llhoft_channels = {
     #  'V1:DQ_VETO_OLIB': 'no_dq_veto_olib_bits',
     #  'V1:DQ_VETO_PYCBC': 'no_dq_veto_pycbc_bits',
                   }
-"""Low-latency h(t) state vector configuration. This is a dictionary
-consisting of a channel and its bitmask, as defined in
-:module:``detchar.py``."""
+"""Low-latency h(t) state vector configuration. This is a dictionary consisting
+of a channel and its bitmask, as defined in :mod:`gwcelery.tasks.detchar`."""
 
 idq_channels = ['H1:IDQ-PGLITCH_OVL_32_2048',
                 'L1:IDQ-PGLITCH_OVL_32_2048']
@@ -149,10 +148,10 @@ frame_types = {'H1': 'H1_llhoft',
                'L1': 'L1_llhoft',
                'V1': 'V1Online'}
 """Types of frames used in Parameter Estimation with LALInference (see
-:module:`gwcelery.tasks.lalinference`)"""
+:mod:`gwcelery.tasks.lalinference`)"""
 
 channel_names = {'H1': 'H1:GDS-CALIB_STRAIN',
                  'L1': 'L1:GDS-CALIB_STRAIN',
                  'V1': 'V1:Hrec_hoft_16384Hz'}
 """Names of h(t) channels used in Parameter Estimation with LALInference (see
-:module:`gwcelery.tasks.lalinference`)"""
+:mod:`gwcelery.tasks.lalinference`)"""

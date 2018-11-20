@@ -102,7 +102,7 @@ def pick_coinc():
 
     # Gstlal stores the template's SVD bank index in the Gamma1 column.
     # Fill this in so that we can calculate p_astro
-    # (see :module:`gwcelery.tasks.p_astro_gstlal`).
+    # (see :mod:`gwcelery.tasks.p_astro_gstlal`).
     for row in sngl_inspiral_table:
         row.Gamma1 = 16
 
