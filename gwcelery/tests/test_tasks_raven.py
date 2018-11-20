@@ -2,7 +2,7 @@ from unittest.mock import call, patch
 
 import pytest
 
-from . import test_tasks_skymaps
+from .test_tasks_skymaps import toy_fits_filecontents  # noqa: F401
 from ..tasks import gracedb, raven
 
 
@@ -63,10 +63,6 @@ def mock_get_event(exttrig_id):
         raise RuntimeError('Asked for search of unexpected exttrig')
 
 
-def mock_download_skymap(skymapfilename, exttrig_id):
-    return test_tasks_skymaps.toy_fits_filecontents()
-
-
 @pytest.mark.parametrize('group', ['CBC', 'Burst'])
 @patch('gwcelery.tasks.gracedb.get_event', mock_get_event)
 @patch('gwcelery.tasks.gracedb.get_superevent',
@@ -80,8 +76,8 @@ def test_calculate_coincidence_far(
     raven.calculate_coincidence_far('S1234', group).delay().get()
 
 
-@pytest.mark.parametrize('group', ['CBC', 'Burst'])
-@patch('gwcelery.tasks.gracedb.download', mock_download_skymap)
+@pytest.mark.parametrize('group', ['CBC', 'Burst'])  # noqa: F811
+@patch('gwcelery.tasks.gracedb.download')
 @patch('gwcelery.tasks.gracedb.get_superevent',
        return_value={'em_events': ['E1', 'E2', 'E3']})
 @patch('gwcelery.tasks.ligo_fermi_skymaps.get_preferred_skymap',
@@ -91,7 +87,9 @@ def test_calculate_coincidence_far(
 @patch('ligo.raven.gracedb_events.SE')
 def test_calculate_spacetime_coincidence_far(
         mock_se_cls, mock_exttrig_cls, mock_calc_signif,
-        mock_get_preferred_skymap, mock_get_superevent, group):
+        mock_get_preferred_skymap, mock_get_superevent, mock_download, group,
+        toy_fits_filecontents):
+    mock_download.return_value = toy_fits_filecontents
     raven.calculate_spacetime_coincidence_far(
         'S1234', group).delay().get()
 

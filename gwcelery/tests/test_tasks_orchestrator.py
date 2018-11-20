@@ -8,11 +8,11 @@ import pytest
 
 from .. import app
 from ..tasks import orchestrator
-from . import test_tasks_skymaps
+from .test_tasks_skymaps import toy_3d_fits_filecontents  # noqa: F401
 from . import resource_json
 
 
-@pytest.mark.parametrize(
+@pytest.mark.parametrize(  # noqa: F811
     'group,pipeline,offline,far', [['CBC', 'gstlal', False, 1.e-9],
                                    ['CBC', 'gstlal', False, 0.5*app.conf[
                                     'preliminary_alert_far_threshold']],
@@ -22,7 +22,8 @@ from . import resource_json
                                    ['Burst', 'oLIB', False, 1.e-9],
                                    ['CBC', 'gstlal', True, 1.e-10],
                                    ['Burst', 'CWB', True, 1.e-10]])
-def test_handle_superevent(monkeypatch, group, pipeline, offline, far):
+def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,
+                           group, pipeline, offline, far):
     """Test a superevent is dispatched to the correct annotation task based on
     its preferred event's search group."""
     alert = {
@@ -48,7 +49,7 @@ def test_handle_superevent(monkeypatch, group, pipeline, offline, far):
 
     def download(filename, graceid):
         if '.fits' in filename:
-            return test_tasks_skymaps.toy_3d_fits_filecontents()
+            return toy_3d_fits_filecontents
         elif filename == 'source_classification.json' and group == 'CBC':
             return json.dumps({'Prob NS2': 0, 'Prob EMbright': 0})
         elif filename == 'psd.xml.gz':
