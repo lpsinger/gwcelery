@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.8 (unreleased)
+
+-   No changes yet.
+
 ## 0.1.7 (2018-11-27)
 
 -   Pin the `redis` package version at <3 because the latest version of redis
