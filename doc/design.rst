@@ -65,6 +65,7 @@ are subclasses of :class:`celery_eternal.EternalTask` or
 :class:`celery_eternal.EternalProcessTask`.
 
 *  :meth:`gwcelery.tasks.gcn.broker`
+*  :meth:`gwcelery.tasks.gcn.listen`
 *  :meth:`gwcelery.tasks.lvalert.listen`
 
 Both of these run inside the general-purpose worker process described above,

@@ -2,7 +2,9 @@
 
 ## 0.1.8 (unreleased)
 
--   No changes yet.
+-   Run two separate instances of Comet, one to act as a broker and one to act
+    as a client. This breaks a cycle that would cause retransmission of GRB
+    notices back to GCN.
 
 ## 0.1.7 (2018-11-27)
 

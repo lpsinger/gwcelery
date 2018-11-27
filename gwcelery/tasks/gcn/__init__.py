@@ -8,6 +8,7 @@ References
 """
 import socket
 import subprocess
+import tempfile
 
 import billiard
 from celery.utils.log import get_task_logger
@@ -93,7 +94,7 @@ def _get_ephemeral_port():
 @app.task(base=EternalProcessTask, bind=True, shared=False)
 def broker(self):
     """Run an embedded :doc:`Comet VOEvent broker <comet:usage/broker>` to send
-    and recieve GCNs."""
+    GCNs."""
     # Look up the broker broadcast port from the global configuration object.
     _, _, broadcast_port = app.conf['gcn_broker_address'].partition(':')
 
@@ -103,26 +104,47 @@ def broker(self):
     author_port = str(_get_ephemeral_port())
     self.backend.client.set(self.name + '.port', author_port)
 
-    # Assemble the command line options for Twisted.
-    cmd = ['--nodaemon', '--pidfile=', 'comet', '--verbose',
-           '--local-ivo', 'ivo://ligo.org/gwcelery',
-           '--remote', app.conf['gcn_client_address'],
-           '--receive', '--receive-port', author_port,
-           '--author-whitelist', '127.0.0.0/8',
-           '--broadcast', '--broadcast-port', broadcast_port,
-           '--broadcast-test-interval', '0',
-           *(_ for name in app.conf['gcn_broker_accept_addresses']
-             for _ in ('--subscriber-whitelist', socket.gethostbyname(name)))]
+    with tempfile.TemporaryDirectory() as tmpdir:
+        # Assemble the command line options for Twisted.
+        cmd = ['--nodaemon', '--pidfile=', 'comet', '--verbose',
+               '--local-ivo', 'ivo://ligo.org/gwcelery',
+               '--receive', '--receive-port', author_port,
+               '--author-whitelist', '127.0.0.0/8',
+               '--broadcast', '--broadcast-port', broadcast_port,
+               '--broadcast-test-interval', '0',
+               '--eventdb', tmpdir,
+               *(_ for name in app.conf['gcn_broker_accept_addresses'] for _ in
+                 ('--subscriber-whitelist', socket.gethostbyname(name)))]
 
-    # Run Twisted.
-    log.info('twistd %s', ' '.join(cmd))
-    config = ServerOptions()
-    config.parseOptions(cmd)
-    config.subOptions['handlers'].append(_VOEventHandler())
-    runner = ApplicationRunner(config)
-    runner.run()
-    if runner._exitSignal is not None:
-        twisted_app._exitWithSignal(runner._exitSignal)
+        # Run Twisted.
+        log.info('twistd %s', ' '.join(cmd))
+        config = ServerOptions()
+        config.parseOptions(cmd)
+        runner = ApplicationRunner(config)
+        runner.run()
+        if runner._exitSignal is not None:
+            twisted_app._exitWithSignal(runner._exitSignal)
+
+
+@app.task(base=EternalProcessTask, shared=False)
+def listen():
+    """Run an embedded :doc:`Comet VOEvent client <comet:usage/broker>` to
+    recieve GCNs."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        # Assemble the command line options for Twisted.
+        cmd = ['--nodaemon', '--pidfile=', 'comet', '--verbose',
+               '--remote', app.conf['gcn_client_address'],
+               '--eventdb', tmpdir]
+
+        # Run Twisted.
+        log.info('twistd %s', ' '.join(cmd))
+        config = ServerOptions()
+        config.parseOptions(cmd)
+        config.subOptions['handlers'].append(_VOEventHandler())
+        runner = ApplicationRunner(config)
+        runner.run()
+        if runner._exitSignal is not None:
+            twisted_app._exitWithSignal(runner._exitSignal)
 
 
 class _OneShotSender(VOEventSenderFactory):
