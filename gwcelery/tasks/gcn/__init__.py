@@ -77,7 +77,9 @@ Declare a new handler like this::
 class _VOEventHandler:
     """ Comet VOEvent handler."""
     name = 'GWCelery VOEvent dispatch handler'
-    __call__ = handler.dispatch
+
+    def __call__(self, event):
+        handler.dispatch(event)
 
 
 def _get_ephemeral_port():
