@@ -104,6 +104,8 @@ def broker(self):
     author_port = str(_get_ephemeral_port())
     self.backend.client.set(self.name + '.port', author_port)
 
+    # Create temporary directory for Comet's event database in order to ensure
+    # isolation from any other instance of GWCelery on the same machine.
     with tempfile.TemporaryDirectory() as tmpdir:
         # Assemble the command line options for Twisted.
         cmd = ['--nodaemon', '--pidfile=', 'comet', '--verbose',
@@ -130,6 +132,9 @@ def broker(self):
 def listen():
     """Run an embedded :doc:`Comet VOEvent client <comet:usage/broker>` to
     recieve GCNs."""
+
+    # Create temporary directory for Comet's event database in order to ensure
+    # isolation from any other instance of GWCelery on the same machine.
     with tempfile.TemporaryDirectory() as tmpdir:
         # Assemble the command line options for Twisted.
         cmd = ['--nodaemon', '--pidfile=', 'comet', '--verbose',
