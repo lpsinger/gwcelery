@@ -24,6 +24,10 @@ def validate_voevent(payload):
     # Which GraceDB ID does this refer to?
     graceid = root.find("./What/Param[@name='GraceID']").attrib['value']
 
+    # Skip static events from the user guide, because they are not in GraceDb.
+    if graceid == 'MS181101ab':
+        return
+
     # Which VOEvent does this refer to?
     u = urlparse(root.attrib['ivorn'])
     local_id = u.fragment
