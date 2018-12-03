@@ -25,6 +25,7 @@
 -   Run `check_vectors` upon addition of an event to a superevent if the
     superevent already has an `DQV` label.
 
+-   Do not check the DMT-DQ_VECTOR for pipelines which use gated h(t).
 
 ## 0.1.7 (2018-11-27)
 

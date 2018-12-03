@@ -108,6 +108,20 @@ check_vector_prepost = {'gstlal': [2, 2],
 """Seconds before and after the superevent start and end times which the DQ
 vector check will include in its check. Pipeline dependent."""
 
+uses_gatedhoft = {'gstlal': False,
+                  'spiir': False,
+                  'pycbc': False,
+                  'MBTAOnline': True,
+                  'oLIB': False,
+                  'LIB': False,
+                  'CWB': False,
+                  'HardwareInjection': False,
+                  'Swift': False,
+                  'Fermi': False,
+                  'SNEWS': False}
+"""Whether or not a pipeline uses gated h(t). Determines whether or not
+the DMT-DQ_VECTOR will be analyzed for data quality."""
+
 llhoft_glob = '/dev/shm/llhoft/{detector}_O2/*.gwf'
 """File glob for low-latency h(t) frames."""
 

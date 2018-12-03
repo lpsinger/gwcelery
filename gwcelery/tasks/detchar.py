@@ -329,7 +329,8 @@ def check_vectors(event, graceid, start, end):
 
     # Create caches for all detectors
     instruments = event['instruments'].split(',')
-    pre, post = app.conf['check_vector_prepost'][event['pipeline']]
+    pipeline = event['pipeline']
+    pre, post = app.conf['check_vector_prepost'][pipeline]
     start, end = start - pre, end + post
     prepost_msg = " within -{}/+{} seconds of superevent".format(pre, post)
 
@@ -338,8 +339,13 @@ def check_vectors(event, graceid, start, end):
     caches = {ifo: create_cache(ifo) for ifo in ifos}
 
     # Examine injection and DQ states
+    # Do not analyze DMT-DQ_VECTOR if pipeline uses gated h(t)
     states = {}
-    for channel, bits in app.conf['llhoft_channels'].items():
+    analysis_channels = app.conf['llhoft_channels'].items()
+    if app.conf['uses_gatedhoft'][pipeline]:
+        analysis_channels = {k: v for k, v in analysis_channels
+                             if k[3:] != 'DMT-DQ_VECTOR'}.items()
+    for channel, bits in analysis_channels:
         states.update(check_vector(caches[channel.split(':')[0]], channel,
                                    start, end, globals()[bits]))
         #  Hard coded not() of Virgo DQ_VETO_* streams
@@ -409,9 +415,15 @@ def check_vectors(event, graceid, start, end):
         ', '.join(k for k, v in dq_states.items() if v is False),
         ', '.join(k for k, v in dq_states.items() if v is None),
     )
+    if app.conf['uses_gatedhoft'][pipeline]:
+        gate_msg = ('. Pipeline {} uses gated h(t),'
+                    ' LIGO DMT-DQ_VECTOR not checked.').format(pipeline)
+    else:
+        gate_msg = ''
+
     # Labeling DQOK/DQV to GraceDb
     gracedb.client.writeLog(
-        graceid, msg + prepost_msg, tag_name=['data_quality'])
+        graceid, msg + prepost_msg + gate_msg, tag_name=['data_quality'])
     if overall_dq_active_state is True:
         state = "pass"
         gracedb.create_label('DQOK', graceid)

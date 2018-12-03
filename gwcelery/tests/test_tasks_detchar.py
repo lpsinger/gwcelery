@@ -45,6 +45,22 @@ def ifo_h1_idq():
     app.conf['idq_channels'] = old
 
 
+@pytest.fixture
+def gatedpipe():
+    old = app.conf['uses_gatedhoft']
+    app.conf['uses_gatedhoft'] = {'gatepipe': True}
+    yield
+    app.conf['uses_gatedhoft'] = old
+
+
+@pytest.fixture
+def gatedpipe_prepost():
+    old = app.conf['check_vector_prepost']
+    app.conf['check_vector_prepost'] = {'gatepipe': [0.5, 0.5]}
+    yield
+    app.conf['check_vector_prepost'] = old
+
+
 def test_create_cache(llhoft_glob_fail):
     assert len(detchar.create_cache('L1')) == 1
 
@@ -148,3 +164,26 @@ def test_check_vectors(mock_create_label, mock_write_log, mock_json,
     ]
     mock_write_log.assert_has_calls(calls, any_order=True)
     mock_create_label.assert_called_with('DQOK', 'S12345a')
+
+
+@patch('gwcelery.tasks.detchar.dqr_json', return_value='dqrjson')
+@patch('gwcelery.tasks.gracedb.client.writeLog')
+@patch('gwcelery.tasks.gracedb.create_label')
+def test_gatedhoft_skips_dmtvec(mock_create_label, mock_write_log, mock_json,
+                                llhoft_glob_pass, ifo_h1, ifo_h1_idq,
+                                gatedpipe, gatedpipe_prepost):
+    event = {'search': 'AllSky', 'instruments': 'H1', 'pipeline': 'gatepipe'}
+    superevent_id = 'S12345a'
+    start, end = 1216577977, 1216577979
+    detchar.check_vectors(event, superevent_id, start, end)
+    mock_write_log.assert_has_calls([
+            call('S12345a',
+                 ('detector state for active instruments is good.'
+                  ' For all instruments,'
+                  ' bits good (H1:HOFT_OK,'
+                  ' H1:OBSERVATION_INTENT), bad (), unknown()'
+                  ' within -0.5/+0.5 seconds of superevent.'
+                  ' Pipeline gatepipe uses gated h(t),'
+                  ' LIGO DMT-DQ_VECTOR not checked.'),
+                 tag_name=['data_quality'])], any_order=True
+    )
