@@ -285,7 +285,7 @@ def check_vector(cache, channel, start, end, bits, logic_type='all'):
                 for key, value in statevector.get_bit_series().items()}
 
 
-@app.task(ignore_result=True, shared=False)
+@app.task(shared=False)
 def check_vectors(event, graceid, start, end):
     """Perform data quality checks for an event and labels/logs results to
     GraceDb.
@@ -433,3 +433,5 @@ def check_vectors(event, graceid, start, end):
     gracedb.upload(
         json.dumps(file), filename, graceid, message, tags=['data_quality']
     )
+
+    return event

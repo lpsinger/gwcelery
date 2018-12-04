@@ -52,10 +52,9 @@ def handle_superevent(alert):
             |
             gracedb.get_event.s()
             |
-            group(
-                detchar.check_vectors.s(superevent_id, start, end),
-                preliminary_alert.s(superevent_id)
-            )
+            detchar.check_vectors.s(superevent_id, start, end)
+            |
+            preliminary_alert.s(superevent_id)
         ).apply_async()
     elif alert['alert_type'] == 'label_added':
         label_name = alert['data']['name']

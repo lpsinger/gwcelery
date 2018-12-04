@@ -6,6 +6,9 @@
     as a client. This breaks a cycle that would cause retransmission of GRB
     notices back to GCN.
 
+-   Fix a race condition that could cause preliminary alerts to be sent out for
+    events for which data quality checks had failed.
+
 ## 0.1.7 (2018-11-27)
 
 -   Pin the `redis` package version at <3 because the latest version of redis
