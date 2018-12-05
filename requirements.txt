@@ -6,7 +6,7 @@ flower
 gwpy
 healpy
 jinja2
-lalsuite >= 6.49.1.dev20181121
+lalsuite >= 6.49.1.dev20181121, <= 6.49.1.dev20181201  # FIXME: https://git.ligo.org/lscsoft/lalsuite/issues/121
 ligo-followup-advocate >= 0.0.11
 ligo-gracedb >= 2.0.1
 ligo-raven >= 1.8
