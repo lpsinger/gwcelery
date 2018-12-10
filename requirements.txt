@@ -21,5 +21,6 @@ pytest >= 3.0
 redis
 safe-netrc
 sentry-sdk
+service_identity  # We don't actually use this package, but it silences some annoying warnings from twistd.
 sleek-lvalert >= 0.0.4
 voeventlib >= 1.2
