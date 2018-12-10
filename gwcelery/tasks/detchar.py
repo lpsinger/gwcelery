@@ -325,7 +325,7 @@ def check_vectors(event, graceid, start, end):
     if event.get('search') == 'MDC':
         log.info('Skipping state vector checks because %s is an MDC',
                  event['graceid'])
-        return
+        return event
 
     # Create caches for all detectors
     instruments = event['instruments'].split(',')
