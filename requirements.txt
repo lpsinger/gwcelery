@@ -18,7 +18,7 @@ numpy
 p-astro
 pygcn >= 0.1.16
 pytest >= 3.0
-redis < 3
+redis
 safe-netrc
 sentry-sdk
 sleek-lvalert >= 0.0.4

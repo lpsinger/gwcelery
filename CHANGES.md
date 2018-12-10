@@ -9,6 +9,9 @@
 -   Fix a race condition that could cause preliminary alerts to be sent out for
     events for which data quality checks had failed.
 
+-   Unpin the `redis` package version because recent updates to Kombu and
+    Billiard seem to have fixed the Nagios unit tests.
+
 ## 0.1.7 (2018-11-27)
 
 -   Pin the `redis` package version at <3 because the latest version of redis
