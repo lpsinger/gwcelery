@@ -75,7 +75,8 @@ def send(message):
     port = broker.backend.client.get(broker.name + '.port')
 
     # Send the VOEvent using comet-sendvo.
-    subprocess.check_call(['comet-sendvo', '--port', port], input=message)
+    subprocess.run(['comet-sendvo', '--port', port],
+                   check=True, input=message, stderr=subprocess.PIPE)
 
 
 class _VOEventDispatchHandler(DispatchHandler):
