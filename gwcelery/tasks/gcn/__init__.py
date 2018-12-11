@@ -14,6 +14,7 @@ import billiard
 from celery.utils.log import get_task_logger
 from celery_eternal import EternalProcessTask
 from comet.icomet import IHandler
+import comet.log
 from comet.utility import xml_document
 from comet.protocol import VOEventSenderFactory
 from gcn import get_notice_type, NoticeType
@@ -169,6 +170,9 @@ def _send(message, port):
     # This function is adapted from the comet-sendvo script.
     # It allows us to do a single-shot VOEvent submission without
     # knowing the path where comet-sendvo is installed.
+
+    # Increase Comet's log verbosity.
+    comet.log.LEVEL = comet.log.Levels.DEBUG
 
     event = xml_document(message)
     factory = _OneShotSender(event)
