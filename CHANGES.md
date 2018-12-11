@@ -12,6 +12,11 @@
 -   Unpin the `redis` package version because recent updates to Kombu and
     Billiard seem to have fixed the Nagios unit tests.
 
+-   Start the Comet VOEvent broker as a subprocess intead of using
+    `multiprocessing` and go back to using PyGCN instead of Comet as the
+    VOEvent client. This is a workaround for suspected instability due to a bad
+    interaction between `redis-py` and `multiprocessing`.
+
 ## 0.1.7 (2018-11-27)
 
 -   Pin the `redis` package version at <3 because the latest version of redis
