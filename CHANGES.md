@@ -17,6 +17,11 @@
     VOEvent client. This is a workaround for suspected instability due to a bad
     interaction between `redis-py` and `multiprocessing`.
 
+-   Reset Matplotlib's style before running `ligo-skymap-plot` and
+    `ligo-skymap-plot-volume`. There is some other module (probably in
+    LALSuite) that is messing with the rcparams at module scope, which was
+    causing Mollweide plots to come out with unusual aspect ratios.
+
 ## 0.1.7 (2018-11-27)
 
 -   Pin the `redis` package version at <3 because the latest version of redis

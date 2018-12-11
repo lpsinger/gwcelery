@@ -88,7 +88,7 @@ def plot_allsky(filecontents):
     # https://github.com/astropy/astropy/issues/8004.
     with NamedTemporaryFile(mode='rb', suffix='.png') as pngfile, \
             NamedTemporaryFile(content=filecontents) as fitsfile, \
-            plt.style.context({'text.usetex': False}):
+            plt.style.context({'text.usetex': False}, after_reset=True):
         ligo_skymap_plot.main([fitsfile.name, '-o', pngfile.name,
                                '--annotate', '--contour', '50', '90'])
         return pngfile.read()
@@ -103,7 +103,7 @@ def plot_volume(filecontents):
     # https://github.com/astropy/astropy/issues/8004.
     with NamedTemporaryFile(mode='rb', suffix='.png') as pngfile, \
             NamedTemporaryFile(content=filecontents) as fitsfile, \
-            plt.style.context({'text.usetex': False}):
+            plt.style.context({'text.usetex': False}, after_reset=True):
         ligo_skymap_plot_volume.main([fitsfile.name, '-o',
                                       pngfile.name, '--annotate'])
         return pngfile.read()
