@@ -108,6 +108,23 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,
         create_circular.assert_called_once()
 
 
+@patch('gwcelery.tasks.gracedb.get_labels',
+       return_value={'DQV', 'ADVREQ'})
+def test_handle_superevent_event_added(mock_get_labels):
+    alert = {
+        'alert_type': 'event_added',
+        'uid': 'TS123456a',
+        'data': {'superevent_id': 'TS123456a',
+                 't_start': 1.,
+                 't_0': 2.,
+                 't_end': 3.},
+        'object': {'graceid': 'G123456'}
+    }
+    with patch('gwcelery.tasks.detchar.check_vectors.run') as p:
+        orchestrator.handle_superevent(alert)
+        p.assert_called_once_with('G123456', 'TS123456a', 1., 3.)
+
+
 @patch('gwcelery.tasks.gracedb.get_log',
        return_value=[{'tag_names': ['sky_loc', 'public'],
                       'filename': 'foobar.fits.gz'}])

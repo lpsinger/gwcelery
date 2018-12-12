@@ -22,6 +22,10 @@
     LALSuite) that is messing with the rcparams at module scope, which was
     causing Mollweide plots to come out with unusual aspect ratios.
 
+-   Run `check_vectors` upon addition of an event to a superevent if the
+    superevent already has an `DQV` label.
+
+
 ## 0.1.7 (2018-11-27)
 
 -   Pin the `redis` package version at <3 because the latest version of redis
