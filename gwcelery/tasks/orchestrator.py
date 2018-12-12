@@ -56,21 +56,6 @@ def handle_superevent(alert):
             |
             preliminary_alert.s(superevent_id)
         ).apply_async()
-    # check DQV label on superevent, run check_vectors if required
-    elif alert['alert_type'] == 'event_added':
-        new_event_id = alert['object']['graceid']
-
-        superevent_content = gracedb.get_superevent(superevent_id)
-        start, end = \
-            superevent_content['t_start'], superevent_content['t_end']
-        if 'DQV' in gracedb.get_labels(superevent_id):
-            (
-                detchar.check_vectors.s(new_event_id, superevent_id,
-                                        start, end)
-                |
-                _update_if_dqok.si(superevent_id, new_event_id)
-            ).apply_async()
-
     elif alert['alert_type'] == 'label_added':
         label_name = alert['data']['name']
         if label_name == 'ADVOK':
@@ -176,17 +161,6 @@ def _download(*args, **kwargs):
     :class:`~urllib.error.URLError`. In particular, it will be retried for 404
     (not found) errors."""
     return gracedb.download(*args, **kwargs)
-
-
-@app.task(shared=False, ignore_result=True)
-def _update_if_dqok(superevent_id, event_id):
-    """Update `preferred_event` of `superevent_id` to `event_id`
-    if `DQOK` label has been applied
-    """
-    if 'DQOK' in gracedb.get_labels(superevent_id):
-        gracedb.update_superevent(superevent_id, preferred_event=event_id)
-        gracedb.create_log(
-            "DQOK applied based on new event %s" % (event_id), superevent_id)
 
 
 @gracedb.task(shared=False)

@@ -33,23 +33,6 @@ def create_label(label, graceid):
 
 
 @task(ignore_result=True, shared=False)
-def create_log(message, graceid, **kwargs):
-    """Write a log message to event/superevent.
-
-    Parameters
-    ----------
-    message : str
-        log message to be written
-    graceid : str
-        event_id/superevent_id
-    **kwargs
-        additional arguments to be passed to
-        :meth:`writeLog`
-    """
-    client.writeLog(graceid, message, **kwargs)
-
-
-@task(ignore_result=True, shared=False)
 def create_signoff(status, comment, signoff_type, graceid):
     """Create a label in GraceDb."""
     client.create_signoff(graceid, signoff_type, status, comment)
