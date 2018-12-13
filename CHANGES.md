@@ -27,6 +27,9 @@
 
 -   Do not check the DMT-DQ_VECTOR for pipelines which use gated h(t).
 
+-   Remove static example VOEvents from the Open Alert Users Guide. We never
+    used them because activating sample alerts got help until ER13.
+
 ## 0.1.7 (2018-11-27)
 
 -   Pin the `redis` package version at <3 because the latest version of redis

@@ -24,4 +24,3 @@ gwcelery\.tasks module
     gwcelery.tasks.raven
     gwcelery.tasks.skymaps
     gwcelery.tasks.superevents
-    gwcelery.tasks.userguide
