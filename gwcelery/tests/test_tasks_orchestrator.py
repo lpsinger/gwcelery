@@ -87,7 +87,7 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,
     # Run function under test
     orchestrator.handle_superevent(alert)
 
-    expose.assert_called_once()
+    expose.assert_not_called()  # FIXME: after ER13, this should be called
     plot_allsky.assert_called_once()
     plot_volume.assert_called_once()
     if offline:
@@ -150,7 +150,7 @@ def test_handle_superevent_initial_alert(mock_send, mock_download, mock_expose,
     mock_create_voevent.assert_called_once_with(
         'S1234', 'initial', skymap_filename='foobar.fits.gz',
         skymap_image_filename='foobar.png', skymap_type='foobar',
-        internal=True, open_alert=True, vetted=True)
+        internal=False, open_alert=True, vetted=True)
     mock_send.assert_called_once_with('contents of S1234-Initial-1.xml')
 
 

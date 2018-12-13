@@ -84,9 +84,8 @@ def test_download(mock_gracedb):
 @patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
 def test_expose(mock_gracedb):
     gracedb.expose('graceid')
-    # FIXME: disable exposing events for now.
-    # mock_gracedb.modify_permissions.assert_called_once_with(
-    #     'graceid', 'expose')
+    mock_gracedb.modify_permissions.assert_called_once_with(
+        'graceid', 'expose')
 
 
 def test_get_log(monkeypatch):

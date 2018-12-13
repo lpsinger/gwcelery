@@ -34,6 +34,11 @@
     over, we need to carefully audit the code and make sure that test events
     are handled appropriately.
 
+-   Enable public GraceDb entries and public GCNs for mock (MDC) events. For
+    **real** events in ER13, disable public preliminary GCNs. Instead, advocate
+    signoffs will trigger making events and GCN notices public: `ADVOK` for
+    initial notices and `ADVNO` for retraction notices.
+
 ## 0.1.7 (2018-11-27)
 
 -   Pin the `redis` package version at <3 because the latest version of redis

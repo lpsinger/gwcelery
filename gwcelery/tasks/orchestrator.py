@@ -5,7 +5,7 @@ import json
 import re
 from urllib.error import URLError
 
-from celery import group
+from celery import chain, group
 from ligo.gracedb.rest import HTTPError
 
 from ..import app
@@ -259,7 +259,11 @@ def preliminary_alert(event, superevent_id):
         skymap_filename += '.gz'
 
     # Make the event public.
-    canvas = gracedb.expose.s(superevent_id)
+    # FIXME: For ER13, only expose mock events.
+    if event['search'] == 'MDC':
+        canvas = gracedb.expose.s(superevent_id)
+    else:
+        canvas = chain()
 
     # If there is a sky map, then copy it to the superevent and create plots.
     if skymap_filename is not None:
@@ -328,7 +332,8 @@ def preliminary_alert(event, superevent_id):
             _create_voevent.s(
                 superevent_id, 'preliminary',
                 skymap_filename=skymap_filename,
-                internal=True,  # FIXME: remove once GraceDb goes public
+                # FIXME: for ER13, only send public alerts for MDC events.
+                internal=(event['search'] != 'MDC'),
                 open_alert=True
             )
             |
@@ -386,7 +391,7 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None):
             superevent_id,
             alert_type,
             skymap_filename=skymap_filename,
-            internal=True,  # FIXME: remove once GraceDb goes public
+            internal=False,
             open_alert=True,
             vetted=True
         )
@@ -442,7 +447,7 @@ def retraction_alert(superevent_id):
         |
         gracedb.create_voevent.si(
             superevent_id, 'retraction',
-            internal=True,  # FIXME: remove once GraceDb goes public
+            internal=False,
             open_alert=True,
             vetted=True
         )

@@ -66,8 +66,7 @@ def download(filename, graceid):
 @task(ignore_result=True, shared=False)
 def expose(graceid):
     """Expose an event to the public."""
-    # client.modify_permissions(graceid, 'expose')
-    pass  # FIXME: disable exposing events for now.
+    client.modify_permissions(graceid, 'expose')
 
 
 @task(shared=False)
