@@ -39,6 +39,9 @@
     signoffs will trigger making events and GCN notices public: `ADVOK` for
     initial notices and `ADVNO` for retraction notices.
 
+-   Include source classification output (BNS/NSBH/BBH/Terrestrial) in GCN
+    Notices.
+
 ## 0.1.7 (2018-11-27)
 
 -   Pin the `redis` package version at <3 because the latest version of redis

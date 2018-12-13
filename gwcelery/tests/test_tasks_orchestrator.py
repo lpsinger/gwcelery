@@ -56,11 +56,10 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,
             return pkg_resources.resource_filename(__name__, 'data/psd.xml.gz')
         elif filename == 'S1234-1-Preliminary.xml':
             return b'fake VOEvent file contents'
+        elif filename == 'p_astro.json':
+            return json.dumps(dict(BNS=0.94, NSBH=0.03, BBH=0.02, Terr=0.01))
         else:
             raise ValueError
-
-    def create_voevent(*args, **kwargs):
-        return 'S1234-1-Preliminary.xml'
 
     create_circular = Mock()
     expose = Mock()
@@ -68,6 +67,7 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,
     plot_allsky = Mock()
     send = Mock()
     lalinference = Mock()
+    create_voevent = Mock(return_value='S1234-1-Preliminary.xml')
 
     monkeypatch.setattr('gwcelery.tasks.gcn.send.run', send)
     monkeypatch.setattr('gwcelery.tasks.skymaps.plot_allsky.run', plot_allsky)
@@ -102,6 +102,12 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,
     else:
         if group == 'CBC':
             lalinference.assert_called_once()
+            create_voevent.assert_called_once_with(
+                'S1234', 'preliminary', BBH=0.02, BNS=0.94, NSBH=0.03,
+                ProbHasNS=0.0, ProbHasRemnant=0.0, Terrestrial=0.01,
+                internal=True, open_alert=True,
+                skymap_filename='bayestar.fits.gz',
+                skymap_image_filename='bayestar.png', skymap_type='bayestar')
         else:
             lalinference.assert_not_called()
         send.assert_called_once()
@@ -125,6 +131,17 @@ def test_handle_superevent_event_added(mock_get_labels):
         p.assert_called_once_with('G123456', 'TS123456a', 1., 3.)
 
 
+def superevent_initial_alert_download(filename, graceid):
+    if filename == 'S1234-Initial-1.xml':
+        return 'contents of S1234-Initial-1.xml'
+    elif filename == 'source_classification.json':
+        return json.dumps({'Prob NS2': 0, 'Prob EMbright': 0})
+    elif filename == 'p_astro.json':
+        return json.dumps(dict(BNS=0.94, NSBH=0.03, BBH=0.02, Terr=0.01))
+    else:
+        raise ValueError
+
+
 @patch('gwcelery.tasks.gracedb.get_log',
        return_value=[{'tag_names': ['sky_loc', 'public'],
                       'filename': 'foobar.fits.gz'}])
@@ -132,9 +149,9 @@ def test_handle_superevent_event_added(mock_get_labels):
        return_value='S1234-Initial-1.xml')
 @patch('gwcelery.tasks.gracedb.expose.run')
 @patch('gwcelery.tasks.gracedb.download.run',
-       return_value='contents of S1234-Initial-1.xml')
+       superevent_initial_alert_download)
 @patch('gwcelery.tasks.gcn.send.run')
-def test_handle_superevent_initial_alert(mock_send, mock_download, mock_expose,
+def test_handle_superevent_initial_alert(mock_send, mock_expose,
                                          mock_create_voevent, mock_get_log):
     """Test that the ``ADVOK`` label triggers an initial alert."""
     alert = {
@@ -148,9 +165,10 @@ def test_handle_superevent_initial_alert(mock_send, mock_download, mock_expose,
 
     mock_expose.assert_called_once_with('S1234')
     mock_create_voevent.assert_called_once_with(
-        'S1234', 'initial', skymap_filename='foobar.fits.gz',
-        skymap_image_filename='foobar.png', skymap_type='foobar',
-        internal=False, open_alert=True, vetted=True)
+        'S1234', 'initial', BBH=0.02, BNS=0.94, NSBH=0.03, ProbHasNS=0.0,
+        ProbHasRemnant=0.0, Terrestrial=0.01, internal=False, open_alert=True,
+        skymap_filename='foobar.fits.gz', skymap_image_filename='foobar.png',
+        skymap_type='foobar', vetted=True)
     mock_send.assert_called_once_with('contents of S1234-Initial-1.xml')
 
 
