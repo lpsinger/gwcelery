@@ -24,7 +24,6 @@ from . import p_astro_gstlal
 
 @lvalert.handler('superevent',
                  'mdc_superevent',
-                 'test_superevent',
                  shared=False)
 def handle_superevent(alert):
     """Schedule annotations for new superevents.
@@ -82,10 +81,6 @@ def handle_superevent(alert):
                  'cbc_spiir',
                  'cbc_pycbc',
                  'cbc_mbtaonline',
-                 'test_gstlal',
-                 'test_spiir',
-                 'test_pycbc',
-                 'test_mbtaonline',
                  shared=False)
 def handle_cbc_event(alert):
     """Peform annotations for CBC events that depend on pipeline-specific

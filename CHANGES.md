@@ -30,6 +30,10 @@
 -   Remove static example VOEvents from the Open Alert Users Guide. We never
     used them because activating sample alerts got help until ER13.
 
+-   Disable running the Orchestrator for test events for ER13. After ER13 is
+    over, we need to carefully audit the code and make sure that test events
+    are handled appropriately.
+
 ## 0.1.7 (2018-11-27)
 
 -   Pin the `redis` package version at <3 because the latest version of redis
