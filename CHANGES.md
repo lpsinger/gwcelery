@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1 (unreleased)
+
+-   Back to development.
+
 ## 0.2.0 (2018-12-14)
 
 -   This is the release of GWCelery for ER13.
