@@ -15,10 +15,10 @@ from . import resource_json
 @pytest.mark.parametrize(  # noqa: F811
     'group,pipeline,offline,far', [['CBC', 'gstlal', False, 1.e-9],
                                    ['CBC', 'gstlal', False, 0.5*app.conf[
-                                    'preliminary_alert_far_threshold']],
+                                    'preliminary_alert_far_threshold']['cbc']],
                                    ['Burst', 'CWB', False, 1.e-9],
                                    ['Burst', 'CWB', False, 0.8*app.conf[
-                                    'preliminary_alert_far_threshold']],
+                                    'preliminary_alert_far_threshold']['cbc']],
                                    ['Burst', 'oLIB', False, 1.e-9],
                                    ['CBC', 'gstlal', True, 1.e-10],
                                    ['Burst', 'CWB', True, 1.e-10]])
@@ -95,7 +95,7 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,
         create_circular.assert_not_called()
         lalinference.assert_not_called()
     elif app.conf['preliminary_alert_trials_factor'][group.lower()] * far > \
-            app.conf['preliminary_alert_far_threshold']:
+            app.conf['preliminary_alert_far_threshold'][group.lower()]:
         send.assert_not_called()
         create_circular.assert_not_called()
         lalinference.assert_not_called()

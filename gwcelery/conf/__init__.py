@@ -79,8 +79,11 @@ superevent_default_d_t_end = 1.0
 superevent_far_threshold = 1 / 3600
 """Maximum false alarm rate to consider events superevents."""
 
-preliminary_alert_far_threshold = 1 / 3600
-"""Maximum false alarm rate to consider sending preliminary alerts."""
+preliminary_alert_far_threshold = {'cbc': 1 / (30 * 86400),
+                                   'burst': 1 / (365 * 86400),
+                                   'test': 1 / (30 * 86400)}
+"""Group specific maximum false alarm rate to consider
+sending preliminary alerts."""
 
 preliminary_alert_trials_factor = dict(cbc=4.0, burst=2.0)
 """Trials factor corresponding to trigger categories.

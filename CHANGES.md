@@ -18,6 +18,9 @@
     visualizations take longer to generate than the FITS files themselves, so
     they were unnecessarily slowing down the preliminary alerts.
 
+-   Preliminary GCN FAR threshold is modified to be group (CBC, Burst, Test)
+    specific.
+
 ## 0.2.3 (2018-12-16)
 
 -   Update frame type used in LALInference Parameter Estimation.
