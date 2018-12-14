@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2 (unreleased)
+
+-   No changes yet.
+
 ## 0.2.1 (2018-12-14)
 
 -   Update detchar module configuration for ER13.
