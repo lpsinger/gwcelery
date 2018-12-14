@@ -4,6 +4,7 @@
 import io
 import json
 
+from celery import Task
 from celery.utils.log import get_task_logger
 from glue.ligolw import ligolw
 from glue.ligolw.ligolw import LIGOLWContentHandler
@@ -15,6 +16,8 @@ from lal import rate
 import numpy as np
 
 from ..import app
+
+from . import p_astro_other
 
 log = get_task_logger(__name__)
 
@@ -110,7 +113,9 @@ def _get_event_ln_likelihood_ratio_svd_endtime_mass(coinc_bytes):
             coinc_inspiral.end_time,
             coinc_inspiral.mass,
             sngl_inspiral[0].mass1,
-            sngl_inspiral[0].mass2)
+            sngl_inspiral[0].mass2,
+            coinc_inspiral.snr,
+            coinc_inspiral.combined_far)
 
 
 # This is the function that computes p-astro for a new
@@ -135,7 +140,19 @@ def p_astro_update(category, event_bayesfac_dict, mean_values_dict):
     return numerator/denominator
 
 
-@app.task(shared=False)
+class _PastroBase(Task):
+    def on_failure(self, exc, task_id, args, kwargs, einfo):
+        log.warning(
+            "p_astro computation failed, using approximate method %s" % (exc))
+        coinc_bytes, ranking_bytes = args[0]
+        event_ln_likelihood_ratio, event_endtime, \
+            event_mass, mass1, mass2, snr, far = \
+            _get_event_ln_likelihood_ratio_svd_endtime_mass(coinc_bytes)
+        p_astro_other.compute_p_astro.s(snr, far, mass1, mass2).apply_async(
+            retry=False)
+
+
+@app.task(shared=False, base=_PastroBase)
 def compute_p_astro(files):
     """
     Task to compute `p_astro` by source category.
@@ -163,7 +180,7 @@ def compute_p_astro(files):
     log.info(
         'Fetching ln_likelihood_ratio, svd bin, endtime, mass from coinc.xml')
     event_ln_likelihood_ratio, event_endtime, \
-        event_mass, event_mass1, event_mass2 = \
+        event_mass, event_mass1, event_mass2, snr, far = \
         _get_event_ln_likelihood_ratio_svd_endtime_mass(coinc_bytes)
 
     # Using the zerolag log likelihood ratio value event,
