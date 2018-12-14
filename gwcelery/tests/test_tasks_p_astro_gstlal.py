@@ -33,15 +33,6 @@ def coinc_bytes_3():
 
 
 @pytest.fixture(autouse=True, scope='module')
-def mock_trigger_db():
-    old = app.conf['p_astro_gstlal_trigger_db']
-    app.conf['p_astro_gstlal_trigger_db'] = pkg_resources.resource_filename(
-        __name__, 'data/p_astro_gstlal_trigger_db.sqlite')
-    yield
-    app.conf['p_astro_gstlal_trigger_db'] = old
-
-
-@pytest.fixture(autouse=True, scope='module')
 def mock_ranking_pdf():
     old = app.conf['p_astro_gstlal_ranking_pdf']
     app.conf['p_astro_gstlal_ranking_pdf'] = pkg_resources.resource_filename(
