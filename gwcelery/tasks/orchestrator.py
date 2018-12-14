@@ -102,20 +102,17 @@ def handle_cbc_event(alert):
     ============================== =====================================================
     """  # noqa: E501
 
-    if alert['alert_type'] != 'log':
-        return
-
     graceid = alert['uid']
-    filename = alert['data']['filename']
-
-    snr = alert['object']['extra_attributes']['CoincInspiral']['snr']
-    far = alert['object']['far']
-    mass1 = alert['object']['extra_attributes']['SingleInspiral'][0]['mass1']
-    mass2 = alert['object']['extra_attributes']['SingleInspiral'][0]['mass2']
 
     # p_astro calculation for other pipelines
-    if filename == 'coinc.xml' and \
-            alert['object']['pipeline'].lower() != 'gstlal':
+    if alert['alert_type'] == 'new' \
+            and (alert['object']['pipeline'].lower() != 'gstlal'
+                 or alert['object']['search'] == 'MDC'):
+        extra_attributes = alert['object']['extra_attributes']
+        snr = extra_attributes['CoincInspiral']['snr']
+        far = alert['object']['far']
+        mass1 = extra_attributes['SingleInspiral'][0]['mass1']
+        mass2 = extra_attributes['SingleInspiral'][0]['mass2']
         (
             p_astro_other.compute_p_astro(snr, far, mass1, mass2)
             |
@@ -126,6 +123,12 @@ def handle_cbc_event(alert):
             |
             gracedb.create_label.si('PASTRO_READY', graceid)
         ).delay()
+
+    if alert['alert_type'] != 'log':
+        return
+
+    filename = alert['data']['filename']
+
     if filename == 'psd.xml.gz':
         (
             group(
