@@ -2,7 +2,7 @@
 
 ## 0.2.1 (unreleased)
 
--   Back to development.
+-   Update detchar module configuration for ER13.
 
 ## 0.2.0 (2018-12-14)
 
