@@ -2,7 +2,6 @@
 import io
 import random
 
-from celery import group
 from celery.task import PeriodicTask
 from celery.utils.log import get_task_logger
 from glue.ligolw import utils
@@ -132,17 +131,10 @@ def upload_event():
     coinc = pick_coinc()
     psd = pkg_resources.resource_string(
         __name__, '../data/first2years/2016/psd.xml.gz')
-    ranking_data = pkg_resources.resource_string(
-        __name__, '../tests/data/ranking_data_G322589.xml.gz')
     graceid = gracedb.create_event(coinc, 'MDC', 'gstlal', 'CBC')
     log.info('uploaded as %s', graceid)
     (
-        group(
-            gracedb.upload.si(psd, 'psd.xml.gz',
-                              graceid, 'Noise PSD', ['psd']),
-            gracedb.upload.si(ranking_data, 'ranking_data.xml.gz',
-                              graceid, 'Ranking data')
-        )
+        gracedb.upload.si(psd, 'psd.xml.gz', graceid, 'Noise PSD', ['psd'])
         |
         gracedb.get_superevents.si(
             'MDC event: {}'.format(graceid)
