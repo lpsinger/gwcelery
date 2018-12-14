@@ -109,12 +109,12 @@ check_vector_prepost = {'gstlal': [2, 2],
 vector check will include in its check. Pipeline dependent."""
 
 uses_gatedhoft = {'gstlal': False,
-                  'spiir': False,
-                  'pycbc': False,
+                  'spiir': True,
+                  'pycbc': True,
                   'MBTAOnline': True,
                   'oLIB': False,
                   'LIB': False,
-                  'CWB': False,
+                  'CWB': True,
                   'HardwareInjection': False,
                   'Swift': False,
                   'Fermi': False,
@@ -122,7 +122,7 @@ uses_gatedhoft = {'gstlal': False,
 """Whether or not a pipeline uses gated h(t). Determines whether or not
 the DMT-DQ_VECTOR will be analyzed for data quality."""
 
-llhoft_glob = '/dev/shm/llhoft/{detector}_O2/*.gwf'
+llhoft_glob = '/dev/shm/llhoft/{detector}/*.gwf'
 """File glob for low-latency h(t) frames."""
 
 llhoft_channels = {
@@ -141,8 +141,8 @@ llhoft_channels = {
 """Low-latency h(t) state vector configuration. This is a dictionary consisting
 of a channel and its bitmask, as defined in :mod:`gwcelery.tasks.detchar`."""
 
-idq_channels = ['H1:IDQ-PGLITCH_OVL_32_2048',
-                'L1:IDQ-PGLITCH_OVL_32_2048']
+idq_channels = ['H1:IDQ-PGLITCH_RANDOM_FOREST_16_4096',
+                'L1:IDQ-PGLITCH_RANDOM_FOREST_16_4096']
 """Low-latency iDQ p(glitch) channel names"""
 
 idq_pglitch_thresh = 0.95
