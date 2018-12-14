@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.1.8 (unreleased)
+## 0.2.0 (unreleased)
+
+-   This is the release of GWCelery for ER13.
 
 -   Run two separate instances of Comet, one to act as a broker and one to act
     as a client. This breaks a cycle that would cause retransmission of GRB
