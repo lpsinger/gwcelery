@@ -114,7 +114,7 @@ def handle_cbc_event(alert):
         mass1 = extra_attributes['SingleInspiral'][0]['mass1']
         mass2 = extra_attributes['SingleInspiral'][0]['mass2']
         (
-            p_astro_other.compute_p_astro(snr, far, mass1, mass2)
+            p_astro_other.compute_p_astro.s(snr, far, mass1, mass2)
             |
             gracedb.upload.s(
                 'p_astro.json', graceid,
