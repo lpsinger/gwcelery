@@ -156,7 +156,7 @@ p_astro_gstlal_ranking_pdf = '/home/gstlalcbc/observing/3/online/trigs/rankingst
 
 frame_types = {'H1': 'H1_llhoft',
                'L1': 'L1_llhoft',
-               'V1': 'V1Online'}
+               'V1': 'V1_llhoft'}
 """Types of frames used in Parameter Estimation with LALInference (see
 :mod:`gwcelery.tasks.lalinference`)"""
 
