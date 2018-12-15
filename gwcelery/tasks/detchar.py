@@ -220,7 +220,7 @@ def check_idq(cache, channel, start, end):
     try:
         idq_prob = TimeSeries.read(
             cache, channel, start=start, end=end)
-    except IndexError:
+    except (IndexError, RuntimeError):
         # FIXME: figure out how to get access to low-latency frames outside
         # of the cluster. Until we figure that out, actual I/O errors have
         # to be non-fatal.
