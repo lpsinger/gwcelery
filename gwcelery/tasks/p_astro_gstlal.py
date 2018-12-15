@@ -4,7 +4,6 @@
 import io
 import json
 
-from celery import Task
 from celery.utils.log import get_task_logger
 from glue.ligolw import ligolw
 from glue.ligolw.ligolw import LIGOLWContentHandler
@@ -140,19 +139,7 @@ def p_astro_update(category, event_bayesfac_dict, mean_values_dict):
     return numerator/denominator
 
 
-class _PastroBase(Task):
-    def on_failure(self, exc, task_id, args, kwargs, einfo):
-        log.warning(
-            "p_astro computation failed, using approximate method %s" % (exc))
-        coinc_bytes, ranking_bytes = args[0]
-        event_ln_likelihood_ratio, event_endtime, \
-            event_mass, mass1, mass2, snr, far = \
-            _get_event_ln_likelihood_ratio_svd_endtime_mass(coinc_bytes)
-        p_astro_other.compute_p_astro.s(snr, far, mass1, mass2).apply_async(
-            retry=False)
-
-
-@app.task(shared=False, base=_PastroBase)
+@app.task(shared=False)
 def compute_p_astro(files):
     """
     Task to compute `p_astro` by source category.
@@ -188,43 +175,50 @@ def compute_p_astro(files):
     # in ranking_data.xml.gz, compute the ln(f/b) value for this event
     zerolag_ln_likelihood_ratios = np.array([event_ln_likelihood_ratio])
     log.info('Computing f_over_b from ranking_data.xml.gz')
-    ln_f_over_b = _get_ln_f_over_b(ranking_data_bytes,
-                                   zerolag_ln_likelihood_ratios)
+    # resort to approximate computation if NaN encountered
+    try:
+        ln_f_over_b = _get_ln_f_over_b(ranking_data_bytes,
+                                       zerolag_ln_likelihood_ratios)
+    except ValueError:
+        log.warning("NaN encountered, using approximate method...")
+        return p_astro_other.compute_p_astro(snr,
+                                             far,
+                                             event_mass1,
+                                             event_mass2)
+    else:
+        num_bins = 3
+        mean_bns = 2.07613829518
+        mean_nsbh = 1.65747751787
+        mean_bbh = 11.8941873831
+        mean_terr = 3923
 
-    num_bins = 3
-    mean_bns = 2.07613829518
-    mean_nsbh = 1.65747751787
-    mean_bbh = 11.8941873831
-    mean_terr = 3923
+        a_hat_bns = int(event_mass1 <= 3 and event_mass2 <= 3)
+        a_hat_bbh = int(event_mass2 > 3 and event_mass2 > 3)
+        a_hat_nsbh = int(min([event_mass1, event_mass2]) <= 3 and
+                         max([event_mass1, event_mass2]) > 3)
 
-    a_hat_bns = int(event_mass1 <= 3 and event_mass2 <= 3)
-    a_hat_bbh = int(event_mass2 > 3 and event_mass2 > 3)
-    a_hat_nsbh = int(min([event_mass1, event_mass2]) <= 3 and
-                     max([event_mass1, event_mass2]) > 3)
+        # Fix mean values (1 per source category) from
+        mean_values_dict = {"BNS": mean_bns,
+                            "NSBH": mean_nsbh,
+                            "BBH": mean_bbh,
+                            "Terr": mean_terr}
 
-    # Fix mean values (1 per source category) from
-    mean_values_dict = {"BNS": mean_bns,
-                        "NSBH": mean_nsbh,
-                        "BBH": mean_bbh,
-                        "Terr": mean_terr}
+        # These are the bayes factor values that need to be
+        # constructed with every new event/GraceDB upload
+        rescaled_fb = num_bins*np.exp(ln_f_over_b)[0]
+        bns_bayesfac = a_hat_bns*rescaled_fb
+        nsbh_bayesfac = a_hat_nsbh*rescaled_fb
+        bbh_bayesfac = a_hat_bbh*rescaled_fb
+        event_bayesfac_dict = {"BNS": bns_bayesfac,
+                               "NSBH": nsbh_bayesfac,
+                               "BBH": bbh_bayesfac}
 
-    # These are the bayes factor values that need to be
-    # constructed with every new event/GraceDB upload
-    rescaled_fb = num_bins*np.exp(ln_f_over_b)[0]
-    bns_bayesfac = a_hat_bns*rescaled_fb
-    nsbh_bayesfac = a_hat_nsbh*rescaled_fb
-    bbh_bayesfac = a_hat_bbh*rescaled_fb
-    event_bayesfac_dict = {"BNS": bns_bayesfac,
-                           "NSBH": nsbh_bayesfac,
-                           "BBH": bbh_bayesfac}
-
-    # Compute the p-astro values for each source category
-    # using the mean values
-    p_astro_values = {}
-    for category in mean_values_dict:
-        p_astro_values[category] = \
-            p_astro_update(category=category,
-                           event_bayesfac_dict=event_bayesfac_dict,
-                           mean_values_dict=mean_values_dict)
-
-    return json.dumps(p_astro_values)
+        # Compute the p-astro values for each source category
+        # using the mean values
+        p_astro_values = {}
+        for category in mean_values_dict:
+            p_astro_values[category] = \
+                p_astro_update(category=category,
+                               event_bayesfac_dict=event_bayesfac_dict,
+                               mean_values_dict=mean_values_dict)
+        return json.dumps(p_astro_values)

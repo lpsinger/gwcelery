@@ -3,6 +3,7 @@ import json
 import numpy as np
 import pkg_resources
 import pytest
+from unittest.mock import patch
 
 from .. import app
 from ..tasks import p_astro_gstlal
@@ -64,6 +65,7 @@ def test_compute_p_astro_1(coinc_bytes_1, ranking_data_bytes):
     """Test to call `compute_p_astro` on gracedb event G322589.
     m1 = 2.7, m2 = 1.0 solar mass for this event"""
     files = coinc_bytes_1, ranking_data_bytes
+    # FIXME graceid should be removed once fixed
     p_astros = json.loads(p_astro_gstlal.compute_p_astro(files))
     assert p_astros['BNS'] == pytest.approx(1, abs=1e-2)
     assert p_astros['NSBH'] == pytest.approx(0, abs=1e-2)
@@ -76,6 +78,7 @@ def test_compute_p_astro_2(coinc_bytes_2, ranking_data_bytes):
     m1 = 4,2, m2 = 1.2 solar mass for this event. FAR = 1.9e-6, P_terr
     has a high value."""
     files = coinc_bytes_2, ranking_data_bytes
+    # FIXME graceid should be removed once fixed
     p_astros = json.loads(p_astro_gstlal.compute_p_astro(files))
     assert p_astros['Terr'] > 0.85
 
@@ -83,6 +86,6 @@ def test_compute_p_astro_2(coinc_bytes_2, ranking_data_bytes):
 def test_failing_compute_p_astro(coinc_bytes_3, ranking_data_bytes):
     """Test the case when p_astro computation fails"""
     files = coinc_bytes_3, ranking_data_bytes
-    with pytest.raises(ValueError):
+    with patch('gwcelery.tasks.p_astro_other.compute_p_astro') as p:
         p_astro_gstlal.compute_p_astro.s(files).delay()
-    # FIXME add test to check if p_astro_other.compute_p_astro was called
+        p.assert_called_once()
