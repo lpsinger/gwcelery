@@ -114,9 +114,23 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,
         create_circular.assert_called_once()
 
 
+@patch('gwcelery.tasks.gracedb.get_log',
+       return_value=[
+        {'self': 'https://gracedb.ligo.org/api/superevents/S181215h/logs/1/',
+         'comment': 'Superevent created',
+         'created': '2018-12-15 11:10:02 UTC',
+         'issuer': 'emfollow'},
+        {'self': 'https://gracedb.ligo.org/api/superevents/S181215h/logs/7/',
+         'comment': 'Added event: G323163',
+         'created': '2018-12-15 11:10:06 UTC',
+         'issuer': 'emfollow'},
+        {'self': 'https://gracedb.ligo.org/api/superevents/S181215h/logs/84/',
+         'comment': 'Added event: G123456',
+         'created': '2018-12-15 11:13:04 UTC',
+         'issuer': 'emfollow'}])
 @patch('gwcelery.tasks.gracedb.get_labels',
        return_value={'DQV', 'ADVREQ'})
-def test_handle_superevent_event_added(mock_get_labels):
+def test_handle_superevent_event_added(mock_get_labels, mock_get_log):
     alert = {
         'alert_type': 'event_added',
         'uid': 'TS123456a',
@@ -124,7 +138,10 @@ def test_handle_superevent_event_added(mock_get_labels):
                  't_start': 1.,
                  't_0': 2.,
                  't_end': 3.},
-        'object': {'graceid': 'G123456'}
+        'object': {'superevent_id': 'TS123456a',
+                   't_start': 1.,
+                   't_0': 2.,
+                   't_end': 3.}
     }
     with patch('gwcelery.tasks.detchar.check_vectors.run') as p:
         orchestrator.handle_superevent(alert)

@@ -57,7 +57,14 @@ def handle_superevent(alert):
         ).apply_async()
     # check DQV label on superevent, run check_vectors if required
     elif alert['alert_type'] == 'event_added':
-        new_event_id = alert['object']['graceid']
+        # FIXME Getting the graceid from the most recent event added log
+        # this is a temporary solution, fix post ER13
+        for log in reversed(gracedb.get_log(superevent_id)):
+            if re.match('Added event: G[0-9]{6}', log['comment']):
+                new_event_id = re.sub('Added event: (G[0-9]{6})',
+                                      r'\1',
+                                      log['comment'])
+                break
 
         start, end = \
             alert['data']['t_start'], alert['data']['t_end']

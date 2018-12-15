@@ -10,6 +10,10 @@
 -   Fix a bug that prevented annotations that are specific to 3D sky maps from
     being performed for multi-resolution FITS files.
 
+-   Fetch the graceid for the new event added from the gracedb logs
+    since superevent packet does not provide information as to which
+    event is added in case of type event_added.
+
 ## 0.2.2 (2018-12-14)
 
 -   Add error handling for nonexistent iDQ frames in detchar module.
