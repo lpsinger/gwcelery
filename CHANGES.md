@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.2 (unreleased)
+## 0.2.2 (2018-12-14)
 
 -   Add error handling for nonexistent iDQ frames in detchar module.
 
