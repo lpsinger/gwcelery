@@ -11,6 +11,10 @@
 -   Whenever we send a public VOEvent using GCN, also make the corresponding
     VOEvent file in GraceDb public.
 
+-   Don't include Mollweide projection PNG file in VOEvents. The sky map
+    visualizations take longer to generate than the FITS files themselves, so
+    they were unnecessarily slowing down the preliminary alerts.
+
 ## 0.2.3 (2018-12-16)
 
 -   Update frame type used in LALInference Parameter Estimation.
