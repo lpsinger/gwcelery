@@ -59,12 +59,14 @@ def handle_superevent(alert):
     elif alert['alert_type'] == 'event_added':
         # FIXME Getting the graceid from the most recent event added log
         # this is a temporary solution, fix post ER13
+        regex = re.compile(r'Added event: ([GMT][0-9]+)')
         for log in reversed(gracedb.get_log(superevent_id)):
-            if re.match('Added event: G[0-9]{6}', log['comment']):
-                new_event_id = re.sub('Added event: (G[0-9]{6})',
-                                      r'\1',
-                                      log['comment'])
+            match = regex.match(log['comment'])
+            if match:
+                new_event_id = match[1]
                 break
+        else:
+            raise ValueError('Added event log message not found')
 
         start = alert['data']['t_start']
         end = alert['data']['t_end']
