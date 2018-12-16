@@ -66,8 +66,9 @@ def handle_superevent(alert):
                                       log['comment'])
                 break
 
-        start, end = \
-            alert['data']['t_start'], alert['data']['t_end']
+        start = alert['data']['t_start']
+        end = alert['data']['t_end']
+
         if 'DQV' in gracedb.get_labels(superevent_id):
             (
                 detchar.check_vectors.s(new_event_id, superevent_id,
