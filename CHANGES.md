@@ -7,6 +7,9 @@
 -   Handle cases where `p_astro_gstlal.compute_p_astro` returns NaNs by falling
     back to `p_astro_other.compute_p_astro`.
 
+-   Fix a bug that prevented annotations that are specific to 3D sky maps from
+    being performed for multi-resolution FITS files.
+
 ## 0.2.2 (2018-12-14)
 
 -   Add error handling for nonexistent iDQ frames in detchar module.

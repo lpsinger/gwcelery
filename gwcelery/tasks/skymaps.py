@@ -3,6 +3,7 @@ import os
 import tempfile
 
 from astropy.io import fits
+from astropy import table
 from celery import group
 from ligo.skymap.tool import ligo_skymap_flatten
 from ligo.skymap.tool import ligo_skymap_plot
@@ -52,12 +53,7 @@ def annotate_fits(versioned_filename, graceid, tags):
 def is_3d_fits_file(filecontents):
     """Determine if a FITS file has distance information."""
     with NamedTemporaryFile(content=filecontents) as fitsfile:
-        try:
-            if fits.getval(fitsfile.name, 'TTYPE4', 1) == 'DISTNORM':
-                return True
-        except (KeyError, IndexError):
-            pass
-    return False
+        return 'DISTNORM' in table.Table.read(fitsfile.name).colnames
 
 
 @app.task(ignore_result=True, shared=False)
