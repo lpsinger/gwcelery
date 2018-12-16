@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.3 (unreleased)
+## 0.2.3 (2018-12-16)
 
 -   Update frame type used in LALInference Parameter Estimation.
 
