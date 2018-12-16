@@ -4,10 +4,8 @@
 
 -   Update frame type used in LALInference Parameter Estimation.
 
--   Remove `on_failure` from `p_astro_gstlal.compute_p_astro` in favor
-    of simple `try...except` to launch `p_astro_other.compute_p_astro`
-    for the cases where NaN is encountered during computing likelihood
-    for gstlal triggers.
+-   Handle cases where `p_astro_gstlal.compute_p_astro` returns NaNs by falling
+    back to `p_astro_other.compute_p_astro`.
 
 ## 0.2.2 (2018-12-14)
 
