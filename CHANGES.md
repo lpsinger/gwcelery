@@ -4,6 +4,9 @@
 
 -   Pass along the GWCelery version number to Sentry.
 
+-   Upload stdout and stderr when dag creation fails and notifications when
+    submitted job fails in Parameter Estimation
+
 ## 0.2.4 (2018-12-17)
 
 -   Fix broken links in log messages due to changes in GraceDb URL routes.

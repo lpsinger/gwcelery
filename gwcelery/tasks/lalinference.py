@@ -98,24 +98,56 @@ def dag_prepare(rundir, download_id, upload_id):
     # run lalinference_pipe
     gracedb.upload(
         filecontents=None, filename=None, graceid=upload_id,
-        message='starting LALInference online parameter estimation'
+        message='starting LALInference online parameter estimation',
+        tags='pe'
     )
     try:
-        subprocess.check_call(['lalinference_pipe',
-                               '--run-path', rundir,
-                               '--gid', download_id,
-                               path_to_ini])
-        subprocess.check_call(['condor_submit_dag', '-no_submit',
-                               rundir + '/multidag.dag'])
-    except subprocess.CalledProcessError:
+        subprocess.run(['lalinference_pipe', '--run-path', rundir,
+                        '--gid', download_id, path_to_ini],
+                       stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                       check=True)
+        subprocess.run(['condor_submit_dag', '-no_submit',
+                        rundir + '/multidag.dag'],
+                       stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                       check=True)
+    except subprocess.CalledProcessError as e:
+        contents = b'args:\n' + json.dumps(e.args[1]).encode('utf-8') + \
+                   b'\n\nstdout:\n' + e.stdout + b'\n\nstderr:\n' + e.stderr
         gracedb.upload(
-            filecontents=None, filename=None, graceid=upload_id,
-            message='Failed to prepare DAG'
+            filecontents=contents, filename='pe_dag.log', graceid=upload_id,
+            message='Failed to prepare DAG', tags='pe'
         )
         shutil.rmtree(rundir)
         raise
 
     return rundir + '/multidag.dag.condor.sub'
+
+
+@app.task(ignore_result=True, shared=False)
+def job_error_notification(request, exc, traceback, upload_id):
+    """Upload notification when condor.submit terminates unexpectedly.
+
+    Parameters
+    ----------
+    request : Context (placeholder)
+        Task request variables
+    exc : Exception
+        Exception rased by condor.submit
+    traceback : str (placeholder)
+        Traceback message from a task
+    upload_id : str
+        The GraceDb ID of an event to which this notification is uploaded
+    """
+    if type(exc) is condor.JobAborted:
+        gracedb.upload(
+            filecontents=None, filename=None, graceid=upload_id,
+            message='Job was aborted.', tags='pe'
+        )
+    elif type(exc) is condor.JobFailed:
+        gracedb.upload(
+            filecontents=None, filename=None, graceid=upload_id,
+            message='Job failed', tags='pe'
+        )
 
 
 @app.task(ignore_result=True, shared=False)
@@ -172,11 +204,12 @@ def dag_finished(rundir, download_id, upload_id):
     return group(
         gracedb.upload.si(
             filecontents=None, filename=None, graceid=upload_id,
-            message='LALInference online parameter estimation finished.'
+            message='LALInference online parameter estimation finished.',
+            tags='pe'
         ),
         upload_result.si(
             webdir, 'LALInference.fits.gz', upload_id,
-            'LALInference FITS sky map', 'sky_loc'
+            'LALInference FITS sky map', ['pe', 'sky_loc']
         ),
         upload_result.si(
             webdir, 'extrinsic.png', upload_id,
@@ -212,7 +245,7 @@ def lalinference(download_id, upload_id):
     (
         dag_prepare.s(rundir, download_id, upload_id)
         |
-        condor.submit.s()
+        condor.submit.s().on_error(job_error_notification.s(upload_id))
         |
         dag_finished(rundir, download_id, upload_id)
     ).delay()
