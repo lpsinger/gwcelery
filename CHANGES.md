@@ -2,7 +2,7 @@
 
 ## 0.2.4 (unreleased)
 
--   No changes yet.
+-   Fix broken links in log messages due to changes in GraceDb URL routes.
 
 ## 0.2.3 (2018-12-16)
 

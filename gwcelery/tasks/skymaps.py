@@ -24,15 +24,15 @@ def annotate_fits(versioned_filename, graceid, tags):
     """
     filebase = versioned_filename.partition('.fits')[0]
     header_msg = (
-        'FITS headers for <a href="/apiweb/events/{graceid}/files/'
+        'FITS headers for <a href="/api/superevents/{graceid}/files/'
         '{versioned_filename}">{versioned_filename}</a>').format(
             graceid=graceid, versioned_filename=versioned_filename)
     allsky_msg = (
-        'Mollweide projection of <a href="/apiweb/events/{graceid}/files/'
+        'Mollweide projection of <a href="/api/superevents/{graceid}/files/'
         '{versioned_filename}">{versioned_filename}</a>').format(
             graceid=graceid, versioned_filename=versioned_filename)
     volume_msg = (
-        'Volume rendering of <a href="/apiweb/events/{graceid}/files/'
+        'Volume rendering of <a href="/api/superevents/{graceid}/files/'
         '{versioned_filename}">{versioned_filename}</a>').format(
             graceid=graceid, versioned_filename=versioned_filename)
 
