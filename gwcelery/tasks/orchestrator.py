@@ -401,6 +401,10 @@ def preliminary_alert(event, superevent_id):
                 |
                 gracedb.create_label.si('GCN_PRELIM_SENT', superevent_id),
 
+                # FIXME: after ER13, we need to add the 'public' tag to make
+                # the VOEvent file public in GraceDb, like we do for the
+                # initial, update, and retraction alerts.
+
                 circulars.create_circular.si(superevent_id)
                 |
                 gracedb.upload.s(
@@ -457,9 +461,13 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None):
             vetted=True
         )
         |
-        gracedb.download.s(superevent_id)
-        |
-        gcn.send.s()
+        group(
+            gracedb.download.s(superevent_id)
+            |
+            gcn.send.s(),
+
+            gracedb.create_tag.s('public', superevent_id)
+        )
     ).apply_async()
 
 
@@ -513,7 +521,11 @@ def retraction_alert(superevent_id):
             vetted=True
         )
         |
-        gracedb.download.s(superevent_id)
-        |
-        gcn.send.s()
+        group(
+            gracedb.download.s(superevent_id)
+            |
+            gcn.send.s(),
+
+            gracedb.create_tag.s('public', superevent_id)
+        )
     ).apply_async()

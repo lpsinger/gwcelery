@@ -4,6 +4,9 @@
 
 -   Fix broken links in log messages due to changes in GraceDb URL routes.
 
+-   Whenever we send a public VOEvent using GCN, also make the corresponding
+    VOEvent file in GraceDb public.
+
 ## 0.2.3 (2018-12-16)
 
 -   Update frame type used in LALInference Parameter Estimation.
