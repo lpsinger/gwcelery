@@ -50,12 +50,13 @@ def test_create_signoff(mock_gracedb):
 
 
 @patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
-def test_create_tag(mock_gracedb):
-    # Run function under test.
-    gracedb.create_tag('tag', 'n', 'graceid')
-
-    # Check that one file was downloaded.
-    mock_gracedb.addTag.assert_called_once_with('graceid', 'n', 'tag')
+@patch('gwcelery.tasks.gracedb.get_log',
+       return_value=[{'filename': filename, 'N': i} for i, filename in
+                     enumerate(['foo', 'bar', 'bat', 'baz'])])
+def test_create_tag(mock_get_log, mock_gracedb):
+    gracedb.create_tag('tag', 'bat', 'graceid')
+    mock_get_log.assert_called_once_with('graceid')
+    mock_gracedb.addTag.assert_called_once_with('graceid', 2, 'tag')
 
 
 @patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)

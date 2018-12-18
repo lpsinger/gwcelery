@@ -38,10 +38,5 @@ def validate_voevent(payload):
 
     assert orig == payload, 'GCN does not match GraceDb'
 
-    # Find matching GraceDB log entry
-    log = gracedb.get_log(graceid)
-    entry, = (e for e in log if e['filename'] == filename)
-    log_number = entry['N']
-
     # Tag the VOEvent to indicate that it was received correctly
-    gracedb.create_tag('gcn_received', log_number, graceid)
+    gracedb.create_tag('gcn_received', filename, graceid)

@@ -39,9 +39,12 @@ def create_signoff(status, comment, signoff_type, graceid):
 
 
 @task(ignore_result=True, shared=False)
-def create_tag(tag, n, graceid):
+def create_tag(tag, filename, graceid):
     """Create a tag in GraceDb."""
-    client.addTag(graceid, n, tag)
+    log = get_log(graceid)
+    entry, = (e for e in log if e['filename'] == filename)
+    log_number = entry['N']
+    client.addTag(graceid, log_number, tag)
 
 
 @task(shared=False)
