@@ -19,9 +19,9 @@ def fake_gcn(celeryconf, monkeypatch):
         return json.loads(
             pkg_resources.resource_string(__name__, 'data/G298048_log.json'))
 
-    def mock_create_tag(tag, filename, graceid):
-        assert tag == 'gcn_received'
+    def mock_create_tag(filename, tag, graceid):
         assert filename == 'G298048-1-Initial.xml'
+        assert tag == 'gcn_received'
         assert graceid == 'G298048'
 
     monkeypatch.setattr(

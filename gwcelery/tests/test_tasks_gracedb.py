@@ -54,7 +54,7 @@ def test_create_signoff(mock_gracedb):
        return_value=[{'filename': filename, 'N': i} for i, filename in
                      enumerate(['foo', 'bar', 'bat', 'baz'])])
 def test_create_tag(mock_get_log, mock_gracedb):
-    gracedb.create_tag('tag', 'bat', 'graceid')
+    gracedb.create_tag('bat', 'tag', 'graceid')
     mock_get_log.assert_called_once_with('graceid')
     mock_gracedb.addTag.assert_called_once_with('graceid', 2, 'tag')
 

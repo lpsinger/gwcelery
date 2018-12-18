@@ -39,7 +39,7 @@ def create_signoff(status, comment, signoff_type, graceid):
 
 
 @task(ignore_result=True, shared=False)
-def create_tag(tag, filename, graceid):
+def create_tag(filename, tag, graceid):
     """Create a tag in GraceDb."""
     log = get_log(graceid)
     entry, = (e for e in log if e['filename'] == filename)
