@@ -141,7 +141,7 @@ def test_check_vectors(mock_create_label, mock_write_log, mock_json,
              ' For all instruments,'
              ' bits good (H1:NO_OMC_DCPD_ADC_OVERFLOW,'
              ' H1:NO_DMT-ETMY_ESD_DAC_OVERFLOW, H1:HOFT_OK,'
-             ' H1:OBSERVATION_INTENT), bad (), unknown()'
+             ' H1:OBSERVATION_INTENT), bad (), unknown ()'
              ' within -0.5/+0.5 seconds of superevent'),
             tag_name=['data_quality']),
         call(
@@ -181,7 +181,7 @@ def test_gatedhoft_skips_dmtvec(mock_create_label, mock_write_log, mock_json,
                  ('detector state for active instruments is good.'
                   ' For all instruments,'
                   ' bits good (H1:HOFT_OK,'
-                  ' H1:OBSERVATION_INTENT), bad (), unknown()'
+                  ' H1:OBSERVATION_INTENT), bad (), unknown ()'
                   ' within -0.5/+0.5 seconds of superevent.'
                   ' Pipeline gatepipe uses gated h(t),'
                   ' LIGO DMT-DQ_VECTOR not checked.'),

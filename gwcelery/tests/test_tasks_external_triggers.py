@@ -31,7 +31,7 @@ def test_handle_create_grb_event(mock_create_event, mock_get_event,
             'E1',
             ('detector state for active instruments is unknown. For all'
              ' instruments, bits good (), bad (),'
-             ' unknown(H1:NO_OMC_DCPD_ADC_OVERFLOW,'
+             ' unknown (H1:NO_OMC_DCPD_ADC_OVERFLOW,'
              ' H1:NO_DMT-ETMY_ESD_DAC_OVERFLOW, L1:NO_OMC_DCPD_ADC_OVERFLOW,'
              ' L1:NO_DMT-ETMY_ESD_DAC_OVERFLOW, H1:HOFT_OK,'
              ' H1:OBSERVATION_INTENT,'
@@ -78,7 +78,7 @@ def test_handle_create_sn_event(mock_create_event, mock_get_event,
             'E1',
             ('detector state for active instruments is unknown. For all'
              ' instruments, bits good (), bad (),'
-             ' unknown(H1:NO_OMC_DCPD_ADC_OVERFLOW,'
+             ' unknown (H1:NO_OMC_DCPD_ADC_OVERFLOW,'
              ' H1:NO_DMT-ETMY_ESD_DAC_OVERFLOW, L1:NO_OMC_DCPD_ADC_OVERFLOW,'
              ' L1:NO_DMT-ETMY_ESD_DAC_OVERFLOW, H1:HOFT_OK,'
              ' H1:OBSERVATION_INTENT,'
