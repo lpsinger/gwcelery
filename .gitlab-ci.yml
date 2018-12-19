@@ -14,7 +14,7 @@ sdist:
   before_script:
     # Versioneer will need access to the git tool.
     - apt-get -q update
-    - apt-get -q install --no-install-recommends git
+    - apt-get -yq install --no-install-recommends git
   script:
     - python setup.py sdist
     - mv dist/* .
