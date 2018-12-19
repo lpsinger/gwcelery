@@ -410,7 +410,8 @@ def preliminary_alert(event, superevent_id):
                 gracedb.upload.s(
                     'circular.txt',
                     superevent_id,
-                    'Automated circular'
+                    'Automatically generated draft of initial GCN Circular',
+                    tags=['em_follow']
                 )
             )
         )
