@@ -18,7 +18,6 @@ sdist:
     paths:
       - '*.tar.gz'
 
-
 # Build binary distribution
 bdist:
   image: python:3.7-slim
