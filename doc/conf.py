@@ -61,7 +61,6 @@ master_doc = 'index'
 # General information about the project.
 setup_cfg = configparser.ConfigParser()
 setup_cfg.read('../setup.cfg')
-parsed_version = pkg_resources.parse_version(setup_cfg['metadata']['version'])
 project = setup_cfg['metadata']['name']
 author = setup_cfg['metadata']['author']
 description = setup_cfg['metadata']['description']
@@ -71,6 +70,14 @@ description = setup_cfg['metadata']['description']
 # built documents.
 #
 # The short X.Y version.
+
+spec = importlib.util.spec_from_file_location(
+    '_version', '../gwcelery/_version.py')
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+parsed_version = pkg_resources.parse_version(module.get_versions()['version'])
+del module, spec
+
 version = parsed_version.base_version
 # The full version, including alpha/beta/rc tags.
 release = parsed_version.public

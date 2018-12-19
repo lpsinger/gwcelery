@@ -1,5 +1,6 @@
 import sys
 
+import versioneer
 import pkg_resources
 from setuptools import setup
 
@@ -16,4 +17,6 @@ if {'build_sphinx'}.intersection(sys.argv):
     setup_requires.extend(get_requirements('docs-requirements.txt'))
 
 setup(install_requires=get_requirements('requirements.txt'),
-      setup_requires=setup_requires)
+      setup_requires=setup_requires,
+      version=versioneer.get_version(),
+      cmdclass=versioneer.get_cmdclass())

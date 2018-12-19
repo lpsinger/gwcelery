@@ -2,10 +2,14 @@
 
 from celery import Celery
 
+from ._version import get_versions
 from .conf import playground
 from . import sentry
 
 __all__ = ('app',)
+
+__version__ = get_versions()['version']
+del get_versions
 
 # Use redis broker, because it supports locks (and thus singleton tasks).
 app = Celery(__name__, broker='redis://', autofinalize=False)
