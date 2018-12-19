@@ -8,7 +8,7 @@ from safe_netrc import netrc, NetrcParseError
 import sentry_sdk
 from sentry_sdk.integrations import celery
 
-from . import __version__ as _version
+from . import _version
 from .util import SPHINX
 
 log = get_logger(__name__)
@@ -47,5 +47,6 @@ def configure():
     username, _, _ = auth
     dsn = urlunparse(
         (scheme, '{}@{}'.format(username, netloc), *rest))
+    version = _version.get_versions()['version']
     sentry_sdk.init(
-        dsn, integrations=[celery.CeleryIntegration()], release=_version)
+        dsn, integrations=[celery.CeleryIntegration()], release=version)
