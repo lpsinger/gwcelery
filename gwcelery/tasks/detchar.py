@@ -408,7 +408,7 @@ def check_vectors(event, graceid, start, end):
     elif all(active_dq_states.values()):
         overall_dq_active_state = True
     fmt = ("detector state for active instruments is {}."
-           " For all instruments, bits good ({}), bad ({}), unknown({})")
+           " For all instruments, bits good ({}), bad ({}), unknown ({})")
     msg = fmt.format(
         {None: 'unknown', False: 'bad', True: 'good'}[overall_dq_active_state],
         ', '.join(k for k, v in dq_states.items() if v is True),
