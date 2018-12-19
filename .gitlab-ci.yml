@@ -11,8 +11,10 @@ stages:
 sdist:
   image: python:3.7-slim
   stage: dist
-  variables:
-    GIT_STRATEGY: clone  # Make sure that we get tags for Versioneer
+  before_script:
+    # Versioneer will need access to the git tool.
+    - apt-get -q update
+    - apt-get -q install --no-install-recommends git
   script:
     - python setup.py sdist
     - mv dist/* .
