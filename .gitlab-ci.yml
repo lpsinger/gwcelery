@@ -1,6 +1,5 @@
 stages:
   - dist
-  - dependencies
   - test
   - deploy
 
