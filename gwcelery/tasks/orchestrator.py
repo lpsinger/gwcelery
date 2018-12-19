@@ -108,7 +108,7 @@ def handle_cbc_event(alert):
     ============================== =====================================================
     ``bayestar.fits``              :meth:`gwcelery.tasks.bayestar.localize`
     ``source_classification.json`` :meth:`gwcelery.tasks.em_bright.classifier`
-    ``p_astro.json``        :meth:`gwcelery.tasks.p_astro_gstlal.compute_p_astro`
+    ``p_astro.json``               :meth:`gwcelery.tasks.p_astro_gstlal.compute_p_astro`
     ============================== =====================================================
     """  # noqa: E501
 
