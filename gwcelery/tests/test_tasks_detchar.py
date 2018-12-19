@@ -159,8 +159,7 @@ def test_check_vectors(mock_create_label, mock_write_log, mock_json,
             'S12345a',
             'DQR-compatible json generated from check_vectors results',
             'gwcelerydetcharcheckvectors-S12345a.json',
-            '"dqrjson"',
-            ['data_quality']),
+            '"dqrjson"', []),
     ]
     mock_write_log.assert_has_calls(calls, any_order=True)
     mock_create_label.assert_called_with('DQOK', 'S12345a')

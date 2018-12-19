@@ -443,7 +443,6 @@ def check_vectors(event, graceid, start, end):
     filename = 'gwcelerydetcharcheckvectors-{}.json'.format(graceid)
     message = "DQR-compatible json generated from check_vectors results"
     gracedb.upload(
-        json.dumps(file), filename, graceid, message, tags=['data_quality']
-    )
+        json.dumps(file), filename, graceid, message)
 
     return event

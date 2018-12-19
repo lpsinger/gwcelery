@@ -25,8 +25,7 @@ def test_handle_create_grb_event(mock_create_event, mock_get_event,
             'E1',
             'DQR-compatible json generated from check_vectors results',
             'gwcelerydetcharcheckvectors-E1.json',
-            '"dqrjson"',
-            ['data_quality']),
+            '"dqrjson"', []),
         call(
             'E1',
             ('detector state for active instruments is unknown. For all'
@@ -72,8 +71,7 @@ def test_handle_create_sn_event(mock_create_event, mock_get_event,
             'E1',
             'DQR-compatible json generated from check_vectors results',
             'gwcelerydetcharcheckvectors-E1.json',
-            '"dqrjson"',
-            ['data_quality']),
+            '"dqrjson"', []),
         call(
             'E1',
             ('detector state for active instruments is unknown. For all'
