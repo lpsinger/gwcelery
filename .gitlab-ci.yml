@@ -11,10 +11,8 @@ stages:
 sdist:
   image: python:3.7-slim
   stage: dist
-  before_script:
-    # GitLab CI does not automatically fetch tags,
-    # but we need the tags so that Versioneer can determine the version.
-    - git pull --tags
+  variables:
+    GIT_STRATEGY: clone  # Make sure that we get tags for Versioneer
   script:
     - python setup.py sdist
     - mv dist/* .
