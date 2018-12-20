@@ -25,6 +25,7 @@ from gwpy.timeseries import Bits, StateVector, TimeSeries
 import numpy as np
 
 from ..import app
+from ..import _version
 from . import gracedb
 
 __author__ = 'Geoffrey Mo <geoffrey.mo@ligo.org>'
@@ -181,7 +182,7 @@ def dqr_json(state, summary):
     return dict(
         state=state,
         process_name=__name__,
-        process_version='unknown',
+        process_version=_version.get_versions()['version'],
         librarian='Geoffrey Mo (geoffrey.mo@ligo.org)',
         date=time.strftime("%H:%M:%S UTC %a %d %b %Y", time.gmtime()),
         hostname=socket.gethostname(),
