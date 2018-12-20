@@ -6,6 +6,7 @@ from urllib.parse import urlparse, urlunparse
 
 import pytest
 
+from .. import __version__
 from .. import sentry
 
 
@@ -36,4 +37,5 @@ def test_sentry_configure(mock_celery_integration, mock_sdk_init,
     dsn = urlunparse((scheme, 'foo@' + netloc, *rest))
     mock_celery_integration.assert_called_once_with()
     mock_sdk_init.assert_called_once_with(
-        dsn, integrations=[mock_celery_integration.return_value])
+        dsn, integrations=[mock_celery_integration.return_value],
+        release=__version__)
