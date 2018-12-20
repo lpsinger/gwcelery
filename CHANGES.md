@@ -7,6 +7,9 @@
 -   Upload stdout and stderr when dag creation fails and notifications when
     submitted job fails in Parameter Estimation
 
+-   Allow detchar module's `create_cache` to use gwdatafind when frames
+    are no longer in llhoft.
+
 ## 0.2.4 (2018-12-17)
 
 -   Fix broken links in log messages due to changes in GraceDb URL routes.

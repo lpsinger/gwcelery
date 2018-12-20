@@ -21,6 +21,7 @@ import time
 
 from celery.utils.log import get_task_logger
 from glue.lal import Cache
+from gwdatafind import find_urls
 from gwpy.timeseries import Bits, StateVector, TimeSeries
 import numpy as np
 
@@ -100,13 +101,16 @@ This is an inelegant but the simplest solution since the logic used in these
 channels are opposite to those in all the other checked channels."""
 
 
-def create_cache(ifo):
-    """Find .gwf files and create cache.
+def create_cache(ifo, start, end):
+    """Find .gwf files and create cache. Will first look in the llhoft, and
+    if the frames have expired from llhoft, will call gwdatafind.
 
     Parameters
     ----------
     ifo : str
         Interferometer name (e.g. ``H1``).
+    start, end: int or float
+        GPS start and end times desired.
 
     Returns
     -------
@@ -114,40 +118,27 @@ def create_cache(ifo):
 
     Example
     -------
-    >>> create_cache('H1')
+    >>> create_cache('H1', 1198800018, 1198800618)
     [<glue.lal.CacheEntry at 0x7fbae6b71278>,
       <glue.lal.CacheEntry at 0x7fbae6ae5b38>,
       <glue.lal.CacheEntry at 0x7fbae6ae5c50>,
      ...
       <glue.lal.CacheEntry at 0x7fbae6b15080>,
       <glue.lal.CacheEntry at 0x7fbae6b15828>]
-
-    Note that running this example will return an I/O error, since /dev/shm
-    gets overwritten every 300 seconds.
-
-    Notes
-    -----
-    There are two main ways which this function can fail, which need to
-    be accounted for in the future. The first is that the directory
-    (typically /dev/shm/llhoft) is found, but the files in question
-    corresponding to the timestamp are not in place. This can happen if the
-    function is late to the game, and hence the data have been deleted from
-    memory and are no longer stored in /dev/shm/llhoft. It can also happen if
-    through some asynchronous processes, the call is early, and the data files
-    have not yet been written to /dev/shm/llhoft. The second way is if
-    /dev/shm/llhoft is not found and hence data never shows up.
-
-    In these cases, the desired behaviour will be for the function to wait a
-    period of ~5 seconds and try again. If it still returns an I/O error of
-    this type, then the function will return a flag and stop trying (this can
-    happen by setting a maximum number of retries to 1).
-
-    This is important for if gwcelery is run locally (and not on a cluster),
-    where /dev/shm is inaccessible.
     """
     pattern = app.conf['llhoft_glob'].format(detector=ifo)
     filenames = glob.glob(pattern)
-    return Cache.from_urls(filenames)
+    cache = Cache.from_urls(filenames)
+    try:
+        cache_starttime = int(
+            list(cache.to_segmentlistdict().values())[0][0][0])
+    except IndexError:
+        log.exception('Files do not exist in llhoft_glob')
+        return cache  # returns empty cache
+    if start < cache_starttime:  # required data has left llhoft
+        urls = find_urls(ifo[0], '{}1_HOFT_C00'.format(ifo[0]), start, end)
+        cache = Cache.from_urls(urls)
+    return cache
 
 
 def dqr_json(state, summary):
@@ -337,7 +328,7 @@ def check_vectors(event, graceid, start, end):
 
     ifos = {key.split(':')[0] for key, val in
             app.conf['llhoft_channels'].items()}
-    caches = {ifo: create_cache(ifo) for ifo in ifos}
+    caches = {ifo: create_cache(ifo, start, end) for ifo in ifos}
 
     # Examine injection and DQ states
     # Do not analyze DMT-DQ_VECTOR if pipeline uses gated h(t)

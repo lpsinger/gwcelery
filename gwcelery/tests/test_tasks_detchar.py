@@ -63,13 +63,20 @@ def gatedpipe_prepost():
 
 
 def test_create_cache(llhoft_glob_fail):
-    assert len(detchar.create_cache('L1')) == 1
+    assert len(detchar.create_cache('L1', 1216577976, 1216577979)) == 1
+
+
+@patch('gwcelery.tasks.detchar.find_urls', return_value=[])
+def test_create_cache_old_data(mock_find, llhoft_glob_fail):
+    start, end = 1198800018, 1198800028
+    detchar.create_cache('L1', start, end)
+    mock_find.assert_called()
 
 
 def test_check_idq(llhoft_glob_pass):
     channel = 'H1:IDQ-PGLITCH_OVL_32_2048'
     start, end = 1216577976, 1216577980
-    cache = detchar.create_cache('H1')
+    cache = detchar.create_cache('H1', start, end)
     assert detchar.check_idq(cache, channel, start, end) == (
         'H1:IDQ-PGLITCH_OVL_32_2048', 0)
 
@@ -110,7 +117,7 @@ def test_dqr_json(mock_time, mock_host, mock_user):
 def test_check_vector(llhoft_glob_pass):
     channel = 'H1:DMT-DQ_VECTOR'
     start, end = 1216577976, 1216577980
-    cache = detchar.create_cache('H1')
+    cache = detchar.create_cache('H1', start, end)
     bits = detchar.dmt_dq_vector_bits
     assert detchar.check_vector(cache, channel, start, end, bits) == {
         'H1:NO_OMC_DCPD_ADC_OVERFLOW': True,
