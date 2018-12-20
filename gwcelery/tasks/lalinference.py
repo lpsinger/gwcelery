@@ -96,7 +96,7 @@ def dag_prepare(rundir, download_id, upload_id):
     path_to_ini = _write_ini(rundir, download_id)
 
     # run lalinference_pipe
-    gracedb.upload(
+    gracedb.upload.delay(
         filecontents=None, filename=None, graceid=upload_id,
         message='starting LALInference online parameter estimation',
         tags='pe'
@@ -113,7 +113,7 @@ def dag_prepare(rundir, download_id, upload_id):
     except subprocess.CalledProcessError as e:
         contents = b'args:\n' + json.dumps(e.args[1]).encode('utf-8') + \
                    b'\n\nstdout:\n' + e.stdout + b'\n\nstderr:\n' + e.stderr
-        gracedb.upload(
+        gracedb.upload.delay(
             filecontents=contents, filename='pe_dag.log', graceid=upload_id,
             message='Failed to prepare DAG', tags='pe'
         )
@@ -139,12 +139,12 @@ def job_error_notification(request, exc, traceback, upload_id):
         The GraceDb ID of an event to which this notification is uploaded
     """
     if type(exc) is condor.JobAborted:
-        gracedb.upload(
+        gracedb.upload.delay(
             filecontents=None, filename=None, graceid=upload_id,
             message='Job was aborted.', tags='pe'
         )
     elif type(exc) is condor.JobFailed:
-        gracedb.upload(
+        gracedb.upload.delay(
             filecontents=None, filename=None, graceid=upload_id,
             message='Job failed', tags='pe'
         )
@@ -163,7 +163,7 @@ def upload_result(webdir, filename, graceid, message, tag):
     if len(paths) == 1:
         with open(paths[0], 'rb') as f:
             contents = f.read()
-        gracedb.upload(
+        gracedb.upload.delay(
             contents, filename,
             graceid, message, tag
         )
