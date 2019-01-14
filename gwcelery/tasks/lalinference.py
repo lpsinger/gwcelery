@@ -50,21 +50,22 @@ def _write_ini(rundir, graceid):
     # Get template of .ini file
     ini_template = env.get_template(ini_name)
 
-    # Get service url, webdir and executables' paths filled in .ini file
-    service_url = gracedb.client._service_url
-    webdir = _webdir(graceid)
-    executables_paths = [{'name': name, 'path': find_executable(executable)}
-                         for name, executable in executables.items()]
+    # Download event's info to determine PE settings
+    event_info = gracedb.get_event(graceid)
+    singleinspiraltable = event_info['extra_attributes']['SingleInspiral']
 
-    # Fill service-url, data types, data channels, webdir and
-    # executables' paths in the template
-    ini_contents = ini_template.render({'service_url': service_url,
-                                        'types':
-                                        json.dumps(app.conf['frame_types']),
-                                        'channels':
-                                        json.dumps(app.conf['channel_names']),
-                                        'webdir': webdir,
-                                        'paths': executables_paths})
+    # fill out the ini template
+    ini_settings = {
+        'service_url': gracedb.client._service_url,
+        'types': json.dumps(app.conf['frame_types']),
+        'channels': json.dumps(app.conf['channel_names']),
+        'webdir': _webdir(graceid),
+        'paths': [{'name': name, 'path': find_executable(executable)}
+                  for name, executable in executables.items()],
+        'q': min([sngl['mass2'] / sngl['mass1']
+                  for sngl in singleinspiraltable])
+    }
+    ini_contents = ini_template.render(ini_settings)
 
     # write down .ini file in the run directory
     path_to_ini = rundir + '/' + ini_name
