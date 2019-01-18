@@ -3,12 +3,15 @@ from distutils.spawn import find_executable
 from distutils.dir_util import mkpath
 import glob
 import json
+import math
 import os
 import shutil
 import subprocess
 import tempfile
 
 from celery import group
+import lal
+import lalsimulation
 
 from .. import app
 from ..jinja import env
@@ -39,10 +42,57 @@ executables = {'datafind': 'gw_data_find',
                'ppanalysis': 'cbcBayesPPAnalysis',
                'pos_to_sim_inspiral': 'cbcBayesPosToSimInspiral'}
 
+flow = 20.0
+
 
 def _webdir(graceid):
     """Return webdir filled in .ini file"""
     return os.getenv('HOME') + '/public_html/online_pe/' + graceid
+
+
+def _ifos(event_info):
+    """Return ifos"""
+    return event_info['extra_attributes']['CoincInspiral']['ifos'].split(',')
+
+
+def _chirplen(singleinspiral):
+    """Return chirplen"""
+    return lalsimulation.SimInspiralChirpTimeBound(
+               flow,
+               singleinspiral['mass1'] * lal.MSUN_SI,
+               singleinspiral['mass2'] * lal.MSUN_SI,
+               0.0, 0.0
+           )
+
+
+def _round_up_to_power_of_two(x):
+    """Return smallest power of two exceeding x"""
+    return 2**math.ceil(math.log(x, 2))
+
+
+def _seglen(singleinspiraltable):
+    """Return seglen"""
+    return max([_round_up_to_power_of_two(max(4.0, _chirplen(sngl) + 2.0))
+                for sngl in singleinspiraltable])
+
+
+def _freq_dict(freq, ifos):
+    """Return dictionary whose keys are ifos and items are frequencies"""
+    return dict((ifo, freq) for ifo in ifos)
+
+
+def _fstop(singleinspiral):
+    """Return final frequency"""
+    return lalsimulation.IMRPhenomDGetPeakFreq(
+               singleinspiral['mass1'], singleinspiral['mass2'], 0.0, 0.0
+           )
+
+
+def _srate(singleinspiraltable):
+    """Return srate we should use"""
+    return _round_up_to_power_of_two(
+               max([_fstop(sngl) for sngl in singleinspiraltable])
+           ) * 2
 
 
 def _write_ini(rundir, graceid):
@@ -55,6 +105,7 @@ def _write_ini(rundir, graceid):
     singleinspiraltable = event_info['extra_attributes']['SingleInspiral']
 
     # fill out the ini template
+    ifos = _ifos(event_info)
     ini_settings = {
         'service_url': gracedb.client._service_url,
         'types': json.dumps(app.conf['frame_types']),
@@ -63,7 +114,11 @@ def _write_ini(rundir, graceid):
         'paths': [{'name': name, 'path': find_executable(executable)}
                   for name, executable in executables.items()],
         'q': min([sngl['mass2'] / sngl['mass1']
-                  for sngl in singleinspiraltable])
+                  for sngl in singleinspiraltable]),
+        'ifos': json.dumps(ifos),
+        'seglen': str(_seglen(singleinspiraltable)),
+        'flow': json.dumps(_freq_dict(flow, ifos)),
+        'srate': str(_srate(singleinspiraltable))
     }
     ini_contents = ini_template.render(ini_settings)
 
