@@ -7,9 +7,10 @@ from traceback import format_exc, format_exception
 from celery.bin.base import Command
 from celery_eternal import EternalTask
 import kombu.exceptions
+import sleek_lvalert
 
 # Make sure that all tasks are registered
-from . import tasks as _  # noqa: F401
+from . import tasks
 
 
 class NagiosPluginStatus(IntEnum):
@@ -22,6 +23,27 @@ class NagiosPluginStatus(IntEnum):
 
 class NagiosCriticalError(Exception):
     """An exception that maps to a Nagios status of `CRITICAL`."""
+
+
+def get_active_queues(inspector):
+    return {queue['name']
+            for queues in (inspector.active_queues() or {}).values()
+            for queue in queues}
+
+
+def get_active_tasks(inspector):
+    return {task['name']
+            for tasks in inspector.active().values()
+            for task in tasks}
+
+
+def get_active_lvalert_nodes(app):
+    client = sleek_lvalert.LVAlertClient(server=app.conf['lvalert_host'])
+    client.connect()
+    client.process(block=False)
+    active = set(client.get_subscriptions())
+    client.abort()
+    return active
 
 
 def get_expected_queues(app):
@@ -39,6 +61,10 @@ def get_expected_tasks(app):
             if isinstance(task, EternalTask)}
 
 
+def get_expected_lvalert_nodes():
+    return set(tasks.lvalert.handler.keys())
+
+
 def check_status(app):
     connection = app.connection()
     try:
@@ -48,23 +74,30 @@ def check_status(app):
 
     inspector = app.control.inspect()
 
-    active = {queue['name']
-              for queues in (inspector.active_queues() or {}).values()
-              for queue in queues}
+    active = get_active_queues(inspector)
     expected = get_expected_queues(app)
     missing = expected - active
     if missing:
         raise NagiosCriticalError('Not all expected queues are active') from \
               AssertionError('Missing queues: ' + ', '.join(missing))
 
-    active = {task['name']
-              for tasks in inspector.active().values()
-              for task in tasks}
+    active = get_active_tasks(inspector)
     expected = get_expected_tasks(app)
     missing = expected - active
     if missing:
         raise NagiosCriticalError('Not all expected tasks are active') from \
               AssertionError('Missing tasks: ' + ', '.join(missing))
+
+    active = get_active_lvalert_nodes(app)
+    expected = get_expected_lvalert_nodes()
+    missing = expected - active
+    extra = active - expected
+    if missing:
+        raise NagiosCriticalError('Not all lvalert nodes are subscribed') \
+            from AssertionError('Missing nodes: ' + ', '.join(missing))
+    if extra:
+        raise NagiosCriticalError('Too many lvalert nodes are subscribed') \
+            from AssertionError('Extra nodes: ' + ', '.join(extra))
 
 
 class NagiosCommand(Command):
