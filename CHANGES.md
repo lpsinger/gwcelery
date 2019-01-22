@@ -17,6 +17,9 @@
     the 4 CBC pipelines. Burst includes the 4 searches performed in total by
     the 2 Burst pipelines. An additional external coincidence search.
 
+-   Automatically set up PE ini file depending on source parameters
+    reported by detection pipelines.
+
 ## 0.2.4 (2018-12-17)
 
 -   Fix broken links in log messages due to changes in GraceDb URL routes.
