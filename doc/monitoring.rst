@@ -84,7 +84,7 @@ You can run it manually from the command line::
 
 To configure Nagios itself, see the `Nagios configuration overview`_, or if
 GWCelery and Nagios are running on different hosts, the `Nagios Remote Plugin
-Executor (NRPE) documentation`_
+Executor (NRPE) documentation`_.
 
 .. _Flower: https://flower.readthedocs.io/
 .. _dashboard.ligo.org: https://dashboard.ligo.org/
