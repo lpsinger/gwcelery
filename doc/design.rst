@@ -4,6 +4,10 @@ Design and anatomy of GWCelery
 Conceptual overview
 -------------------
 
+Below is a diagram illustrating the conceptual relationships of the major
+subsystems of GWCelery. Nodes in the graph are hyperlinks to the relevant API
+documentation.
+
 .. digraph:: superevents
 
     compound = true
