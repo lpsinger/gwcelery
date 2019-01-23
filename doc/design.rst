@@ -4,8 +4,36 @@ Design and anatomy of GWCelery
 Conceptual overview
 -------------------
 
-Below is a diagram illustrating the conceptual relationships of the major
-subsystems of GWCelery. Nodes in the graph are hyperlinks to the relevant API
+Several online gravitational-wave transient search pipelines (currently Gstlal,
+PyCBC, cWB, and oLIB) upload candidates in real time to GraceDb, the central
+database and web portal for low-latency LIGO/Virgo analyses. Whenever an event
+is uploaded or altered, GraceDb pushes machine-readable notifications through
+LVAlert, a pubsub system based on XMPP.
+
+The business logic for selecting and sending alerts to astronomers resides not
+in GraceDb itself but in GWCelery. The role of GWCelery in the LIGO/Virgo alert
+infrastructure is to drive the workflow of aggregating and annotating
+gravitational-wave candidates and sending GCN Notices to astronomers.
+
+GWCelery interacts with GraceDb by listening for LVAlert messages and making
+REST API requests through the GraceDb client. GWCelery interacts with GCN by
+listening for GCN Notices using the PyGCN VOEvent client and sending GCN
+notices using the Comet VOEvent broker.
+
+The major subsystems of GWCelery are:
+
+* the LVAlert listener
+* the GraceDb client
+* the GCN listener
+* the GCN broker
+* the Superevent Manager, which clusters and merges related candidates into
+  "superevents"
+* the External Trigger Manager, which correlates gravitational-wave events with
+  GRB, neutrino, and supernova events
+* the Orchestrator, which executes the per-event annotation workflow
+
+Below is a diagram illustrating the conceptual relationships of these
+subsystems. Nodes in the graph are hyperlinks to the relevant API
 documentation.
 
 .. digraph:: superevents
