@@ -1,6 +1,191 @@
 Design and anatomy of GWCelery
 ==============================
 
+Conceptual overview
+-------------------
+
+.. digraph:: superevents
+
+    compound = true
+    splines = ortho
+
+    node [
+        fillcolor = white
+        shape = box
+        style = filled
+        target = "_top"
+    ]
+
+    graph [
+        labeljust = "left"
+        style = filled
+        target = "_top"
+    ]
+
+    gracedb [
+        label = "GraceDb"
+    ]
+
+    lvalert [
+        label = "LVAlert"
+    ]
+
+    {
+        rank = source
+
+        gstlal [
+            label = "Gstlal\nSearch"
+        ]
+
+        pycbc [
+            label = "PyCBC\nSearch"
+        ]
+
+        cwb [
+            label = "cWB\nSearch"
+        ]
+
+        olib [
+            label = "oLIB\nSearch"
+        ]
+    }
+
+    subgraph cluster_gwcelery {
+        label = "GWCelery"
+
+        {
+            rank = same
+
+            lvalert_listener [
+                href = "../gwcelery.tasks.lvalert.html"
+                label = "LVAlert\nListener"
+            ]
+
+            superevent_manager [
+                href = "../gwcelery.tasks.superevents.html"
+                label = "Superevent\nManager"
+            ]
+
+            gracedb_client [
+                href = "../gwcelery.tasks.gracedb.html"
+                label = "GraceDb\nClient"
+            ]
+        }
+
+        raven [
+            href = "../gwcelery.tasks.external_triggers.html"
+            label = "External\nTrigger\nManager"
+        ]
+
+        subgraph cluster_orchestrator {
+            href = "../gwcelery.tasks.orchestrator.html"
+            label = "Orchestrator"
+
+            {
+                rank = same
+
+                detchar [
+                    href = "../gwcelery.tasks.detchar.html"
+                    label = "Detchar"
+                ]
+
+                bayestar [
+                    href = "../gwcelery.tasks.bayestar.html"
+                    label = "BAYESTAR"
+                ]
+
+                lalinference [
+                    href = "../gwcelery.tasks.lalinference.html"
+                    label = "LALInference"
+                ]
+            }
+
+            {
+                rank = same
+
+                skymaps [
+                    href = "../gwcelery.tasks.skymaps.html"
+                    label = "Sky Map\nVisualization"
+                ]
+
+                classification [
+                    label = "Source\nClassification"
+                ]
+
+                circulars [
+                    href = "../gwcelery.tasks.circulars.html"
+                    label = "Circular\nTemplates"
+                ]
+            }
+        }
+
+        {
+            rank = same
+
+            gcn_listener [
+                href = "../gwcelery.tasks.gcn.html"
+                label = "GCN\nListener"
+            ]
+
+            gcn_broker [
+                html = "gwcelery.tasks.gcn.html"
+                label = "GCN\nBroker"
+            ]
+        }
+    }
+
+    gcn [
+        label = "GCN"
+    ]
+
+    {
+        rank = sink
+
+        astronomers [
+            label = "Astronomers"
+        ]
+    }
+
+    gstlal -> gracedb
+    pycbc -> gracedb
+    cwb -> gracedb
+    olib -> gracedb
+
+    gracedb -> lvalert
+    lvalert -> lvalert_listener
+    gracedb -> gracedb_client [dir=back]
+
+    lvalert_listener -> superevent_manager
+    lvalert_listener -> detchar [lhead=cluster_orchestrator]
+    lvalert_listener -> raven
+
+    superevent_manager -> gracedb_client
+    lalinference -> gracedb_client [ltail=cluster_orchestrator]
+    raven -> gracedb_client
+
+    detchar -> bayestar [style=invis]
+    bayestar -> lalinference [style=invis]
+
+    detchar -> skymaps [style=invis]
+    bayestar -> classification [style=invis]
+    lalinference -> circulars [style=invis]
+
+    skymaps -> classification [style=invis]
+    classification -> circulars [style=invis]
+
+    classification -> gcn_broker [ltail=cluster_orchestrator]
+    classification -> gcn_listener [dir=back, ltail=cluster_orchestrator]
+
+    superevent_manager -> raven [style=invis]
+    raven -> detchar [style=invis]
+    raven -> bayestar [style=invis]
+    raven -> lalinference [style=invis]
+
+    gcn_listener -> gcn [dir=back]
+    gcn_broker -> gcn
+    gcn -> astronomers
+    gcn -> astronomers [dir=back]
+
 Processes
 ---------
 
