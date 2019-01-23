@@ -86,6 +86,18 @@ To configure Nagios itself, see the `Nagios configuration overview`_, or if
 GWCelery and Nagios are running on different hosts, the `Nagios Remote Plugin
 Executor (NRPE) documentation`_.
 
+Sentry
+------
+
+All warnings, errors, exceptions, and tasks failures are both logged to disk
+and uploaded instantly to Sentry_, an error monitoring and reporting platform.
+The Sentry instance is installed `on premise`_ at Caltech. Sentry notifies
+GWCelery contributors by email when a new bug occurs.
+
+For details about the Sentry logging configuration, see the
+:mod:`gwcelery.sentry` module or the `Celery integration module`_ in the Sentry
+SDK docs.
+
 .. _Flower: https://flower.readthedocs.io/
 .. _dashboard.ligo.org: https://dashboard.ligo.org/
 .. _monitor.ligo.org: https://monitor.ligo.org/
@@ -93,3 +105,6 @@ Executor (NRPE) documentation`_.
 .. _the format that Nagios expects: https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/3/en/pluginapi.html
 .. _Nagios configuration overview: https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/4/en/config.html
 .. _Nagios Remote Plugin Executor (NRPE) documentation: https://assets.nagios.com/downloads/nagioscore/docs/nrpe/NRPE.pdf
+.. _Sentry: https://sentry.io/
+.. _`on premise`: https://docs.sentry.io/server/
+.. _`Celery integration module`: https://docs.sentry.io/platforms/python/celery/
