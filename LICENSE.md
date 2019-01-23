@@ -1,11 +1,12 @@
 # License
 
-The [GWCelery Logo](etc/logo.png) is a composite of
-[Celery2](https://commons.wikimedia.org/wiki/File:Celery2.png)
-by Tiia Monto and
-[Lorentzian Wormhole](https://commons.wikimedia.org/wiki/File:Lorentzian_Wormhole.svg)
-by Kes47 from Wikimedia Commons
-([CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/legalcode)).
+The [GWCelery Logo] is a composite of [Celery2] by Tiia Monto and [Lorentzian
+Wormhole] by Kes47 from Wikimedia Commons ([CC BY-SA 3.0]).
+
+[GWCelery Logo]: https://git.ligo.org/emfollow/gwcelery/blob/master/doc/_static/logo.png
+[Celery2]: https://commons.wikimedia.org/wiki/File:Celery2.png
+[Lorentzian Wormhole]: https://commons.wikimedia.org/wiki/File:Lorentzian_Wormhole.svg
+[CC BY-SA 3.0]:https://creativecommons.org/licenses/by-sa/3.0/legalcode
 
 ### GNU GENERAL PUBLIC LICENSE
 
