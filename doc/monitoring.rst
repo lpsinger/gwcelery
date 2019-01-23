@@ -66,8 +66,6 @@ utilities <celery:monitoring-control>`, including the following:
 Nagios
 ------
 
-This tool is specific to GWCelery.
-
 The dashboard.ligo.org_ and monitor.ligo.org_ services use Nagios_ to monitor
 and report on the health of all of the components of the low-latency analysis
 infrastructure.
