@@ -244,9 +244,9 @@ of several processes:
 Eternal tasks
 -------------
 
-GWCelery has a couple long-running tasks that do not return because they have
-to keep open a persistent connection with some external service. These tasks
-are subclasses of :class:`celery_eternal.EternalTask` or
+GWCelery has a few long-running tasks that do not return because they have to
+keep open a persistent connection with some external service. These tasks are
+subclasses of :class:`celery_eternal.EternalTask` or
 :class:`celery_eternal.EternalProcessTask`.
 
 *  :meth:`gwcelery.tasks.gcn.broker`
