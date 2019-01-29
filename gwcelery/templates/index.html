@@ -1,0 +1,114 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="{{ url_for('static', filename='typeahead.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha256-azvvU9xKluwHFJ0Cpgtf0CYzK7zgtOznnzxV4924X1w=" crossorigin="anonymous">
+<title>GWCelery Tools</title>
+
+<div class=container>
+    <div class=jumbotron>
+        <h1>GWCelery Tools</h1>
+    </div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <div class=card>
+        <div class=card-header>
+            Issue Update GCN Notice
+        </div>
+        <div class=card-body>
+            <form method=post action="{{ url_for('send_update_gcn') }}">
+                <div class="form-row">
+                    <div class="form-group col-md">
+                        <label for=superevent_id>Superevent ID</label>
+                        <input id=superevent_id name=superevent_id class="form-control typeahead">
+                    </div>
+                    <div class="form-group col-md">
+                        <label for=skymap_filename>Sky Map File</label>
+                        <input id=skymap_filename name=skymap_filename class="form-control superevent-dependent typeahead" data-typeahead-url-template="{{ url_for('typeahead_skymap_filename', superevent_id='SUPEREVENT_ID', filename='TERM') }}">
+                    </div>
+                    <div class="form-group col-md">
+                        <label for=source_classification_filename>Classification</label>
+                        <input id=source_classification_filename name=source_classification_filename class="form-control superevent-dependent typeahead" data-typeahead-url-template="{{ url_for('typeahead_source_classification_filename', superevent_id='SUPEREVENT_ID', filename='TERM') }}">
+                    </div>
+                    <div class="form-group col-md">
+                        <label for=p_astro_filename>P_Astro</label>
+                        <input id=p_astro_filename name=p_astro_filename class="form-control superevent-dependent typeahead" data-typeahead-url-template="{{ url_for('typeahead_p_astro_filename', superevent_id='SUPEREVENT_ID', filename='TERM') }}">
+                    </div>
+                    <div class="form-group col-md">
+                        <label for=submit class=w-100>&nbsp;</label>
+                        <button type=submit id=submit class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha256-63ld7aiYP6UxBifJWEzz87ldJyVnETUABZAYs5Qcsmc=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js" integrity="sha256-RWiU4omUU7tQ2M3wmRQNW9UL50MB4CucbRPCbsQv+X0=" crossorigin="anonymous"></script>
+<script>
+    (function() {
+        $('.typeahead')
+            .wrap('<div class=text-nowrap></div>')
+            .after('<div style="position: relative; left: -32px" class="invisible position-relative spinner-border spinner-border-sm text-primary" role="status"></div>');
+
+        $('#superevent_id').typeahead({
+            highlight: true,
+            minLength: 0
+        }, {
+            source: new Bloodhound({
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                datumTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: '{{ url_for('typeahead_superevent_id', superevent_id='TERM') }}',
+                    wildcard: 'TERM'
+                }
+            })
+        });
+
+        $('.typeahead.superevent-dependent').each(function() {
+            const url = $(this).data('typeahead-url-template');
+
+            const bloodhound = new Bloodhound({
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                datumTokenizer: Bloodhound.tokenizers.whitespace,
+                prefetch: url.replace('TERM', ''),
+                remote: {
+                    url: url,
+                    wildcard: 'TERM'
+                }
+            });
+
+            const stringify = bloodhound.identify;
+
+            $(this).typeahead({
+                highlight: true,
+                minLength: 0
+            }, {
+                source: bloodhound
+            });
+
+            $('#superevent_id').on('typeahead:change typeahead:select', ev => {
+                const superevent_id = $(ev.target).val();
+                bloodhound.prefetch.url = url.replace('SUPEREVENT_ID', superevent_id);
+                bloodhound.remote.url = url.replace('SUPEREVENT_ID', superevent_id);
+                bloodhound.identify = (datum => stringify({superevent_id: superevent_id, datum: datum}));
+                bloodhound.initialize();
+            });
+        });
+
+        $('.typeahead').on('typeahead:asyncrequest', ev => {
+            $(ev.target).parent().next('.spinner-border').removeClass('invisible');
+        });
+
+        $('.typeahead').on('typeahead:asynccancel typeahead:asyncreceive', ev => {
+            $(ev.target).parent().next('.spinner-border').addClass('invisible');
+        });
+    })();
+</script>

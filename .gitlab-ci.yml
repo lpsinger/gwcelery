@@ -189,6 +189,7 @@ pypi:
     echo CELERY_CONFIG_MODULE=gwcelery.conf.${CI_ENVIRONMENT_NAME} >> .env
     echo FLOWER_URL_PREFIX=~\${USER}/${CI_ENVIRONMENT_NAME}/flower >> .env
     echo FLOWER_PORT=${FLOWER_PORT} >> .env
+    echo FLASK_PORT=${FLASK_PORT} >> .env
     pipenv sync
     pipenv run gwcelery condor resubmit
     EOF
@@ -207,6 +208,7 @@ deploy to production:
   <<: *deploy-start
   variables:
     FLOWER_PORT: '5555'
+    FLASK_PORT: '5556'
   when: manual
   environment:
     name: production
@@ -217,6 +219,7 @@ deploy to playground:
   <<: *deploy-start
   variables:
     FLOWER_PORT: '5557'
+    FLASK_PORT: '5558'
   environment:
     name: playground
     on_stop: stop deployment on playground

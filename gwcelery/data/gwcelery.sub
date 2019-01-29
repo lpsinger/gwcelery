@@ -50,6 +50,13 @@ log = gwcelery-superevent-worker.log
 output = gwcelery-superevent-worker.out
 queue
 
+arguments = "gwcelery flask run --with-threads"
+description = gwcelery-flask
+error = gwcelery-flask.err
+log = gwcelery-flask.log
+output = gwcelery-flask.out
+queue
+
 arguments = "gwcelery flower"
 description = gwcelery-flower
 error = gwcelery-flower.err
