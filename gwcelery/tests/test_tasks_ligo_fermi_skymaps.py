@@ -33,7 +33,7 @@ def mock_get_log(graceid):
 
 
 @pytest.fixture  # noqa: F811
-def mock_download(monkeypatch, toy_3d_fits_filecontents):
+def mock_download(monkeypatch, toy_3d_fits_filecontents):  # noqa: F811
 
     def download(filename, graceid):
         """Mocks GraceDb download functionality"""

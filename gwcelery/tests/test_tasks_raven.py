@@ -88,7 +88,7 @@ def test_calculate_coincidence_far(
 def test_calculate_spacetime_coincidence_far(
         mock_se_cls, mock_exttrig_cls, mock_calc_signif,
         mock_get_preferred_skymap, mock_get_superevent, mock_download, group,
-        toy_fits_filecontents):
+        toy_fits_filecontents):  # noqa: F811
     mock_download.return_value = toy_fits_filecontents
     raven.calculate_spacetime_coincidence_far(
         'S1234', group).delay().get()

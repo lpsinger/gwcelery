@@ -22,7 +22,7 @@ from . import resource_json
                                    ['Burst', 'oLIB', False, 1.e-9],
                                    ['CBC', 'gstlal', True, 1.e-10],
                                    ['Burst', 'CWB', True, 1.e-10]])
-def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,
+def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
                            group, pipeline, offline, far):
     """Test a superevent is dispatched to the correct annotation task based on
     its preferred event's search group."""
