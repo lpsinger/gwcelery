@@ -1,4 +1,5 @@
 """Base classes for other Celery tasks."""
+from operator import itemgetter
 
 from celery import group
 from celery.utils.log import get_task_logger
@@ -12,6 +13,24 @@ log = get_task_logger(__name__)
 def identity(arg):
     """Identity task (returns its input)."""
     return arg
+
+
+@app.task(shared=False)
+def _pack(result, i):
+    return i, result
+
+
+@app.task(shared=False)
+def _unpack(results):
+    return tuple(map(itemgetter(1), sorted(results, key=itemgetter(0))))
+
+
+def ordered_group(*args):
+    """Like :meth:`celery.group`, but preserve order.
+
+    This is a temporary workaround for
+    https://github.com/celery/celery/pull/4858."""
+    return group(arg | _pack.s(i) for i, arg in enumerate(args)) | _unpack.s()
 
 
 class DispatchHandler(dict):

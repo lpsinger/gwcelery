@@ -11,7 +11,7 @@ from ligo.gracedb.rest import HTTPError
 from ..import app
 from . import bayestar
 from . import circulars
-from .core import identity
+from .core import identity, ordered_group
 from . import detchar
 from . import em_bright
 from . import gcn
@@ -141,14 +141,10 @@ def handle_cbc_event(alert):
 
     if filename == 'psd.xml.gz':
         (
-            group(
+            ordered_group(
                 gracedb.download.s('coinc.xml', graceid),
                 gracedb.download.s('psd.xml.gz', graceid)
             )
-            |
-            # FIXME: group(A, B) | group(C, D) does not pass the results from
-            # tasks A and B to tasks C and D without this.
-            identity.s()
             |
             group(
                 bayestar.localize.s(graceid)
@@ -174,7 +170,7 @@ def handle_cbc_event(alert):
         (
             gracedb.get_event.s(graceid)
             |
-            group(
+            ordered_group(
                 gracedb.download.si('coinc.xml', graceid),
                 gracedb.download.si('ranking_data.xml.gz', graceid)
             )
@@ -452,7 +448,7 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None):
     (
         gracedb.expose.s(superevent_id)
         |
-        group(
+        ordered_group(
             gracedb.download.si('source_classification.json', superevent_id),
             gracedb.download.si('p_astro.json', superevent_id)
         )
