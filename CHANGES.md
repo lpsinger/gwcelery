@@ -13,7 +13,7 @@
 -   The Nagios monitoring plugin will now report on the status of LVAlert
     subscriptions.
 
--   Change trails factor to 5 for both CBC and Burst categories. CBC includes
+-   Change trials factor to 5 for both CBC and Burst categories. CBC includes
     the 4 CBC pipelines. Burst includes the 4 searches performed in total by
     the 2 Burst pipelines. An additional external coincidence search.
 
