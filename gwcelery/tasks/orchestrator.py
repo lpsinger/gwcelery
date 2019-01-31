@@ -51,9 +51,13 @@ def handle_superevent(alert):
             |
             gracedb.get_event.s()
             |
-            detchar.check_vectors.s(superevent_id, start, end)
-            |
-            preliminary_alert.s(superevent_id)
+            group(
+                detchar.check_vectors.s(superevent_id, start, end)
+                |
+                preliminary_alert.s(superevent_id),
+
+                parameter_estimation.s(superevent_id)
+            )
         ).apply_async()
     # check DQV label on superevent, run check_vectors if required
     elif alert['alert_type'] == 'event_added':
@@ -280,7 +284,6 @@ def preliminary_alert(event, superevent_id):
     4.   Send the VOEvent to GCN.
     5.   Apply the GCN_PRELIM_SENT label to the superevent.
     6.   Create and upload a GCN Circular draft.
-    7.   Start parameter estimation with LALInference.
     """
     preferred_event_id = event['graceid']
 
@@ -413,11 +416,27 @@ def preliminary_alert(event, superevent_id):
             )
         )
 
-        if event['group'] == 'CBC' and event['search'] != 'MDC':
-            # Start parameter estimation.
-            lalinference.lalinference.delay(preferred_event_id, superevent_id)
-
     canvas.apply_async()
+
+
+@app.task(ignore_result=True, shared=False)
+def parameter_estimation(event, superevent_id):
+    """Tasks for Parameter Estimation Followup with LALInference
+
+    This consists of the following steps:
+
+    1.   Upload an ini file which is suitable for the target event.
+    2.   Start Parameter Estimation if FAR is smaller than the PE threshold.
+    """
+    preferred_event_id = event['graceid']
+    # FIXME: it will be better to start parater estimation for 'burst' events.
+    if event['group'] == 'CBC' and event['search'] != 'MDC':
+        canvas = lalinference.upload_ini.s(event, superevent_id)
+        if event['far'] <= app.conf['pe_threshold']:
+            canvas |= \
+                lalinference.start_pe.s(preferred_event_id, superevent_id)
+
+        canvas.apply_async()
 
 
 @app.task(ignore_result=True, shared=False)

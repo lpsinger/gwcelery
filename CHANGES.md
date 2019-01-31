@@ -14,6 +14,10 @@
     to run multiple isolated instances of GWCelery under HTCondor on the same
     cluster in different working directories.
 
+-   Update criteria for starting Parameter Estimation. ini file for PE is
+    uploaded to every superevent and PE is performed for superevents which have
+    FAR < 1/(2 weeks).
+
 ## 0.2.5 (2018-02-01)
 
 -   Pass along the GWCelery version number to Sentry.

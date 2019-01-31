@@ -21,7 +21,9 @@ from . import resource_json
                                     'preliminary_alert_far_threshold']['cbc']],
                                    ['Burst', 'oLIB', False, 1.e-9],
                                    ['CBC', 'gstlal', True, 1.e-10],
-                                   ['Burst', 'CWB', True, 1.e-10]])
+                                   ['Burst', 'CWB', True, 1.e-10],
+                                   ['CBC', 'gstlal', False, 2.0*app.conf[
+                                    'pe_threshold']]])
 def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
                            group, pipeline, offline, far):
     """Test a superevent is dispatched to the correct annotation task based on
@@ -66,7 +68,8 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
     plot_volume = Mock()
     plot_allsky = Mock()
     send = Mock()
-    lalinference = Mock()
+    upload_ini = Mock()
+    start_pe = Mock()
     create_voevent = Mock(return_value='S1234-1-Preliminary.xml')
 
     monkeypatch.setattr('gwcelery.tasks.gcn.send.run', send)
@@ -81,8 +84,10 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
                         get_superevent)
     monkeypatch.setattr('gwcelery.tasks.circulars.create_circular.run',
                         create_circular)
-    monkeypatch.setattr('gwcelery.tasks.lalinference.lalinference.run',
-                        lalinference)
+    monkeypatch.setattr('gwcelery.tasks.lalinference.upload_ini.run',
+                        upload_ini)
+    monkeypatch.setattr('gwcelery.tasks.lalinference.start_pe.run',
+                        start_pe)
 
     # Run function under test
     orchestrator.handle_superevent(alert)
@@ -93,25 +98,27 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
     if offline:
         send.assert_not_called()
         create_circular.assert_not_called()
-        lalinference.assert_not_called()
     elif app.conf['preliminary_alert_trials_factor'][group.lower()] * far > \
             app.conf['preliminary_alert_far_threshold'][group.lower()]:
         send.assert_not_called()
         create_circular.assert_not_called()
-        lalinference.assert_not_called()
     else:
         if group == 'CBC':
-            lalinference.assert_called_once()
             create_voevent.assert_called_once_with(
                 'S1234', 'preliminary', BBH=0.02, BNS=0.94, NSBH=0.03,
                 ProbHasNS=0.0, ProbHasRemnant=0.0, Terrestrial=0.01,
                 internal=True, open_alert=True,
                 skymap_filename='bayestar.fits.gz',
                 skymap_image_filename='bayestar.png', skymap_type='bayestar')
-        else:
-            lalinference.assert_not_called()
         send.assert_called_once()
         create_circular.assert_called_once()
+
+    if group == 'CBC' and not offline:
+        upload_ini.assert_called_once()
+        if far <= app.conf['pe_threshold']:
+            start_pe.assert_called_once()
+        else:
+            start_pe.assert_not_called()
 
 
 @patch('gwcelery.tasks.gracedb.get_log',

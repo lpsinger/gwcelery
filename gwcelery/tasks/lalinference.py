@@ -50,9 +50,9 @@ def _webdir(graceid):
     return os.getenv('HOME') + '/public_html/online_pe/' + graceid
 
 
-def _ifos(event_info):
+def _ifos(event):
     """Return ifos"""
-    return event_info['extra_attributes']['CoincInspiral']['ifos'].split(',')
+    return event['extra_attributes']['CoincInspiral']['ifos'].split(',')
 
 
 def _chirplen(singleinspiral):
@@ -95,22 +95,23 @@ def _srate(singleinspiraltable):
            ) * 2
 
 
-def _write_ini(rundir, graceid):
-    """Write down .ini file in run directory and return path to .ini file"""
+def _return_ini(event):
+    """Determine an appropriate PE settings for the target event and return ini
+    file content
+    """
     # Get template of .ini file
     ini_template = env.get_template(ini_name)
 
     # Download event's info to determine PE settings
-    event_info = gracedb.get_event(graceid)
-    singleinspiraltable = event_info['extra_attributes']['SingleInspiral']
+    singleinspiraltable = event['extra_attributes']['SingleInspiral']
 
-    # fill out the ini template
-    ifos = _ifos(event_info)
+    # fill out the ini template and return the resultant content
+    ifos = _ifos(event)
     ini_settings = {
         'service_url': gracedb.client._service_url,
         'types': json.dumps(app.conf['frame_types']),
         'channels': json.dumps(app.conf['channel_names']),
-        'webdir': _webdir(graceid),
+        'webdir': _webdir(event['graceid']),
         'paths': [{'name': name, 'path': find_executable(executable)}
                   for name, executable in executables.items()],
         'q': min([sngl['mass2'] / sngl['mass1']
@@ -120,28 +121,44 @@ def _write_ini(rundir, graceid):
         'flow': json.dumps(_freq_dict(flow, ifos)),
         'srate': str(_srate(singleinspiraltable))
     }
-    ini_contents = ini_template.render(ini_settings)
-
-    # write down .ini file in the run directory
-    path_to_ini = rundir + '/' + ini_name
-    with open(path_to_ini, 'w') as f:
-        f.write(ini_contents)
-
-    return path_to_ini
+    return ini_template.render(ini_settings)
 
 
 @app.task(shared=False)
-def dag_prepare(rundir, download_id, upload_id):
+def upload_ini(event, superevent_id):
+    """Upload ini file and return its content
+
+    Parameters
+    ----------
+    event : dict
+        information on a target preferred event
+    superevent_id : str
+        The GraceDb ID of a target superevent
+    """
+    ini_contents = _return_ini(event)
+    gracedb.upload.delay(
+        filecontents=ini_contents, filename='online_pe.ini',
+        graceid=superevent_id,
+        message='This is an appropriate ini file for this event.',
+        tags='pe'
+    )
+    return ini_contents
+
+
+@app.task(shared=False)
+def dag_prepare(rundir, ini_contents, preferred_event_id, superevent_id):
     """Create a Condor DAG to run LALInference on a given event.
 
     Parameters
     ----------
     rundir : str
         The path to a run directory where the DAG file exits
-    download_id : str
-        The GraceDb ID of an event from which xml files are downloaded
-    upload_id : str
-        The GraceDb ID of an event to which results are uploaded
+    ini_contents : str
+        The content of online_pe.ini
+    preferred_event_id : str
+        The GraceDb ID of a target preferred event
+    superevent_id : str
+        The GraceDb ID of a target superevent
 
     Returns
     -------
@@ -149,17 +166,19 @@ def dag_prepare(rundir, download_id, upload_id):
         The path to the .sub file
     """
     # write down .ini file in the run directory
-    path_to_ini = _write_ini(rundir, download_id)
+    path_to_ini = rundir + '/' + ini_name
+    with open(path_to_ini, 'w') as f:
+        f.write(ini_contents)
 
     # run lalinference_pipe
     gracedb.upload.delay(
-        filecontents=None, filename=None, graceid=upload_id,
+        filecontents=None, filename=None, graceid=superevent_id,
         message='starting LALInference online parameter estimation',
         tags='pe'
     )
     try:
         subprocess.run(['lalinference_pipe', '--run-path', rundir,
-                        '--gid', download_id, path_to_ini],
+                        '--gid', preferred_event_id, path_to_ini],
                        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                        check=True)
         subprocess.run(['condor_submit_dag', '-no_submit',
@@ -170,7 +189,8 @@ def dag_prepare(rundir, download_id, upload_id):
         contents = b'args:\n' + json.dumps(e.args[1]).encode('utf-8') + \
                    b'\n\nstdout:\n' + e.stdout + b'\n\nstderr:\n' + e.stderr
         gracedb.upload.delay(
-            filecontents=contents, filename='pe_dag.log', graceid=upload_id,
+            filecontents=contents, filename='pe_dag.log',
+            graceid=superevent_id,
             message='Failed to prepare DAG', tags='pe'
         )
         shutil.rmtree(rundir)
@@ -180,7 +200,7 @@ def dag_prepare(rundir, download_id, upload_id):
 
 
 @app.task(ignore_result=True, shared=False)
-def job_error_notification(request, exc, traceback, upload_id):
+def job_error_notification(request, exc, traceback, superevent_id):
     """Upload notification when condor.submit terminates unexpectedly.
 
     Parameters
@@ -191,17 +211,17 @@ def job_error_notification(request, exc, traceback, upload_id):
         Exception rased by condor.submit
     traceback : str (placeholder)
         Traceback message from a task
-    upload_id : str
-        The GraceDb ID of an event to which this notification is uploaded
+    superevent_id : str
+        The GraceDb ID of a target superevent
     """
     if type(exc) is condor.JobAborted:
         gracedb.upload.delay(
-            filecontents=None, filename=None, graceid=upload_id,
+            filecontents=None, filename=None, graceid=superevent_id,
             message='Job was aborted.', tags='pe'
         )
     elif type(exc) is condor.JobFailed:
         gracedb.upload.delay(
-            filecontents=None, filename=None, graceid=upload_id,
+            filecontents=None, filename=None, graceid=superevent_id,
             message='Job failed', tags='pe'
         )
 
@@ -237,17 +257,17 @@ def clean_up(rundir):
     shutil.rmtree(rundir)
 
 
-def dag_finished(rundir, download_id, upload_id):
+def dag_finished(rundir, preferred_event_id, superevent_id):
     """Upload PE results and clean up run directory
 
     Parameters
     ----------
     rundir : str
         The path to a run directory where the DAG file exits
-    download_id : str
-        The GraceDb ID of an event from which xml files are downloaded
-    upload_id : str
-        The GraceDb ID of an event to which results are uploaded
+    preferred_event_id : str
+        The GraceDb ID of a target preferred event
+    superevent_id : str
+        The GraceDb ID of a target superevent
 
     Returns
     -------
@@ -255,43 +275,45 @@ def dag_finished(rundir, download_id, upload_id):
         The work-flow for uploading PE results
     """
     # get webdir where the results are outputted
-    webdir = _webdir(download_id)
+    webdir = _webdir(preferred_event_id)
 
     return group(
         gracedb.upload.si(
-            filecontents=None, filename=None, graceid=upload_id,
+            filecontents=None, filename=None, graceid=superevent_id,
             message='LALInference online parameter estimation finished.',
             tags='pe'
         ),
         upload_result.si(
-            webdir, 'LALInference.fits.gz', upload_id,
+            webdir, 'LALInference.fits.gz', superevent_id,
             'LALInference FITS sky map', ['pe', 'sky_loc']
         ),
         upload_result.si(
-            webdir, 'extrinsic.png', upload_id,
+            webdir, 'extrinsic.png', superevent_id,
             'Corner plot for extrinsic parameters', 'pe'
         ),
         upload_result.si(
-            webdir, 'intrinsic.png', upload_id,
+            webdir, 'intrinsic.png', superevent_id,
             'Corner plot for intrinsic parameters', 'pe'
         ),
         upload_result.si(
-            webdir, 'sourceFrame.png', upload_id,
+            webdir, 'sourceFrame.png', superevent_id,
             'Corner plot for source frame parameters', 'pe'
         )
     ) | clean_up.si(rundir)
 
 
 @app.task(ignore_result=True, shared=False)
-def lalinference(download_id, upload_id):
+def start_pe(ini_contents, preferred_event_id, superevent_id):
     """Run LALInference on a given event.
 
     Parameters
     ----------
-    download_id : str
-        The GraceDb ID of an event from which xml files are downloaded
-    upload_id : str
-        The GraceDb ID of an event to which results are uploaded
+    ini_contents : str
+        The content of online_pe.ini
+    preferred_event_id : str
+        The GraceDb ID of a target preferred event
+    superevent_id : str
+        The GraceDb ID of a target superevent
     """
     # make a run directory
     lalinference_dir = os.path.expanduser('~/.cache/lalinference')
@@ -299,9 +321,9 @@ def lalinference(download_id, upload_id):
     rundir = tempfile.mkdtemp(dir=lalinference_dir)
 
     (
-        dag_prepare.s(rundir, download_id, upload_id)
+        dag_prepare.s(rundir, ini_contents, preferred_event_id, superevent_id)
         |
-        condor.submit.s().on_error(job_error_notification.s(upload_id))
+        condor.submit.s().on_error(job_error_notification.s(superevent_id))
         |
-        dag_finished(rundir, download_id, upload_id)
+        dag_finished(rundir, preferred_event_id, superevent_id)
     ).delay()
