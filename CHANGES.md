@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.6 (unreleased)
+
+-   No changes yet.
+
 ## 0.2.5 (2018-02-01)
 
 -   Pass along the GWCelery version number to Sentry.
