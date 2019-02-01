@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.5 (unreleased)
+## 0.2.5 (2018-02-01)
 
 -   Pass along the GWCelery version number to Sentry.
 
@@ -19,6 +19,9 @@
 
 -   Automatically set up PE ini file depending on source parameters
     reported by detection pipelines.
+
+-   Add a Flask-based web interface for manually triggering certain tasks such
+    as sending updated GCN notices.
 
 ## 0.2.4 (2018-12-17)
 
