@@ -2,7 +2,8 @@
 
 ## 0.2.6 (unreleased)
 
--   No changes yet.
+-   Temporarily revert change to exclude Mollweide projection PNG file in
+    VOEvents. The GraceDb server has not yet been updated for this change.
 
 ## 0.2.5 (2018-02-01)
 

@@ -261,6 +261,7 @@ def _create_voevent(properties_and_classification_json, *args, **kwargs):
     if skymap_filename is not None:
         skymap_type = re.sub(r'\.fits(\..+)?$', '', skymap_filename)
         kwargs.setdefault('skymap_type', skymap_type)
+        kwargs.setdefault('skymap_image_filename', skymap_type + '.png')
 
     return gracedb.create_voevent(*args, **kwargs)
 
@@ -330,18 +331,14 @@ def preliminary_alert(event, superevent_id):
                 )
                 |
                 gracedb.create_label.si('SKYMAP_READY', superevent_id),
+
+                skymaps.annotate_fits(
+                    original_skymap_filename,
+                    superevent_id,
+                    ['sky_loc', 'public']
+                )
             )
         )
-
-        (
-            _download.si(original_skymap_filename, superevent_id)
-            |
-            skymaps.annotate_fits(
-                original_skymap_filename,
-                superevent_id,
-                ['sky_loc', 'public']
-            )
-        ).apply_async()
 
     # If this is a CBC event, then copy the EM bright classification.
     if event['group'] == 'CBC':
