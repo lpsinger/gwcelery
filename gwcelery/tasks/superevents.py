@@ -36,7 +36,7 @@ def handle(payload):
     alert_type = payload['alert_type']
 
     if alert_type != 'new':
-        log.critical('Unhandled by parse_trigger, passing...')
+        log.info('Not new type alert, passing...')
         return
 
     gid = payload['uid']
@@ -75,7 +75,6 @@ def handle(payload):
 
     d_t_start, d_t_end = _get_dts(event_info)
 
-    # Condition 1/2
     if sid is None:
         log.debug('Entered 1st if')
         event_segment = _Event(event_info['gpstime'],
@@ -129,8 +128,6 @@ def handle(payload):
                 raise err
 
     else:
-        # ERROR SITUATION
-        log.debug('3rd if: SID returned and new alert')
         log.critical('Superevent %s exists for alert_type new for %s',
                      sid, gid)
 
