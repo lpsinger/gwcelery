@@ -29,6 +29,9 @@ def configure():
     if SPHINX:  # pragma: no cover
         return
 
+    # Delayed import
+    from . import app
+
     scheme, netloc, *rest = urlparse(DSN)
 
     try:
@@ -48,5 +51,6 @@ def configure():
     dsn = urlunparse(
         (scheme, '{}@{}'.format(username, netloc), *rest))
     version = _version.get_versions()['version']
-    sentry_sdk.init(
-        dsn, integrations=[celery.CeleryIntegration()], release=version)
+    environment = app.conf['sentry_environment']
+    sentry_sdk.init(dsn, integrations=[celery.CeleryIntegration()],
+                    environment=environment, release=version)

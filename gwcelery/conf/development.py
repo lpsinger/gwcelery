@@ -4,3 +4,8 @@ from .test import *  # noqa: F401, F403
 
 gracedb_host = 'gracedb-dev1.ligo.org'
 """GraceDb host."""
+
+sentry_environment = 'development'
+"""Record this `environment tag
+<https://docs.sentry.io/enriching-error-data/environments/>`)` in Sentry log
+messages."""

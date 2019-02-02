@@ -19,3 +19,8 @@ channel_names = {'H1': 'H1:GDS-CALIB_STRAIN_O2Replay',
                  'V1': 'V1:Hrec_hoft_16384Hz_O2Replay'}
 """Names of h(t) channels used in Parameter Estimation with LALInference (see
 :mod:`gwcelery.tasks.lalinference`)"""
+
+sentry_environment = 'playground'
+"""Record this `environment tag
+<https://docs.sentry.io/enriching-error-data/environments/>`)` in Sentry log
+messages."""

@@ -7,3 +7,8 @@ lvalert_host = 'lvalert-test.cgca.uwm.edu'
 
 gracedb_host = 'gracedb-test.ligo.org'
 """GraceDb host."""
+
+sentry_environment = 'test'
+"""Record this `environment tag
+<https://docs.sentry.io/enriching-error-data/environments/>`)` in Sentry log
+messages."""
