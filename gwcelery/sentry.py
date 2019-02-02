@@ -15,7 +15,7 @@ log = get_logger(__name__)
 
 __all__ = ('configure', 'DSN')
 
-DSN = 'http://emfollow.ldas.cit:9000/2'
+DSN = 'http://localhost:9000/2'
 """Sentry data source name (DSN)."""
 
 
