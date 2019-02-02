@@ -20,7 +20,7 @@ def test_condor_subcommand(mock_execvp, subcommand, extra_args):
 
     cmd = 'condor_' + subcommand
     mock_execvp.assert_called_once_with(
-        cmd, (cmd,) + extra_args + condor.CONSTRAINTS)
+        cmd, (cmd, *extra_args, *condor.get_constraints()))
 
 
 @mock.patch('subprocess.check_output', return_value=b'<classads></classads>')
@@ -33,7 +33,7 @@ def test_condor_submit_not_yet_running(mock_execvp, mock_check_output):
         assert e.code == 0
 
     mock_check_output.assert_called_once_with(
-        ('condor_q', '-xml') + condor.CONSTRAINTS)
+        ('condor_q', '-xml', *condor.get_constraints()))
     mock_execvp.assert_called_once_with(
         'condor_submit', ('condor_submit', condor.SUBMIT_FILE))
 
@@ -49,7 +49,7 @@ def test_condor_submit_already_running(mock_execvp, mock_check_output):
         assert e.code == 1
 
     mock_check_output.assert_called_once_with(
-        ('condor_q', '-xml') + condor.CONSTRAINTS)
+        ('condor_q', '-xml', *condor.get_constraints()))
     mock_execvp.assert_not_called()
 
 
@@ -76,7 +76,8 @@ def test_condor_resubmit_fail(mock_check_call, _, __, ___):
         app.start(['gwcelery', 'condor', 'resubmit'])
     except SystemExit as e:
         assert e.code == 1
-    mock_check_call.assert_called_with(('condor_rm',) + condor.CONSTRAINTS)
+    mock_check_call.assert_called_with(
+        ('condor_rm', *condor.get_constraints()))
 
 
 @mock.patch('subprocess.check_output',

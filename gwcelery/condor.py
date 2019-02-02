@@ -1,4 +1,5 @@
 """Provide subcommand to manage GWCelery through HTCondor."""
+import json
 import os
 import shlex
 import subprocess
@@ -10,7 +11,13 @@ import lxml.etree
 import pkg_resources
 
 SUBMIT_FILE = pkg_resources.resource_filename(__name__, 'data/gwcelery.sub')
-CONSTRAINTS = ('-constraint', 'JobBatchName=="gwcelery"')
+
+
+def get_constraints():
+    return '-constraint', 'JobBatchName=={} && Iwd=={}'.format(
+        json.dumps('gwcelery'),  # JSON string literal escape sequences
+        json.dumps(os.getcwd())  # are a close match to HTCondor ClassAds.
+    )
 
 
 def run_exec(*args):
@@ -20,7 +27,7 @@ def run_exec(*args):
 
 def running():
     """Determine if GWCelery is already running under HTCondor."""
-    status = subprocess.check_output(('condor_q', '-xml') + CONSTRAINTS)
+    status = subprocess.check_output(('condor_q', '-xml', *get_constraints()))
     classads = lxml.etree.fromstring(status)
     return classads.find('.//c') is not None
 
@@ -28,7 +35,7 @@ def running():
 def submit():
     """Submit all GWCelery jobs to HTCondor (if not already running)."""
     if running():
-        print('error: GWCelery jobs are already running.\n'
+        print('error: GWCelery jobs are already running in this directory.\n'
               'You must first remove exist jobs with "gwcelery condor rm".\n'
               'To see the status of those jobs, run "gwcelery condor q".',
               file=sys.stderr)
@@ -40,7 +47,7 @@ def submit():
 def resubmit():
     """Remove any running GWCelery jobs and resubmit to HTCondor."""
     if running():
-        subprocess.check_call(('condor_rm',) + CONSTRAINTS)
+        subprocess.check_call(('condor_rm', *get_constraints()))
     timeout = 60
     start = time.monotonic()
     while time.monotonic() - start < timeout:
@@ -55,27 +62,28 @@ def resubmit():
 
 def rm():
     """Remove all GWCelery jobs."""
-    run_exec('condor_rm', *CONSTRAINTS)
+    run_exec('condor_rm', *get_constraints())
 
 
 def hold():
     """Put all GWCelery jobs on hold."""
-    run_exec('condor_hold', *CONSTRAINTS)
+    run_exec('condor_hold', *get_constraints())
 
 
 def release():
     """Release all GWCelery jobs from hold status."""
-    run_exec('condor_release', *CONSTRAINTS)
+    run_exec('condor_release', *get_constraints())
 
 
 def q():
     """Show status of all GWCelery jobs."""
-    run_exec('condor_q', '-nobatch', *CONSTRAINTS)
+    run_exec('condor_q', '-nobatch', *get_constraints())
 
 
 class CondorCommand(Command):
     """Shortcuts for HTCondor commands to manage deployment of GWCelery on LIGO
-    Data Grid clusters."""
+    Data Grid clusters. These commands apply to the GWCelery instance that is
+    running in the current working directory."""
 
     def add_arguments(self, parser):
         subparsers = parser.add_subparsers()

@@ -9,6 +9,11 @@
     configuration module (`production`, `test`, `playground`, or `development`)
     in order to differentiate log messages from different deployments.
 
+-   The 'gwcelery condor' command now identifies jobs that it owns by matching
+    both the job batch name and the working directory. This makes it possible
+    to run multiple isolated instances of GWCelery under HTCondor on the same
+    cluster in different working directories.
+
 ## 0.2.5 (2018-02-01)
 
 -   Pass along the GWCelery version number to Sentry.

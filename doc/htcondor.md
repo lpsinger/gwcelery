@@ -44,3 +44,32 @@ The following command is a shortcut for
 
 [HTCondor]: https://research.cs.wisc.edu/htcondor/
 [`gwcelery.sub`]: https://git.ligo.org/emfollow/gwcelery/blob/master/gwcelery/data/gwcelery.sub
+
+## Managing multiple deployments
+
+There should generally be at most one full deployment of GWCelery per GraceDb
+server running at one time. The `gwcelery condor` shortcut command is designed
+to protect you from accidentally starting multiple deployments of GWCelery by
+inspecting the HTCondor job queue before submitting new jobs. If you try to
+start GWCelery a second time on the same host in the same directory, you will
+get the following error message:
+
+    $ gwcelery condor submit
+    error: GWCelery jobs are already running in this directory.
+    You must first remove exist jobs with "gwcelery condor rm".
+    To see the status of those jobs, run "gwcelery condor q".
+
+However, there are situations where you may actually want to run multiple
+instances of GWCelery on the same machine. For example, you may want to run one
+instance for the 'production' GraceDb server and one for the 'playground'
+server. To accomplish this, just start the two instances of gwcelery in
+different directories. Here is an example.
+
+    $ mkdir -p production
+    $ pushd production
+    $ CELERY_CONFIG_MODULE=gwcelery.conf.production gwcelery condor submit
+    $ popd
+    $ mkdir -p playground
+    $ pushd playground
+    $ CELERY_CONFIG_MODULE=gwcelery.conf.playground gwcelery condor submit
+    $ popd
