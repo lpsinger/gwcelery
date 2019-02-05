@@ -1,0 +1,24 @@
+{
+    "_meta": {
+        "hash": {
+            "sha256": "7747a7923d19ce6b38f5b1c533fda256de1999e4cfd19b5210df1373b499d905"
+        },
+        "pipfile-spec": 6,
+        "requires": {
+            "python_version": "3.6"
+        },
+        "sources": [
+            {
+                "name": "pypi",
+                "url": "https://pypi.org/simple",
+                "verify_ssl": true
+            }
+        ]
+    },
+    "default": {
+        "gwcelery": {
+            "path": "."
+        }
+    },
+    "develop": {}
+}
