@@ -38,9 +38,6 @@
 -   Automatically set up PE ini file depending on source parameters
     reported by detection pipelines.
 
--   Add a Flask-based web interface for manually triggering certain tasks such
-    as sending updated GCN notices.
-
 ## 0.2.4 (2018-12-17)
 
 -   Fix broken links in log messages due to changes in GraceDb URL routes.
