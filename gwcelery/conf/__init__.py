@@ -35,20 +35,13 @@ gcn_broker_address = ':5341'
 This should be a string of the form `host:port`. If `host` is empty,
 then listen on all available interfaces."""
 
-gcn_broker_accept_addresses = ['capella2.gsfc.nasa.gov']
-"""List of hosts from which the broker will accept connections."""
+gcn_broker_accept_addresses = []
+"""List of hosts from which the broker will accept connections.
+If empty, then completely disable the broker's broadcast capability."""
 
-gcn_client_address = '68.169.57.253:8096'
+gcn_client_address = ''
 """The VOEvent listener will connect to this address to receive GCNs.
-
-We are temporarily using the pre-registered port 8096 for receiving
-proprietary LIGO/Virgo alerts on emfollow.ligo.caltech.edu. This means that
-the capability to receive GCNs requires setting up a site configuration in
-advance with Scott Barthelmey.
-
-Once we switch to sending public alerts exclusively, then we can switch
-back to using port 8099 for anonymous access, requiring no prior site
-configuration."""
+If empty, then completely disable the GCN listener."""
 
 superevent_d_t_start = {'gstlal': 1.0,
                         'spiir': 1.0,

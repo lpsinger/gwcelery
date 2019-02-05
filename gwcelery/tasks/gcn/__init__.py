@@ -49,20 +49,20 @@ def broker(self):
     # isolation from any other instance of GWCelery on the same machine.
     with tempfile.TemporaryDirectory() as tmpdir:
         # Assemble the command line options for Twisted.
-        subprocess.check_call([
-            'twistd', '--nodaemon', '--pidfile=',
-            'comet', '--verbose',
-            '--local-ivo', 'ivo://ligo.org/gwcelery',
-            '--receive',
-            '--receive-port', author_port,
-            '--author-whitelist', '127.0.0.0/8',
-            '--broadcast',
-            '--broadcast-port', broadcast_port,
-            '--broadcast-test-interval', '0',
-            '--eventdb', tmpdir,
-            *(_ for name in app.conf['gcn_broker_accept_addresses'] for _ in
-                ('--subscriber-whitelist', socket.gethostbyname(name)))
-        ])
+        cmd = ['twistd', '--nodaemon', '--pidfile=',
+               'comet', '--verbose',
+               '--local-ivo', 'ivo://ligo.org/gwcelery',
+               '--receive',
+               '--receive-port', author_port,
+               '--author-whitelist', '127.0.0.0/8',
+               '--eventdb', tmpdir]
+        if app.conf['gcn_broker_accept_addresses']:
+            cmd += ['--broadcast',
+                    '--broadcast-port', broadcast_port,
+                    '--broadcast-test-interval', '0']
+            for name in app.conf['gcn_broker_accept_addresses']:
+                cmd += ['--subscriber-whitelist', socket.gethostbyname(name)]
+        subprocess.check_call(cmd)
 
 
 @app.task(ignore_result=True, shared=False)
@@ -122,7 +122,8 @@ def _host_port(address):
     return host, int(port)
 
 
-@app.task(base=EternalProcessTask, shared=False)
+@app.task(base=EternalProcessTask if app.conf['gcn_client_address'] else None,
+          shared=False)
 def listen():
     """Listen to GCN notices forever. GCN notices are dispatched asynchronously
     to tasks that have been registered with
