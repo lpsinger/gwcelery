@@ -86,5 +86,5 @@ def listen(self):
     while not self.is_aborted():
         time.sleep(1)
     log.info('Disconnecting')
-    client.disconnect()
+    client.abort()
     log.info('Exiting')

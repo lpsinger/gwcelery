@@ -42,7 +42,7 @@ def get_active_lvalert_nodes(app):
     client.connect()
     client.process(block=False)
     active = set(client.get_subscriptions())
-    client.abort()
+    client.disconnect()
     return active
 
 
