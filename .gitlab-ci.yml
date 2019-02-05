@@ -182,7 +182,7 @@ pypi:
     ssh -T emfollow@emfollow.ligo.caltech.edu <<EOF
     set -ex
     mkdir -p ${CI_ENVIRONMENT_NAME} && cd ${CI_ENVIRONMENT_NAME}
-    if [ -d .git ]; then git fetch; else git clone ${CI_PROJECT_URL} .
+    if [ -d .git ]; then git fetch; else git clone ${CI_PROJECT_URL} .; fi
     git checkout $CI_COMMIT_SHA
     echo CELERY_BROKER_URL=redis+socket://${PWD}/redis.sock > .env
     echo CELERY_CONFIG_MODULE=gwcelery.conf.${CI_ENVIRONMENT_NAME} >> .env
