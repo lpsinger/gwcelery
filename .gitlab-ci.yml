@@ -173,9 +173,6 @@ pypi:
     - echo 'emfollow.ligo.caltech.edu,131.215.113.150 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBAVKq+Y7sXfJVSEekUyw35FMUHiPgkryogaxMM0bsd2F4ZfXcH4x6HKQ+eByAJV53WeN9p17j+y69sV0/xNwjZc=' >> ~/.ssh/known_hosts
     - echo -e "${ID_RSA}" > ~/.ssh/id_rsa
     - echo "${ID_RSA_PUB}" > ~/.ssh/id_rsa.pub
-    - echo "SENTRY_ORG=${SENTRY_ORG}" > ~/.ssh/environment
-    - echo "SENTRY_URL=${SENTRY_URL}" >> ~/.ssh/environment
-    - echo "SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}" >> ~/.ssh/environment
     - chmod 0600 ~/.ssh/id_rsa ~/.ssh/id_rsa.pub
 
 # Deploy on Caltech cluster
@@ -183,11 +180,11 @@ pypi:
   <<: *deploy-common
   script: |
     ssh -T emfollow@emfollow.ligo.caltech.edu <<EOF
-    set -ex
+    set -e
     mkdir -p ${CI_ENVIRONMENT_NAME} && cd ${CI_ENVIRONMENT_NAME}
     if [ -d .git ]; then git fetch; else git clone ${CI_PROJECT_URL} .; fi
     git checkout $CI_COMMIT_SHA
-    singularity run docker://getsentry/sentry-cli releases set-commits \$(python -c 'from versioneer import get_versions; print(get_versions()["version"])') --auto
+    env SENTRY_ORG="${SENTRY_ORG}" SENTRY_URL="${SENTRY_URL}" singularity run docker://getsentry/sentry-cli releases set-commits \$(python -c 'from versioneer import get_versions; print(get_versions()["version"])') --auto
     echo CELERY_BROKER_URL=redis+socket://\${PWD}/redis.sock > .env
     echo CELERY_CONFIG_MODULE=gwcelery.conf.${CI_ENVIRONMENT_NAME} >> .env
     echo FLOWER_URL_PREFIX=~\${USER}/${CI_ENVIRONMENT_NAME}/flower >> .env
@@ -201,7 +198,7 @@ pypi:
   <<: *deploy-common
   script: |
     ssh -T emfollow@emfollow.ligo.caltech.edu <<EOF
-    set -ex
+    set -e
     cd ${CI_ENVIRONMENT_NAME}
     pipenv run gwcelery condor rm
     EOF
