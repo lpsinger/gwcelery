@@ -50,7 +50,7 @@ def configure():
     username, _, _ = auth
     dsn = urlunparse(
         (scheme, '{}@{}'.format(username, netloc), *rest))
-    version = _version.get_versions()['version']
+    version = 'gwcelery-{}'.format(_version.get_versions()['version'])
     environment = app.conf['sentry_environment']
     sentry_sdk.init(dsn, integrations=[celery.CeleryIntegration()],
                     environment=environment, release=version)
