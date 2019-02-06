@@ -27,7 +27,7 @@ add the following lines to the file ``~/public_html/.htaccess``::
 
 Some additional firewall configuration may be required.
 
-.. image:: _static/screenshot.png
+.. image:: _static/flower-screenshot.png
    :alt: Screenshot of Flower
 
 Command-Line Tools
