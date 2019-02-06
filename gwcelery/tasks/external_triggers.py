@@ -21,8 +21,10 @@ def handle_sn_gcn(payload):
     Prepares the alert to be sent to graceDB as 'E' events."""
     root = etree.fromstring(payload)
 
-    #  Get TrigID
+    #  Get TrigID and Test Event Boolean
     trig_id = root.find("./What/Param[@name='TrigID']").attrib['value']
+    test_event = root.find("./What/Group[@name='Trigger_ID']" +
+                           "/Param[@name='Test']").attrib['value']
 
     event_observatory = 'SNEWS'
     query = 'group: External pipeline: {} grbevent.trigger_id = "{}"'.format(
@@ -34,16 +36,23 @@ def handle_sn_gcn(payload):
         event, = events
         graceid = event['graceid']
         gracedb.replace_event(graceid, payload)
+        return
+
+    elif test_event == 'true':
+        graceid = gracedb.create_event(filecontents=payload,
+                                       search='Supernova',
+                                       group='Test',
+                                       pipeline=event_observatory)
 
     else:
         graceid = gracedb.create_event(filecontents=payload,
                                        search='Supernova',
                                        group='External',
                                        pipeline=event_observatory)
-        event = gracedb.get_event(graceid)
-        start = event['gpstime'] - 10
-        end = start + 10
-        detchar.check_vectors(event, event['graceid'], start, end)
+    event = gracedb.get_event(graceid)
+    start = event['gpstime'] - 10
+    end = start + 10
+    detchar.check_vectors(event, event['graceid'], start, end)
 
 
 @gcn.handler(gcn.NoticeType.FERMI_GBM_ALERT,
@@ -158,7 +167,9 @@ def handle_sn_lvalert(alert):
     # Determine GraceDb ID
     graceid = alert['uid']
 
-    if alert['alert_type'] == 'new' and \
+    if alert['object'].get('group', '') == 'Test':
+        pass
+    elif alert['alert_type'] == 'new' and \
             alert['object'].get('group', '') == 'External':
         raven.coincidence_search(graceid, alert['object'],
                                  group='Burst', pipelines=['SNEWS']).delay()

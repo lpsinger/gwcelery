@@ -26,7 +26,7 @@
     <Param name="Misc_flags"    value="0x353055" />
     <Group name="Trigger_ID" >
       <Param name="SubType"        value="coinc" />
-      <Param name="Test"           value="false" />
+      <Param name="Test"           value="true" />
       <Param name="RADec_valid"    value="false" />
       <Param name="Retraction"     value="false" />
       <Param name="InternalTest"   value="false" />
