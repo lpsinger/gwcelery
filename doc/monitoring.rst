@@ -98,6 +98,9 @@ For details about the Sentry logging configuration, see the
 :mod:`gwcelery.sentry` module or the `Celery integration module`_ in the Sentry
 SDK docs.
 
+.. image:: _static/sentry-screenshot.png
+   :alt: Screenshot of Sentry
+
 .. _Flower: https://flower.readthedocs.io/
 .. _dashboard.ligo.org: https://dashboard.ligo.org/
 .. _monitor.ligo.org: https://monitor.ligo.org/
