@@ -10,3 +10,9 @@ __pycache__
 build
 dist
 htmlcov
+celerybeat-schedule
+*.pid
+*.err
+*.log
+*.out
+.env
