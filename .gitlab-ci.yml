@@ -185,7 +185,7 @@ pypi:
     mkdir -p ${CI_ENVIRONMENT_NAME} && cd ${CI_ENVIRONMENT_NAME}
     if [ -d .git ]; then git fetch; else git clone ${CI_PROJECT_URL} .; fi
     git checkout $CI_COMMIT_SHA
-    env SENTRY_ORG="${SENTRY_ORG}" SENTRY_URL="${SENTRY_URL}" SENTRY_AUTH_TOKEN="SENTRY_AUTH_TOKEN" singularity run docker://getsentry/sentry-cli --log-level=info releases set-commits gwcelery-\$(python -c 'from versioneer import get_versions; print(get_versions()["version"])') --auto
+    env SENTRY_ORG="${SENTRY_ORG}" SENTRY_URL="${SENTRY_URL}" SENTRY_AUTH_TOKEN="${SENTRY_AUTH_TOKEN}" singularity run docker://getsentry/sentry-cli --log-level=info releases set-commits gwcelery-\$(python -c 'from versioneer import get_versions; print(get_versions()["version"])') --auto
     echo CELERY_BROKER_URL=redis+socket://\${PWD}/redis.sock > .env
     echo CELERY_CONFIG_MODULE=gwcelery.conf.${CI_ENVIRONMENT_NAME} >> .env
     echo FLOWER_URL_PREFIX=~\${USER}/${CI_ENVIRONMENT_NAME}/flower >> .env
