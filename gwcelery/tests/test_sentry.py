@@ -37,4 +37,5 @@ def test_sentry_configure(mock_celery_integration, mock_sdk_init,
     mock_celery_integration.assert_called_once_with()
     mock_sdk_init.assert_called_once_with(
         dsn, integrations=[mock_celery_integration.return_value],
-        environment=app.conf['sentry_environment'], release=__version__)
+        environment=app.conf['sentry_environment'],
+        release='gwcelery-' + __version__)
