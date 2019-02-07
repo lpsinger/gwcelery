@@ -187,8 +187,8 @@ pypi:
     git checkout $CI_COMMIT_SHA
     echo CELERY_BROKER_URL=redis+socket://\${PWD}/redis.sock > .env
     echo CELERY_CONFIG_MODULE=gwcelery.conf.${CI_ENVIRONMENT_NAME} >> .env
-    echo FLOWER_URL_PREFIX=~\${USER}/${CI_ENVIRONMENT_NAME}/flower >> .env
-    echo FLASK_URL_PREFIX=~\${USER}/${CI_ENVIRONMENT_NAME}/gwcelery >> .env
+    echo FLOWER_URL_PREFIX=/~\${USER}/${CI_ENVIRONMENT_NAME}/flower >> .env
+    echo FLASK_URL_PREFIX=/~\${USER}/${CI_ENVIRONMENT_NAME}/gwcelery >> .env
     echo FLOWER_PORT=${FLOWER_PORT} >> .env
     echo FLASK_PORT=${FLASK_PORT} >> .env
     pipenv sync
