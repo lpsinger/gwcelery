@@ -531,8 +531,8 @@ def retraction_alert(superevent_id):
     (
         gracedb.expose.s(superevent_id)
         |
-        gracedb.create_voevent.si(
-            superevent_id, 'retraction',
+        _create_voevent.si(
+            None, superevent_id, 'retraction',
             internal=False,
             open_alert=True,
             vetted=True
