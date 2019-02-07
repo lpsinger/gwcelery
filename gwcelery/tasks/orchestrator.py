@@ -440,7 +440,9 @@ def parameter_estimation(event, superevent_id):
 
 
 @app.task(ignore_result=True, shared=False)
-def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None):
+def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None,
+                            source_classification_filename=None,
+                            p_astro_filename=None):
     """
     Create and send initial or update GCN notice.
 
@@ -450,23 +452,46 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None):
         The superevent ID.
     alert_type : {'initial', 'update'}
         The alert type.
-    skymap_filename :str, optional
-        The sky map to send. If None, then most recent public sky map is used.
+    skymap_filename : str, optional
+        The sky map to send.
+        If None, then most recent public sky map is used.
+    source_classification_filename : str, optional
+        The source classification file to use.
+        If None, then most recent one is used.
+    p_astro_filename : str, optional
+        The p_astro file to use.
+        If None, then most recent one is used.
     """
-    if skymap_filename is None:
+    skymap_needed = (skymap_filename is None)
+    source_classification_needed = (source_classification_filename is None)
+    p_astro_needed = (p_astro_filename is None)
+    if skymap_needed or source_classification_needed or p_astro_needed:
         for message in gracedb.get_log(superevent_id):
             t = message['tag_names']
             f = message['filename']
-            if {'sky_loc', 'public'}.issubset(t) and f \
+            if not f:
+                continue
+            if skymap_needed \
+                    and {'sky_loc', 'public'}.issubset(t) \
                     and (f.endswith('.fits') or f.endswith('.fits.gz')):
                 skymap_filename = f
+            if source_classification_needed \
+                    and 'em_bright' in t \
+                    and f.startswith('source_classification') \
+                    and f.endswith('.json'):
+                source_classification_filename = f
+            if p_astro_needed \
+                    and 'em_bright' in t \
+                    and f.startswith('p_astro') \
+                    and f.endswith('.json'):
+                p_astro_filename = f
 
     (
         gracedb.expose.s(superevent_id)
         |
         ordered_group(
-            gracedb.download.si('source_classification.json', superevent_id),
-            gracedb.download.si('p_astro.json', superevent_id)
+            gracedb.download.si(source_classification_filename, superevent_id),
+            gracedb.download.si(p_astro_filename, superevent_id)
         )
         |
         _create_voevent.s(
@@ -489,7 +514,8 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None):
 
 
 @app.task(ignore_result=True, shared=False)
-def initial_alert(superevent_id, skymap_filename=None):
+def initial_alert(superevent_id, skymap_filename=None,
+                  source_classification_filename=None, p_astro_filename=None):
     """Produce an initial alert.
 
     This does nothing more than call
@@ -500,14 +526,23 @@ def initial_alert(superevent_id, skymap_filename=None):
     ----------
     superevent_id : str
         The superevent ID.
-    skymap_filename :str, optional
-        The sky map to send. If None, then most recent public sky map is used.
+    skymap_filename : str, optional
+        The sky map to send.
+        If None, then most recent public sky map is used.
+    source_classification_filename : str, optional
+        The source classification file to use.
+        If None, then most recent one is used.
+    p_astro_filename : str, optional
+        The p_astro file to use.
+        If None, then most recent one is used.
     """
-    initial_or_update_alert(superevent_id, 'initial', skymap_filename)
+    initial_or_update_alert(superevent_id, 'initial', skymap_filename,
+                            source_classification_filename, p_astro_filename)
 
 
 @app.task(ignore_result=True, shared=False)
-def update_alert(superevent_id, skymap_filename=None):
+def update_alert(superevent_id, skymap_filename=None,
+                 source_classification_filename=None, p_astro_filename=None):
     """Produce an update alert.
 
     This does nothing more than call
@@ -518,10 +553,18 @@ def update_alert(superevent_id, skymap_filename=None):
     ----------
     superevent_id : str
         The superevent ID.
-    skymap_filename :str, optional
-        The sky map to send. If None, then most recent public sky map is used.
+    skymap_filename : str, optional
+        The sky map to send.
+        If None, then most recent public sky map is used.
+    source_classification_filename : str, optional
+        The source classification file to use.
+        If None, then most recent one is used.
+    p_astro_filename : str, optional
+        The p_astro file to use.
+        If None, then most recent one is used.
     """
-    initial_or_update_alert(superevent_id, 'update', skymap_filename)
+    initial_or_update_alert(superevent_id, 'update', skymap_filename,
+                            source_classification_filename, p_astro_filename)
 
 
 @app.task(ignore_result=True, shared=False)

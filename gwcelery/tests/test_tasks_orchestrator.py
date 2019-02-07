@@ -168,7 +168,11 @@ def superevent_initial_alert_download(filename, graceid):
 
 @patch('gwcelery.tasks.gracedb.get_log',
        return_value=[{'tag_names': ['sky_loc', 'public'],
-                      'filename': 'foobar.fits.gz'}])
+                      'filename': 'foobar.fits.gz'},
+                     {'tag_names': ['em_bright'],
+                      'filename': 'source_classification.json'},
+                     {'tag_names': ['em_bright'],
+                      'filename': 'p_astro.json'}])
 @patch('gwcelery.tasks.gracedb.create_tag.run')
 @patch('gwcelery.tasks.gracedb.create_voevent.run',
        return_value='S1234-Initial-1.xml')
