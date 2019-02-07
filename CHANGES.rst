@@ -24,6 +24,9 @@ Changelog
 -   Add a Flask-based web interface for manually triggering certain tasks such
     as sending updated GCN notices.
 
+-   Add functionalities to determine psdstart and psdlength depending on length
+    of available data and data quality in Parameter Estimation
+
 0.2.5 (2018-02-01)
 ------------------
 

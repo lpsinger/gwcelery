@@ -152,17 +152,30 @@ p_astro_gstlal_ln_likelihood_threshold = 6
 
 p_astro_gstlal_ranking_pdf = '/home/gstlalcbc/observing/3/online/trigs/rankingstat_pdf.xml.gz'  # noqa: E501
 
-frame_types = {'H1': 'H1_O2_llhoft',
-               'L1': 'L1_O2_llhoft',
-               'V1': 'V1_O2_llhoft'}
+low_latency_frame_types = {'H1': 'H1_O2_llhoft',
+                           'L1': 'L1_O2_llhoft',
+                           'V1': 'V1_O2_llhoft'}
 """Types of frames used in Parameter Estimation with LALInference (see
 :mod:`gwcelery.tasks.lalinference`)"""
 
-channel_names = {'H1': 'H1:GDS-CALIB_STRAIN_O2Replay',
-                 'L1': 'L1:GDS-CALIB_STRAIN_O2Replay',
-                 'V1': 'V1:Hrec_hoft_16384Hz_O2Replay'}
+high_latency_frame_types = {'H1': 'None',
+                            'L1': 'None',
+                            'V1': 'None'}
+"""Types of nonllhoft-frames used in Parameter Estimation with LALInference.
+They do not exist for O2Replay data. (see
+:mod:`gwcelery.tasks.lalinference`)"""
+
+strain_channel_names = {'H1': 'H1:GDS-CALIB_STRAIN_O2Replay',
+                        'L1': 'L1:GDS-CALIB_STRAIN_O2Replay',
+                        'V1': 'V1:Hrec_hoft_16384Hz_O2Replay'}
 """Names of h(t) channels used in Parameter Estimation with LALInference (see
 :mod:`gwcelery.tasks.lalinference`)"""
+
+state_vector_channel_names = {'H1': 'H1:GDS-CALIB_STATE_VECTOR',
+                              'L1': 'L1:GDS-CALIB_STATE_VECTOR',
+                              'V1': 'V1:DQ_ANALYSIS_STATE_VECTOR'}
+"""Names of state vector channels used in Parameter Estimation with
+LALInference (see :mod:`gwcelery.tasks.lalinference`)"""
 
 pe_threshold = 1.0 / (14 * 86400)
 """FAR threshold in Hz for Parameter Estimation. PE group now applies

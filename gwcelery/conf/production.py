@@ -26,16 +26,21 @@ Once we switch to sending public alerts exclusively, then we can switch
 back to using port 8099 for anonymous access, requiring no prior site
 configuration."""
 
-
-frame_types = {'H1': 'H1_llhoft',
-               'L1': 'L1_llhoft',
-               'V1': 'V1_llhoft'}
+low_latency_frame_types = {'H1': 'H1_llhoft',
+                           'L1': 'L1_llhoft',
+                           'V1': 'V1_llhoft'}
 """Types of frames used in Parameter Estimation with LALInference (see
 :mod:`gwcelery.tasks.lalinference`)"""
 
-channel_names = {'H1': 'H1:GDS-CALIB_STRAIN',
-                 'L1': 'L1:GDS-CALIB_STRAIN',
-                 'V1': 'V1:Hrec_hoft_16384Hz'}
+high_latency_frame_types = {'H1': 'H1_HOFT_C00',
+                            'L1': 'L1_HOFT_C00',
+                            'V1': 'V1Online'}
+"""Types of nonllhoft-frames used in Parameter Estimation with LALInference
+(see :mod:`gwcelery.tasks.lalinference`)"""
+
+strain_channel_names = {'H1': 'H1:GDS-CALIB_STRAIN',
+                        'L1': 'L1:GDS-CALIB_STRAIN',
+                        'V1': 'V1:Hrec_hoft_16384Hz'}
 """Names of h(t) channels used in Parameter Estimation with LALInference (see
 :mod:`gwcelery.tasks.lalinference`)"""
 
