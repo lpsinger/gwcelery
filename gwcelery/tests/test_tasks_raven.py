@@ -7,6 +7,27 @@ from ..tasks import gracedb, raven
 
 
 @pytest.mark.parametrize(
+    'group,gracedb_id,pipelines,tl,th',
+    [['CBC', 'S1', ['Fermi', 'Swift'], -1, 5], ['CBC', 'E1', [], -5, 1],
+     ['Burst', 'S2', ['Fermi', 'Swift'], -60, 600],
+     ['Burst', 'E2', [], -600, 60], ['Burst', 'S3', ['SNEWS'], -10, 10],
+     ['Burst', 'E3', ['SNEWS'], -10, 10]])
+@patch('gwcelery.tasks.raven.add_exttrig_to_superevent.run')
+@patch('gwcelery.tasks.raven.search.run')
+def test_coincidence_search(mock_search, mock_add_exttrig_to_superevent,
+                            group, gracedb_id, pipelines, tl, th):
+    """Test that correct time windows are used for each RAVEN search."""
+    alert_object = {'superevent_id': gracedb_id}
+
+    raven.coincidence_search(gracedb_id, alert_object, group,
+                             pipelines).delay()
+
+    mock_search.assert_called_once_with(
+        gracedb_id, alert_object, tl, th, group, pipelines)
+    mock_add_exttrig_to_superevent.assert_called_once()
+
+
+@pytest.mark.parametrize(
     'event_type,event_id', [['SE', 'S1234'], ['ExtTrig', 'E1234']])
 @patch('ligo.raven.gracedb_events.ExtTrig')
 @patch('ligo.raven.gracedb_events.SE')
@@ -120,13 +141,3 @@ def test_calc_signif_skymaps(
 
     mock_raven_calc_signif.assert_called_once_with(
         se, exttrig, tl, th, incl_sky=True)
-
-
-@pytest.mark.parametrize('graceid,group', [['E1', 'CBC'], ['S1', 'CBC'],
-                                           ['E1', 'Burst'], ['S1', 'Burst']])
-@patch('gwcelery.tasks.raven.search')
-@patch('gwcelery.tasks.raven.add_exttrig_to_superevent')
-def test_coincidence_search(mock_add_exttrig, mock_raven_search,
-                            graceid, group):
-    raven.coincidence_search(graceid, {'superevent_id': graceid},
-                             group).delay().get()

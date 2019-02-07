@@ -102,7 +102,7 @@ def coincidence_search(gracedb_id, alert_object, group=None, pipelines=[]):
     """
     if 'SNEWS' in pipelines:
         tl, th = -10, 10
-    if group == 'CBC' and gracedb_id.startswith('E'):
+    elif group == 'CBC' and gracedb_id.startswith('E'):
         tl, th = tl_cbc, th_cbc
     elif group == 'CBC' and gracedb_id.startswith('S'):
         tl, th = -th_cbc, -tl_cbc
@@ -114,8 +114,7 @@ def coincidence_search(gracedb_id, alert_object, group=None, pipelines=[]):
         raise ValueError('Invalid RAVEN search request for {0}'.format(
             gracedb_id))
     return (
-        search.s(gracedb_id, alert_object, tl, th, group=group,
-                 pipelines=pipelines)
+        search.s(gracedb_id, alert_object, tl, th, group, pipelines)
         |
         add_exttrig_to_superevent.s(gracedb_id)
     )
