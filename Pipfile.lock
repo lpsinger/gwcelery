@@ -263,10 +263,10 @@
         },
         "gwpy": {
             "hashes": [
-                "sha256:29ad64b1a79386e274b967e3f405ee05d806b303f38d1c6312ed15a44a103fd6",
-                "sha256:d7417f5f7a1cb6e6a0e8f476335a73ac6fdab2bd9ae95f93b26341275183e863"
+                "sha256:0b939629deb6eaea8d60cbe1faf242ddcc445e99392697e03fe7a37d80d798d6",
+                "sha256:3da53fb6da72cae31b172093be90bc528109aa471f6b94507d74dd6a087fb930"
             ],
-            "version": "==0.13.0"
+            "version": "==0.13.1"
         },
         "h5py": {
             "hashes": [
@@ -414,10 +414,10 @@
         },
         "kombu": {
             "hashes": [
-                "sha256:1ef049243aa05f29e988ab33444ec7f514375540eaa8e0b2e1f5255e81c5e56d",
-                "sha256:3c9dca2338c5d893f30c151f5d29bfb81196748ab426d33c362ab51f1e8dbf78"
+                "sha256:529df9e0ecc0bad9fc2b376c3ce4796c41b482cf697b78b71aea6ebe7ca353c8",
+                "sha256:7a2cbed551103db9a4e2efafe9b63222e012a61a18a881160ad797b9d4e1d0a1"
             ],
-            "version": "==4.2.2.post1"
+            "version": "==4.3.0"
         },
         "lalsuite": {
             "hashes": [
@@ -634,10 +634,10 @@
         },
         "parso": {
             "hashes": [
-                "sha256:4b8f9ed80c3a4a3191aa3261505d868aa552dd25649cb13a7d73b6b7315edf2d",
-                "sha256:5a120be2e8863993b597f1c0437efca799e90e0793c98ae5d4e34ebd00140e31"
+                "sha256:6ecf7244be8e7283ec9009c72d074830e7e0e611c974f813d76db0390a4e0dd6",
+                "sha256:8162be7570ffb34ec0b8d215d7f3b6c5fab24f51eb3886d6dee362de96b6db94"
             ],
-            "version": "==0.3.2"
+            "version": "==0.3.3"
         },
         "pexpect": {
             "hashes": [
@@ -862,10 +862,10 @@
         },
         "sentry-sdk": {
             "hashes": [
-                "sha256:073180ac7ebbf1168d86dcc0b684ecb62c0353481d0b606d4c42da63d91de219",
-                "sha256:8154c8db60004f2d934b5b561383b1ab0a9c2f4b951e7d9fda9788f055acce3f"
+                "sha256:131e3b9ac11dffd86fe4f1f5d388d3dab372fc9e30d6611d1fc87096a1d67359",
+                "sha256:e925a2363178c211ad787f507cedda12ee5b0aadf5ac390950140393636a80bb"
             ],
-            "version": "==0.7.0"
+            "version": "==0.7.2"
         },
         "service-identity": {
             "hashes": [
