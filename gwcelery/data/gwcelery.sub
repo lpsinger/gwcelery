@@ -50,7 +50,7 @@ log = gwcelery-superevent-worker.log
 output = gwcelery-superevent-worker.out
 queue
 
-arguments = "gwcelery flask run --with-threads"
+arguments = "gwcelery flask run --with-threads --host 0.0.0.0"
 description = gwcelery-flask
 error = gwcelery-flask.err
 log = gwcelery-flask.log
