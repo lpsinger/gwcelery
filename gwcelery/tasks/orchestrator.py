@@ -132,7 +132,7 @@ def handle_cbc_event(alert):
             |
             gracedb.upload.s(
                 'p_astro.json', graceid,
-                'p_astro computation complete'
+                'p_astro computation complete', ['p_astro', 'public']
             )
             |
             gracedb.create_label.si('PASTRO_READY', graceid)
@@ -183,7 +183,7 @@ def handle_cbc_event(alert):
             |
             gracedb.upload.s(
                 'p_astro.json', graceid,
-                'p_astro computation complete'
+                'p_astro computation complete', ['p_astro', 'public']
             )
             |
             gracedb.create_label.si('PASTRO_READY', graceid)
@@ -367,7 +367,7 @@ def preliminary_alert(event, superevent_id):
                 superevent_id,
                 message='Source classification copied from {}'.format(
                     preferred_event_id),
-                tags=['em_bright', 'public']
+                tags=['p_astro', 'public']
             )
             |
             gracedb.create_label.si('PASTRO_READY', superevent_id)
@@ -477,12 +477,10 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None,
                 skymap_filename = f
             if source_classification_needed \
                     and 'em_bright' in t \
-                    and f.startswith('source_classification') \
                     and f.endswith('.json'):
                 source_classification_filename = f
             if p_astro_needed \
-                    and 'em_bright' in t \
-                    and f.startswith('p_astro') \
+                    and 'p_astro' in t \
                     and f.endswith('.json'):
                 p_astro_filename = f
 

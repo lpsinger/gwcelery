@@ -171,7 +171,7 @@ def superevent_initial_alert_download(filename, graceid):
                       'filename': 'foobar.fits.gz'},
                      {'tag_names': ['em_bright'],
                       'filename': 'source_classification.json'},
-                     {'tag_names': ['em_bright'],
+                     {'tag_names': ['p_astro'],
                       'filename': 'p_astro.json'}])
 @patch('gwcelery.tasks.gracedb.create_tag.run')
 @patch('gwcelery.tasks.gracedb.create_voevent.run',
