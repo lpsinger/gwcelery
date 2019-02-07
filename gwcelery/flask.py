@@ -36,11 +36,12 @@ class ReverseProxied(object):
 
     :param app: the WSGI application
     '''
-    def __init__(self, app):
+    def __init__(self, app, script_name=None):
         self.app = app
+        self.script_name = script_name
 
     def __call__(self, environ, start_response):
-        script_name = environ.get('HTTP_X_SCRIPT_NAME', '')
+        script_name = environ.get('HTTP_X_SCRIPT_NAME', '') or self.script_name
         if script_name:
             environ['SCRIPT_NAME'] = script_name
             path_info = environ['PATH_INFO']
@@ -55,6 +56,7 @@ class ReverseProxied(object):
 
 app = Flask(__name__)
 app.wsgi_app = ReverseProxied(app.wsgi_app)
+app.wsgi_app.script_name = os.environ.get('FLASK_URL_PREFIX')
 
 # Default secret key: secure and random. However, sessions are not preserved
 # across different Python processes.
