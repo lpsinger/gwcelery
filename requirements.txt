@@ -22,7 +22,7 @@ pygcn >= 0.1.16
 pytest >= 3.0
 redis
 safe-netrc
-sentry-sdk
+sentry-sdk[flask]
 service_identity  # We don't actually use this package, but it silences some annoying warnings from twistd.
 sleek-lvalert >= 0.0.4
 voeventlib >= 1.2

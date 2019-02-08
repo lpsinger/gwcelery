@@ -113,6 +113,12 @@
             ],
             "version": "==3.5.0.5"
         },
+        "blinker": {
+            "hashes": [
+                "sha256:471aee25f3992bd325afa3772f1063dbdbbca947a041b8b89466dc00d606f8b6"
+            ],
+            "version": "==1.4"
+        },
         "celery": {
             "extras": [
                 "redis"
@@ -889,6 +895,9 @@
             "version": "==0.9.0"
         },
         "sentry-sdk": {
+            "extras": [
+                "flask"
+            ],
             "hashes": [
                 "sha256:131e3b9ac11dffd86fe4f1f5d388d3dab372fc9e30d6611d1fc87096a1d67359",
                 "sha256:e925a2363178c211ad787f507cedda12ee5b0aadf5ac390950140393636a80bb"
