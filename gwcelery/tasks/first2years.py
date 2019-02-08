@@ -112,13 +112,14 @@ def pick_coinc():
 
 @app.task(shared=False)
 def _vet_event(superevents):
-    gracedb.create_signoff.s(
-        random.choice(['NO', 'OK']),
-        'If this had been a real gravitational-wave event candidate, '
-        'then an on-duty scientist would have left a comment here on '
-        'data quality and the status of the detectors.',
-        'ADV', superevents[0]['superevent_id']
-    ).apply_async()
+    if superevents:
+        gracedb.create_signoff.s(
+            random.choice(['NO', 'OK']),
+            'If this had been a real gravitational-wave event candidate, '
+            'then an on-duty scientist would have left a comment here on '
+            'data quality and the status of the detectors.',
+            'ADV', superevents[0]['superevent_id']
+        ).apply_async()
 
 
 @app.task(base=PeriodicTask, shared=False, run_every=3600)
