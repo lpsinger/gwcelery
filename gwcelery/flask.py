@@ -91,7 +91,7 @@ typeahead_graceid_regex = re.compile(
 
 
 @app.route('/typeahead_superevent_id')
-@cache.cached()
+@cache.cached(query_string=True)
 def typeahead_superevent_id():
     """Search GraceDb for superevents by ID.
 
@@ -171,7 +171,7 @@ def _search_by_tag_and_filename(superevent_id, filename, extension, tag):
 
 
 @app.route('/typeahead_skymap_filename')
-@cache.cached()
+@cache.cached(query_string=True)
 def typeahead_skymap_filename():
     return jsonify(_search_by_tag_and_filename(
         request.args.get('superevent_id') or '',
@@ -181,7 +181,7 @@ def typeahead_skymap_filename():
 
 
 @app.route('/typeahead_source_classification_filename')
-@cache.cached()
+@cache.cached(query_string=True)
 def typeahead_source_classification_filename():
     return jsonify(_search_by_tag_and_filename(
         request.args.get('superevent_id') or '',
@@ -191,7 +191,7 @@ def typeahead_source_classification_filename():
 
 
 @app.route('/typeahead_p_astro_filename')
-@cache.cached()
+@cache.cached(query_string=True)
 def typeahead_p_astro_filename():
     return jsonify(_search_by_tag_and_filename(
         request.args.get('superevent_id') or '',
