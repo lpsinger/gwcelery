@@ -96,7 +96,9 @@ def test_typeahead_skymap_filename_gracedb_error_non_404(client, monkeypatch):
     ('typeahead_source_classification_filename', 'em_bright'),
     ('typeahead_p_astro_filename', 'p_astro')
 ])
-def test_typeahead(endpoint, tag, client, monkeypatch):
+def test_typeahead_source_classification_and_p_astro(
+        endpoint, tag, client, monkeypatch):
+    """Test typeahead filtering for source_classification and p_astro files."""
     mock_logs = Mock()
     mock_logs.configure_mock(**{'return_value.json.return_value': {'log': [
         {'filename': 'foobar.txt', 'tag_names': [tag]},
