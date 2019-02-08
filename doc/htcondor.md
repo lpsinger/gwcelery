@@ -11,8 +11,8 @@ a directory where you want these files to go. For example:
 Then run the submit file as follows:
 
     $ gwcelery.sub
-    Submitting job(s)......
-    6 job(s) submitted to cluster 293497.
+    Submitting job(s)........
+    8 job(s) submitted to cluster 293497.
 
 To stop GWCelery, run the `condor_hold` command:
 
