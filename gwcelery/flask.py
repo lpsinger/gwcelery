@@ -15,7 +15,7 @@ from flask.cli import FlaskGroup
 from ligo.gracedb.rest import HTTPError as GraceDbHTTPError
 
 from . import app as celery_app
-from .tasks import gracedb, orchestrator
+from .tasks import first2years, gracedb, orchestrator
 
 
 # from http://flask.pocoo.org/snippets/35/
@@ -212,6 +212,13 @@ def send_update_gcn():
         flash('Queued update alert for {}.'.format(superevent_id), 'success')
     else:
         flash('No alert sent. Please fill in all fields.', 'danger')
+    return redirect(url_for('index'))
+
+
+@app.route('/send_mock_event', methods=['POST'])
+def send_mock_event():
+    first2years.upload_event.delay()
+    flash('Queued a mock event.', 'success')
     return redirect(url_for('index'))
 
 

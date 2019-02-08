@@ -16,7 +16,7 @@
             {% endfor %}
         {% endif %}
     {% endwith %}
-    <div class=card>
+    <div class="card mb-3">
         <div class=card-header>
             Issue Update GCN Notice
         </div>
@@ -41,6 +41,26 @@
                     </div>
                     <div class="form-group col-md">
                         <label for=submit class=w-100>&nbsp;</label>
+                        <button type=submit id=submit class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="card mb-3">
+        <div class=card-header>
+            Issue Mock Event
+        </div>
+        <div class=card-body>
+            <form method=post action="{{ url_for('send_mock_event') }}">
+                <div class=form-row>
+                    <div class=form-group>
+                        <div class=form-text>Issue a mock event selected at random from <a href="https://www.ligo.org/scientists/first2years/">First Two Years</a>.</div>
+                        <small class="form-text text-muted">Mock events are created at fixed times of day by finding the event with the most recent sidereal time. If another mock event has recently been sent, then a manually issued mock event may be grouped with an existing superevent and not trigger any new GCNs.</small>
+                    </div>
+                </div>
+                <div class=form-row>
+                    <div class=form-group>
                         <button type=submit id=submit class="btn btn-primary">Submit</button>
                     </div>
                 </div>
