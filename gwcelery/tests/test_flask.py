@@ -1,3 +1,4 @@
+import datetime
 from unittest.mock import Mock
 
 from flask import get_flashed_messages, url_for
@@ -65,6 +66,26 @@ def test_send_update_gcn_post(client, monkeypatch):
     mock_update_alert.assert_called_once_with(
         'MS190208a', 'bayestar.fits.gz',
         'source_classification.json', 'p_astro.json')
+
+
+def test_typeahead_superevent_id(client, monkeypatch):
+    """Test typeahead filtering for superevent_id."""
+    mock_superevents = Mock(return_value=(
+        {
+            'superevent_id': (
+                datetime.date(2019, 2, 1) + datetime.timedelta(i)
+            ).strftime('MS%y%m%da')
+        } for i in range(31)))
+    monkeypatch.setattr(
+        'gwcelery.tasks.gracedb.client.superevents', mock_superevents)
+
+    response = client.get(
+        url_for('typeahead_superevent_id', superevent_id='MS1902'))
+
+    assert HTTP_STATUS_CODES[response.status_code] == 'OK'
+    assert response.json == [
+        'MS190201a', 'MS190202a', 'MS190203a', 'MS190204a', 'MS190205a',
+        'MS190206a', 'MS190207a', 'MS190208a']
 
 
 def test_typeahead_skymap_filename_gracedb_error_404(client, monkeypatch):
