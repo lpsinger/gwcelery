@@ -67,7 +67,7 @@ def test_send_update_gcn_post(client, monkeypatch):
         'source_classification.json', 'p_astro.json')
 
 
-def test_typeahead_skymap_filename_gracedb_404(client, monkeypatch):
+def test_typeahead_skymap_filename_gracedb_error_404(client, monkeypatch):
     """Test that the typeahead endpoints return an empty list if GraceDb
     returns a 404 error."""
     monkeypatch.setattr('gwcelery.tasks.gracedb.client.logs',
@@ -78,6 +78,18 @@ def test_typeahead_skymap_filename_gracedb_404(client, monkeypatch):
 
     assert HTTP_STATUS_CODES[response.status_code] == 'OK'
     assert response.json == []
+
+
+def test_typeahead_skymap_filename_gracedb_error_non_404(client, monkeypatch):
+    """Test that the typeahead raises an internal error if GraceDb
+    returns an error other than 404."""
+    monkeypatch.setattr('gwcelery.tasks.gracedb.client.logs',
+                        Mock(side_effect=GraceDbHTTPError(403, None, None)))
+
+    response = client.get(
+        url_for('typeahead_skymap_filename', superevent_id='MS190208a'))
+
+    assert HTTP_STATUS_CODES[response.status_code] == 'Internal Server Error'
 
 
 @pytest.mark.parametrize('endpoint,tag', [
