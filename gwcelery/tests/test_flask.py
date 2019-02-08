@@ -88,6 +88,21 @@ def test_typeahead_superevent_id(client, monkeypatch):
         'MS190206a', 'MS190207a', 'MS190208a']
 
 
+def test_typeahead_superevent_id_invalid_date(client, monkeypatch):
+    """Test typeahead filtering for superevent_id when the search term contains
+    an invalid date fragment."""
+    mock_superevents = Mock()
+    monkeypatch.setattr(
+        'gwcelery.tasks.gracedb.client.superevents', mock_superevents)
+
+    response = client.get(
+        url_for('typeahead_superevent_id', superevent_id='MS190235'))
+
+    mock_superevents.assert_not_called()
+    assert HTTP_STATUS_CODES[response.status_code] == 'OK'
+    assert response.json == []
+
+
 def test_typeahead_skymap_filename_gracedb_error_404(client, monkeypatch):
     """Test that the typeahead endpoints return an empty list if GraceDb
     returns a 404 error."""
