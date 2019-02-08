@@ -1,2 +1,3 @@
+pytest-flask
 pytest-runner
 pytest-socket
