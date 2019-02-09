@@ -273,6 +273,11 @@ of several processes:
 
     A Celery worker that accepts all other tasks.
 
+8.  **Flask Web Application**
+
+    A web application that provides forms to manually initiate certain tasks,
+    including sending an update alert or creating a mock event.
+
 Eternal tasks
 -------------
 
