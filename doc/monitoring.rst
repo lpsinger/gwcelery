@@ -70,17 +70,6 @@ add the following lines to the file ``~/public_html/.htaccess``::
 .. image:: _static/flask-screenshot.png
    :alt: Screenshot of Flask web application
 
-Celery events
--------------
-
-Celery has a built-in `Curses-based monitoring tool`_ that can be started from the
-command line::
-
-    $ gwcelery events
-
-.. image:: _static/celeryevent-screenshot.png
-   :alt: Screenshot of celeryevent text UI monitor
-
 Nagios
 ------
 
@@ -137,8 +126,15 @@ utilities <celery:monitoring-control>`, including the following:
          ...
          b'\t</Stream>\n\t</Table>\n</LIGO_LW>\n')
 
+*   ``gwcelery events``: A text UI monitoring tool that offers functionality
+    similar to Flower. Example::
+
+        $ gwcelery events
+
+    .. image:: _static/celeryevent-screenshot.png
+       :alt: Screenshot of celeryevent text UI monitor
+
 .. _Flower: https://flower.readthedocs.io/
-.. _`Curses-based monitoring tool`: http://docs.celeryproject.org/en/latest/userguide/monitoring.html#celery-events-curses-monitor
 .. _dashboard.ligo.org: https://dashboard.ligo.org/
 .. _monitor.ligo.org: https://monitor.ligo.org/
 .. _Nagios: https://www.nagios.com
