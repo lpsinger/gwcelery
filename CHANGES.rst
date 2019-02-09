@@ -1,18 +1,21 @@
-# Changelog
+Changelog
+=========
 
-## 0.2.6 (unreleased)
+0.2.6 (unreleased)
+------------------
 
 -   Temporarily revert change to exclude Mollweide projection PNG file in
     VOEvents. The GraceDb server has not yet been updated for this change.
 
 -   Report an environment tag to Sentry corresponding to the GWCelery
-    configuration module (`production`, `test`, `playground`, or `development`)
-    in order to differentiate log messages from different deployments.
+    configuration module (``production``, ``test``, ``playground``, or
+    ``development``) in order to differentiate log messages from different
+    deployments.
 
--   The 'gwcelery condor' command now identifies jobs that it owns by matching
-    both the job batch name and the working directory. This makes it possible
-    to run multiple isolated instances of GWCelery under HTCondor on the same
-    cluster in different working directories.
+-   The ``gwcelery condor`` command now identifies jobs that it owns by
+    matching both the job batch name and the working directory. This makes it
+    possible to run multiple isolated instances of GWCelery under HTCondor on
+    the same cluster in different working directories.
 
 -   Update criteria for starting Parameter Estimation. ini file for PE is
     uploaded to every superevent and PE is performed for superevents which have
@@ -21,14 +24,15 @@
 -   Add a Flask-based web interface for manually triggering certain tasks such
     as sending updated GCN notices.
 
-## 0.2.5 (2018-02-01)
+0.2.5 (2018-02-01)
+------------------
 
 -   Pass along the GWCelery version number to Sentry.
 
 -   Upload stdout and stderr when dag creation fails and notifications when
     submitted job fails in Parameter Estimation
 
--   Allow detchar module's `create_cache` to use gwdatafind when frames
+-   Allow detchar module's ``create_cache`` to use gwdatafind when frames
     are no longer in llhoft.
 
 -   The Nagios monitoring plugin will now report on the status of LVAlert
@@ -41,7 +45,8 @@
 -   Automatically set up PE ini file depending on source parameters
     reported by detection pipelines.
 
-## 0.2.4 (2018-12-17)
+0.2.4 (2018-12-17)
+------------------
 
 -   Fix broken links in log messages due to changes in GraceDb URL routes.
 
@@ -55,12 +60,13 @@
 -   Preliminary GCN FAR threshold is modified to be group (CBC, Burst, Test)
     specific.
 
-## 0.2.3 (2018-12-16)
+0.2.3 (2018-12-16)
+------------------
 
 -   Update frame type used in LALInference Parameter Estimation.
 
--   Handle cases where `p_astro_gstlal.compute_p_astro` returns NaNs by falling
-    back to `p_astro_other.compute_p_astro`.
+-   Handle cases where ``p_astro_gstlal.compute_p_astro`` returns NaNs by
+    falling back to ``p_astro_other.compute_p_astro``.
 
 -   Fix a bug that prevented annotations that are specific to 3D sky maps from
     being performed for multi-resolution FITS files.
@@ -69,15 +75,18 @@
     since superevent packet does not provide information as to which
     event is added in case of type event_added.
 
-## 0.2.2 (2018-12-14)
+0.2.2 (2018-12-14)
+------------------
 
 -   Add error handling for nonexistent iDQ frames in detchar module.
 
-## 0.2.1 (2018-12-14)
+0.2.1 (2018-12-14)
+------------------
 
 -   Update detchar module configuration for ER13.
 
-## 0.2.0 (2018-12-14)
+0.2.0 (2018-12-14)
+------------------
 
 -   This is the release of GWCelery for ER13.
 
@@ -88,21 +97,21 @@
 -   Fix a race condition that could cause preliminary alerts to be sent out for
     events for which data quality checks had failed.
 
--   Unpin the `redis` package version because recent updates to Kombu and
+-   Unpin the ``redis`` package version because recent updates to Kombu and
     Billiard seem to have fixed the Nagios unit tests.
 
 -   Start the Comet VOEvent broker as a subprocess intead of using
-    `multiprocessing` and go back to using PyGCN instead of Comet as the
+    ``multiprocessing`` and go back to using PyGCN instead of Comet as the
     VOEvent client. This is a workaround for suspected instability due to a bad
-    interaction between `redis-py` and `multiprocessing`.
+    interaction between ``redis-py`` and ``multiprocessing``.
 
--   Reset Matplotlib's style before running `ligo-skymap-plot` and
-    `ligo-skymap-plot-volume`. There is some other module (probably in
+-   Reset Matplotlib's style before running ``ligo-skymap-plot`` and
+    ``ligo-skymap-plot-volume``. There is some other module (probably in
     LALSuite) that is messing with the rcparams at module scope, which was
     causing Mollweide plots to come out with unusual aspect ratios.
 
--   Run `check_vectors` upon addition of an event to a superevent if the
-    superevent already has an `DQV` label.
+-   Run ``check_vectors`` upon addition of an event to a superevent if the
+    superevent already has an ``DQV`` label.
 
 -   Do not check the DMT-DQ_VECTOR for pipelines which use gated h(t).
 
@@ -115,32 +124,35 @@
 
 -   Enable public GraceDb entries and public GCNs for mock (MDC) events. For
     **real** events in ER13, disable public preliminary GCNs. Instead, advocate
-    signoffs will trigger making events and GCN notices public: `ADVOK` for
-    initial notices and `ADVNO` for retraction notices.
+    signoffs will trigger making events and GCN notices public: ``ADVOK`` for
+    initial notices and ``ADVNO`` for retraction notices.
 
 -   Include source classification output (BNS/NSBH/BBH/Terrestrial) in GCN
     Notices.
 
-## 0.1.7 (2018-11-27)
+0.1.7 (2018-11-27)
+------------------
 
--   Pin the `redis` package version at <3 because the latest version of redis
+-   Pin the ``redis`` package version at <3 because the latest version of redis
     breaks the Nagios unit tests.
 
 -   Ditch our own homebrew VOEvent broker and use Comet instead.
 
 -   In addition to traditional flat, fixed-nside sky maps, BAYESTAR will now
     also upload an experimental multiresolution format described in
-    [LIGO-G1800186-v4](https://dcc.ligo.org/LIGO-G1800186-v4/public).
+    `LIGO-G1800186-v4 <https://dcc.ligo.org/LIGO-G1800186-v4/public>`_.
 
-## 0.1.6 (2018-11-14)
+0.1.6 (2018-11-14)
+------------------
 
 -   Update URL for static example event.
 
-## 0.1.5 (2018-11-13)
+0.1.5 (2018-11-13)
+------------------
 
 -   Add tasks for submitting HTCondor DAGs.
 
--   Add a new module, `gwcelery.tasks.lalinference`, which provides tasks to
+-   Add a new module, ``gwcelery.tasks.lalinference``, which provides tasks to
     start parameter estimation with LALInference and upload the results to
     GraceDB.
 
@@ -158,14 +170,15 @@
     original VOEvents from GraceDb byte-for-byte, since GCN will now pass
     through our VOEvents without modification.
 
-## 0.1.4 (2018-10-29)
+0.1.4 (2018-10-29)
+------------------
 
 -   Work around a bug in astropy.visualization.wcsaxes that affected all-sky
-    plots when Matplotlib's `text.usetex` rcparam is set to `True`
+    plots when Matplotlib's ``text.usetex`` rcparam is set to ``True``
     (https://github.com/astropy/astropy/issues/8004). This bug has evidently
     been present since at least astropy 1.3, but was not being triggered until
     recently: it is likely that some other package that we import
-    (e.g. lalsuite) is now globally setting `text.usetex` to `True`.
+    (e.g. lalsuite) is now globally setting ``text.usetex`` to ``True``.
 
 -   A try except is added around updateSuperevent to handle a bad
     request error from server side when updating superevent parameters
@@ -173,19 +186,20 @@
 
 -   Send automatic preliminary alerts only for events with a false alarm rate
     below a maximum value specified by a new configuration variable,
-    `preliminary_alert_far_threshold`.
+    ``preliminary_alert_far_threshold``.
 
 -   State vector vetoes will not suppress processing of preliminary sky maps
     and source classification. They will still suppress sending preliminary
     alerts.
 
--   Set `open_alert` to `True` for all automated VOEvents.
+-   Set ``open_alert`` to ``True`` for all automated VOEvents.
 
-## 0.1.3 (2018-10-26)
+0.1.3 (2018-10-26)
+------------------
 
 -   Preliminary GCN is not sent for superevents created from offline gw events.
 
--   Add `dqr_json` function to `gwcelery.tasks.detchar`, which uploads a 
+-   Add ``dqr_json`` function to ``gwcelery.tasks.detchar``, which uploads a 
     DQR-compatible json to GraceDb with the results of the detchar checks.
 
 -   Depend on ligo.skymap >= 0.0.17.
@@ -193,35 +207,37 @@
 -   Fix a bug in sending initial, update, and retraction GCN notices: we were
     sending the VOEvent filenames instead of the file contents.
 
-## 0.1.2 (2018-10-11)
+0.1.2 (2018-10-11)
+------------------
 
--   Setted `vetted` flag to true for all initial, update, and retraction alerts
-    that are triggered by GraceDb signoffs.
+-   Setted ``vetted`` flag to true for all initial, update, and retraction
+    alerts that are triggered by GraceDb signoffs.
 
 -   Write GraceDb signoffs, instead of just labels, to simulate initial and
-    retraction alerts for mock events, because merely creating the `ADVNO`
-    or `ADVOK` label does not cause GraceDb to erase the `ADVREQ` label. This
-    change makes mock alerts more realistic.
+    retraction alerts for mock events, because merely creating the ``ADVNO``
+    or ``ADVOK`` label does not cause GraceDb to erase the ``ADVREQ`` label.
+    This change makes mock alerts more realistic.
 
--   Change filename of cWB sky maps from `skyprobcc_cWB.fits` to
-    `cWB.fits.gz` for consistency with other pipelines.
+-   Change filename of cWB sky maps from ``skyprobcc_cWB.fits`` to
+    ``cWB.fits.gz`` for consistency with other pipelines.
 
 -   Any time that we send a VOEvent, first change the GraceDb permissions on
     the corresponding superevent so that it is visible to the public. Note that
     this has no effect during the ongoing software engineering runs because
     LVEM and unauthenticated access are currently disabled in GraceDb.
 
-## 0.1.1 (2018-10-04)
+0.1.1 (2018-10-04)
+------------------
 
--   Use the `public` tag instead of the `lvem` tag to mark preliminary sky maps
-    for public access rather than LV-EM partner access. Note that GraceDb has
-    not yet actually implemented unauthenticated access, so this should have no
-    effect during our ongoing software engineering runs.
+-   Use the ``public`` tag instead of the ``lvem`` tag to mark preliminary sky
+    maps for public access rather than LV-EM partner access. Note that GraceDb
+    has not yet actually implemented unauthenticated access, so this should
+    have no effect during our ongoing software engineering runs.
 
--   Add `check_idq` function to detchar module, which reads probabilities
+-   Add ``check_idq`` function to detchar module, which reads probabilities
     generated by iDQ.
 
--   Automated `DQV` labels should not trigger retraction notices because they
+-   Automated ``DQV`` labels should not trigger retraction notices because they
     prevent preliminary notices from being sent in the first place.
 
 -   The criterion for selecting a superevent's preferred event now prefers
@@ -237,17 +253,18 @@
     of the preliminary alert.
 
 -   Mock events now include example initial and retraction notices. Two minutes
-    after each mock event is uploaded, there will be either an `ADVOK` or an
-    `ADVNO` label applied at random, triggering either an initial or a
+    after each mock event is uploaded, there will be either an ``ADVOK`` or an
+    ``ADVNO`` label applied at random, triggering either an initial or a
     retraction notice respectively.
 
 -   Depend on ligo-gracedb >= 2.0.1 in order to pull in a bug fix for VOEvents
     with ProbHasNS or ProbHasRemnant set to 0.0.
 
--   Use the `sentry-sdk` package instead of the deprecated `raven` package for
-    Sentry integration.
+-   Use the ``sentry-sdk`` package instead of the deprecated ``raven`` package
+    for Sentry integration.
 
-## 0.1.0 (2018-09-26)
+0.1.0 (2018-09-26)
+------------------
 
 -   Separated the external GCN listening handlers into two: one that listens
     to GCNs about SNEWS triggers and another that listens to Fermi and Swift.
@@ -267,12 +284,13 @@
 
 -   Update the LVAlert host for gracedb-playground.ligo.org.
 
--   Add experimental integration with [Sentry](https://sentry.io/) for log
+-   Add experimental integration with `Sentry <https://sentry.io/>`_ for log
     aggregation and error reporting.
 
 -   Track API and LVAlert schema changes in ligo-gracedb 2.0.0.
 
-## 0.0.31 (2018-09-04)
+0.0.31 (2018-09-04)
+-------------------
 
 -   Refactor external trigger handling to separate it from the orchestrator.
 
@@ -293,48 +311,52 @@
 
 -   Update ligo.skymap to 0.0.15.
 
-## 0.0.30 (2018-08-02)
+0.0.30 (2018-08-02)
+-------------------
 
 -   Manage superevents for production, test, and MDC events separately.
 
 -   Add some more validation of LIGO/Virgo VOEvents from GCN.
 
--   Remove now-unused task `gwcelery.tasks.orchestartor.continue_if`.
+-   Remove now-unused task ``gwcelery.tasks.orchestartor.continue_if``.
 
--   Add `check_vectors` run for external triggers.
+-   Add ``check_vectors`` run for external triggers.
 
 -   Change the preferred event selection criteria for burst events
     to be FAR instead of SNR.
 
--   Add `gwcelery nagios` subcommand for Nagios monitoring.
+-   Add ``gwcelery nagios`` subcommand for Nagios monitoring.
 
--   Incorporate Virgo DQ veto streams into `check_vectors`
+-   Incorporate Virgo DQ veto streams into ``check_vectors``
 
 -   Update ligo-raven to 1.3 and ligo-followup-advocate to 0.0.11.
 
-## 0.0.29 (2018-07-31)
+0.0.29 (2018-07-31)
+-------------------
 
 -   Add a workflow graph to superevents module documentation.
 
--   Add `gwcelery condor resubmit` as a shortcut for
-    `gwcelery condor rm; gwcelery condor submit`.
+-   Add ``gwcelery condor resubmit`` as a shortcut for
+    ``gwcelery condor rm; gwcelery condor submit``.
 
 -   Fix deprecation warning due to renaming of
-    `ligo.gracedb.rest.Gracedb.createTag` to
-    `ligo.gracedb.rest.Gracedb.addTag`.
+    ``ligo.gracedb.rest.Gracedb.createTag`` to
+    ``ligo.gracedb.rest.Gracedb.addTag``.
 
 -   Update ligo-gracedb to 2.0.0.dev1.
 
-## 0.0.28 (2018-07-25)
+0.0.28 (2018-07-25)
+-------------------
 
--   Add injection checks to `check_vector`.
+-   Add injection checks to ``check_vector``.
 
--   Bitmasks are now defined symbolically in `detchar`.
+-   Bitmasks are now defined symbolically in ``detchar``.
 
 -   Refactor configuration so that it is possible to customize settings
     through an environment variable.
 
-## 0.0.27 (2018-07-22)
+0.0.27 (2018-07-22)
+-------------------
 
 -   The preferred event for superevents is now decided based on higher SNR
     value instead of lower FAR in the case of a tie between groups.
@@ -342,10 +364,11 @@
 -   A check for the existence of the gstlal trigger database is performed
     so that compute_p_astro does not return None.
 
-## 0.0.26 (2018-07-20)
+0.0.26 (2018-07-20)
+-------------------
 
 -   Fix spelling of the label that is applied to events after p_astro finishes,
-    changed from `P_ASTRO_READY` to `PASTRO_READY`.
+    changed from ``P_ASTRO_READY`` to ``PASTRO_READY``.
 
 -   Run p_astro calculation for mock events.
 
@@ -362,13 +385,14 @@
     back to using port 8099 for anonymous access, requiring no prior site
     configuration.
 
-## 0.0.25 (2018-07-19)
+0.0.25 (2018-07-19)
+-------------------
 
--   Reintroduce pipeline-dependent pre/post peeks for `check_vector` after
+-   Reintroduce pipeline-dependent pre/post peeks for ``check_vector`` after
     fixing issue where pipeline information was being looked for in the wrong
     dictionary.
 
--   `check_vector` checks all detectors regardless of instruments used, but
+-   ``check_vector`` checks all detectors regardless of instruments used, but
     only appends labels based on active instruments.
 
 -   Fix a few issues in the GCN broker:
@@ -383,16 +407,18 @@
     *   Consume and ignore all keepalive and ack packets from the client so
         that the receive buffer does not overrun.
 
--   Add `p_astro` computation for `gstlal` pipeline. The copmutation is
+-   Add ``p_astro`` computation for ``gstlal`` pipeline. The copmutation is
     launched for all cbc_gstlal triggers.
 
-## 0.0.24 (2018-07-18)
+0.0.24 (2018-07-18)
+-------------------
 
--   Revert pipeline-dependent pre/post peeks for `check_vector` because they
+-   Revert pipeline-dependent pre/post peeks for ``check_vector`` because they
     introduced a regression: it caused the orchestrator failed without running
     any annotations.
 
-## 0.0.23 (2018-07-18)
+0.0.23 (2018-07-18)
+-------------------
 
 -   Add timeout and keepalive messages to GCN broker.
 
@@ -402,9 +428,10 @@
 
 -   Fix fallback for determining superevent duration for unknown pipelines.
 
--   Make `check_vector` pre/post peeks pipeline dependent.
+-   Make ``check_vector`` pre/post peeks pipeline dependent.
 
-## 0.0.22 (2018-07-11)
+0.0.22 (2018-07-11)
+-------------------
 
 -   Process gstlal-spiir events.
 
@@ -413,30 +440,33 @@
     trigger sky map to the external trigger GraceDb page.
 
 -   Generalize conditional processing of complex canvases by replacing the
-    `continue_if_group_is()` task with a more general task that can be used
-    like `continue_if(group='CBC')`.
+    ``continue_if_group_is()`` task with a more general task that can be used
+    like ``continue_if(group='CBC')``.
 
--   Add a `check_vector_prepost` configuration variable to control how much
+-   Add a ``check_vector_prepost`` configuration variable to control how much
     padding is added around an event for querying the state vector time series.
 
     This should have the beneficial side effect of fixing some crashes for
     burst events, for which the bare duration of the superevent segment was
     less than one sample.
 
-## 0.0.21 (2018-07-10)
+0.0.21 (2018-07-10)
+-------------------
 
--   MBTA events in GraceDb leave the `search` field blank. Work around this
-    in `gwcelery.tasks.detchar.check_vectors` where we expected the field
+-   MBTA events in GraceDb leave the ``search`` field blank. Work around this
+    in ``gwcelery.tasks.detchar.check_vectors`` where we expected the field
     to be present.
 
 -   Track change in GraceDb JSON response for VOEvent creation.
 
-## 0.0.20 (2018-07-09)
+0.0.20 (2018-07-09)
+-------------------
 
 -   After fixing some minor bugs in code that had not yet been tested live,
     sending VOEvents to GCN now works.
 
-## 0.0.19 (2018-07-09)
+0.0.19 (2018-07-09)
+-------------------
 
 -   Rewrite the GCN broker so that it does not require a dedicated worker.
 
@@ -447,46 +477,53 @@
 
 -   Exclude mock data challenge events from state vector checks.
 
-## 0.0.18 (2018-07-06)
+0.0.18 (2018-07-06)
+-------------------
 
 -   Add detector state vector checks to the preliminary alert workflow.
 
-## 0.0.17 (2018-07-05)
+0.0.17 (2018-07-05)
+-------------------
 
 -   Undo accidental configuration change in last version.
 
-## 0.0.16 (2018-07-05)
+0.0.16 (2018-07-05)
+-------------------
 
 -   Stop listening for three unnecessary GCN notice types:
-    `SWIFT_BAT_ALARM_LONG`, `SWIFT_BAT_ALARM_SHORT`, and `SWIFT_BAT_KNOWN_SRC`.
+    ``SWIFT_BAT_ALARM_LONG``, ``SWIFT_BAT_ALARM_SHORT``, and
+    ``SWIFT_BAT_KNOWN_SRC``.
 
--   Switch to [SleekXMPP](http://sleekxmpp.com) for the LVAlert client,
-    instead of [PyXMPP2](http://jajcus.github.io/pyxmpp2/). Because SleekXMPP
+-   Switch to `SleekXMPP <http://sleekxmpp.com>`_ for the LVAlert client,
+    instead of `PyXMPP2 <http://jajcus.github.io/pyxmpp2/>`_. Because SleekXMPP
     has first-class support for publish-subscribe, the LVAlert listener can
     now automatically subscribe to all LVAlert nodes for which our code has
     handlers. Most of the client code now lives in a new external package,
-    [sleek-lvalert](https://git.ligo.org/emfollow/sleek-lvalert).
+    `sleek-lvalert <https://git.ligo.org/emfollow/sleek-lvalert>`_.
 
-## 0.0.15 (2018-06-29)
+0.0.15 (2018-06-29)
+-------------------
 
 -   Change superevent threshold and mock event rate to once per hour.
 
--   Add `gracedb.create_label` task.
+-   Add ``gracedb.create_label`` task.
 
 -   Always upload external triggers to the 'External' group.
 
 -   Add rudimentary burst event workflow to orchestrator: it just generates
     VOEvents and circulars.
 
--   Create a label in GraceDb whenever `em_bright` or `bayestar` completes.
+-   Create a label in GraceDb whenever ``em_bright`` or ``bayestar`` completes.
 
-## 0.0.14 (2018-06-28)
+0.0.14 (2018-06-28)
+-------------------
 
 -   Fix typo that was causing a task to fail.
 
 -   Decrease orchestrator timeout to 15 seconds.
 
-## 0.0.13 (2018-06-28)
+0.0.13 (2018-06-28)
+-------------------
 
 -   Change FAR threshold for creation of superevents to 1 per day.
 
@@ -502,7 +539,8 @@
 
 -   BAYESTAR now adds GraceDb URLs of events to FITS headers.
 
-## 0.0.12 (2018-06-28)
+0.0.12 (2018-06-28)
+-------------------
 
 -   Prevent receiving duplicate copies of LVAlert messages by unregistering
     redundant LVAlert message types.
@@ -517,11 +555,12 @@
 -   Create (but do not send) preliminary VOEvents for all superevents.
     No vetting is performed yet.
 
-## 0.0.11 (2018-06-27)
+0.0.11 (2018-06-27)
+-------------------
 
 -   Submit handler tasks to Celery as a single group.
 
--   Retry GraceDb tasks that raise a `TimeoutError` exception.
+-   Retry GraceDb tasks that raise a ``TimeoutError`` exception.
 
 -   The superevent handler now skips LVAlert messages that do not affect
     the false alarm rate of an event (e.g. simple log messages).
@@ -538,26 +577,26 @@
     that gracedb is polled only once to get the information needed
     for superevent manager.
 
--   Renamed the `set_preferred_event` task in gracedb.py to `update_superevent`
-    to be a full wrapper around the `updateSuperevent` client function.
-    Now it can be used to set preferred event and also update superevent
-    time windows.
+-   Renamed the ``set_preferred_event`` task in gracedb.py to
+    ``update_superevent`` to be a full wrapper around the ``updateSuperevent``
+    client function. Now it can be used to set preferred event and also update
+    superevent time windows.
 
--   Many `cwb` (extra) attributes, which should be floating point
+-   Many ``cwb`` (extra) attributes, which should be floating point
     numbers, are present in lvalert packet as strings. Casting them
     to avoid embarassing TypeErrors.
 
 -   Reverted back the typecasting of far, gpstime into float. This is
     fixed in https://git.ligo.org/lscsoft/gracedb/issues/10
 
--   CBC `t_start` and `t_end` values are changed to 1 sec interval.
+-   CBC ``t_start`` and ``t_end`` values are changed to 1 sec interval.
 
 -   Added ligo-raven to run on external trigger and superevent creation
     lvalerts to search for coincidences. In case of coincidence, EM_COINC label
     is applied to the superevent and external trigger page and the external
     trigger is added to the list of em_events in superevent object dictionary.
 
--   `cwb` and `lib` nodes added to superevent handler.
+-   ``cwb`` and ``lib`` nodes added to superevent handler.
 
 -   Events are treated as finite segment window, initial superevent
     creation with preferred event window. Addition of events to
@@ -569,14 +608,15 @@
 
 -   Update to ligo-gracedb >= 1.29dev1.
 
--   Rename the `get_superevent` task to `get_superevents` and add
-    a new `get_superevent` task that is a trivial wrapper around
-    `ligo.gracedb.rest.GraceDb.superevent()`.
+-   Rename the ``get_superevent`` task to ``get_superevents`` and add
+    a new ``get_superevent`` task that is a trivial wrapper around
+    ``ligo.gracedb.rest.GraceDb.superevent()``.
 
-## 0.0.10 (2018-06-13)
+0.0.10 (2018-06-13)
+-------------------
 
 -   Model the time extent of events and superevents using the
-    `glue.segments` module.
+    ``glue.segments`` module.
 
 -   Replace GraceDb.get with GraceDb.superevents from the recent dev
     release of gracedb-client.
@@ -585,31 +625,34 @@
     by matching on both TrigID (which is generally the mission elapsed time)
     and mission name.
 
--   Add the configuration variable `superevent_far_threshold` to limit
+-   Add the configuration variable ``superevent_far_threshold`` to limit
     the maximum false alarm rate of events that are included in superevents.
 
 -   LVAlert handlers are now passed the actual alert data structure rather than
     the JSON text, so handlers are no longer responsible for calling
-    `json.loads`. It is a little bit more convenient and possibly also faster
+    ``json.loads``. It is a little bit more convenient and possibly also faster
     for Celery to deserialize the alert messages.
 
--   Introduce `Production`, `Development`, `Test`, and `Playground` application
-    configuration objects in order to facilitate quickly switching between
-    GraceDb servers.
+-   Introduce ``Production``, ``Development``, ``Test``, and ``Playground``
+    application configuration objects in order to facilitate quickly switching
+    between GraceDb servers.
 
 -   Pipeline specific start and end times for superevent segments. These values
     are controlled via configuration variables.
 
-## 0.0.9 (2018-06-06)
+0.0.9 (2018-06-06)
+------------------
 
 -   Add missing LVAlert message types to superevent handler.
 
-## 0.0.8 (2018-06-06)
+0.0.8 (2018-06-06)
+------------------
 
 -   Add some logging to the GCN and LVAlert dispatch code in order to
     diagnose missed messages.
 
-## 0.0.7 (2018-05-31)
+0.0.7 (2018-05-31)
+------------------
 
 -   Ingest Swift, Fermi, and SNEWS GCN notices and save them in GraceDb.
 
@@ -617,29 +660,30 @@
     1.29.dev0, because this is the only version that supports superevents at
     the moment.
 
-## 0.0.6 (2018-05-26)
+0.0.6 (2018-05-26)
+------------------
 
--   Generate GCN Circular drafts using
-    [`ligo-followup-advocate`](https://git.ligo.org/emfollow/ligo-followup-advocate).
+-   Generate GCN Circular drafts using `ligo-followup-advocate
+    <https://git.ligo.org/emfollow/ligo-followup-advocate>`_.
 
 -   In the continuous integration pipeline, validate PEP8 naming conventions
-    using [`pep8-naming`](https://pypi.org/project/pep8-naming/).
+    using `pep8-naming <https://pypi.org/project/pep8-naming/>`_.
 
 -   Add instructions for measuring test coverage and running the linter locally
     to the contributing guide.
 
--   Rename `gwcelery.tasks.voevent` to `gwcelery.tasks.gcn` to make it clear
-    that this submodule contains functionality related to GCN notices,
+-   Rename ``gwcelery.tasks.voevent`` to ``gwcelery.tasks.gcn`` to make it
+    clear that this submodule contains functionality related to GCN notices,
     rather than VOEvents in general.
 
--   Rename `gwcelery.tasks.dispatch` to `gwcelery.tasks.orchestrator` to make
-    it clear that this module encapsulates the behavior associated with the
-    "orchestrator" in the O3 low-latency design document.
+-   Rename ``gwcelery.tasks.dispatch`` to ``gwcelery.tasks.orchestrator`` to
+    make it clear that this module encapsulates the behavior associated with
+    the "orchestrator" in the O3 low-latency design document.
 
 -   Mock up calls to BAYESTAR in test suite to speed it up.
 
 -   Unify dispatch of LVAlert and GCN messages using decorators.
-    GCN notice handlers are declared like this:
+    GCN notice handlers are declared like this::
 
         import lxml.etree
         from gwcelery.tasks import gcn
@@ -650,7 +694,7 @@
             root = lxml.etree.fromstring(payload)
             # do work here...
 
-    LVAlert message handlers are declared like this:
+    LVAlert message handlers are declared like this::
 
         import json
         from gwcelery.tasks import lvalert
@@ -666,40 +710,45 @@
     GraceDb host name in the Celery application config.
 
 -   Create superevents by simple clustering in time. Currently this is only
-    supported by the `gracedb-dev1` host.
+    supported by the ``gracedb-dev1`` host.
 
-## 0.0.5 (2018-05-08)
+0.0.5 (2018-05-08)
+------------------
 
--   Disable socket access during most unit tests. This adds some extra assurance
-    that we don't accidentally interact with production servers during the unit
-    tests.
+-   Disable socket access during most unit tests. This adds some extra
+    assurance that we don't accidentally interact with production servers
+    during the unit tests.
 
--   Ignore BAYESTAR jobs that raise a `DetectorDisabled` error. These
+-   Ignore BAYESTAR jobs that raise a ``DetectorDisabled`` error. These
     exceptions are used for control flow and do not constitute a real error.
     Ignoring these jobs avoids polluting logs and the Flower monitor.
 
-## 0.0.4 (2018-04-28)
+0.0.4 (2018-04-28)
+------------------
 
 -   FITS history and comment entries are now displayed in a monospaced font.
 
 -   Adjust error reporting for some tasks.
 
--   Depend on newer version of `ligo.skymap`.
+-   Depend on newer version of ``ligo.skymap``.
 
--   Add unit tests for the `gwcelery condor submit` subcommand.
+-   Add unit tests for the ``gwcelery condor submit`` subcommand.
 
-## 0.0.3 (2018-04-27)
+0.0.3 (2018-04-27)
+------------------
 
--   Fix some compatibility issues between the `gwcelery condor submit`
-    subcommand and the format of `condor_q -totals -xml` with older versions
+-   Fix some compatibility issues between the ``gwcelery condor submit``
+    subcommand and the format of ``condor_q -totals -xml`` with older versions
     of HTCondor.
 
-## 0.0.2 (2018-04-27)
+0.0.2 (2018-04-27)
+------------------
 
--   Add `gwcelery condor submit` and related subcommands as shortcuts for
+-   Add ``gwcelery condor submit`` and related subcommands as shortcuts for
     managing GWCelery running under HTCondor.
 
-## 0.0.1 (2018-04-27)
+0.0.1 (2018-04-27)
+------------------
 
 -   This is the initial release. It provides rapid sky localization with
     BAYESTAR, sky map annotation, and sending mock alerts.
