@@ -3,9 +3,10 @@ Running under HTCondor
 
 The recommended way to start and stop GWCelery on the LIGO Data Grid cluster is
 using HTCondor_. See the example HTCondor submit file `gwcelery.sub`_. This
-submit file will start up Redis, the worker processes, and Flower. It will
-create some log files and a Unix domain socket, so you should first navigate to
-a directory where you want these files to go. For example::
+submit file will start up Redis, the worker processes, the Flask web
+application, and Flower. It will create some log files and a Unix domain
+socket, so you should first navigate to a directory where you want these files
+to go. For example::
 
     $ mkdir -p ~/gwcelery/var && cd ~/gwcelery/var
 
