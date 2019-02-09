@@ -45,12 +45,16 @@ To start
         $ make -j
         $ src/redis-server
 
-GWCelery itself consists of four workers::
+GWCelery itself consists of four `Celery workers`_ and one `Flask`_ web
+application::
 
     $ gwcelery worker -l info -n gwcelery-worker -Q celery -B
     $ gwcelery worker -l info -n gwcelery-openmp-worker -Q openmp -c 1
     $ gwcelery worker -l info -n gwcelery-superevent-worker -Q superevent -c 1
     $ gwcelery worker -l info -n gwcelery-exttrig-worker -Q exttrig -c 1
+    $ gwcelery flask run
 
-.. _redis: https://redis.io
+.. _`redis`: https://redis.io
 .. _`Redis Quick Start`: https://redis.io/topics/quickstart
+.. _`Celery workers`: http://docs.celeryproject.org/en/latest/userguide/workers.html
+.. _`Flask`: http://flask.pocoo.org
