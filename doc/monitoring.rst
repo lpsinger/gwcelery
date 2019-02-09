@@ -70,8 +70,8 @@ add the following lines to the file ``~/public_html/.htaccess``::
 .. image:: _static/flask-screenshot.png
    :alt: Screenshot of Flask web application
 
-Celeryevent
------------
+Celery events
+-------------
 
 Celery has a built-in `Curses-based monitoring tool`_ that can be started from the
 command line::
