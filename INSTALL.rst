@@ -48,7 +48,19 @@ DataGrid Client`_ by running ``ligo-proxy-init``::
 
     $ ligo-proxy-init albert.einstein
 
+To authenticate for LVAlert, first complete the `LVAlert Account Activation`_
+form once for each LVAlert server that you intend to use (generally you only
+need "Playground" for development purposes). Make a note of the passwords and
+store them in your ~/.netrc file with appropriate file permissions::
+
+    echo > ~/.netrc
+    chmod 0600 ~/.netrc
+    echo machine lvalert.cgca.uwm.edu login albert.einstein password password-for-production >> ~/.netrc
+    echo machine lvalert-playground.cgca.uwm.edu login albert.einstein password password-for-playground >> ~/.netrc
+    echo machine lvalert-test.cgca.uwm.edu login albert.einstein password password-for-test >> ~/.netrc
+
 .. _`LSC DataGrid Client`: https://www.lsc-group.phys.uwm.edu/lscdatagrid/doc/installclient.html
+.. _`LVAlert Account Activation`: https://www.lsc-group.phys.uwm.edu/cgi-bin/jabber-acct.cgi
 
 Redis
 ~~~~~
