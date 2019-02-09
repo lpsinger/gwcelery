@@ -1,9 +1,9 @@
 Monitoring and Management
 =========================
 
-:doc:`Like all Celery applications <celery:userguide/monitoring>`, GWCelery
-supports a rich selection of management and monitoring tools. Here is an
-introduction to a few of them.
+GWCelery supports a rich selection of management and monitoring tools. Here is
+an introduction to a few of them. For more Celery monitoring solutions, see the
+:doc:`Celery monitoring and management guide <celery:userguide/monitoring>`.
 
 Flower
 ------
@@ -30,6 +30,21 @@ Some additional firewall configuration may be required.
 .. image:: _static/flower-screenshot.png
    :alt: Screenshot of Flower
 
+Sentry
+------
+
+All warnings, errors, exceptions, and tasks failures are both logged to disk
+and uploaded instantly to Sentry_, an error monitoring and reporting platform.
+The Sentry instance is installed `on premise`_ at Caltech. Sentry notifies
+GWCelery contributors by email when a new bug occurs.
+
+For details about the Sentry logging configuration, see the
+:mod:`gwcelery.sentry` module or the `Celery integration module`_ in the Sentry
+SDK docs.
+
+.. image:: _static/sentry-screenshot.png
+   :alt: Screenshot of Sentry
+
 Flask
 -----
 
@@ -54,6 +69,29 @@ add the following lines to the file ``~/public_html/.htaccess``::
 
 .. image:: _static/flask-screenshot.png
    :alt: Screenshot of Flask web application
+
+Nagios
+------
+
+.. note::
+   The GWCelery Nagios plugin is tailored to GWCelery and is not sufficiently
+   general to use with other Celery applications.
+
+The dashboard.ligo.org_ and monitor.ligo.org_ services use Nagios_ to monitor
+and report on the health of all of the components of the low-latency analysis
+infrastructure.
+
+GWCelery provides the command ``gwcelery nagios`` to check the status of the
+application and provide a report in `the format that Nagios expects`_.
+
+You can run it manually from the command line::
+
+    $ gwcelery nagios
+    OK: GWCelery is running normally
+
+To configure Nagios itself, see the `Nagios configuration overview`_, or if
+GWCelery and Nagios are running on different hosts, the `Nagios Remote Plugin
+Executor (NRPE) documentation`_.
 
 Command-Line Tools
 ------------------
@@ -87,44 +125,6 @@ utilities <celery:monitoring-control>`, including the following:
          b'p://ldas-sw.ligo.caltech.edu/doc/ligolwAPI/html/ligolw_dtd.txt">\n<LIGO_L'
          ...
          b'\t</Stream>\n\t</Table>\n</LIGO_LW>\n')
-
-Nagios
-------
-
-.. note::
-   The GWCelery Nagios plugin is tailored to GWCelery and is not sufficiently
-   general to use with other Celery applications.
-
-The dashboard.ligo.org_ and monitor.ligo.org_ services use Nagios_ to monitor
-and report on the health of all of the components of the low-latency analysis
-infrastructure.
-
-GWCelery provides the command ``gwcelery nagios`` to check the status of the
-application and provide a report in `the format that Nagios expects`_.
-
-You can run it manually from the command line::
-
-    $ gwcelery nagios
-    OK: GWCelery is running normally
-
-To configure Nagios itself, see the `Nagios configuration overview`_, or if
-GWCelery and Nagios are running on different hosts, the `Nagios Remote Plugin
-Executor (NRPE) documentation`_.
-
-Sentry
-------
-
-All warnings, errors, exceptions, and tasks failures are both logged to disk
-and uploaded instantly to Sentry_, an error monitoring and reporting platform.
-The Sentry instance is installed `on premise`_ at Caltech. Sentry notifies
-GWCelery contributors by email when a new bug occurs.
-
-For details about the Sentry logging configuration, see the
-:mod:`gwcelery.sentry` module or the `Celery integration module`_ in the Sentry
-SDK docs.
-
-.. image:: _static/sentry-screenshot.png
-   :alt: Screenshot of Sentry
 
 .. _Flower: https://flower.readthedocs.io/
 .. _dashboard.ligo.org: https://dashboard.ligo.org/
