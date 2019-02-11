@@ -53,8 +53,8 @@ Guidelines for tasks
    directly in GraceDb. Temporary files that are written in ``/tmp`` are OK but
    should be cleaned up promptly.
 
-   See also the Celery manual's notes on :ref:`task-celery:task-data-locality`
-   and :ref:`celery:task-state`.
+   See also the Celery manual's notes on :ref:`celery:task-data-locality` and
+   :ref:`celery:task-state`.
 
 -  **Dependencies should be installable by pip.** Dependencies of tasks should
    be listed in the `requirements.txt`_ file so that they are installed
