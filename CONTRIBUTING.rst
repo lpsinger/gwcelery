@@ -59,14 +59,14 @@ Guidelines for tasks
    See also the Celery manual's notes on `data locality`_ and `state`_.
 
 -  **Dependencies should be installable by pip.** Dependencies of tasks should
-   be listed in the ``install_requires`` section in `setup.cfg`_ so that they
-   are installed automatically when GWCelery is installed with `pip`_.
+   be listed in the `requirements.txt`_ file so that they are installed
+   automatically when GWCelery is installed with `pip`_.
 
 .. _`granularity`: http://docs.celeryproject.org/en/latest/userguide/tasks.html#granularity
 .. _`Tips and Best Practices`: http://docs.celeryproject.org/en/latest/userguide/tasks.html#tips-and-best-practices
 .. _`data locality`: http://docs.celeryproject.org/en/latest/userguide/tasks.html#data-locality
 .. _`state`: http://docs.celeryproject.org/en/latest/userguide/tasks.html#state
-.. _`setup.cfg`: https://git.ligo.org/emfollow/gwcelery/blob/master/setup.cfg
+.. _`requirements.txt`: https://git.ligo.org/emfollow/gwcelery/blob/master/requirements.txt
 .. _`pip`: https://pip.pypa.io/
 
 Unit tests
