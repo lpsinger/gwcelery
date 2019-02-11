@@ -7,6 +7,7 @@ import pkg_resources
 import pytest
 
 from .. import app
+from ..tasks import lalinference
 from ..tasks import orchestrator
 from .test_tasks_skymaps import toy_3d_fits_filecontents  # noqa: F401
 from . import resource_json
@@ -60,6 +61,8 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
             return b'fake VOEvent file contents'
         elif filename == 'p_astro.json':
             return json.dumps(dict(BNS=0.94, NSBH=0.03, BBH=0.02, Terr=0.01))
+        elif filename == lalinference.ini_name:
+            return 'test'
         else:
             raise ValueError
 
@@ -68,7 +71,7 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
     plot_volume = Mock()
     plot_allsky = Mock()
     send = Mock()
-    upload_ini = Mock()
+    prepare_ini = Mock()
     start_pe = Mock()
     create_voevent = Mock(return_value='S1234-1-Preliminary.xml')
 
@@ -84,8 +87,8 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
                         get_superevent)
     monkeypatch.setattr('gwcelery.tasks.circulars.create_circular.run',
                         create_circular)
-    monkeypatch.setattr('gwcelery.tasks.lalinference.upload_ini.run',
-                        upload_ini)
+    monkeypatch.setattr('gwcelery.tasks.lalinference.prepare_ini.run',
+                        prepare_ini)
     monkeypatch.setattr('gwcelery.tasks.lalinference.start_pe.run',
                         start_pe)
 
@@ -114,7 +117,7 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
         create_circular.assert_called_once()
 
     if group == 'CBC' and not offline:
-        upload_ini.assert_called_once()
+        prepare_ini.assert_called_once()
         if far <= app.conf['pe_threshold']:
             start_pe.assert_called_once()
         else:

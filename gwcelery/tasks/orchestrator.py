@@ -431,10 +431,21 @@ def parameter_estimation(event, superevent_id):
     preferred_event_id = event['graceid']
     # FIXME: it will be better to start parater estimation for 'burst' events.
     if event['group'] == 'CBC' and event['search'] != 'MDC':
-        canvas = lalinference.upload_ini.s(event, superevent_id)
+        canvas = lalinference.prepare_ini.s(event, superevent_id)
+        next_task = gracedb.upload.s(
+                        filename=lalinference.ini_name,
+                        graceid=superevent_id,
+                        message='Automatically generated LALInference ' +
+                                'configuration file for this event.',
+                        tags='pe'
+                    )
         if event['far'] <= app.conf['pe_threshold']:
-            canvas |= \
+            next_task = group(
+                next_task,
+
                 lalinference.start_pe.s(preferred_event_id, superevent_id)
+            )
+        canvas |= next_task
 
         canvas.apply_async()
 

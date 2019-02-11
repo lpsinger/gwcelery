@@ -234,7 +234,8 @@ def _find_appropriate_frametype_psdstart_psdlength(trigtime, seglen,
         raise
 
 
-def _return_ini(event, superevent_id=None):
+@app.task(shared=False)
+def prepare_ini(event, superevent_id=None):
     """Determine an appropriate PE settings for the target event and return ini
     file content
     """
@@ -270,27 +271,6 @@ def _return_ini(event, superevent_id=None):
         'psd-length': str(psdstart_psdlength[1])
     }
     return ini_template.render(ini_settings)
-
-
-@app.task(shared=False)
-def upload_ini(event, superevent_id):
-    """Upload ini file and return its content
-
-    Parameters
-    ----------
-    event : dict
-        information on a target preferred event
-    superevent_id : str
-        The GraceDb ID of a target superevent
-    """
-    ini_contents = _return_ini(event, superevent_id)
-    gracedb.upload.delay(
-        filecontents=ini_contents, filename='online_pe.ini',
-        graceid=superevent_id,
-        message='This is an appropriate ini file for this event.',
-        tags='pe'
-    )
-    return ini_contents
 
 
 @app.task(shared=False)
