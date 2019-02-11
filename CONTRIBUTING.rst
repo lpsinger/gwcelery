@@ -87,14 +87,13 @@ This will save a coverage report that you can view in a web browser as
 Code style
 ----------
 
-Code should be written in the `PEP 8 style`_ and must pass linting by
+Code should be written in the :pep:`8` style and must pass linting by
 `Flake8`_. To check code style, run the following commands in the top of your
 source directory::
 
     $ pip install flake8 pep8-naming
     $ flake8 --show-source .
 
-.. _`PEP 8 style`: https://www.python.org/dev/peps/pep-0008/
 .. _Flake8: http://flake8.pycqa.org/en/latest/
 
 Documentation
