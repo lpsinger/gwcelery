@@ -228,18 +228,19 @@ of several processes:
 1.  **Message Broker**
 
     Routes and distributes Celery task messages and stores results of tasks for
-    later retrieval. See `Choosing a Broker`_ in the Celery manual for more
-    details. For technical reasons, we use a Redis_ broker.
+    later retrieval. See :ref:`celery:celerytut-broker` in the Celery manual
+    for more details. For technical reasons, we use a :ref:`Redis
+    <celery:broker-redis>` broker.
 
 2.  **Celery Beat**
 
-    Scheduler for periodic tasks (the Celery equivalent of
-    cron jobs). For more information, see `Periodic Tasks`_ in the Celery
-    manual.
+    Scheduler for periodic tasks (the Celery equivalent of cron jobs). For more
+    information, see :ref:`celery:guide-beat` in the Celery manual.
 
 3.  **Monitoring Console** (optional)
 
-    You can optionally run Flower_, a web monitoring console for Celery.
+    You can optionally run :ref:`Flower <celery:monitoring-flower>`, a web
+    monitoring console for Celery.
 
 4.  **OpenMP Worker**
 
@@ -333,9 +334,3 @@ LVAlert message handler tasks are declared using the
                      'cbc_mbtaonline')
     def handle_cbc(alert):
         # do work here...
-
-
-.. _`Choosing a Broker`: http://docs.celeryproject.org/en/latest/getting-started/first-steps-with-celery.html#choosing-a-broker
-.. _Redis: http://docs.celeryproject.org/en/latest/getting-started/brokers/redis.html#broker-redis
-.. _`Periodic Tasks`: http://docs.celeryproject.org/en/latest/userguide/periodic-tasks.html
-.. _Flower: http://flower.readthedocs.io/en/latest/
