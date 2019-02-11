@@ -8,6 +8,7 @@ References
 """
 import socket
 import subprocess
+import sys
 import tempfile
 
 from celery.utils.log import get_task_logger
@@ -49,8 +50,7 @@ def broker(self):
     # isolation from any other instance of GWCelery on the same machine.
     with tempfile.TemporaryDirectory() as tmpdir:
         # Assemble the command line options for Twisted.
-        cmd = ['twistd', '--nodaemon', '--pidfile=',
-               'comet', '--verbose',
+        cmd = [sys.executable, '-m', 'twisted', 'comet', '--verbose',
                '--local-ivo', 'ivo://ligo.org/gwcelery',
                '--receive',
                '--receive-port', author_port,
