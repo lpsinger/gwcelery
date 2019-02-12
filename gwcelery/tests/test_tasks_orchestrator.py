@@ -111,8 +111,7 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
                 'S1234', 'preliminary', BBH=0.02, BNS=0.94, NSBH=0.03,
                 ProbHasNS=0.0, ProbHasRemnant=0.0, Terrestrial=0.01,
                 internal=True, open_alert=True,
-                skymap_filename='bayestar.fits.gz',
-                skymap_image_filename='bayestar.png', skymap_type='bayestar')
+                skymap_filename='bayestar.fits.gz', skymap_type='bayestar')
         send.assert_called_once()
         create_circular.assert_called_once()
 
@@ -200,8 +199,7 @@ def test_handle_superevent_initial_alert(mock_send, mock_expose,
     mock_create_voevent.assert_called_once_with(
         'S1234', 'initial', BBH=0.02, BNS=0.94, NSBH=0.03, ProbHasNS=0.0,
         ProbHasRemnant=0.0, Terrestrial=0.01, internal=False, open_alert=True,
-        skymap_filename='foobar.fits.gz', skymap_image_filename='foobar.png',
-        skymap_type='foobar', vetted=True)
+        skymap_filename='foobar.fits.gz', skymap_type='foobar', vetted=True)
     mock_send.assert_called_once_with('contents of S1234-Initial-1.xml')
     mock_create_tag.assert_called_once_with(
         'S1234-Initial-1.xml', 'public', 'S1234')

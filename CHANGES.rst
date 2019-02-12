@@ -4,9 +4,6 @@ Changelog
 0.2.6 (unreleased)
 ------------------
 
--   Temporarily revert change to exclude Mollweide projection PNG file in
-    VOEvents. The GraceDb server has not yet been updated for this change.
-
 -   Report an environment tag to Sentry corresponding to the GWCelery
     configuration module (``production``, ``test``, ``playground``, or
     ``development``) in order to differentiate log messages from different
