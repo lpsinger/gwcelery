@@ -1,3 +1,5 @@
+.. highlight:: shell-session
+
 Running under HTCondor
 ======================
 

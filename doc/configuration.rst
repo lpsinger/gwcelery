@@ -1,3 +1,5 @@
+.. highlight:: shell-session
+
 Configuration
 =============
 
@@ -21,7 +23,7 @@ preset is to set the :meth:`CELERY_CONFIG_MODULE
 <celery.Celery.config_from_envvar>` environment variable before starting the
 workers. For example, to configure GWCelery for production::
 
-    export CELERY_CONFIG_MODULE=gwcelery.conf.production
+    $ export CELERY_CONFIG_MODULE=gwcelery.conf.production
 
 Authentication
 --------------

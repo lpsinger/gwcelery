@@ -1,3 +1,5 @@
+.. highlight:: shell-session
+
 Monitoring and Management
 =========================
 
@@ -20,7 +22,9 @@ Flower using the following command::
 
     $ gwcelery flower --url-prefix=~${USER}/flower
 
-add the following lines to the file ``~/public_html/.htaccess``::
+add the following lines to the file ``~/public_html/.htaccess``:
+
+.. code-block:: apache
 
     RewriteEngine on
     RewriteRule ^flower/?(.*)$ http://emfollow.ligo.caltech.edu:5555/$1 [P]
@@ -62,7 +66,9 @@ additional command line arguments::
 
     $ FLASK_URL_PREFIX=/~${USER}/gwcelery gwcelery flask run --port=5556 --with-threads --host 0.0.0.0
 
-add the following lines to the file ``~/public_html/.htaccess``::
+add the following lines to the file ``~/public_html/.htaccess``:
+
+.. code-block:: apache
 
     RewriteEngine on
     RewriteRule ^gwcelery/?(.*)$ http://emfollow.ligo.caltech.edu:5556/$1 [P]
