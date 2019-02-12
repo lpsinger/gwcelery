@@ -1,14 +1,36 @@
 Deployment
 ==========
 
+Continuous deployment
+---------------------
+
+GWCelery is automatically deployed using GitLab's continuous deployment
+features, configured through the project's `.gitlab-ci.yml`_ file. Deployment can be managed through the GitLab project's `Environments`_ page.
+
+There are two instances of GWCelery that are running on the LIGO-Caltech
+computing cluster and that are managed in this manner:
+
+*   **Playground**: The playground instance is re-deployed *on every push to
+    master that passes the unit tests*. It uses the
+    :mod:`gwcelery.conf.playground` configuration preset.
+
+*   **Production**: The production instance is re-deployed *only when manually
+    triggered through GitLab*. It uses the
+    :mod:`gwcelery.conf.production` configuration preset.
+
+When we observe that the Playground instance shows correct end-to-end behavior,
+we have the option of triggering a re-deployment to Production. Deployment to
+production should preferably occur at a release. The procedure for performing a
+release is described below.
+
 Making a new release
 --------------------
 
-We always prepare releases from the tip of the ``master`` branch. The GitLab
-project's `continuous integration script`_ will automatically build and push
-any tagged release to the `Python Package Index`_ (PyPI). Follow these steps
-when issuing a release in order to maintain a consistent and orderly change
-log.
+We always prepare releases from the tip of the ``master`` branch. GitLab is
+configured through the project's `.gitlab-ci.yml`_ file to automatically build
+and push any tagged release to the `Python Package Index`_ (PyPI). Follow these
+steps when issuing a release in order to maintain a consistent and orderly
+change log.
 
 1.  **Check the pipeline status.** Before you begin, first make sure that the
     unit tests, documentation, and packaging jobs are passing. Consult the
@@ -59,7 +81,8 @@ log.
 6.  Wait a couple minutes, and then verify that the new release has been
     published on our PyPI project page, https://pypi.org/project/gwcelery/.
 
-.. _`continuous integration script`: https://git.ligo.org/emfollow/gwcelery/blob/master/.gitlab-ci.yml
+.. _`Environments`: https://git.ligo.org/emfollow/gwcelery/environments
+.. _`.gitlab-ci.yml`: https://git.ligo.org/emfollow/gwcelery/blob/master/.gitlab-ci.yml
 .. _`Python Package Index`: https://pypi.org
 .. _`GitLab pipeline status`: https://git.ligo.org/emfollow/gwcelery/pipelines
 .. _`CHANGES.rst`: https://git.ligo.org/emfollow/gwcelery/blob/master/CHANGES.rst
