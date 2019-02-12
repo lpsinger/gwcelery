@@ -62,7 +62,14 @@ Guidelines for tasks
    be listed in the `requirements.txt`_ file so that they are installed
    automatically when GWCelery is installed with `pip`_.
 
+   Note that the Sphinx-generated documentation (that is to say, this manual)
+   is generally built without most of the dependencies installed. Whenever you
+   add a new package to requirements.txt, you should also add any modules that
+   are imported from that package to the ``autodoc_mock_imports`` list in the
+   Sphinx configuration file, `doc/conf.py`_.
+
 .. _`requirements.txt`: https://git.ligo.org/emfollow/gwcelery/blob/master/requirements.txt
+.. _`doc/conf.py`: https://git.ligo.org/emfollow/gwcelery/blob/master/doc/conf.py
 .. _`pip`: https://pip.pypa.io/
 
 Unit tests
