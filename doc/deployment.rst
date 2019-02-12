@@ -87,7 +87,7 @@ change log.
 5.  **Push the new tag and updated change log.** Push the new tag and updated
     change log:
 
-        ``git push --tags && git push``
+        ``git push && git push --tags``
 
 6.  Wait a couple minutes, and then verify that the new release has been
     published on our PyPI project page, https://pypi.org/project/gwcelery/.
