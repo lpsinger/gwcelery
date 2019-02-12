@@ -3,7 +3,7 @@ from unittest import mock
 import pytest
 
 from .. import app
-from .. import condor
+from ..tools import condor
 
 
 @pytest.mark.parametrize('subcommand,extra_args', [['rm', ()],

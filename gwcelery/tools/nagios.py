@@ -10,7 +10,7 @@ import kombu.exceptions
 import sleek_lvalert
 
 # Make sure that all tasks are registered
-from . import tasks
+from .. import tasks
 
 
 class NagiosPluginStatus(IntEnum):

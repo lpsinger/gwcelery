@@ -4,7 +4,7 @@ from unittest.mock import Mock
 import pytest
 
 from .. import app
-from .. import nagios
+from ..tools import nagios
 
 
 def test_nagios_unknown_error(monkeypatch, capsys):
@@ -67,7 +67,7 @@ def test_nagios(capsys, monkeypatch, socket_enabled,
 
     # tasks, no LVAlert nodes
 
-    monkeypatch.setattr('gwcelery.nagios.get_active_tasks',
+    monkeypatch.setattr('gwcelery.tools.nagios.get_active_tasks',
                         lambda _: nagios.get_expected_tasks(app))
     mock_lvalert_client.configure_mock(**{
         'return_value.get_subscriptions.return_value': {}})
