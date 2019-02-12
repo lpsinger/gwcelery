@@ -27,12 +27,12 @@ GWCelery's responsibilities include:
    :caption: Contents:
 
    quickstart
-   configuration
-   monitoring
-   htcondor
-   contributing
    design
+   configuration
+   htcondor
+   monitoring
    gwcelery
+   contributing
 
 .. toctree::
    :maxdepth: 1
