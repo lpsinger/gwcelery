@@ -7,6 +7,12 @@ Continuous deployment
 GWCelery is automatically deployed using GitLab's continuous deployment
 features, configured through the project's `.gitlab-ci.yml`_ file. Deployment can be managed through the GitLab project's `Environments`_ page.
 
+Python dependencies in the deployment environment are managed automatically
+using `pipenv`_. Note that there are some runtime environment settings such as
+the ``~/.bashrc`` file that are managed in the repository
+https://git.ligo.org/emfollow/deployment/ligo.caltech.edu, which is a holdover
+from a previous continuous deployment strategy.
+
 There are two instances of GWCelery that are running on the LIGO-Caltech
 computing cluster and that are managed in this manner:
 
@@ -97,6 +103,7 @@ change log.
 
 .. _`Environments`: https://git.ligo.org/emfollow/gwcelery/environments
 .. _`.gitlab-ci.yml`: https://git.ligo.org/emfollow/gwcelery/blob/master/.gitlab-ci.yml
+.. _`pipenv`: https://pipenv.readthedocs.io/
 .. _`Python Package Index`: https://pypi.org
 .. _`GitLab pipeline status`: https://git.ligo.org/emfollow/gwcelery/pipelines
 .. _`CHANGES.rst`: https://git.ligo.org/emfollow/gwcelery/blob/master/CHANGES.rst
