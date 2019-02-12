@@ -23,6 +23,17 @@ we have the option of triggering a re-deployment to Production. Deployment to
 production should preferably occur at a release. The procedure for performing a
 release is described below.
 
+.. danger::
+   It is possible to start an interactive session inside the GWCelery
+   production environment by logging in to the LIGO-Caltech cluster, but this
+   measure should be **reserved for emergencies only**.
+
+   Any manual changes to the environment **may disrupt the logging and
+   monitoring subsystems**. Any files that are manually changed, added to, or
+   removed from the deployment environment **will not be captured in version
+   control** and may be **rolled back without warning** the next time that the
+   continuous deployment is triggered.
+
 Making a new release
 --------------------
 
