@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.2.6 (unreleased)
+0.2.6 (2019-02-12)
 ------------------
 
 -   Report an environment tag to Sentry corresponding to the GWCelery
