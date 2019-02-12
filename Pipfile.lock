@@ -770,10 +770,10 @@
         },
         "pygcn": {
             "hashes": [
-                "sha256:268d146e3ca6dce383a1c2480fcf04a97c53f992d448a373bb64cb7f2bbcea55",
-                "sha256:d72fec1ee1bf50b206bb1b5cc09491c18fd9d8612f242cfa8797a32e82a6b5e2"
+                "sha256:72ebc6ced064abf6425533bc0110ed919790235e05a115c680d92403d5138623",
+                "sha256:fec4181de3e6a4d18ba76811187c81459f310787494cf301d90b7256081d04b2"
             ],
-            "version": "==0.1.18"
+            "version": "==0.1.19"
         },
         "pygments": {
             "hashes": [
