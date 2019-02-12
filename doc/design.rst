@@ -32,6 +32,9 @@ The major subsystems of GWCelery are:
   GRB, neutrino, and supernova events
 * the Orchestrator, which executes the per-event annotation workflow
 
+Block diagram
+-------------
+
 Below is a diagram illustrating the conceptual relationships of these
 subsystems. Nodes in the graph are hyperlinks to the relevant API
 documentation.
