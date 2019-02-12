@@ -25,7 +25,7 @@ Changelog
 -   Add a Flask-based web interface for manually triggering certain tasks such
     as sending updated GCN notices.
 
-0.2.5 (2018-02-01)
+0.2.5 (2019-02-01)
 ------------------
 
 -   Pass along the GWCelery version number to Sentry.
