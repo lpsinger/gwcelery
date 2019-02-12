@@ -11,40 +11,48 @@ JobBatchName = gwcelery
 
 arguments = "redis-server --port 0 --unixsocket redis.sock --unixsocketperm 700"
 description = redis-server
+error =
 output = gwcelery-redis.log
 queue
 
 arguments = "gwcelery beat"
 description = gwcelery-beat
 error = gwcelery-beat.log
+output =
 queue
 
 arguments = "gwcelery worker -l info -n gwcelery-worker -Q celery"
 description = gwcelery-worker
 error = gwcelery-worker.log
+output =
 queue
 
 arguments = "gwcelery worker -l info -n gwcelery-openmp-worker -Q openmp -c 1"
 description = gwcelery-openmp-worker
 error = gwcelery-openmp-worker.log
+output =
 queue
 
 arguments = "gwcelery worker -l info -n gwcelery-exttrig-worker -Q exttrig -c 1"
 description = gwcelery-exttrig-worker
 error = gwcelery-exttrig-worker.log
+output =
 queue
 
 arguments = "gwcelery worker -l info -n gwcelery-superevent-worker -Q superevent -c 1"
 description = gwcelery-superevent-worker
 error = gwcelery-superevent-worker.log
+output =
 queue
 
 arguments = "gwcelery flask run --with-threads --host 0.0.0.0"
 description = gwcelery-flask
 error = gwcelery-flask.log
+output =
 queue
 
 arguments = "gwcelery flower"
 description = gwcelery-flower
 error = gwcelery-flower.log
+output =
 queue
