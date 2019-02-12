@@ -92,6 +92,9 @@ change log.
 6.  Wait a couple minutes, and then verify that the new release has been
     published on our PyPI project page, https://pypi.org/project/gwcelery/.
 
+7.  If desired, navigate to the GitLab project's `Environments`_ page and
+    trigger a deployment to production.
+
 .. _`Environments`: https://git.ligo.org/emfollow/gwcelery/environments
 .. _`.gitlab-ci.yml`: https://git.ligo.org/emfollow/gwcelery/blob/master/.gitlab-ci.yml
 .. _`Python Package Index`: https://pypi.org
