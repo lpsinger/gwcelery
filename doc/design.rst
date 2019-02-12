@@ -8,7 +8,7 @@ Several online gravitational-wave transient search pipelines (currently Gstlal,
 PyCBC, cWB, and oLIB) upload candidates in real time to GraceDb, the central
 database and web portal for low-latency LIGO/Virgo analyses. Whenever an event
 is uploaded or altered, GraceDb pushes machine-readable notifications through
-LVAlert, a pubsub system based on XMPP.
+LVAlert, a pubsub system based on XMPP_.
 
 The business logic for selecting and sending alerts to astronomers resides not
 in GraceDb itself but in GWCelery. The role of GWCelery in the LIGO/Virgo alert
@@ -339,3 +339,4 @@ LVAlert message handler tasks are declared using the
         # do work here...
 
 .. _PyGCN: https://pypi.org/project/pygcn/
+.. _XMPP: https://xmpp.org
