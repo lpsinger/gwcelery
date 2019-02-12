@@ -1,4 +1,5 @@
-"""Application configuration for ``gracedb-test.ligo.org``."""
+"""Application configuration for ``gracedb-test.ligo.org``. Inherits all
+settings from :mod:`gwcelery.conf.playground`, with the exceptions below."""
 
 from . import *  # noqa: F401, F403
 
