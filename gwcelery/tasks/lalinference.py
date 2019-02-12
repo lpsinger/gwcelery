@@ -256,19 +256,19 @@ def prepare_ini(event, superevent_id=None):
         )
     ini_settings = {
         'service_url': gracedb.client._service_url,
-        'types': json.dumps(frametypes),
-        'channels': json.dumps(app.conf['strain_channel_names']),
+        'types': frametypes,
+        'channels': app.conf['strain_channel_names'],
         'webdir': _webdir(event['graceid']),
         'paths': [{'name': name, 'path': find_executable(executable)}
                   for name, executable in executables.items()],
         'q': min([sngl['mass2'] / sngl['mass1']
                   for sngl in singleinspiraltable]),
-        'ifos': json.dumps(ifos),
-        'seglen': str(seglen),
-        'flow': json.dumps(_freq_dict(flow, ifos)),
-        'srate': str(_srate(singleinspiraltable)),
-        'psd-start-time': str(psdstart_psdlength[0]),
-        'psd-length': str(psdstart_psdlength[1])
+        'ifos': ifos,
+        'seglen': seglen,
+        'flow': _freq_dict(flow, ifos),
+        'srate': _srate(singleinspiraltable),
+        'psd-start-time': psdstart_psdlength[0],
+        'psd-length': psdstart_psdlength[1]
     }
     return ini_template.render(ini_settings)
 
