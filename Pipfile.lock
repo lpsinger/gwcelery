@@ -23,14 +23,6 @@
             ],
             "version": "==2.4.1"
         },
-        "appnope": {
-            "hashes": [
-                "sha256:5b26757dc6f79a3b7dc9fab95359328d5747fcb2409d331ea66d0272b90ab2a0",
-                "sha256:8b995ffe925347a2138d7ac0fe77155e4311a0ea6d6da4f5128fe4b3cbe5ed71"
-            ],
-            "markers": "sys_platform == 'darwin'",
-            "version": "==0.1.0"
-        },
         "asn1crypto": {
             "hashes": [
                 "sha256:2f1adbb7546ed199e3c90ef23ec95c5cf3585bac7d11fb7eb562a3fe89c64e87",
@@ -470,10 +462,9 @@
         },
         "ligo-followup-advocate": {
             "hashes": [
-                "sha256:e9a1c1005d30252b9fa37fad0ba955030fee4ee1e9491331f28d80450ab984fe",
-                "sha256:eea7803aa86719afd287add1d97880c4a8d54a35de4ff862dda58f1026b4a257"
+                "sha256:05f9e94540351ce6170c6d905fd5e5b96ee58c653501620b683c6eb41331f7db"
             ],
-            "version": "==0.0.11"
+            "version": "==0.0.12"
         },
         "ligo-gracedb": {
             "hashes": [
