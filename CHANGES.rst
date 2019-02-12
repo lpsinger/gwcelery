@@ -14,15 +14,16 @@ Changelog
     possible to run multiple isolated instances of GWCelery under HTCondor on
     the same cluster in different working directories.
 
--   Update criteria for starting Parameter Estimation. ini file for PE is
-    uploaded to every superevent and PE is performed for superevents which have
-    FAR < 1/(2 weeks).
+-   Change the conditions for starting parameter estimation. For every CBC
+    superevent, create an ``online_pe.ini`` file suitable for starting
+    LALInference. However, only start LALInference if the false alarm rate is
+    less than once per 2 weeks.
+
+-   Determine PSD segment length for LALInference automatically based on data
+    availability and data quality.
 
 -   Add a Flask-based web interface for manually triggering certain tasks such
     as sending updated GCN notices.
-
--   Add functionalities to determine psdstart and psdlength depending on length
-    of available data and data quality in Parameter Estimation
 
 0.2.5 (2018-02-01)
 ------------------
