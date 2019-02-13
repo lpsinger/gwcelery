@@ -160,6 +160,7 @@ pypi:
   image: kroniak/ssh-client
   only:
     - master@emfollow/gwcelery
+    - tags@emfollow/gwcelery
   dependencies: []
   before_script:
     # Configure ssh known_hosts file and public/private key pair.
