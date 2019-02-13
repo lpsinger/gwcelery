@@ -27,11 +27,9 @@ def source_classification(m1, m2, c1, threshold=3.0):
 
 @app.task(shared=False)
 def classifier(coinc_psd, graceid):
-    """This function is currently actually calculating the simple
-       source classification probability (m1 < 3.0 M_sun). In the
-       future this code will call a classification code that will
-       be put on lalinference.
-    """
+    """This function is currently actually calculating the simple source
+    classification probability (m1 < 3.0 M_sun). In the future this code will
+    call a classification code that will be put on lalinference. """
     # Parse event
     coinc, psd = coinc_psd
     coinc = io.BytesIO(coinc)
