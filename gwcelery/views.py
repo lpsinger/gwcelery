@@ -12,7 +12,7 @@ from .tasks import first2years, gracedb, orchestrator
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.jinja2')
 
 
 def take_n(n, iterable):

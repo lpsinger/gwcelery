@@ -70,7 +70,7 @@ def annotate_fits_volume(filecontents, *args):
 @app.task(shared=False)
 def fits_header(filecontents, filename):
     """Dump FITS header to HTML."""
-    template = env.get_template('fits_header.html')
+    template = env.get_template('fits_header.jinja2')
     with NamedTemporaryFile(content=filecontents) as fitsfile, \
             fits.open(fitsfile.name) as hdus:
         return template.render(filename=filename, hdus=hdus)

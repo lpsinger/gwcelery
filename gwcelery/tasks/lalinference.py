@@ -240,7 +240,7 @@ def prepare_ini(event, superevent_id=None):
     file content
     """
     # Get template of .ini file
-    ini_template = env.get_template(ini_name)
+    ini_template = env.get_template('online_pe.jinja2')
 
     # Download event's info to determine PE settings
     singleinspiraltable = event['extra_attributes']['SingleInspiral']
