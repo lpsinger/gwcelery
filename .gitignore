@@ -13,4 +13,6 @@ htmlcov
 celerybeat-schedule
 *.pid
 *.log
+*.rdb
+*.sock
 .env
