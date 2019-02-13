@@ -174,7 +174,7 @@ pypi:
 .deploy-start: &deploy-start
   <<: *deploy-common
   script: |
-    ssh -T emfollow@emfollow.ligo.caltech.edu <<EOF
+    ssh -T emfollow@emfollow.ligo.caltech.edu bash <<EOF
     set -e
     mkdir -p ${CI_ENVIRONMENT_NAME} && cd ${CI_ENVIRONMENT_NAME}
     if [ -d .git ]; then git fetch; else git clone ${CI_PROJECT_URL} .; fi
@@ -193,7 +193,7 @@ pypi:
 .deploy-stop: &deploy-stop
   <<: *deploy-common
   script: |
-    ssh -T emfollow@emfollow.ligo.caltech.edu <<EOF
+    ssh -T emfollow@emfollow.ligo.caltech.edu bash <<EOF
     set -e
     cd ${CI_ENVIRONMENT_NAME}
     pipenv run gwcelery condor rm
