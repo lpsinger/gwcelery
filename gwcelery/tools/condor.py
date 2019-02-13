@@ -10,7 +10,7 @@ from celery.bin.base import Command
 import lxml.etree
 import pkg_resources
 
-SUBMIT_FILE = pkg_resources.resource_filename(__name__, 'data/gwcelery.sub')
+SUBMIT_FILE = pkg_resources.resource_filename(__name__, '../data/gwcelery.sub')
 
 
 def get_constraints():
