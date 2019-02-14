@@ -529,8 +529,6 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None,
             vetted=True
         )
         |
-        identity.s()  # FIXME: necessary to pass result to next task?
-        |
         group(
             gracedb.download.s(superevent_id)
             |
