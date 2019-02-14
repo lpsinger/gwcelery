@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "6e681c68f913ece0f5901cb394a99addfd4ea6cab5e72e4a62152b518b8729b3"
+            "sha256": "9877f5988b8a7547bda5a813d2cc65da7092107b301f2d5832dffc19f0656866"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -22,6 +22,14 @@
                 "sha256:6816eed27521293ee03aa9ace300a07215b11fee4e845588a9b863a7ba30addb"
             ],
             "version": "==2.4.1"
+        },
+        "appnope": {
+            "hashes": [
+                "sha256:5b26757dc6f79a3b7dc9fab95359328d5747fcb2409d331ea66d0272b90ab2a0",
+                "sha256:8b995ffe925347a2138d7ac0fe77155e4311a0ea6d6da4f5128fe4b3cbe5ed71"
+            ],
+            "markers": "sys_platform == 'darwin'",
+            "version": "==0.1.0"
         },
         "asn1crypto": {
             "hashes": [
@@ -115,11 +123,8 @@
             "extras": [
                 "redis"
             ],
-            "hashes": [
-                "sha256:77dab4677e24dc654d42dfbdfed65fa760455b6bb563a0877ecc35f4cfcfc678",
-                "sha256:ad7a7411772b80a4d6c64f2f7f723200e39fb66cf614a7fdfab76d345acc7b13"
-            ],
-            "version": "==4.2.1"
+            "git": "https://github.com/celery/celery",
+            "ref": "0d1ab662a3881c575fb6293596c7c780aa042b2e"
         },
         "celery-eternal": {
             "hashes": [

@@ -6,6 +6,7 @@ verify_ssl = true
 [packages]
 gwcelery = {editable = true,path = "."}
 ipython = "*"
+celery = {extras = ["redis"],git = "https://github.com/celery/celery",ref = "0d1ab662a3881c575fb6293596c7c780aa042b2e"}
 
 [requires]
 python_version = "3.6"
