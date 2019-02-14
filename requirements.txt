@@ -10,7 +10,7 @@ gwpy
 healpy
 jinja2
 lalsuite >= 6.52
-ligo-followup-advocate == 0.0.13.dev0
+ligo-followup-advocate >= 0.0.14
 ligo-gracedb >= 2.1.2
 ligo-raven >= 1.8
 ligo-segments

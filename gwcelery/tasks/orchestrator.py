@@ -618,4 +618,15 @@ def retraction_alert(superevent_id):
 
             gracedb.create_tag.s('public', superevent_id)
         )
+        |
+        (
+            circulars.create_retraction_circular.si(superevent_id)
+            |
+            gracedb.upload.s(
+                'retraction_circular.txt',
+                superevent_id,
+                'Automatically generated draft of retraction GCN Circular',
+                tags=['em_follow']
+            )
+        )
     ).apply_async()

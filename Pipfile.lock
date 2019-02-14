@@ -457,9 +457,9 @@
         },
         "ligo-followup-advocate": {
             "hashes": [
-                "sha256:5681b2817cea2cffeadf78ccd8668e8b66dd1cc3ec0d4b719707054d2a058837"
+                "sha256:80a593350bd9db3265ec1796dff017ef82867fc68d3a2e90f2b8fa3b70596643"
             ],
-            "version": "==0.0.13.dev0"
+            "version": "==0.0.14"
         },
         "ligo-gracedb": {
             "hashes": [
