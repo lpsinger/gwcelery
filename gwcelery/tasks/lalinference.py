@@ -414,29 +414,32 @@ def dag_finished(rundir, preferred_event_id, superevent_id):
     # get webdir where the results are outputted
     webdir = _webdir(preferred_event_id)
 
-    return group(
-        gracedb.upload.si(
-            filecontents=None, filename=None, graceid=superevent_id,
-            message='LALInference online parameter estimation finished.',
-            tags='pe'
-        ),
-        upload_result.si(
-            webdir, 'LALInference.fits.gz', superevent_id,
-            'LALInference FITS sky map', ['pe', 'sky_loc']
-        ),
-        upload_result.si(
-            webdir, 'extrinsic.png', superevent_id,
-            'Corner plot for extrinsic parameters', 'pe'
-        ),
-        upload_result.si(
-            webdir, 'intrinsic.png', superevent_id,
-            'Corner plot for intrinsic parameters', 'pe'
-        ),
-        upload_result.si(
-            webdir, 'sourceFrame.png', superevent_id,
-            'Corner plot for source frame parameters', 'pe'
-        )
-    ) | clean_up.si(rundir)
+    return \
+        group(
+            gracedb.upload.si(
+                filecontents=None, filename=None, graceid=superevent_id,
+                message='LALInference online parameter estimation finished.' +
+                        ' <a href=' + baseurl + '>results</a>',
+                tags='pe'
+            ),
+            upload_result.si(
+                webdir, 'LALInference.fits.gz', superevent_id,
+                'LALInference FITS sky map', ['pe', 'sky_loc']
+            ),
+            upload_result.si(
+                webdir, 'extrinsic.png', superevent_id,
+                'Corner plot for extrinsic parameters', 'pe'
+            ),
+            upload_result.si(
+                webdir, 'intrinsic.png', superevent_id,
+                'Corner plot for intrinsic parameters', 'pe'
+            ),
+            upload_result.si(
+                webdir, 'sourceFrame.png', superevent_id,
+                'Corner plot for source frame parameters', 'pe'
+            )
+        ) | gracedb.create_label.si('PE_READY', superevent_id) | \
+        clean_up.si(rundir)
 
 
 @app.task(ignore_result=True, shared=False)
