@@ -110,13 +110,8 @@ def replace_event(graceid, payload):
 
 
 @task(ignore_result=True, shared=False)
-def upload(filecontents, filename, graceid, message, tags=None):
+def upload(filecontents, filename, graceid, message, tags=()):
     """Upload a file to GraceDB."""
-    # FIXME: it would be more elegant to have `tags=()` in the kwargs, but
-    # gracedb-client does not understand tuples of tags.
-    # See https://git.ligo.org/lscsoft/gracedb-client/issues/5
-    if tags is None:
-        tags = []
     client.writeLog(graceid, message, filename, filecontents, tags)
 
 
