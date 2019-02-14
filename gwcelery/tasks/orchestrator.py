@@ -61,17 +61,7 @@ def handle_superevent(alert):
         ).apply_async()
     # check DQV label on superevent, run check_vectors if required
     elif alert['alert_type'] == 'event_added':
-        # FIXME Getting the graceid from the most recent event added log
-        # this is a temporary solution, fix post ER13
-        regex = re.compile(r'Added event: ([GMT][0-9]+)')
-        for log in reversed(gracedb.get_log(superevent_id)):
-            match = regex.match(log['comment'])
-            if match:
-                new_event_id = match[1]
-                break
-        else:
-            raise ValueError('Added event log message not found')
-
+        new_event_id = alert['data']['preferred_event']
         start = alert['data']['t_start']
         end = alert['data']['t_end']
 
