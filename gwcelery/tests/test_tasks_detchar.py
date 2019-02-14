@@ -141,7 +141,6 @@ def test_check_vectors(mock_create_label, mock_write_log, mock_json,
     superevent_id = 'S12345a'
     start, end = 1216577977, 1216577979
     detchar.check_vectors(event, superevent_id, start, end)
-    print(mock_write_log.mock_calls)
     calls = [
         call(
             'S12345a',
