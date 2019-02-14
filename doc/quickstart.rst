@@ -9,7 +9,12 @@ testing on any machine.
 To install
 ----------
 
-GWCelery requires Python >= 3.6.
+.. important::
+   GWCelery requires Python 3.6; it does not work with Python 3.7 right now.
+
+   There is a `bug in the Celery 4.2.1`_ that makes it incompatible with Python
+   3.7. It has already been fixed upstream, but it will continue to affect us
+   `until Celery 4.3 is released`_.
 
 The easiest way to install it is with ``venv`` and ``pip``::
 
@@ -27,6 +32,8 @@ The easiest way to install it is with ``venv`` and ``pip``::
 
    then run ``pip install --upgrade setuptools`` and try again.
 
+.. _`bug in the Celery 4.2.1`: https://github.com/celery/celery/pull/4852
+.. _`until Celery 4.3 is released`: https://github.com/celery/celery/issues/5180
 
 To test
 -------
