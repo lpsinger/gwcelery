@@ -455,7 +455,8 @@ def parameter_estimation(event, superevent_id):
     2.   Start Parameter Estimation if FAR is smaller than the PE threshold.
     """
     preferred_event_id = event['graceid']
-    # FIXME: it will be better to start parater estimation for 'burst' events.
+    # FIXME: it will be better to start parameter estimation for 'burst'
+    # events.
     if event['group'] == 'CBC' and event['search'] != 'MDC':
         canvas = lalinference.prepare_ini.s(event, superevent_id)
         next_task = gracedb.upload.s(
