@@ -421,7 +421,7 @@ def preliminary_alert(event, superevent_id):
                 gracedb.upload.s(
                     'circular.txt',
                     superevent_id,
-                    'Automatically generated draft of initial GCN Circular',
+                    'Template for preliminary GCN Circular',
                     tags=['em_follow']
                 )
             )
@@ -532,6 +532,15 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None,
                 |
                 gcn.send.s(),
 
+                circulars.create_circular.si(superevent_id)
+                |
+                gracedb.upload.s(
+                    '{}-circular.txt'.format(alert_type),
+                    superevent_id,
+                    'Template for {} GCN Circular'.format(alert_type),
+                    tags=['em_follow']
+                ),
+
                 gracedb.create_tag.s('public', superevent_id)
             )
         )
@@ -611,17 +620,15 @@ def retraction_alert(superevent_id):
             |
             gcn.send.s(),
 
-            gracedb.create_tag.s('public', superevent_id)
-        )
-        |
-        (
             circulars.create_retraction_circular.si(superevent_id)
             |
             gracedb.upload.s(
-                'retraction_circular.txt',
+                'retraction-circular.txt',
                 superevent_id,
-                'Automatically generated draft of retraction GCN Circular',
+                'Template for retraction GCN Circular',
                 tags=['em_follow']
-            )
+            ),
+
+            gracedb.create_tag.s('public', superevent_id)
         )
     ).apply_async()

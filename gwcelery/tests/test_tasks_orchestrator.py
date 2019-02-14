@@ -169,9 +169,10 @@ def superevent_initial_alert_download(filename, graceid):
 @patch('gwcelery.tasks.gracedb.download.run',
        superevent_initial_alert_download)
 @patch('gwcelery.tasks.gcn.send.run')
-def test_handle_superevent_initial_alert(mock_send, mock_expose,
-                                         mock_create_voevent, mock_create_tag,
-                                         mock_get_log):
+@patch('gwcelery.tasks.circulars.create_circular.run')
+def test_handle_superevent_initial_alert(mock_create_circular, mock_send,
+                                         mock_expose, mock_create_voevent,
+                                         mock_create_tag, mock_get_log):
     """Test that the ``ADVOK`` label triggers an initial alert."""
     alert = {
         'alert_type': 'label_added',
@@ -188,6 +189,7 @@ def test_handle_superevent_initial_alert(mock_send, mock_expose,
         ProbHasRemnant=0.0, Terrestrial=0.01, internal=False, open_alert=True,
         skymap_filename='foobar.fits.gz', skymap_type='foobar', vetted=True)
     mock_send.assert_called_once_with('contents of S1234-Initial-1.xml')
+    mock_create_circular.assert_called_once_with('S1234')
     mock_create_tag.assert_called_once_with(
         'S1234-Initial-1.xml', 'public', 'S1234')
 
