@@ -18,7 +18,7 @@ ligo.skymap >= 0.1.0
 lscsoft-glue
 lxml
 numpy
-pygcn >= 0.1.16
+pygcn >= 0.1.19
 pytest >= 3.0
 redis
 safe-netrc

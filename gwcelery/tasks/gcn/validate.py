@@ -11,6 +11,7 @@ from .. import gracedb
 @gcn.handler(gcn.NoticeType.LVC_PRELIMINARY,
              gcn.NoticeType.LVC_INITIAL,
              gcn.NoticeType.LVC_UPDATE,
+             gcn.NoticeType.LVC_RETRACTION,
              shared=False)
 def validate_voevent(payload):
     """Check that the contents of a public LIGO/Virgo GCN matches the original
