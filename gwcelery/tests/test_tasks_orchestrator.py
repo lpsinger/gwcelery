@@ -132,7 +132,7 @@ def test_handle_superevent_event_added(mock_get_labels):
                  'preferred_event': 'G123456',
                  't_start': 1.,
                  't_0': 2.,
-                 't_end': 3.,},
+                 't_end': 3.},
         'object': {'superevent_id': 'TS123456a',
                    'preferred_event': 'G123456',
                    't_start': 1.,
