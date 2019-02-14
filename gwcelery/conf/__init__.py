@@ -14,6 +14,9 @@ in :obj:`sys.path`, including any of the following presets:
  * :mod:`gwcelery.conf.test`
 """
 
+import getpass
+import os
+
 # Celery application settings.
 # Use pickle serializer, because it supports byte values.
 
@@ -180,3 +183,12 @@ LALInference (see :mod:`gwcelery.tasks.lalinference`)"""
 pe_threshold = 1.0 / (14 * 86400)
 """FAR threshold in Hz for Parameter Estimation. PE group now applies
 1/(2 weeks) as a threshold. 86400 seconds = 1 day and 14 days = 2 weeks."""
+
+pe_results_path = os.path.join(os.getenv('HOME'), 'public_html/online_pe')
+"""Path to the results of Parameter Estimation (see
+:mod:`gwcelery.tasks.lalinference`)"""
+
+pe_results_url = ('https://ldas-jobs.ligo.caltech.edu/~{}/'
+                  'online_pe/').format(getpass.getuser())
+"""URL of page where all the results of Parameter Estimation are outputted
+(see :mod:`gwcelery.tasks.lalinference`)"""

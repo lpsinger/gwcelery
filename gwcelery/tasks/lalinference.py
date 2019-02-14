@@ -8,6 +8,7 @@ import os
 import shutil
 import subprocess
 import tempfile
+import urllib
 
 from celery import group
 from glue.lal import Cache
@@ -55,9 +56,9 @@ padding = 16
 default_num_of_realizations = 32
 
 
-def _webdir(graceid):
-    """Return webdir filled in .ini file"""
-    return os.getenv('HOME') + '/public_html/online_pe/' + graceid
+def _pe_results_path(graceid):
+    """Return path to results of Parameter Estimation"""
+    return os.path.join(app.conf['pe_results_path'], graceid)
 
 
 def _ifos(event):
@@ -265,7 +266,7 @@ def prepare_ini(event, superevent_id=None):
         'service_url': gracedb.client._service_url,
         'types': frametypes,
         'channels': app.conf['strain_channel_names'],
-        'webdir': _webdir(event['graceid']),
+        'webdir': _pe_results_path(event['graceid']),
         'paths': [{'name': name, 'path': find_executable(executable)}
                   for name, executable in executables.items()],
         'q': min([sngl['mass2'] / sngl['mass1']
@@ -364,7 +365,7 @@ def job_error_notification(request, exc, traceback, superevent_id):
 
 
 @app.task(ignore_result=True, shared=False)
-def upload_result(webdir, filename, graceid, message, tag):
+def upload_result(pe_results_path, filename, graceid, message, tag):
     """Upload a PE result
 
     Parameters
@@ -372,14 +373,36 @@ def upload_result(webdir, filename, graceid, message, tag):
     graceid : str
         The GraceDb ID.
     """
-    paths = list(glob.iglob(webdir + '/**/' + filename, recursive=True))
-    if len(paths) == 1:
-        with open(paths[0], 'rb') as f:
-            contents = f.read()
-        gracedb.upload.delay(
-            contents, filename,
-            graceid, message, tag
-        )
+    path, = glob.iglob(
+        os.path.join(pe_results_path, '**', filename), recursive=True
+    )
+    with open(path, 'rb') as f:
+        contents = f.read()
+    gracedb.upload.delay(
+        contents, filename, graceid, message, tag
+    )
+
+
+@app.task(ignore_result=True, shared=False)
+def upload_url(pe_results_path, graceid):
+    """Upload url of a page containing all of the plots."""
+    path_to_posplots, = glob.iglob(
+        os.path.join(pe_results_path, '**', 'posplots.html'),
+        recursive=True
+    )
+    baseurl = urllib.parse.urljoin(
+                  app.conf['pe_results_url'],
+                  os.path.relpath(
+                      path_to_posplots,
+                      app.conf['pe_results_path'],
+                  )
+              )
+    gracedb.upload.delay(
+        filecontents=None, filename=None, graceid=graceid,
+        message=('LALInference online parameter estimation finished.'
+                 '<a href={}>results</a>').format(baseurl),
+        tags='pe'
+    )
 
 
 @app.task(ignore_result=True, shared=False)
@@ -411,31 +434,26 @@ def dag_finished(rundir, preferred_event_id, superevent_id):
     tasks : canvas
         The work-flow for uploading PE results
     """
-    # get webdir where the results are outputted
-    webdir = _webdir(preferred_event_id)
+    # get path to pe results
+    pe_results_path = _pe_results_path(preferred_event_id)
 
     return \
         group(
-            gracedb.upload.si(
-                filecontents=None, filename=None, graceid=superevent_id,
-                message='LALInference online parameter estimation finished.' +
-                        ' <a href=' + baseurl + '>results</a>',
-                tags='pe'
-            ),
+            upload_url.si(pe_results_path, superevent_id),
             upload_result.si(
-                webdir, 'LALInference.fits.gz', superevent_id,
+                pe_results_path, 'LALInference.fits.gz', superevent_id,
                 'LALInference FITS sky map', ['pe', 'sky_loc']
             ),
             upload_result.si(
-                webdir, 'extrinsic.png', superevent_id,
+                pe_results_path, 'extrinsic.png', superevent_id,
                 'Corner plot for extrinsic parameters', 'pe'
             ),
             upload_result.si(
-                webdir, 'intrinsic.png', superevent_id,
+                pe_results_path, 'intrinsic.png', superevent_id,
                 'Corner plot for intrinsic parameters', 'pe'
             ),
             upload_result.si(
-                webdir, 'sourceFrame.png', superevent_id,
+                pe_results_path, 'sourceFrame.png', superevent_id,
                 'Corner plot for source frame parameters', 'pe'
             )
         ) | gracedb.create_label.si('PE_READY', superevent_id) | \
