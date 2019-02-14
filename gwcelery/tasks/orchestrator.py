@@ -240,10 +240,20 @@ def _create_voevent(classification, *args, **kwargs):
     kwargs = dict(kwargs)
 
     if classification is not None:
+        # Merge together both JSON files into a single dictionary.
         data = {}
         for text in classification:
             data.update(json.loads(text))
 
+        # Copy over recognized keys to kwargs for gracedb.create_voevent.
+        # Missing keys are not an error.
+        for key in ('BNS', 'NSBH', 'BBH'):
+            try:
+                kwargs[key] = data[key]
+            except KeyError:
+                pass
+
+        # Remaining keys have small differences in argument names and units.
         try:
             kwargs['ProbHasNS'] = 0.01 * data['Prob NS2']
         except KeyError:
@@ -251,21 +261,6 @@ def _create_voevent(classification, *args, **kwargs):
 
         try:
             kwargs['ProbHasRemnant'] = 0.01 * data['Prob EMbright']
-        except KeyError:
-            pass
-
-        try:
-            kwargs['BNS'] = data['BNS']
-        except KeyError:
-            pass
-
-        try:
-            kwargs['NSBH'] = data['NSBH']
-        except KeyError:
-            pass
-
-        try:
-            kwargs['BBH'] = data['BBH']
         except KeyError:
             pass
 
