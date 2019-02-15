@@ -62,7 +62,7 @@ def broker(self):
                     '--broadcast-test-interval', '0']
             for name in app.conf['gcn_broker_accept_addresses']:
                 cmd += ['--subscriber-whitelist', socket.gethostbyname(name)]
-        subprocess.check_call(cmd)
+        subprocess.run(cmd, check=True)
 
 
 @app.task(ignore_result=True, shared=False)
@@ -75,8 +75,7 @@ def send(message):
     port = broker.backend.client.get(broker.name + '.port')
 
     # Send the VOEvent using comet-sendvo.
-    subprocess.run(['comet-sendvo', '--port', port],
-                   check=True, input=message, stderr=subprocess.PIPE)
+    subprocess.run(['comet-sendvo', '--port', port], input=message, check=True)
 
 
 class _VOEventDispatchHandler(DispatchHandler):
