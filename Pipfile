@@ -4,8 +4,14 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [packages]
+# Our package and all of its dependencies.
 gwcelery = {editable = true,path = "."}
+
+# Include IPython for a nicer ``gwcelery shell`` experience.
 ipython = "*"
+
+# Pull in flower from GitHub to pick up our patch for Redis brokers that has
+# not yet made it into a release. # See https://github.com/mher/flower/pull/822
 flower = {git = "https://github.com/mher/flower",ref = "d02002d000024045de94a558d9054e2a8c0e2d77"}
 
 [requires]
