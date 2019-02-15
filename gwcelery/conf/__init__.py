@@ -155,6 +155,13 @@ p_astro_gstlal_ln_likelihood_threshold = 6
 
 p_astro_gstlal_ranking_pdf = '/home/gstlalcbc/observing/3/online/trigs/rankingstat_pdf.xml.gz'  # noqa: E501
 
+p_astro_url = \
+    'http://emfollow.ldas.cit/data/H1L1V1-mean_counts-1126051217-61603201.json'
+"""URL for mean values of Poisson counts using which p_astro
+is computed. (Used by :mod:`gwcelery.tasks.p_astro_gstlal` and
+:mod:`gwcelery.tasks.p_astro_other`)
+"""
+
 low_latency_frame_types = {'H1': 'H1_O2_llhoft',
                            'L1': 'L1_O2_llhoft',
                            'V1': 'V1_O2_llhoft'}

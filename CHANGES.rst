@@ -14,6 +14,9 @@ Changelog
 
 -   Include ``EM_COINC`` triggered circulars to upload to the superevent page.
 
+-   p-astro reads mean values from a file on CIT, new mass-gap category
+    added. Removed redundant functions from p_astro_gstlal module.
+
 0.2.6 (2019-02-12)
 ------------------
 
