@@ -9,11 +9,11 @@ lvalert_host = 'lvalert.cgca.uwm.edu'
 gracedb_host = 'gracedb.ligo.org'
 """GraceDb host."""
 
-gcn_broker_accept_addresses = ['capella2.gsfc.nasa.gov']
+voevent_broadcaster_whitelist = ['capella2.gsfc.nasa.gov']
 """List of hosts from which the broker will accept connections.
 If empty, then completely disable the broker's broadcast capability."""
 
-gcn_client_address = '68.169.57.253:8096'
+voevent_receiver_address = '68.169.57.253:8096'
 """The VOEvent listener will connect to this address to receive GCNs.
 If empty, then completely disable the GCN listener.
 

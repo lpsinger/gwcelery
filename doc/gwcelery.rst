@@ -10,3 +10,4 @@ API Reference
     gwcelery.tasks
     gwcelery.tools
     gwcelery.util
+    gwcelery.voevent

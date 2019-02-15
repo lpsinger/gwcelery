@@ -13,9 +13,9 @@ def celeryconf():
     new_conf = dict(
         broker_url='memory://',
         result_backend='cache+memory://',
-        gcn_broker_address='127.0.0.1:53410',
-        gcn_broker_accept_addresses=['127.0.0.1'],
-        gcn_client_address='gcn.invalid:8099',
+        voevent_broadcaster_address='127.0.0.1:53410',
+        voevent_broadcaster_whitelist=['127.0.0.0/8'],
+        voevent_receiver_address='gcn.invalid:8099',
         task_always_eager=True,
         task_eager_propagates=True,
         lvalert_host='lvalert.invalid',

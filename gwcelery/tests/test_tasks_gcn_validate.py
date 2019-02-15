@@ -3,7 +3,7 @@ import json
 import pkg_resources
 import pytest
 
-from ..tasks.gcn.validate import validate_voevent
+from ..tasks.gcn import validate
 
 
 @pytest.fixture
@@ -38,10 +38,10 @@ def fake_gcn(celeryconf, monkeypatch):
 
 def test_validate_voevent(fake_gcn):
     """Test that the fake GCN notice matches what we actually sent."""
-    validate_voevent(fake_gcn)
+    validate(fake_gcn)
 
 
 def test_validate_voevent_mismatched_param(fake_gcn):
     """Test that we correctly detect mismatched parameter values in GCNs."""
     with pytest.raises(AssertionError, match="^GCN does not match GraceDb$"):
-        validate_voevent(fake_gcn + b'\n')
+        validate(fake_gcn + b'\n')

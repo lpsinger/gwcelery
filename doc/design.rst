@@ -273,11 +273,20 @@ of several processes:
 
     *  :meth:`gwcelery.tasks.external_triggers.handle_gcn`
 
-7.  **General-Purpose Worker**
+7.  **VOEvent Worker**
+
+    A Celery worker that is dedicated to sending and receiving VOEvents. It
+    runs an embedded instance of the :doc:`comet:index` VOEvent broker, which
+    is started and stopped using a set of custom :doc:`Celery bootsteps
+    <celery:userguide/extending>`. Note that the VOEvent worker must be started
+    with the ``--pool=solo`` option so that tasks are executed in the same
+    Python process that is running the VOEvent broker.
+
+8.  **General-Purpose Worker**
 
     A Celery worker that accepts all other tasks.
 
-8.  **Flask Web Application**
+9.  **Flask Web Application**
 
     A web application that provides forms to manually initiate certain tasks,
     including sending an update alert or creating a mock event.
@@ -290,11 +299,9 @@ keep open a persistent connection with some external service. These tasks are
 subclasses of :class:`celery_eternal.EternalTask` or
 :class:`celery_eternal.EternalProcessTask`.
 
-*  :meth:`gwcelery.tasks.gcn.broker`
-*  :meth:`gwcelery.tasks.gcn.listen`
 *  :meth:`gwcelery.tasks.lvalert.listen`
 
-Both of these run inside the general-purpose worker process described above,
+These tasks run inside the general-purpose worker process described above,
 and are automatically started (and restarted as necessary) by Celery Beat.
 
 Handlers
@@ -312,7 +319,7 @@ GCN notices
 ~~~~~~~~~~~
 
 GCN notice handler tasks are declared using the
-:meth:`gwcelery.tasks.gcn.handler` decorator::
+:meth:`gwcelery.voevent.handler` decorator::
 
     import lxml.etree
     from gwcelery.tasks import gcn

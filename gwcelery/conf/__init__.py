@@ -33,16 +33,16 @@ lvalert_host = 'lvalert-playground.cgca.uwm.edu'
 gracedb_host = 'gracedb-playground.ligo.org'
 """GraceDb host."""
 
-gcn_broker_address = ':5341'
+voevent_broadcaster_address = 'localhost:5341'
 """The VOEvent broker will bind to this address to send GCNs.
 This should be a string of the form `host:port`. If `host` is empty,
 then listen on all available interfaces."""
 
-gcn_broker_accept_addresses = []
+voevent_broadcaster_whitelist = ['127.0.0.0/8']
 """List of hosts from which the broker will accept connections.
 If empty, then completely disable the broker's broadcast capability."""
 
-gcn_client_address = ''
+voevent_receiver_address = '68.169.57.253:8099'
 """The VOEvent listener will connect to this address to receive GCNs.
 If empty, then completely disable the GCN listener."""
 

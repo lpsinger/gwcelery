@@ -5,6 +5,7 @@ from celery import Celery
 from ._version import get_versions
 from .conf import playground
 from . import sentry
+from . import voevent
 
 __all__ = ('app',)
 
@@ -14,6 +15,9 @@ del get_versions
 # Use redis broker, because it supports locks (and thus singleton tasks).
 app = Celery(__name__, broker='redis://', autofinalize=False)
 """Celery application object."""
+
+# Register VOEvent subsystem.
+voevent.install(app)
 
 # Register all tasks.
 app.autodiscover_tasks([__name__])

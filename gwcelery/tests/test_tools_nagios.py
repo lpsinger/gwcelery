@@ -55,8 +55,8 @@ def test_nagios(capsys, monkeypatch, socket_enabled,
     # worker, no tasks
 
     starter.python_process(
-        args=(['gwcelery', 'worker', '-l', 'info',
-               '-Q', 'celery,exttrig,openmp,superevent'],),
+        args=(['gwcelery', 'worker', '-l', 'info', '--pool', 'solo',
+               '-Q', 'celery,exttrig,openmp,superevent,voevent'],),
         target=app.start, timeout=10, magic_words=b'ready.')
 
     with pytest.raises(SystemExit) as excinfo:

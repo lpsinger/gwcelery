@@ -45,6 +45,12 @@ error = gwcelery-superevent-worker.log
 output =
 queue
 
+arguments = "gwcelery worker -l info -n gwcelery-voevent-worker -Q voevent -P solo"
+description = gwcelery-voevent-worker
+error = gwcelery-voevent-worker.log
+output =
+queue
+
 arguments = "gwcelery flask run --with-threads --host 0.0.0.0"
 description = gwcelery-flask
 error = gwcelery-flask.log

@@ -15,7 +15,6 @@ gwcelery.tasks module
     gwcelery.tasks.first2years
     gwcelery.tasks.ligo_fermi_skymaps
     gwcelery.tasks.gcn
-    gwcelery.tasks.gcn.validate
     gwcelery.tasks.gracedb
     gwcelery.tasks.lalinference
     gwcelery.tasks.lvalert
