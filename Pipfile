@@ -6,6 +6,7 @@ verify_ssl = true
 [packages]
 gwcelery = {editable = true,path = "."}
 ipython = "*"
+flower = {git = "https://github.com/mher/flower",ref = "d02002d000024045de94a558d9054e2a8c0e2d77"}
 
 [requires]
 python_version = "3.6"
