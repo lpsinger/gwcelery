@@ -24,7 +24,7 @@ queue
 arguments = "gwcelery worker -l info -n gwcelery-worker -Q celery"
 description = gwcelery-worker
 error = gwcelery-worker.log
-output =
+output = gwcelery-worker.out
 queue
 
 arguments = "gwcelery worker -l info -n gwcelery-openmp-worker -Q openmp -c 1"
