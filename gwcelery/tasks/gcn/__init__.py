@@ -50,7 +50,8 @@ def broker(self):
     # isolation from any other instance of GWCelery on the same machine.
     with tempfile.TemporaryDirectory() as tmpdir:
         # Assemble the command line options for Twisted.
-        cmd = [sys.executable, '-m', 'twisted', 'comet', '--verbose',
+        cmd = [sys.executable, '-m', 'twisted', '--log-file', '+',
+               'comet', '--verbose',
                '--local-ivo', 'ivo://ligo.org/gwcelery',
                '--receive',
                '--receive-port', author_port,
