@@ -123,10 +123,10 @@
         },
         "celery-eternal": {
             "hashes": [
-                "sha256:98862b04254a03cbf76b5908b71c6e18ebd7ddadcf96c898029638c311a0326f",
-                "sha256:ad5dd96153311067d46c4b0efc9750873130356823e8be67f387154ddcfd9573"
+                "sha256:7ad22d9a26ce3c7774d73d52ae556d68e214122acbc50c6e1e7e358401b96ac1",
+                "sha256:b20bda2c9ccf9bca2617467c2ae2bf4c8d6ecdbaf84940f42401956ef574ab16"
             ],
-            "version": "==0.1.0"
+            "version": "==0.1.1"
         },
         "celery-singleton": {
             "hashes": [
@@ -468,9 +468,9 @@
         },
         "ligo-raven": {
             "hashes": [
-                "sha256:d5f0f87ded41fb015e4909ce975c1a18cbf7d6512c422ce4333d3839a597ddbf"
+                "sha256:16f6f92ce73bcde01c8823244ba9d3d0dd240949f511ad1e50f49ae1f9f3605f"
             ],
-            "version": "==1.9"
+            "version": "==1.10"
         },
         "ligo-segments": {
             "hashes": [
