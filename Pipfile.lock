@@ -131,10 +131,10 @@
         },
         "celery-eternal": {
             "hashes": [
-                "sha256:37dc9f19fc947ea5eb93f3388cdab667b492e94ffa7fa85b2c1d3612579e4672",
-                "sha256:e089d1a03f44a7c6514dd2e8e4d77f44c781fe78c0bc0cdb46967e71818316dc"
+                "sha256:98862b04254a03cbf76b5908b71c6e18ebd7ddadcf96c898029638c311a0326f",
+                "sha256:ad5dd96153311067d46c4b0efc9750873130356823e8be67f387154ddcfd9573"
             ],
-            "version": "==0.0.3"
+            "version": "==0.1.0"
         },
         "celery-singleton": {
             "hashes": [
