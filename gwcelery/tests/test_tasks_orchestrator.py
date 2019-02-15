@@ -194,6 +194,44 @@ def test_handle_superevent_initial_alert(mock_create_circular, mock_send,
         'S1234-Initial-1.xml', 'public', 'S1234')
 
 
+def superevent_retraction_alert_download(filename, graceid):
+    if filename == 'S1234-Retraction-2.xml':
+        return 'contents of S1234-Retraction-2.xml'
+    else:
+        raise ValueError
+
+
+@patch('gwcelery.tasks.gracedb.create_tag.run')
+@patch('gwcelery.tasks.gracedb.create_voevent.run',
+       return_value='S1234-Retraction-2.xml')
+@patch('gwcelery.tasks.gracedb.expose.run')
+@patch('gwcelery.tasks.gracedb.download.run',
+       superevent_retraction_alert_download)
+@patch('gwcelery.tasks.gcn.send.run')
+@patch('gwcelery.tasks.circulars.create_retraction_circular.run')
+def test_handle_superevent_retraction_alert(mock_create_retraction_circular,
+                                            mock_send, mock_expose,
+                                            mock_create_voevent,
+                                            mock_create_tag):
+    """Test that the ``ADVNO`` label triggers a retraction alert."""
+    alert = {
+        'alert_type': 'label_added',
+        'uid': 'S1234',
+        'data': {'name': 'ADVNO'}
+    }
+
+    # Run function under test
+    orchestrator.handle_superevent(alert)
+
+    mock_expose.assert_called_once_with('S1234')
+    mock_create_voevent.assert_called_once_with(
+        'S1234', 'retraction', internal=False, open_alert=True, vetted=True)
+    mock_send.assert_called_once_with('contents of S1234-Retraction-2.xml')
+    mock_create_retraction_circular.assert_called_once_with('S1234')
+    mock_create_tag.assert_called_once_with(
+        'S1234-Retraction-2.xml', 'public', 'S1234')
+
+
 def mock_download(filename, graceid, *args, **kwargs):
     assert graceid == 'T250822'
     filenames = {'coinc.xml': 'coinc.xml',
