@@ -18,6 +18,27 @@
     {% endwith %}
     <div class="card mb-3">
         <div class=card-header>
+            Configuration
+        </div>
+        <div class=card-body>
+            <div class=form-row>
+                <div class="form-group col-md">
+                    <label for=gracedb-host>GraceDb Host</label>
+                    <div class="input-group">
+                        <input id=gracedb-host class=form-control readonly value="{{ conf.gracedb_host }}">
+                    </div>
+                </div>
+                <div class="form-group col-md">
+                    <label for=gracedb-host>LVAlert Host</label>
+                    <div class="input-group">
+                        <input id=gracedb-host class=form-control readonly value="{{ conf.lvalert_host }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card mb-3">
+        <div class=card-header>
             Issue Update GCN Notice
         </div>
         <div class=card-body>
