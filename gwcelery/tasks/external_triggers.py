@@ -1,16 +1,12 @@
 from lxml import etree
 from urllib.parse import urlparse
 
-from celery.utils.log import get_task_logger
-
 from . import detchar
 from . import gcn
 from . import gracedb
 from . import ligo_fermi_skymaps
 from . import lvalert
 from . import raven
-
-log = get_task_logger(__name__)
 
 
 @gcn.handler(gcn.NoticeType.SNEWS,
