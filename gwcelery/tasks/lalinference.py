@@ -21,6 +21,7 @@ from .. import app
 from ..jinja import env
 from . import condor
 from . import gracedb
+from . import skymaps
 
 
 ini_name = 'online_pe.ini'
@@ -54,11 +55,6 @@ padding = 16
 
 # default number of realizations used for PSD estimation
 default_num_of_realizations = 32
-
-
-def _pe_results_path(graceid):
-    """Return path to results of Parameter Estimation"""
-    return os.path.join(app.conf['pe_results_path'], graceid)
 
 
 def _ifos(event):
@@ -266,7 +262,7 @@ def prepare_ini(event, superevent_id=None):
         'service_url': gracedb.client._service_url,
         'types': frametypes,
         'channels': app.conf['strain_channel_names'],
-        'webdir': _pe_results_path(event['graceid']),
+        'webdir': os.path.join(app.conf['pe_results_path'], event['graceid']),
         'paths': [{'name': name, 'path': find_executable(executable)}
                   for name, executable in executables.items()],
         'q': min([sngl['mass2'] / sngl['mass1']
@@ -365,26 +361,7 @@ def job_error_notification(request, exc, traceback, superevent_id):
 
 
 @app.task(ignore_result=True, shared=False)
-def upload_result(pe_results_path, filename, graceid, message, tag):
-    """Upload a PE result
-
-    Parameters
-    ----------
-    graceid : str
-        The GraceDb ID.
-    """
-    path, = glob.iglob(
-        os.path.join(pe_results_path, '**', filename), recursive=True
-    )
-    with open(path, 'rb') as f:
-        contents = f.read()
-    gracedb.upload.delay(
-        contents, filename, graceid, message, tag
-    )
-
-
-@app.task(ignore_result=True, shared=False)
-def upload_url(pe_results_path, graceid):
+def _upload_url(pe_results_path, graceid):
     """Upload url of a page containing all of the plots."""
     path_to_posplots, = glob.iglob(
         os.path.join(pe_results_path, '**', 'posplots.html'),
@@ -394,7 +371,7 @@ def upload_url(pe_results_path, graceid):
                   app.conf['pe_results_url'],
                   os.path.relpath(
                       path_to_posplots,
-                      app.conf['pe_results_path'],
+                      app.conf['pe_results_path']
                   )
               )
     gracedb.upload.delay(
@@ -403,6 +380,37 @@ def upload_url(pe_results_path, graceid):
                  '<a href={}>results</a>').format(baseurl),
         tags='pe'
     )
+
+
+@app.task(ignore_result=True, shared=False)
+def _get_result_contents(pe_results_path, filename):
+    """Return the contents of a PE results file by reading it from the local
+    filesystem.
+    """
+    path, = glob.iglob(
+        os.path.join(pe_results_path, '**', filename), recursive=True
+    )
+    with open(path, 'rb') as f:
+        contents = f.read()
+    return contents
+
+
+def _upload_result(pe_results_path, filename, graceid, message, tag):
+    """Return a canvas to get the contents of a PE result file and upload it to
+    GraceDb.
+    """
+    return _get_result_contents.si(pe_results_path, filename) | \
+        gracedb.upload.s(filename, graceid, message, tag)
+
+
+def _upload_skymap(pe_results_path, graceid):
+    return _get_result_contents.si(pe_results_path, 'LALInference.fits') | \
+        group(
+            skymaps.annotate_fits('LALInference.fits',
+                                  graceid, ['pe', 'sky_loc']),
+            gracedb.upload.s('LALInference.fits', graceid,
+                             'LALInference FITS sky map', ['pe', 'sky_loc'])
+        )
 
 
 @app.task(ignore_result=True, shared=False)
@@ -435,24 +443,24 @@ def dag_finished(rundir, preferred_event_id, superevent_id):
         The work-flow for uploading PE results
     """
     # get path to pe results
-    pe_results_path = _pe_results_path(preferred_event_id)
+    pe_results_path = \
+        os.path.join(app.conf['pe_results_path'], preferred_event_id)
 
+    # FIXME: _upload_url.si has to be out of group for gracedb.create_label.si
+    # to run
     return \
+        _upload_url.si(pe_results_path, superevent_id) | \
         group(
-            upload_url.si(pe_results_path, superevent_id),
-            upload_result.si(
-                pe_results_path, 'LALInference.fits.gz', superevent_id,
-                'LALInference FITS sky map', ['pe', 'sky_loc']
-            ),
-            upload_result.si(
+            _upload_skymap(pe_results_path, superevent_id),
+            _upload_result(
                 pe_results_path, 'extrinsic.png', superevent_id,
                 'Corner plot for extrinsic parameters', 'pe'
             ),
-            upload_result.si(
+            _upload_result(
                 pe_results_path, 'intrinsic.png', superevent_id,
                 'Corner plot for intrinsic parameters', 'pe'
             ),
-            upload_result.si(
+            _upload_result(
                 pe_results_path, 'sourceFrame.png', superevent_id,
                 'Corner plot for source frame parameters', 'pe'
             )
