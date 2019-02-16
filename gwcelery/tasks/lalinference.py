@@ -267,8 +267,8 @@ def prepare_ini(event, superevent_id=None):
         'seglen': seglen,
         'flow': _freq_dict(flow, ifos),
         'srate': _srate(singleinspiraltable),
-        'psd-start-time': psdstart_psdlength[0],
-        'psd-length': psdstart_psdlength[1]
+        'psd_start_time': psdstart_psdlength[0],
+        'psd_length': psdstart_psdlength[1]
     }
     return ini_template.render(ini_settings)
 

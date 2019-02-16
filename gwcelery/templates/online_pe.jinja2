@@ -45,8 +45,8 @@ roq_b_matrix_directory={{ roqdir }}
 # max-psd-length and padding are never used, but lalinference_pipe needs them.
 max-psd-length=100000000
 padding=16
-psd-start-time = {{ psd-start-time }}
-psd-length = {{ psd-length }}
+psd-start-time = {{ psd_start_time }}
+psd-length = {{ psd_length }}
 {# FIXME: it would be better to determine trigger time as well here, but
 current lalinference_pipe automatically determines it from coinc.xml. #}
 events=all
