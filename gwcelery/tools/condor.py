@@ -1,4 +1,9 @@
-"""Provide subcommand to manage GWCelery through HTCondor."""
+"""Shortcuts for HTCondor commands to manage deployment of GWCelery on LIGO
+Data Grid clusters.
+
+These commands apply to the GWCelery instance that is
+running in the current working directory."""
+
 import json
 import os
 import shlex
@@ -81,9 +86,6 @@ def q():
 
 
 class CondorCommand(Command):
-    """Shortcuts for HTCondor commands to manage deployment of GWCelery on LIGO
-    Data Grid clusters. These commands apply to the GWCelery instance that is
-    running in the current working directory."""
 
     def add_arguments(self, parser):
         subparsers = parser.add_subparsers()
@@ -93,3 +95,6 @@ class CondorCommand(Command):
 
     def run(self, func=None, **kwargs):
         func()
+
+
+CondorCommand.__doc__ = __doc__

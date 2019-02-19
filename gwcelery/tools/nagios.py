@@ -1,5 +1,6 @@
 """A `Nagios plugin <https://nagios-plugins.org/doc/guidelines.html>`_
 for monitoring GWCelery."""
+
 from enum import IntEnum
 from sys import exit
 from traceback import format_exc, format_exception
@@ -101,7 +102,6 @@ def check_status(app):
 
 
 class NagiosCommand(Command):
-    """Check Celery status for monitoring with Nagios."""
 
     def run(self, **kwargs):
         try:
@@ -123,3 +123,6 @@ class NagiosCommand(Command):
         if detail:
             print(detail)
         exit(status)
+
+
+NagiosCommand.__doc__ = __doc__

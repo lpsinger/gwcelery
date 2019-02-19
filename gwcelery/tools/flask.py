@@ -1,4 +1,5 @@
 """Flask web application for manually triggering certain tasks."""
+
 import argparse
 import os
 

@@ -8,4 +8,5 @@ API Reference
     gwcelery.conf
     gwcelery.sentry
     gwcelery.tasks
+    gwcelery.tools
     gwcelery.util
