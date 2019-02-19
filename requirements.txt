@@ -20,7 +20,7 @@ lxml
 numpy
 pygcn >= 0.1.19
 pytest >= 3.0
-redis
+redis < 3.2.0
 safe-netrc
 sentry-sdk[flask]
 service_identity  # We don't actually use this package, but it silences some annoying warnings from twistd.
