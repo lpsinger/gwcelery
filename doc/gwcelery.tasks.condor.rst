@@ -1,5 +1,5 @@
-gwcelery\.tasks\.condor module
-------------------------------
+gwcelery.tasks.condor module
+----------------------------
 
 .. automodule:: gwcelery.tasks.condor
 

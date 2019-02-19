@@ -1,4 +1,4 @@
-gwcelery\.tasks\.skymaps module
--------------------------------
+gwcelery.tasks.skymaps module
+-----------------------------
 
 .. automodule:: gwcelery.tasks.skymaps

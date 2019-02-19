@@ -1,4 +1,4 @@
-gwcelery\.tasks\.detchar module
--------------------------------
+gwcelery.tasks.detchar module
+-----------------------------
 
 .. automodule:: gwcelery.tasks.detchar

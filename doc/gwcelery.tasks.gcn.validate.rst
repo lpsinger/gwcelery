@@ -1,4 +1,4 @@
-gwcelery\.tasks\.gcn\.validate module
--------------------------------------
+gwcelery.tasks.gcn.validate module
+----------------------------------
 
 .. automodule:: gwcelery.tasks.gcn.validate

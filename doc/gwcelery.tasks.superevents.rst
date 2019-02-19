@@ -1,5 +1,5 @@
-gwcelery\.tasks\.superevents module
------------------------------------
+gwcelery.tasks.superevents module
+---------------------------------
 
 `Superevents` are a new abstraction of gravitational-wave candidates
 introduced in the third LIGO/Virgo observing (O3). Each superevent is

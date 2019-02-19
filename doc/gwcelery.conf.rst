@@ -1,24 +1,24 @@
-gwcelery\.conf module
-=====================
+gwcelery.conf module
+====================
 
 .. automodule:: gwcelery.conf
 
-gwcelery\.conf\.development module
-----------------------------------
+gwcelery.conf.development module
+--------------------------------
 
 .. automodule:: gwcelery.conf.development
 
-gwcelery\.conf\.playground module
----------------------------------
+gwcelery.conf.playground module
+-------------------------------
 
 .. automodule:: gwcelery.conf.playground
 
-gwcelery\.conf\.production module
----------------------------------
+gwcelery.conf.production module
+-------------------------------
 
 .. automodule:: gwcelery.conf.production
 
-gwcelery\.conf\.test module
----------------------------
+gwcelery.conf.test module
+-------------------------
 
 .. automodule:: gwcelery.conf.test

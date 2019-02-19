@@ -1,5 +1,5 @@
-gwcelery\.tasks\.orchestrator module
-------------------------------------
+gwcelery.tasks.orchestrator module
+----------------------------------
 
 This module implements the alert orchestrator, which responsible for the
 vetting and annotation workflow to produce preliminary, initial, and update

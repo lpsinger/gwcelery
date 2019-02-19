@@ -1,4 +1,4 @@
-gwcelery\.tasks\.lalinference module
-------------------------------------
+gwcelery.tasks.lalinference module
+----------------------------------
 
 .. automodule:: gwcelery.tasks.lalinference

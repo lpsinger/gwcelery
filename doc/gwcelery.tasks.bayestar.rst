@@ -1,4 +1,4 @@
-gwcelery\.tasks\.bayestar module
---------------------------------
+gwcelery.tasks.bayestar module
+------------------------------
 
 .. automodule:: gwcelery.tasks.bayestar

@@ -1,5 +1,5 @@
-gwcelery\.tasks\.external_triggers module
------------------------------------------
+gwcelery.tasks.external_triggers module
+---------------------------------------
 
 This module listens to the `GCNs` from SNEWS and the Fermi and Swift
 missions. It is also responsible for carrying out tasks related to

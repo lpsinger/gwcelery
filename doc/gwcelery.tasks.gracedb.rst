@@ -1,4 +1,4 @@
-gwcelery\.tasks\.gracedb module
--------------------------------
+gwcelery.tasks.gracedb module
+-----------------------------
 
 .. automodule:: gwcelery.tasks.gracedb

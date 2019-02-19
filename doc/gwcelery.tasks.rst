@@ -1,5 +1,5 @@
-gwcelery\.tasks module
-======================
+gwcelery.tasks module
+=====================
 
 .. automodule:: gwcelery.tasks
 

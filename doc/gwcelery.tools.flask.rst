@@ -1,4 +1,4 @@
-gwcelery\.tools\.flask module
-=============================
+gwcelery.tools.flask module
+===========================
 
 .. automodule:: gwcelery.tools.flask

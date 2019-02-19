@@ -1,4 +1,4 @@
-gwcelery\.sentry module
-=======================
+gwcelery.sentry module
+======================
 
 .. automodule:: gwcelery.sentry

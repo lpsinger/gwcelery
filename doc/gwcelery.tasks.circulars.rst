@@ -1,5 +1,5 @@
-gwcelery\.tasks\.circulars module
----------------------------------
+gwcelery.tasks.circulars module
+-------------------------------
 
 .. automodule:: gwcelery.tasks.circulars
 

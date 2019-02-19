@@ -1,4 +1,4 @@
-gwcelery\.tasks\.gcn module
----------------------------
+gwcelery.tasks.gcn module
+-------------------------
 
 .. automodule:: gwcelery.tasks.gcn

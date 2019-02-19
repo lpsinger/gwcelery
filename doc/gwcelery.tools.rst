@@ -1,5 +1,5 @@
-gwcelery\.tools module
-======================
+gwcelery.tools module
+=====================
 
 .. automodule:: gwcelery.tools
 

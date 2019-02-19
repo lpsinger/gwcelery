@@ -1,4 +1,4 @@
-gwcelery\.tools\.nagios module
-==============================
+gwcelery.tools.nagios module
+============================
 
 .. automodule:: gwcelery.tools.nagios
