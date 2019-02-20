@@ -158,7 +158,11 @@ def _start_end_of_science_segment_for_one_ifo(start, end, ifo, frametype):
     """
     # get gps start and end time of available data
     datacache = Cache.from_urls(find_urls(ifo[0], frametype, start, end))
-    available_segment = datacache.to_segmentlistdict()[ifo[0]][-1]
+    # treat the case where nothing was found with gwdatafind
+    try:
+        available_segment = datacache.to_segmentlistdict()[ifo[0]][-1]
+    except KeyError:
+        return end, end
     start, end = available_segment[0], available_segment[1]
 
     # check whether data is calibrated correctly, observing-intent and taken
