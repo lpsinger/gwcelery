@@ -45,6 +45,8 @@ roq_b_matrix_directory={{ roqdir }}
 # max-psd-length and padding are never used, but lalinference_pipe needs them.
 max-psd-length=100000000
 padding=16
+gps-start-time = {{ gps_start_time }}
+gps-end-time = {{ gps_end_time }}
 psd-start-time = {{ psd_start_time }}
 psd-length = {{ psd_length }}
 {# FIXME: it would be better to determine trigger time as well here, but

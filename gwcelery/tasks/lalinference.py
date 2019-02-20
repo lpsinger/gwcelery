@@ -190,18 +190,19 @@ def _psdstart_psdlength(start, trigtime, seglen):
     Note that psdlength has to be seglen multiplied by an integer"""
     psdlength = \
         math.floor(trigtime + 2 - seglen - padding - start) // seglen * seglen
-    return [trigtime + 2 - seglen - padding - psdlength, psdlength]
+    return (trigtime + 2 - seglen - padding - psdlength, psdlength)
 
 
-def _find_appropriate_frametype_psdstart_psdlength(trigtime, seglen,
-                                                   ifos, superevent_id=None):
-    """Return appropriate frametype, psdstart and psdlength. This function sets
-    long enough psdlength first and shorten psdlength depending on whether data
-    is available, correctly calibrated, observing-intent and taken while the
-    interferometers are locked. This function first searches for low-latency
-    frame data and, if they are not available, searches for high-latency frame
-    data. If enough data is not found finally, raise exception and report
-    failure to GraceDB"""
+def _find_appropriate_frametype_gpsstart_gpsend_psdstart_psdlength(
+    trigtime, seglen, ifos, superevent_id=None
+):
+    """Return appropriate frametype, gpsstart, gpsend, psdstart and psdlength.
+    This function sets long enough psdlength first and shorten psdlength
+    depending on whether data is available, correctly calibrated,
+    observing-intent and taken while the interferometers are locked. This
+    function first searches for low-latency frame data and, if they are not
+    available, searches for high-latency frame data. If enough data is not
+    found finally, raise exception and report failure to GraceDB"""
     # First search for low-latecy frame data
     frametype_dict = app.conf['low_latency_frame_types']
     start, end = _start_end_of_science_segment(
@@ -212,7 +213,8 @@ def _find_appropriate_frametype_psdstart_psdlength(trigtime, seglen,
     # available at this time but it will be available at the actual start time
     # of Parameter Estimation
     if start <= start_threshold:
-        return frametype_dict, _psdstart_psdlength(start, trigtime, seglen)
+        psdstart, psdlength = _psdstart_psdlength(start, trigtime, seglen)
+        return frametype_dict, start, end, psdstart, psdlength
 
     # If part of low-latency data has already vanished, search for high-latency
     # frame data
@@ -221,7 +223,8 @@ def _find_appropriate_frametype_psdstart_psdlength(trigtime, seglen,
                      trigtime, seglen, ifos, frametype_dict
                  )
     if start <= start_threshold and end >= end_threshold:
-        return frametype_dict, _psdstart_psdlength(start, trigtime, seglen)
+        psdstart, psdlength = _psdstart_psdlength(start, trigtime, seglen)
+        return frametype_dict, start, end, psdstart, psdlength
     else:
         if superevent_id is not None:
             gracedb.upload.delay(
@@ -250,8 +253,8 @@ def prepare_ini(event, superevent_id=None):
     ifos = _ifos(event)
     seglen = _seglen(singleinspiraltable)
     # FIXME: seglen here might not be actual seglen if ROQ is used
-    frametypes, psdstart_psdlength = \
-        _find_appropriate_frametype_psdstart_psdlength(
+    frametypes, gpsstart, gpsend, psdstart, psdlength = \
+        _find_appropriate_frametype_gpsstart_gpsend_psdstart_psdlength(
             trigtime, seglen, ifos, superevent_id
         )
     ini_settings = {
@@ -267,8 +270,10 @@ def prepare_ini(event, superevent_id=None):
         'seglen': seglen,
         'flow': _freq_dict(flow, ifos),
         'srate': _srate(singleinspiraltable),
-        'psd_start_time': psdstart_psdlength[0],
-        'psd_length': psdstart_psdlength[1]
+        'gps_start_time': gpsstart,
+        'gps_end_time': gpsend,
+        'psd_start_time': psdstart,
+        'psd_length': psdlength
     }
     return ini_template.render(ini_settings)
 
