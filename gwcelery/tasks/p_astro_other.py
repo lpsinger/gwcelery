@@ -89,7 +89,7 @@ def compute_p_astro(snr, far, mass1, mass2):
 
     # These are the bayes factor values that need to be
     # constructed with every new event/GraceDB upload
-    fground = 3*snr_star/(snr**4)
+    fground = 3*snr_star**3/(snr**4)
     bground = far/far_star
 
     a_hat_bns = int(mass1 <= 3 and mass2 <= 3)
