@@ -2,11 +2,11 @@
 from operator import itemgetter
 
 from celery import group
-from celery.utils.log import get_task_logger
+from celery.utils.log import get_logger
 
 from .. import app
 
-log = get_task_logger(__name__)
+log = get_logger(__name__)
 
 
 @app.task(shared=False)
