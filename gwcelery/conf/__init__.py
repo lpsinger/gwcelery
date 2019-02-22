@@ -33,7 +33,7 @@ lvalert_host = 'lvalert-playground.cgca.uwm.edu'
 gracedb_host = 'gracedb-playground.ligo.org'
 """GraceDb host."""
 
-voevent_broadcaster_address = 'localhost:5341'
+voevent_broadcaster_address = ':5342'
 """The VOEvent broker will bind to this address to send GCNs.
 This should be a string of the form `host:port`. If `host` is empty,
 then listen on all available interfaces."""

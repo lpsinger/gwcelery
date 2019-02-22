@@ -9,6 +9,11 @@ lvalert_host = 'lvalert.cgca.uwm.edu'
 gracedb_host = 'gracedb.ligo.org'
 """GraceDb host."""
 
+voevent_broadcaster_address = ':5341'
+"""The VOEvent broker will bind to this address to send GCNs.
+This should be a string of the form `host:port`. If `host` is empty,
+then listen on all available interfaces."""
+
 voevent_broadcaster_whitelist = ['capella2.gsfc.nasa.gov']
 """List of hosts from which the broker will accept connections.
 If empty, then completely disable the broker's broadcast capability."""
