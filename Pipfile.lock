@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "feebcea6701a8bccba33710658095a28b2edd803f54982ae61b4d6fa2d8fa8da"
+            "sha256": "6f11f79aedbe565deb0fcb79534656ab77d495693118d1fab89591fcc5523c3d"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -255,8 +255,8 @@
             "version": "==1.4.0"
         },
         "flower": {
-            "git": "https://github.com/mher/flower",
-            "ref": "d02002d000024045de94a558d9054e2a8c0e2d77"
+            "git": "https://github.com/lpsinger/flower",
+            "ref": "6a186c7bf7bb7dafc65ed3ce809d1ce072581577"
         },
         "future": {
             "hashes": [
@@ -746,10 +746,10 @@
         },
         "py": {
             "hashes": [
-                "sha256:bf92637198836372b520efcba9e020c330123be8ce527e535d185ed4b6f45694",
-                "sha256:e76826342cefe3c3d5f7e8ee4316b80d1dd8a300781612ddbc765c17ba25a6c6"
+                "sha256:64f65755aee5b381cea27766a3a147c3f15b9b6b9ac88676de66ba2ae36793fa",
+                "sha256:dc639b046a6e2cff5bbe40194ad65936d6ba360b52b3c3fe1d08a82dd50b5e53"
             ],
-            "version": "==1.7.0"
+            "version": "==1.8.0"
         },
         "pyasn1": {
             "hashes": [
