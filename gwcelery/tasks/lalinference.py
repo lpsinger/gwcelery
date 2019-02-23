@@ -102,8 +102,8 @@ def _srate(singleinspiraltable):
            ) * 2
 
 
-def _start_end(trigtime, seglen, num_of_realizations):
-    """Return gps start time and end time
+def _start(trigtime, seglen, num_of_realizations):
+    """Return gps start time
 
     Parameters
     ----------
@@ -119,30 +119,24 @@ def _start_end(trigtime, seglen, num_of_realizations):
     ------
     start : float
         GPS start time of the whole data used for Parameter Estimation
-    end : float
-        GPS end time of the whole data used for Parameter Estimation
     """
-    end = trigtime + 2
-    return end - seglen - padding - num_of_realizations * seglen, end
+    return trigtime + 2 - seglen - padding - num_of_realizations * seglen
 
 
-def _start_end_of_science_segment_for_one_ifo(start, end, ifo, frametype):
-    """Return gps start time and end time of correctly calibrated and
-    observing-intent data on the time when interferometers are locked. First
-    this function searches for available data. If parts of the data are
-    unavailabile, this function throws away data except for the last
-    continuously available data. Next, this function cheks the Bit 0 (HOFT_OK),
-    1 (OBSERVATION_INTENT) and 2 (OBSERVATION_READY) in GDS-CALIB_STATE_VECTOR
-    and extracts the last continous data which have 1 in all the three bits.
-    Finally this function returns gps start time and end time of the resultant
-    data. This function looks for data only for one specified ifo.
+def _start_of_science_segment_for_one_ifo(start, trigtime, ifo, frametype):
+    """Return gps start time of correctly calibrated and observing-intent data
+    on the time when interferometers are locked. In detail, this function
+    returns the last continuous data whose statevector's Bit 0 (HOFT_OK), 1
+    (OBSERVATION_INTENT) and 2 (OBSERVATION_READY) are 1. Here it is assumed
+    that data around trigtime satisfies these criterions since detection
+    pipelines already checked it.
 
     Parameters
     ----------
     start : float
         GPS start time of the time window over which data is searched for.
-    end : float
-        GPS end time of the time window over which data is searched for.
+    trigtime : float
+        GPS time of a trigger
     ifo : str
     frametype : str
 
@@ -150,40 +144,39 @@ def _start_end_of_science_segment_for_one_ifo(start, end, ifo, frametype):
     ------
     start : float
         GPS start time of found science segment
-    end : float
-        GPS end time of found science segment
     """
     # get gps start and end time of available data
-    datacache = Cache.from_urls(find_urls(ifo[0], frametype, start, end))
+    datacache = Cache.from_urls(find_urls(ifo[0], frametype, start, trigtime))
     # treat the case where nothing was found with gwdatafind
     try:
         available_segment = datacache.to_segmentlistdict()[ifo[0]][-1]
     except KeyError:
-        return end, end
-    start, end = available_segment[0], available_segment[1]
+        return trigtime
+    start = max(start, available_segment[0])
 
     # check whether data is calibrated correctly, observing-intent and taken
     # while the inferferometers are locked
     flag = StateVector.read(
                datacache, app.conf['state_vector_channel_names'][ifo],
-               start=start, end=end,
+               start=start, end=trigtime,
                bits=["HOFT_OK", "OBSERVATION_INTENT", "OBSERVATION_READY"]
            ).to_dqflags()
     pe_segment = (flag['HOFT_OK'].active - ~flag['OBSERVATION_INTENT'].active -
                   ~flag['OBSERVATION_READY'].active)[-1]
-    return pe_segment[0], pe_segment[1]
+    return pe_segment[0]
 
 
-def _start_end_of_science_segment(trigtime, seglen, ifos, frametype_dict):
-    """Calculate gps start time and end time of ready-for-PE data with
+def _start_of_science_segment(trigtime, seglen, ifos, frametype_dict):
+    """Calculate gps start time of ready-for-PE data with
     _start_end_of_science_segment for each ifo and return maximum of start time
-    and minimum of end time"""
-    start, end = _start_end(trigtime, seglen, default_num_of_realizations)
+    and minimum of end time
+    """
+    start = _start(trigtime, seglen, default_num_of_realizations)
     for ifo in ifos:
-        start, end = _start_end_of_science_segment_for_one_ifo(
-                         start, end, ifo, frametype_dict[ifo]
-                     )
-    return start, end
+        start = _start_of_science_segment_for_one_ifo(
+                    start, trigtime, ifo, frametype_dict[ifo]
+                )
+    return start
 
 
 def _psdstart_psdlength(start, trigtime, seglen):
@@ -194,38 +187,36 @@ def _psdstart_psdlength(start, trigtime, seglen):
     return (trigtime + 2 - seglen - padding - psdlength, psdlength)
 
 
-def _find_appropriate_frametype_gpsstart_gpsend_psdstart_psdlength(
+def _find_appropriate_frametype_psdstart_psdlength(
     trigtime, seglen, ifos, superevent_id=None
 ):
-    """Return appropriate frametype, gpsstart, gpsend, psdstart and psdlength.
-    This function sets long enough psdlength first and shorten psdlength
-    depending on whether data is available, correctly calibrated,
-    observing-intent and taken while the interferometers are locked. This
-    function first searches for low-latency frame data and, if they are not
-    available, searches for high-latency frame data. If enough data is not
-    found finally, raise exception and report failure to GraceDB"""
+    """Return appropriate frametype, psdstart and psdlength. This function sets
+    long enough psdlength first and shorten psdlength depending on whether data
+    is available, correctly calibrated, observing-intent and taken while the
+    interferometers are locked. This function first searches for low-latency
+    frame data and, if they are not available, searches for high-latency frame
+    data. If enough data is not found finally, raise exception and report
+    failure to GraceDB.
+    """
     # First search for low-latecy frame data
     frametype_dict = app.conf['low_latency_frame_types']
-    start, end = _start_end_of_science_segment(
-                     trigtime, seglen, ifos, frametype_dict
-                 )
-    start_threshold, end_threshold = _start_end(trigtime, seglen, 1)
-    # Here we take into account the case where very recent data is not
-    # available at this time but it will be available at the actual start time
-    # of Parameter Estimation
+    start = _start_of_science_segment(
+                trigtime, seglen, ifos, frametype_dict
+            )
+    start_threshold = _start(trigtime, seglen, 1)
     if start <= start_threshold:
         psdstart, psdlength = _psdstart_psdlength(start, trigtime, seglen)
-        return frametype_dict, start, end, psdstart, psdlength
+        return frametype_dict, psdstart, psdlength
 
     # If part of low-latency data has already vanished, search for high-latency
     # frame data
     frametype_dict = app.conf['high_latency_frame_types']
-    start, end = _start_end_of_science_segment(
-                     trigtime, seglen, ifos, frametype_dict
-                 )
-    if start <= start_threshold and end >= end_threshold:
+    start = _start_of_science_segment(
+                trigtime, seglen, ifos, frametype_dict
+            )
+    if start <= start_threshold:
         psdstart, psdlength = _psdstart_psdlength(start, trigtime, seglen)
-        return frametype_dict, start, end, psdstart, psdlength
+        return frametype_dict, psdstart, psdlength
     else:
         if superevent_id is not None:
             gracedb.upload.delay(
@@ -254,8 +245,8 @@ def prepare_ini(event, superevent_id=None):
     ifos = _ifos(event)
     seglen = _seglen(singleinspiraltable)
     # FIXME: seglen here might not be actual seglen if ROQ is used
-    frametypes, gpsstart, gpsend, psdstart, psdlength = \
-        _find_appropriate_frametype_gpsstart_gpsend_psdstart_psdlength(
+    frametypes, psdstart, psdlength = \
+        _find_appropriate_frametype_psdstart_psdlength(
             trigtime, seglen, ifos, superevent_id
         )
     ini_settings = {
@@ -271,8 +262,8 @@ def prepare_ini(event, superevent_id=None):
         'seglen': seglen,
         'flow': _freq_dict(flow, ifos),
         'srate': _srate(singleinspiraltable),
-        'gps_start_time': gpsstart,
-        'gps_end_time': gpsend,
+        'gps_start_time': psdstart - 1.0,  # to be smaller than psdstart
+        'gps_end_time': trigtime + 3.0,  # to be larger than trigtime + 2.0
         'psd_start_time': psdstart,
         'psd_length': psdlength
     }
