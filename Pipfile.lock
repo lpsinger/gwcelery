@@ -464,9 +464,10 @@
         },
         "ligo-followup-advocate": {
             "hashes": [
-                "sha256:80a593350bd9db3265ec1796dff017ef82867fc68d3a2e90f2b8fa3b70596643"
+                "sha256:3e171c99ccd30197642470dbbc78fc0a2a5516565b583de5de073ed8831dc973",
+                "sha256:8273f46fd1d3d0f919a81f2e19f8e329e457f85e3d0dda5d0939b1b29eb1a15f"
             ],
-            "version": "==0.0.14"
+            "version": "==0.0.15"
         },
         "ligo-gracedb": {
             "hashes": [
@@ -829,10 +830,10 @@
         },
         "redis": {
             "hashes": [
-                "sha256:74c892041cba46078ae1ef845241548baa3bd3634f9a6f0f952f006eb1619c71",
-                "sha256:7ba8612bbfd966dea8c62322543fed0095da2834dbd5a7c124afbc617a156aa7"
+                "sha256:724932360d48e5407e8f82e405ab3650a36ed02c7e460d1e6fddf0f038422b54",
+                "sha256:9b19425a38fd074eb5795ff2b0d9a55b46a44f91f5347995f27e3ad257a7d775"
             ],
-            "version": "==3.1.0"
+            "version": "==3.2.0"
         },
         "reproject": {
             "hashes": [

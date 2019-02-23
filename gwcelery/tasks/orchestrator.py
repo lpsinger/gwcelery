@@ -416,7 +416,7 @@ def preliminary_alert(event, superevent_id):
                 # the VOEvent file public in GraceDb, like we do for the
                 # initial, update, and retraction alerts.
 
-                circulars.create_circular.si(superevent_id)
+                circulars.create_initial_circular.si(superevent_id)
                 |
                 gracedb.upload.s(
                     'circular.txt',
@@ -532,7 +532,7 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None,
                 |
                 gcn.send.s(),
 
-                circulars.create_circular.si(superevent_id)
+                circulars.create_initial_circular.si(superevent_id)
                 |
                 gracedb.upload.s(
                     '{}-circular.txt'.format(alert_type),

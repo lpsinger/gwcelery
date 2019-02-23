@@ -63,7 +63,7 @@ def test_handle_replace_grb_event(mock_get_events, mock_replace_event):
 def test_handle_create_snews_event(mock_create_event, mock_get_event,
                                    mock_write_log, mock_json):
     text = resource_string(__name__, 'data/snews_gcn.xml')
-    external_triggers.handle_sn_gcn(payload=text)
+    external_triggers.handle_snews_gcn(payload=text)
     mock_create_event.assert_called_once_with(filecontents=text,
                                               search='Supernova',
                                               pipeline='SNEWS',
@@ -97,7 +97,7 @@ def test_handle_create_snews_event(mock_create_event, mock_get_event,
 @patch('gwcelery.tasks.gracedb.get_events', return_value=[{'graceid': 'E1'}])
 def test_handle_replace_snews_event(mock_get_events, mock_replace_event):
     text = resource_string(__name__, 'data/snews_gcn.xml')
-    external_triggers.handle_sn_gcn(payload=text)
+    external_triggers.handle_snews_gcn(payload=text)
     mock_replace_event.assert_called_once_with('E1', text)
 
 
@@ -128,7 +128,7 @@ def test_handle_sntrig_creation(mock_raven_coincidence_search, calls, path):
     alert = resource_json(__name__, path)
 
     # Run function under test
-    external_triggers.handle_sn_lvalert(alert)
+    external_triggers.handle_snews_lvalert(alert)
 
     if calls is True:
         mock_raven_coincidence_search.assert_has_calls([
@@ -167,11 +167,11 @@ def test_handle_superevent_creation(mock_raven_coincidence_search,
 @patch('gwcelery.tasks.raven.calculate_spacetime_coincidence_far')
 @patch('gwcelery.tasks.raven.calculate_coincidence_far')
 @patch('gwcelery.tasks.ligo_fermi_skymaps.create_combined_skymap')
-def test_handle_superevent_emcoinc_label(mock_create_combined_skymap,
-                                         mock_calculate_coincidence_far,
-                                         mock_calc_spacetime_coinc_far,
-                                         mock_get_event, mock_get_superevent,
-                                         mock_se_cls, mock_exttrig_cls):
+def test_handle_superevent_emcoinc_label1(mock_create_combined_skymap,
+                                          mock_calculate_coincidence_far,
+                                          mock_calc_spacetime_coinc_far,
+                                          mock_get_event, mock_get_superevent,
+                                          mock_se_cls, mock_exttrig_cls):
     """Test dispatch of an LVAlert message for a superevent EM_COINC label
     application."""
     alert = resource_json(__name__, 'data/lvalert_superevent_label.json')
@@ -181,3 +181,16 @@ def test_handle_superevent_emcoinc_label(mock_create_combined_skymap,
     mock_calculate_coincidence_far.assert_called_once_with('S180616h', 'CBC')
     mock_calc_spacetime_coinc_far.assert_called_once_with('S180616h',
                                                           'CBC')
+
+
+@patch('gwcelery.tasks.gracedb.upload.run')
+@patch('gwcelery.tasks.circulars.create_emcoinc_circular.run')
+def test_handle_superevent_emcoinc_label2(mock_create_emcoinc_circular,
+                                          mock_gracedb_upload):
+    """Test dispatch of an LVAlert message for a superevent EM_COINC label
+    application."""
+    alert = resource_json(__name__, 'data/lvalert_superevent_label.json')
+
+    external_triggers.handle_emcoinc_lvalert(alert)
+    mock_create_emcoinc_circular.assert_called_once_with('S180616h')
+    mock_gracedb_upload.assert_called_once()

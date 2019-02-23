@@ -66,7 +66,7 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
         else:
             raise ValueError
 
-    create_circular = Mock()
+    create_initial_circular = Mock()
     expose = Mock()
     plot_volume = Mock()
     plot_allsky = Mock()
@@ -85,8 +85,8 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
                         create_voevent)
     monkeypatch.setattr('gwcelery.tasks.gracedb.get_superevent.run',
                         get_superevent)
-    monkeypatch.setattr('gwcelery.tasks.circulars.create_circular.run',
-                        create_circular)
+    monkeypatch.setattr('gwcelery.tasks.circulars.create_initial_circular.run',
+                        create_initial_circular)
     monkeypatch.setattr('gwcelery.tasks.lalinference.prepare_ini.run',
                         prepare_ini)
     monkeypatch.setattr('gwcelery.tasks.lalinference.start_pe.run',
@@ -100,11 +100,11 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
     plot_volume.assert_called_once()
     if offline:
         send.assert_not_called()
-        create_circular.assert_not_called()
+        create_initial_circular.assert_not_called()
     elif app.conf['preliminary_alert_trials_factor'][group.lower()] * far > \
             app.conf['preliminary_alert_far_threshold'][group.lower()]:
         send.assert_not_called()
-        create_circular.assert_not_called()
+        create_initial_circular.assert_not_called()
     else:
         if group == 'CBC':
             create_voevent.assert_called_once_with(
@@ -113,7 +113,7 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
                 internal=True, open_alert=True,
                 skymap_filename='bayestar.fits.gz', skymap_type='bayestar')
         send.assert_called_once()
-        create_circular.assert_called_once()
+        create_initial_circular.assert_called_once()
 
     if group == 'CBC' and not offline:
         prepare_ini.assert_called_once()
@@ -169,9 +169,10 @@ def superevent_initial_alert_download(filename, graceid):
 @patch('gwcelery.tasks.gracedb.download.run',
        superevent_initial_alert_download)
 @patch('gwcelery.tasks.gcn.send.run')
-@patch('gwcelery.tasks.circulars.create_circular.run')
-def test_handle_superevent_initial_alert(mock_create_circular, mock_send,
-                                         mock_expose, mock_create_voevent,
+@patch('gwcelery.tasks.circulars.create_initial_circular.run')
+def test_handle_superevent_initial_alert(mock_create_initial_circular,
+                                         mock_send, mock_expose,
+                                         mock_create_voevent,
                                          mock_create_tag, mock_get_log):
     """Test that the ``ADVOK`` label triggers an initial alert."""
     alert = {
@@ -189,7 +190,7 @@ def test_handle_superevent_initial_alert(mock_create_circular, mock_send,
         ProbHasRemnant=0.0, Terrestrial=0.01, internal=False, open_alert=True,
         skymap_filename='foobar.fits.gz', skymap_type='foobar', vetted=True)
     mock_send.assert_called_once_with('contents of S1234-Initial-1.xml')
-    mock_create_circular.assert_called_once_with('S1234')
+    mock_create_initial_circular.assert_called_once_with('S1234')
     mock_create_tag.assert_called_once_with(
         'S1234-Initial-1.xml', 'public', 'S1234')
 
