@@ -3,7 +3,7 @@ import threading
 from celery import bootsteps
 from celery.concurrency import solo
 from comet.icomet import IHandler
-from comet.protocol import VOEventBroadcasterFactory
+from comet.protocol.broadcaster import VOEventBroadcasterFactory
 from comet.utility import WhitelistingFactory
 from twisted.application.internet import TCPClient, TCPServer
 from twisted.internet import reactor
@@ -13,6 +13,8 @@ from .util import get_host_port, get_local_ivo, get_network
 from .logging import log
 from .signals import voevent_received
 from .subscriber import VOEventSubscriberFactory
+
+__all__ = ('Broadcaster', 'Reactor', 'Receiver')
 
 
 class VOEventBootStep(bootsteps.ConsumerStep):
@@ -37,7 +39,12 @@ class VOEventBootStep(bootsteps.ConsumerStep):
 
 
 class Reactor(VOEventBootStep):
-    """Start the global Twisted reactor in background thread."""
+    """Run the global Twisted reactor in background thread.
+
+    The Twisted reactor is a global run loop that drives all Twisted services
+    and operations. This boot step starts the Twisted reactor in a background
+    thread when the Celery consumer starts, and stops the thread when the
+    Consumer terminates."""
 
     name = 'Twisted reactor'
 
@@ -59,7 +66,7 @@ class Reactor(VOEventBootStep):
 
 
 class TwistedService(VOEventBootStep):
-    """A generic Twisted bootstep."""
+    """A generic bootstep to create, start, and stop a Twisted service."""
 
     requires = VOEventBootStep.requires + (Reactor,)
 
@@ -83,7 +90,23 @@ class TwistedService(VOEventBootStep):
 
 
 class Broadcaster(TwistedService):
-    """VOEvent broadcaster."""
+    """Comet-based VOEvent broadcaster.
+
+    Run a Comet-based VOEvent broadcaster
+    (:class:`comet.protocol.broadcaster.VOEventBroadcasterFactory`). Starts
+    after the :class:`~gwcelery.voevent.bootsteps.Reactor` bootstep.
+
+    A few :doc:`configuration options <configuration>` are available:
+
+    * ``voevent_broadcaster_address``: The address to bind to, in
+      :samp:`{host}:{port}` format.
+    * ``voevent_broadcaster_whitelist``: A list of hostnames, IP addresses, or
+       CIDR address ranges from which to accept connections.
+
+    The list of active connections is made available :ref:`inspection
+    <celery:worker-inspect>` with the ``gwcelery inspect stats`` command under
+    the ``voevent-broker-peers`` key.
+    """
 
     name = 'VOEvent broadcaster'
 
@@ -113,7 +136,21 @@ class Handler:
 
 
 class Receiver(TwistedService):
-    """VOEvent receiver."""
+    """VOEvent receiver.
+
+    Run a Comet-based VOEvent receiver
+    (:class:`comet.protocol.subscriber.VOEventSubscriberFactory`). Starts after
+    the :class:`~gwcelery.voevent.bootsteps.Reactor` bootstep.
+
+    A few :doc:`configuration options <configuration>` are available:
+
+    * ``voevent_receiver_address``: The address to connect to, in
+      :samp:`{host}:{port}` format.
+
+    The list of active connections is made available :ref:`inspection
+    <celery:worker-inspect>` with the ``gwcelery inspect stats`` command under
+    the ``voevent-receiver-peers`` key.
+    """
 
     name = 'VOEvent receiver'
 

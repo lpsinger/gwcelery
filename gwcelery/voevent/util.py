@@ -24,7 +24,15 @@ def get_host_port(address):
 
 def get_local_ivo(app):
     """Create an IVOID to identify this application in VOEvent Transport
-    Protocol packets."""
+    Protocol packets.
+
+    Returns
+    -------
+    str
+        A local IVOID composed of the machine's fully qualified domain name and
+        the Celery application name (for example,
+        `ivo://emfollow.ligo.caltech.edu/gwcelery`).
+    """
     return 'ivo://{}/{}'.format(socket.getfqdn(), app.main)
 
 
@@ -39,7 +47,7 @@ def get_network(address):
 
     Returns
     -------
-    network : ipaddress.IPv4Network
+    ipaddress.IPv4Network
         An object representing the IP address prefix.
     """
     try:

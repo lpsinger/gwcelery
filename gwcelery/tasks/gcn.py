@@ -71,6 +71,22 @@ class SendingError(RuntimeError):
           ignore_result=True, queue='voevent', retry_backoff=True,
           retry_kwargs=dict(max_retries=10), shared=False)
 def send(self, message):
+    """Send a VOEvent to GCN.
+
+    This task will be retried several times if the VOEvent cannot be sent. See
+    the Raises section below for circumstances that cause a retry.
+
+    Parameters
+    ----------
+    message : bytes
+        The raw VOEvent file contents.
+
+    Raises
+    ------
+    SendingError
+        If the VOEvent could not be sent because there were no network peers
+        connected to the VOEvent broadcaster.
+    """
     broadcasters = self.app.conf['voevent_broadcaster_factory'].broadcasters
     if not broadcasters:
         raise SendingError('Not sending the event because there are no '
