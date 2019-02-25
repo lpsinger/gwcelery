@@ -319,7 +319,7 @@ GCN notices
 ~~~~~~~~~~~
 
 GCN notice handler tasks are declared using the
-:meth:`gwcelery.voevent.handler` decorator::
+:meth:`gwcelery.tasks.gcn.handler` decorator::
 
     import lxml.etree
     from gwcelery.tasks import gcn
