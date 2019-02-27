@@ -419,7 +419,7 @@ def preliminary_alert(event, superevent_id):
                 circulars.create_initial_circular.si(superevent_id)
                 |
                 gracedb.upload.s(
-                    'circular.txt',
+                    'preliminary-circular.txt',
                     superevent_id,
                     'Template for preliminary GCN Circular',
                     tags=['em_follow']

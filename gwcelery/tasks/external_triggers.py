@@ -205,7 +205,7 @@ def handle_emcoinc_lvalert(alert):
             canvas |= (circulars.create_emcoinc_circular.si(graceid)
                        |
                        gracedb.upload.s(
-                           'emcoinc_circular.txt',
+                           'emcoinc-circular.txt',
                            graceid,
                            'Template for the em_coinc GCN Circular',
                            tags=['em_follow', 'ext_coinc']
