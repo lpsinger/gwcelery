@@ -175,36 +175,42 @@ pypi:
 .deploy-start: &deploy-start
   <<: *deploy-common
   script: |
-    gsissh -T emfollow@emfollow.ligo-wa.caltech.edu bash <<EOF
+    case $CI_ENVIRONMENT_NAME in
+    production)
+      SSH_USERNAME=emfollow
+      ;;
+    playground)
+      SSH_USERNAME=emfollow-playground
+      ;;
+    esac
+    gsissh -T $SSH_USERNAME@emfollow.ligo.caltech.edu bash <<EOF
     set -e
-    mkdir -p ${CI_ENVIRONMENT_NAME} && cd ${CI_ENVIRONMENT_NAME}
-    if [ -d .git ]; then git fetch; else git clone ${CI_REPOSITORY_URL} .; fi
+    if [ -d .git ]; then git init; fi
+    git remote add origin ${CI_PROJECT_URL} || git remote set-url origin ${CI_PROJECT_URL}
     git checkout $CI_COMMIT_SHA
-    echo CELERY_BROKER_URL=redis+socket://\${PWD}/redis.sock > .env
-    echo CELERY_CONFIG_MODULE=gwcelery.conf.${CI_ENVIRONMENT_NAME} >> .env
-    echo FLOWER_URL_PREFIX=/~\${USER}/${CI_ENVIRONMENT_NAME}/flower >> .env
-    echo FLASK_URL_PREFIX=/~\${USER}/${CI_ENVIRONMENT_NAME}/gwcelery >> .env
-    echo FLOWER_PORT=${FLOWER_PORT} >> .env
-    echo FLASK_PORT=${FLASK_PORT} >> .env
-    pipenv sync
-    pipenv run gwcelery condor resubmit
+    pipenv install --system --deploy
+    gwcelery condor resubmit
     EOF
 
 # Deploy on Caltech cluster
 .deploy-stop: &deploy-stop
   <<: *deploy-common
   script: |
-    gsissh -T emfollow@emfollow.ligo-wa.caltech.edu bash <<EOF
+    case $CI_ENVIRONMENT_NAME in
+    production)
+      SSH_USERNAME=emfollow
+      ;;
+    playground)
+      SSH_USERNAME=emfollow-playground
+      ;;
+    esac
+    gsissh -T $SSH_USERNAME@emfollow.ligo-wa.caltech.edu bash <<EOF
     set -e
-    cd ${CI_ENVIRONMENT_NAME}
-    pipenv run gwcelery condor rm
+    gwcelery condor rm
     EOF
 
 deploy to production:
   <<: *deploy-start
-  variables:
-    FLOWER_PORT: '5555'
-    FLASK_PORT: '5556'
   when: manual
   environment:
     name: production
@@ -213,9 +219,6 @@ deploy to production:
 
 deploy to playground:
   <<: *deploy-start
-  variables:
-    FLOWER_PORT: '5557'
-    FLASK_PORT: '5558'
   environment:
     name: playground
     on_stop: stop deployment on playground

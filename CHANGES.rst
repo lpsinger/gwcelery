@@ -18,6 +18,10 @@ Changelog
     ``gsissh`` instead of SSH keys and vanilla ``ssh`` because the new
     my.ligo.org SSH key management does not support scripted access.
 
+-   Improve the isolation between the production and playground instances of
+    GWCelery by deploying them under two separate user accounts on the Caltech
+    cluster.
+
 0.2.6 (2019-02-12)
 ------------------
 
