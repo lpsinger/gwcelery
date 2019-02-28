@@ -159,7 +159,7 @@ pypi:
   stage: deploy
   image:
     name: ligo/ssh
-    entrypoint: ["/bin/bash"]
+    entrypoint: /bin/bash
   only:
     - master@emfollow/gwcelery
     - tags@emfollow/gwcelery
