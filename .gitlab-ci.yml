@@ -166,24 +166,29 @@ pypi:
   dependencies: []
   before_script:
     - umask 0077
+    # Set up LSC DataGrid credentials
     - echo "${ROBOT_KEYTAB}" | base64 -d > keytab
     - kinit emfollow-deployment/robot/runners.ligo.uwm.edu@LIGO.ORG -k -t keytab
     - ligo-proxy-init -k -p
     - grid-proxy-info -identity
+    # Figure out which user to log in as (emfollow or emfollow-playground)
+    - mkdir -p ~/.ssh
+    - |
+      case $CI_ENVIRONMENT_NAME in
+      production)
+        echo User emfollow >> ~/.ssh/config
+        ;;
+      playground)
+        echo User emfollow-playground >> ~/.ssh/config
+        ;;
+      esac
+
 
 # Deploy on Caltech cluster
 .deploy-start: &deploy-start
   <<: *deploy-common
   script: |
-    case $CI_ENVIRONMENT_NAME in
-    production)
-      SSH_USERNAME=emfollow
-      ;;
-    playground)
-      SSH_USERNAME=emfollow-playground
-      ;;
-    esac
-    gsissh -T $SSH_USERNAME@emfollow.ligo-wa.caltech.edu bash <<EOF
+    gsissh -T emfollow.ligo-wa.caltech.edu bash <<EOF
     set -e
     if [ ! -d .git ]; then git init; fi
     git remote add origin ${CI_PROJECT_URL} || git remote set-url origin ${CI_PROJECT_URL}
@@ -196,15 +201,7 @@ pypi:
 .deploy-stop: &deploy-stop
   <<: *deploy-common
   script: |
-    case $CI_ENVIRONMENT_NAME in
-    production)
-      SSH_USERNAME=emfollow
-      ;;
-    playground)
-      SSH_USERNAME=emfollow-playground
-      ;;
-    esac
-    gsissh -T $SSH_USERNAME@emfollow.ligo-wa.caltech.edu bash <<EOF
+    gsissh -T emfollow.ligo-wa.caltech.edu bash <<EOF
     set -e
     gwcelery condor rm
     EOF
