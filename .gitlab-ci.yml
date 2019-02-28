@@ -183,7 +183,7 @@ pypi:
       SSH_USERNAME=emfollow-playground
       ;;
     esac
-    gsissh -T $SSH_USERNAME@emfollow.ligo.caltech.edu bash <<EOF
+    gsissh -T $SSH_USERNAME@emfollow.ligo-wa.caltech.edu bash <<EOF
     set -e
     if [ -d .git ]; then git init; fi
     git remote add origin ${CI_PROJECT_URL} || git remote set-url origin ${CI_PROJECT_URL}
