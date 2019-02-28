@@ -17,6 +17,10 @@ Changelog
 -   p-astro reads mean values from a file on CIT, new mass-gap category
     added. Removed redundant functions from p_astro_gstlal module.
 
+-   Continuous deployment on the Caltech cluster now uses a robot keytab and
+    ``gsissh`` instead of SSH keys and vanilla ``ssh`` because the new
+    my.ligo.org SSH key management does not support scripted access.
+
 0.2.6 (2019-02-12)
 ------------------
 
