@@ -157,7 +157,9 @@ pypi:
 
 .deploy-common: &deploy-common
   stage: deploy
-  image: ligo/ssh
+  image:
+    name: ligo/ssh
+    entrypoint: ["/bin/bash"]
   only:
     - master@emfollow/gwcelery
     - tags@emfollow/gwcelery
