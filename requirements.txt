@@ -12,7 +12,7 @@ healpy
 jinja2
 lalsuite >= 6.52
 ligo-followup-advocate >= 0.0.21
-ligo-gracedb >= 2.1.2
+ligo-gracedb >= 2.2.0
 ligo-raven >= 1.10
 ligo-segments
 ligo.skymap >= 0.1.1
