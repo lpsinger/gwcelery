@@ -4,8 +4,7 @@ Changelog
 0.2.7 (unreleased)
 ------------------
 
--   Fixed exponent in the expression of foreground count in p_astro_other
-    task.
+-   Fixed exponent in the expression of foreground count in p_astro_other task.
 
 -   Add ``PE_READY`` tag and upload link to PE results after PE finishes.
 
