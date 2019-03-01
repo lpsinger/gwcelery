@@ -202,7 +202,7 @@ pypi:
       gsissh -T emfollow.ligo-wa.caltech.edu bash <<EOF
       set -e
       if [ ! -d .git ]; then git init; fi
-      pipenv install --system --deploy
+      pipenv -v install --system --deploy
       gwcelery condor resubmit
       EOF
 
