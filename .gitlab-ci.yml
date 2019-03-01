@@ -210,6 +210,7 @@ pypi:
   <<: *deploy-common
   script: |
     gsissh -T emfollow.ligo-wa.caltech.edu bash <<EOF
+    . .bashrc
     set -e
     gwcelery condor rm
     EOF
