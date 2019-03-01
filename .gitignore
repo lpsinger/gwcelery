@@ -24,6 +24,7 @@ data
 .astropy
 .bash_history
 .bash_logout
+.config
 .emacs
 .globus/usercert.pem
 .globus/userkey.pem
@@ -32,4 +33,7 @@ data
 .lesshst
 .local
 .netrc
+.python_history
+.rediscli_history
 .viminfo
+.Xauthority
