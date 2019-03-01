@@ -162,8 +162,6 @@ def handle_cbc_event(alert):
         ).delay()
     elif filename == 'ranking_data.xml.gz':
         (
-            gracedb.get_event.s(graceid)
-            |
             ordered_group(
                 gracedb.download.si('coinc.xml', graceid),
                 gracedb.download.si('ranking_data.xml.gz', graceid)
