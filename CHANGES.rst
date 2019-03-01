@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.2.7 (unreleased)
+0.3.0 (2019-03-01)
 ------------------
 
 -   Fixed exponent in the expression of foreground count in p_astro_other task.
