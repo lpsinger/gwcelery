@@ -13,4 +13,5 @@ https://gwcelery.readthedocs.io/en/latest/deployment.html
 
 Interactive terminal sessions are for EMERGENCY USE ONLY. \
 Are you sure that you want to proceed?" 15 70 --defaultno \
---title 'FOR EMERGENCY USE ONLY' --backtitle $(hostname --fqdn) || logout
+--title 'FOR EMERGENCY USE ONLY' \
+--backtitle "${USER}@$(hostname --fqdn)" || logout
