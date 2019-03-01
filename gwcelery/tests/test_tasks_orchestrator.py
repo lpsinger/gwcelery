@@ -60,7 +60,8 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
         elif filename == 'S1234-1-Preliminary.xml':
             return b'fake VOEvent file contents'
         elif filename == 'p_astro.json':
-            return json.dumps(dict(BNS=0.94, NSBH=0.03, BBH=0.02, Terr=0.01))
+            return json.dumps(
+                dict(BNS=0.94, NSBH=0.03, BBH=0.02, Terrestrial=0.01))
         elif filename == lalinference.ini_name:
             return 'test'
         else:
@@ -150,7 +151,8 @@ def superevent_initial_alert_download(filename, graceid):
     elif filename == 'source_classification.json':
         return json.dumps({'Prob NS2': 0, 'Prob EMbright': 0})
     elif filename == 'p_astro.json':
-        return json.dumps(dict(BNS=0.94, NSBH=0.03, BBH=0.02, Terr=0.01))
+        return json.dumps(
+            dict(BNS=0.94, NSBH=0.03, BBH=0.02, Terrestrial=0.01))
     else:
         raise ValueError
 

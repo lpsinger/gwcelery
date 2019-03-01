@@ -245,7 +245,7 @@ def _create_voevent(classification, *args, **kwargs):
 
         # Copy over recognized keys to kwargs for gracedb.create_voevent.
         # Missing keys are not an error.
-        for key in ('BNS', 'NSBH', 'BBH'):
+        for key in ('BNS', 'NSBH', 'BBH', 'MassGap', 'Terrestrial'):
             try:
                 kwargs[key] = data[key]
             except KeyError:
@@ -259,11 +259,6 @@ def _create_voevent(classification, *args, **kwargs):
 
         try:
             kwargs['ProbHasRemnant'] = 0.01 * data['Prob EMbright']
-        except KeyError:
-            pass
-
-        try:
-            kwargs['Terrestrial'] = data['Terr']
         except KeyError:
             pass
 
