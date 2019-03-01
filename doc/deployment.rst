@@ -9,10 +9,7 @@ features, configured through the project's `.gitlab-ci.yml`_ file. Deployment
 can be managed through the GitLab project's `Environments`_ page.
 
 Python dependencies in the deployment environment are managed automatically
-using `pipenv`_. Note that there are some runtime environment settings such as
-the ``~/.bashrc`` file that are managed in the repository
-https://git.ligo.org/emfollow/deployment/ligo.caltech.edu, which is a holdover
-from a previous continuous deployment strategy.
+using `pipenv`_.
 
 There are two instances of GWCelery that are running on the LIGO-Caltech
 computing cluster and that are managed in this manner:
