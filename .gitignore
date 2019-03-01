@@ -28,6 +28,8 @@ data
 .globus/usercert.pem
 .globus/userkey.pem
 .ipython
+.kshrc
 .lesshst
 .local
+.netrc
 .viminfo
