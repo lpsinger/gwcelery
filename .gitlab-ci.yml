@@ -201,6 +201,7 @@ pypi:
       gsissh -T emfollow.ligo.caltech.edu bash <<EOF
       . .bashrc
       set -e
+      pip install --upgrade pipenv pip setuptools
       pipenv install --system --deploy
       gwcelery condor resubmit
       EOF
