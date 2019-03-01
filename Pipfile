@@ -10,6 +10,8 @@ gwcelery = {editable = true,path = "."}
 ipython = "*"
 # Pull in flower from GitHub branch to pull in extra features.
 flower = {git = "https://github.com/lpsinger/flower",ref = "custom-stats"}
+# For some reason pipenv is not respecting flower's specified torando version requirement.
+tornado = "<6.0.0"
 
 [requires]
 python_version = "3.6"
