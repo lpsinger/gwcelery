@@ -27,7 +27,7 @@ export X509_USER_KEY="$HOME/.globus/userkey.pem"
 # GWCelery instance variables.
 export CELERY_BROKER_URL="redis+socket://${HOME}/redis.sock"
 export FLOWER_URL_PREFIX="/~${USER}/flower"
-export FLASK_URL_PREFIX="/~${USER}"
+export FLASK_URL_PREFIX="/~${USER}/gwcelery"
 
 # GWCelery configuration-dependent instance variables.
 case "${USER}" in
