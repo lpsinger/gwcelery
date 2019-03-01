@@ -1,3 +1,4 @@
+# Files created by editing, developing, running tests
 .*.swp
 *~
 *.egg-info
@@ -10,9 +11,23 @@ __pycache__
 build
 dist
 htmlcov
+
+# Files created by running gwcelery inside the source directory
 celerybeat-schedule
 *.pid
 *.log
 *.rdb
 *.sock
-.env
+
+# Files created if the source directory is also the home directory
+data
+.astropy
+.bash_history
+.bash_logout
+.emacs
+.globus/usercert.pem
+.globus/userkey.pem
+.ipython
+.lesshst
+.local
+.viminfo
