@@ -13,11 +13,11 @@ RewriteCond "%{REQUEST_URI}" "^/~(.*?)/"
 RewriteRule ".*" - [E=TILDE_USER:%1]
 
 # Port for Flower and Flask apps (production).
-RewriteCond "%{ENV:TILDE_USER}" "^emfollow/"
+RewriteCond "%{ENV:TILDE_USER}" "^emfollow$"
 RewriteRule ".*" - [E=FLOWER_PORT:5555,E=FLASK_PORT:5556]
 
 # Port for Flower and Flask apps (playground).
-RewriteCond "%{ENV:TILDE_USER}" "^emfollow-playground/"
+RewriteCond "%{ENV:TILDE_USER}" "^emfollow-playground$"
 RewriteRule ".*" - [E=FLOWER_PORT:5557,E=FLASK_PORT:5558]
 
 # The reverse proxy rules themselves.
