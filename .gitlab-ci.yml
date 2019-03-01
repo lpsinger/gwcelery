@@ -191,7 +191,7 @@ pypi:
     gsissh -T emfollow.ligo-wa.caltech.edu bash <<EOF
     set -e
     if [ ! -d .git ]; then git init; fi
-    git remote add origin ${CI_PROJECT_URL} || git remote set-url origin ${CI_PROJECT_URL}
+    git remote add origin ${CI_REPOSITORY_URL} || git remote set-url origin ${CI_REPOSITORY_URL}
     git fetch origin
     git checkout $CI_COMMIT_SHA
     pipenv install --system --deploy
