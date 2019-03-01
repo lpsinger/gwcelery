@@ -9,6 +9,7 @@ fi
 # Add user site directory to the PATH. On Linux, this is usuall ~/.local/bin.
 export PATH="$(python -m site --user-base)/bin${PATH+:${PATH}}"
 
+# `pip install` should always behave as if it was called with `--user`.
 export PIP_USER=1
 
 # Unless the user has set `GSSAPIDelegateCredentials no` in their ~/.ssh/config
