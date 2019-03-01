@@ -12,6 +12,8 @@ source /opt/rh/rh-python36/enable
 # Add user site directory to the PATH. On Linux, this is usuall ~/.local/bin.
 export PATH="$(python -m site --user-base)/bin${PATH+:${PATH}}"
 
+export PIP_USER=1
+
 # Unless the user has set `GSSAPIDelegateCredentials no` in their ~/.ssh/config
 # file, their Globus certificate will be copied in when they log in, shadowing
 # the robot certificate. Set these environment variables to override.

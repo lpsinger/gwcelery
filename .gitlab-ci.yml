@@ -187,16 +187,24 @@ pypi:
 # Deploy on Caltech cluster
 .deploy-start: &deploy-start
   <<: *deploy-common
-  script: |
-    gsissh -T emfollow.ligo-wa.caltech.edu bash <<EOF
-    set -e
-    if [ ! -d .git ]; then git init; fi
-    git remote add origin ${CI_REPOSITORY_URL} || git remote set-url origin ${CI_REPOSITORY_URL}
-    git fetch origin
-    git checkout -f $CI_COMMIT_SHA
-    pipenv install --system --deploy
-    gwcelery condor resubmit
-    EOF
+  script:
+    # Update the repository.
+    - |
+      gsissh -T emfollow.ligo-wa.caltech.edu bash <<EOF
+      set -e
+      if [ ! -d .git ]; then git init; fi
+      git remote add origin ${CI_REPOSITORY_URL} || git remote set-url origin ${CI_REPOSITORY_URL}
+      git fetch origin
+      git checkout -f $CI_COMMIT_SHA
+      EOF
+    # Reinstall and start (new session to reload bashrc).
+    - |
+      gsissh -T emfollow.ligo-wa.caltech.edu bash <<EOF
+      set -e
+      if [ ! -d .git ]; then git init; fi
+      pipenv install --system --deploy
+      gwcelery condor resubmit
+      EOF
 
 # Deploy on Caltech cluster
 .deploy-stop: &deploy-stop
