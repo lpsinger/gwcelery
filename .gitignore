@@ -36,5 +36,6 @@ data
 .netrc
 .python_history
 .rediscli_history
+.rnd
 .viminfo
 .Xauthority
