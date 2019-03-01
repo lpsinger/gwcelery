@@ -221,14 +221,14 @@ deploy to production:
   environment:
     name: production
     on_stop: stop deployment on production
-    url: https://ldas-jobs.ligo.caltech.edu/~emfollow/production/flower
+    url: https://ldas-jobs.ligo.caltech.edu/~emfollow/flower
 
 deploy to playground:
   <<: *deploy-start
   environment:
     name: playground
     on_stop: stop deployment on playground
-    url: https://ldas-jobs.ligo.caltech.edu/~emfollow/playground/flower
+    url: https://ldas-jobs.ligo.caltech.edu/~emfollow-playground/flower
 
 stop deployment on production:
   <<: *deploy-stop
