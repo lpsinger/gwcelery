@@ -199,8 +199,8 @@ pypi:
     # Reinstall and start (new session to reload bashrc).
     - |
       gsissh -T emfollow.ligo-wa.caltech.edu bash <<EOF
+      . .bashrc
       set -e
-      if [ ! -d .git ]; then git init; fi
       pipenv install --system --deploy
       gwcelery condor resubmit
       EOF
