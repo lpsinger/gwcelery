@@ -189,7 +189,7 @@ pypi:
   script:
     # Update the repository.
     - |
-      gsissh -T emfollow.ligo-wa.caltech.edu bash <<EOF
+      gsissh -T emfollow.ligo.caltech.edu bash <<EOF
       set -e
       if [ ! -d .git ]; then git init; fi
       git remote add origin ${CI_REPOSITORY_URL} || git remote set-url origin ${CI_REPOSITORY_URL}
@@ -198,7 +198,7 @@ pypi:
       EOF
     # Reinstall and start (new session to reload bashrc).
     - |
-      gsissh -T emfollow.ligo-wa.caltech.edu bash <<EOF
+      gsissh -T emfollow.ligo.caltech.edu bash <<EOF
       . .bashrc
       set -e
       pipenv install --system --deploy
@@ -209,7 +209,7 @@ pypi:
 .deploy-stop: &deploy-stop
   <<: *deploy-common
   script: |
-    gsissh -T emfollow.ligo-wa.caltech.edu bash <<EOF
+    gsissh -T emfollow.ligo.caltech.edu bash <<EOF
     . .bashrc
     set -e
     gwcelery condor rm
