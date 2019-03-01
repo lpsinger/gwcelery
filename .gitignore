@@ -26,6 +26,7 @@ data
 .bash_logout
 .config
 .emacs
+.globus/krb5.keytab
 .globus/usercert.pem
 .globus/userkey.pem
 .ipython
