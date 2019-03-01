@@ -1,6 +1,5 @@
 #!/usr/bin/env condor_submit
 accounting_group = ligo.dev.o2.cbc.pe.bayestar
-accounting_group_user = leo.singer
 universe = local
 getenv = true
 environment = "CELERY_BROKER_URL=redis+socket://$ENV(PWD)/redis.sock"
