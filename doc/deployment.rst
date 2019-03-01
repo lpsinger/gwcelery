@@ -5,7 +5,8 @@ Continuous deployment
 ---------------------
 
 GWCelery is automatically deployed using GitLab's continuous deployment
-features, configured through the project's `.gitlab-ci.yml`_ file. Deployment can be managed through the GitLab project's `Environments`_ page.
+features, configured through the project's `.gitlab-ci.yml`_ file. Deployment
+can be managed through the GitLab project's `Environments`_ page.
 
 Python dependencies in the deployment environment are managed automatically
 using `pipenv`_. Note that there are some runtime environment settings such as
