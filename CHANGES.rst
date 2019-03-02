@@ -4,7 +4,9 @@ Changelog
 0.3.1 (unreleased)
 ------------------
 
--   No changes yet.
+-   Fix a bug in translating keys from ``source_classification.json`` to
+    keyword arguments for ``GraceDb.createVOEvent`` that caused VOEvents to
+    be missing the ``HasNS`` and ``HasRemnant`` fields.
 
 0.3.0 (2019-03-01)
 ------------------

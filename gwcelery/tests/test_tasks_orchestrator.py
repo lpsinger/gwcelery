@@ -54,7 +54,7 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
         if '.fits' in filename:
             return toy_3d_fits_filecontents
         elif filename == 'source_classification.json' and group == 'CBC':
-            return json.dumps({'Prob NS2': 0, 'Prob EMbright': 0})
+            return json.dumps({'HasNS': 0.0, 'HasRemnant': 0.0})
         elif filename == 'psd.xml.gz':
             return pkg_resources.resource_filename(__name__, 'data/psd.xml.gz')
         elif filename == 'S1234-1-Preliminary.xml':
@@ -149,7 +149,7 @@ def superevent_initial_alert_download(filename, graceid):
     if filename == 'S1234-Initial-1.xml':
         return 'contents of S1234-Initial-1.xml'
     elif filename == 'source_classification.json':
-        return json.dumps({'Prob NS2': 0, 'Prob EMbright': 0})
+        return json.dumps({'HasNS': 0.0, 'HasRemnant': 0.0})
     elif filename == 'p_astro.json':
         return json.dumps(
             dict(BNS=0.94, NSBH=0.03, BBH=0.02, Terrestrial=0.01))

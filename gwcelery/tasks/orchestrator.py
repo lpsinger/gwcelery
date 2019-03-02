@@ -249,29 +249,21 @@ def _create_voevent(classification, *args, **kwargs):
     kwargs = dict(kwargs)
 
     if classification is not None:
-        # Merge together both JSON files into a single dictionary.
-        data = {}
+        # Merge source classification and source properties into kwargs.
         for text in classification:
-            data.update(json.loads(text))
+            kwargs.update(json.loads(text))
 
-        # Copy over recognized keys to kwargs for gracedb.create_voevent.
-        # Missing keys are not an error.
-        for key in ('BNS', 'NSBH', 'BBH', 'MassGap', 'Terrestrial'):
-            try:
-                kwargs[key] = data[key]
-            except KeyError:
-                pass
+    # FIXME: These keys have differ between source_classification.json
+    # and the GraceDb REST API.
+    try:
+        kwargs['ProbHasNS'] = kwargs.pop('HasNS')
+    except KeyError:
+        pass
 
-        # Remaining keys have small differences in argument names and units.
-        try:
-            kwargs['ProbHasNS'] = 0.01 * data['Prob NS2']
-        except KeyError:
-            pass
-
-        try:
-            kwargs['ProbHasRemnant'] = 0.01 * data['Prob EMbright']
-        except KeyError:
-            pass
+    try:
+        kwargs['ProbHasRemnant'] = kwargs.pop('HasRemnant')
+    except KeyError:
+        pass
 
     skymap_filename = kwargs.get('skymap_filename')
     if skymap_filename is not None:
