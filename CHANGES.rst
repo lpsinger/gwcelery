@@ -8,6 +8,9 @@ Changelog
     keyword arguments for ``GraceDb.createVOEvent`` that caused VOEvents to
     be missing the ``HasNS`` and ``HasRemnant`` fields.
 
+-   FAR threshold for sending preliminary notices for CBC is changed to
+    1 per 2 months.
+
 0.3.0 (2019-03-01)
 ------------------
 
