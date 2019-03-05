@@ -23,6 +23,10 @@ explanation on jinja is here http://jinja.pocoo.org . #}
     {% set neff = '300' %}
 {% endif %}
 
+{% if 'playground' in service_url %}
+    {% set disable_spin = 'disable-spin=' %}
+    {% set zeroLogLike = 'zeroLogLike=' %}
+{% endif %}
 
 [analysis]
 ifos={{ ifos | safe }}
@@ -95,7 +99,8 @@ margphi=
 resume=
 adapt-temps=
 progress=
-
+{{ disable_spin }}
+{{ zeroLogLike }}
 
 [mpi]
 mpi_task_count=8
