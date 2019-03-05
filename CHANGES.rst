@@ -11,6 +11,9 @@ Changelog
 -   FAR threshold for sending preliminary notices for CBC is changed to
     1 per 2 months.
 
+-   Upload log files when LALInference parameter estimation jobs fail or are
+    aborted.
+
 0.3.0 (2019-03-01)
 ------------------
 

@@ -2,6 +2,7 @@
 from distutils.spawn import find_executable
 from distutils.dir_util import mkpath
 import glob
+import itertools
 import json
 import math
 import os
@@ -330,8 +331,28 @@ def dag_prepare(rundir, ini_contents, preferred_event_id, superevent_id):
     return rundir + '/multidag.dag.condor.sub'
 
 
+def _find_paths_from_name(directory, name):
+    """Return the paths of files or directories with given name under the
+    specfied directory
+
+    Parameters
+    ----------
+    directory : string
+        Name of directory under which the target file or directory is searched
+        for.
+    name : string
+        Name of target files or directories
+
+    Returns
+    -------
+    paths : generator
+        Paths to the target files or directories
+    """
+    return glob.iglob(os.path.join(directory, '**', name), recursive=True)
+
+
 @app.task(ignore_result=True, shared=False)
-def job_error_notification(request, exc, traceback, superevent_id):
+def job_error_notification(request, exc, traceback, superevent_id, rundir):
     """Upload notification when condor.submit terminates unexpectedly.
 
     Parameters
@@ -344,6 +365,8 @@ def job_error_notification(request, exc, traceback, superevent_id):
         Traceback message from a task
     superevent_id : str
         The GraceDb ID of a target superevent
+    rundir : str
+        The run directory for PE
     """
     if type(exc) is condor.JobAborted:
         gracedb.upload.delay(
@@ -353,17 +376,29 @@ def job_error_notification(request, exc, traceback, superevent_id):
     elif type(exc) is condor.JobFailed:
         gracedb.upload.delay(
             filecontents=None, filename=None, graceid=superevent_id,
-            message='Job failed', tags='pe'
+            message='Job failed.', tags='pe'
         )
+    # Get paths to .log files
+    paths_to_log = _find_paths_from_name(rundir, '*.log')
+    # Get paths to .err files
+    paths_to_err = _find_paths_from_name(rundir, '*.err')
+    # Upload .log and .err files
+    for path in itertools.chain(paths_to_log, paths_to_err):
+        with open(path, 'rb') as f:
+            contents = f.read()
+        if contents:
+            gracedb.upload.delay(
+                filecontents=contents, filename=os.path.basename(path),
+                graceid=superevent_id,
+                message='Here is a log file for PE.',
+                tags='pe'
+            )
 
 
 @app.task(ignore_result=True, shared=False)
 def _upload_url(pe_results_path, graceid):
     """Upload url of a page containing all of the plots."""
-    path_to_posplots, = glob.iglob(
-        os.path.join(pe_results_path, '**', 'posplots.html'),
-        recursive=True
-    )
+    path_to_posplots, = _find_paths_from_name(pe_results_path, 'posplots.html')
     baseurl = urllib.parse.urljoin(
                   app.conf['pe_results_url'],
                   os.path.relpath(
@@ -384,9 +419,7 @@ def _get_result_contents(pe_results_path, filename):
     """Return the contents of a PE results file by reading it from the local
     filesystem.
     """
-    path, = glob.iglob(
-        os.path.join(pe_results_path, '**', filename), recursive=True
-    )
+    path, = _find_paths_from_name(pe_results_path, filename)
     with open(path, 'rb') as f:
         contents = f.read()
     return contents
@@ -486,7 +519,9 @@ def start_pe(ini_contents, preferred_event_id, superevent_id):
     (
         dag_prepare.s(rundir, ini_contents, preferred_event_id, superevent_id)
         |
-        condor.submit.s().on_error(job_error_notification.s(superevent_id))
+        condor.submit.s().on_error(
+            job_error_notification.s(superevent_id, rundir)
+        )
         |
         dag_finished(rundir, preferred_event_id, superevent_id)
     ).delay()
