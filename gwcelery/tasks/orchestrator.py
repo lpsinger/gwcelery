@@ -101,7 +101,7 @@ def handle_cbc_event(alert):
     File                           Task
     ============================== =====================================================
     ``bayestar.fits``              :meth:`gwcelery.tasks.bayestar.localize`
-    ``source_classification.json`` :meth:`gwcelery.tasks.em_bright.classifier`
+    ``em_bright.json``             :meth:`gwcelery.tasks.em_bright.classifier`
     ``p_astro.json``               :meth:`gwcelery.tasks.p_astro_gstlal.compute_p_astro`
     ============================== =====================================================
     """  # noqa: E501
@@ -130,8 +130,8 @@ def handle_cbc_event(alert):
                 em_bright_task.si((mass1, mass2, chi1, chi2, snr), graceid)
                 |
                 gracedb.upload.s(
-                    'source_classification.json', graceid,
-                    'source classification complete', ['em_bright', 'public']
+                    'em_bright.json', graceid,
+                    'em bright complete', ['em_bright', 'public']
                 )
                 |
                 gracedb.create_label.si('EMBRIGHT_READY', graceid)
@@ -253,7 +253,7 @@ def _create_voevent(classification, *args, **kwargs):
         for text in classification:
             kwargs.update(json.loads(text))
 
-    # FIXME: These keys have differ between source_classification.json
+    # FIXME: These keys have differ between em_bright.json
     # and the GraceDb REST API.
     try:
         kwargs['ProbHasNS'] = kwargs.pop('HasNS')
@@ -353,10 +353,10 @@ def preliminary_alert(event, superevent_id):
     # If this is a CBC event, then copy the EM bright classification.
     if event['group'] == 'CBC':
         canvas |= group(
-            _download.si('source_classification.json', preferred_event_id)
+            _download.si('em_bright.json', preferred_event_id)
             |
             gracedb.upload.s(
-                'source_classification.json',
+                'em_bright.json',
                 superevent_id,
                 message='Source properties copied from {}'.format(
                     preferred_event_id),
@@ -365,7 +365,7 @@ def preliminary_alert(event, superevent_id):
             |
             gracedb.create_label.si('EMBRIGHT_READY', superevent_id)
             |
-            _download.si('source_classification.json', superevent_id),
+            _download.si('em_bright.json', superevent_id),
 
             _download.si('p_astro.json', preferred_event_id)
             |
@@ -460,7 +460,7 @@ def parameter_estimation(event, superevent_id):
 
 @app.task(ignore_result=True, shared=False)
 def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None,
-                            source_classification_filename=None,
+                            em_bright_filename=None,
                             p_astro_filename=None):
     """
     Create and send initial or update GCN notice.
@@ -474,7 +474,7 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None,
     skymap_filename : str, optional
         The sky map to send.
         If None, then most recent public sky map is used.
-    source_classification_filename : str, optional
+    em_bright_filename : str, optional
         The source classification file to use.
         If None, then most recent one is used.
     p_astro_filename : str, optional
@@ -482,9 +482,9 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None,
         If None, then most recent one is used.
     """
     skymap_needed = (skymap_filename is None)
-    source_classification_needed = (source_classification_filename is None)
+    em_bright_needed = (em_bright_filename is None)
     p_astro_needed = (p_astro_filename is None)
-    if skymap_needed or source_classification_needed or p_astro_needed:
+    if skymap_needed or em_bright_needed or p_astro_needed:
         for message in gracedb.get_log(superevent_id):
             t = message['tag_names']
             f = message['filename']
@@ -494,10 +494,10 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None,
                     and {'sky_loc', 'public'}.issubset(t) \
                     and (f.endswith('.fits') or f.endswith('.fits.gz')):
                 skymap_filename = f
-            if source_classification_needed \
+            if em_bright_needed \
                     and 'em_bright' in t \
                     and f.endswith('.json'):
-                source_classification_filename = f
+                em_bright_filename = f
             if p_astro_needed \
                     and 'p_astro' in t \
                     and f.endswith('.json'):
@@ -507,7 +507,7 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None,
         gracedb.expose.s(superevent_id)
         |
         ordered_group(
-            gracedb.download.si(source_classification_filename, superevent_id),
+            gracedb.download.si(em_bright_filename, superevent_id),
             gracedb.download.si(p_astro_filename, superevent_id)
         )
         |
@@ -545,7 +545,7 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None,
 
 @app.task(ignore_result=True, shared=False)
 def initial_alert(superevent_id, skymap_filename=None,
-                  source_classification_filename=None, p_astro_filename=None):
+                  em_bright_filename=None, p_astro_filename=None):
     """Produce an initial alert.
 
     This does nothing more than call
@@ -559,7 +559,7 @@ def initial_alert(superevent_id, skymap_filename=None,
     skymap_filename : str, optional
         The sky map to send.
         If None, then most recent public sky map is used.
-    source_classification_filename : str, optional
+    em_bright_filename : str, optional
         The source classification file to use.
         If None, then most recent one is used.
     p_astro_filename : str, optional
@@ -567,12 +567,12 @@ def initial_alert(superevent_id, skymap_filename=None,
         If None, then most recent one is used.
     """
     initial_or_update_alert(superevent_id, 'initial', skymap_filename,
-                            source_classification_filename, p_astro_filename)
+                            em_bright_filename, p_astro_filename)
 
 
 @app.task(ignore_result=True, shared=False)
 def update_alert(superevent_id, skymap_filename=None,
-                 source_classification_filename=None, p_astro_filename=None):
+                 em_bright_filename=None, p_astro_filename=None):
     """Produce an update alert.
 
     This does nothing more than call
@@ -586,7 +586,7 @@ def update_alert(superevent_id, skymap_filename=None,
     skymap_filename : str, optional
         The sky map to send.
         If None, then most recent public sky map is used.
-    source_classification_filename : str, optional
+    em_bright_filename : str, optional
         The source classification file to use.
         If None, then most recent one is used.
     p_astro_filename : str, optional
@@ -594,7 +594,7 @@ def update_alert(superevent_id, skymap_filename=None,
         If None, then most recent one is used.
     """
     initial_or_update_alert(superevent_id, 'update', skymap_filename,
-                            source_classification_filename, p_astro_filename)
+                            em_bright_filename, p_astro_filename)
 
 
 @app.task(ignore_result=True, shared=False)

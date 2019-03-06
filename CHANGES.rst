@@ -14,6 +14,8 @@ Changelog
 -   Upload log files when LALInference parameter estimation jobs fail or are
     aborted.
 
+-   Changed the filename ``source_classification.json`` to ``em_bright.json``.
+
 0.3.0 (2019-03-01)
 ------------------
 

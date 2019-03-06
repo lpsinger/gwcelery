@@ -120,9 +120,9 @@ def typeahead_skymap_filename():
     ))
 
 
-@app.route('/typeahead_source_classification_filename')
+@app.route('/typeahead_em_bright_filename')
 @cache.cached(query_string=True)
-def typeahead_source_classification_filename():
+def typeahead_em_bright_filename():
     return jsonify(_search_by_tag_and_filename(
         request.args.get('superevent_id') or '',
         request.args.get('filename') or '',
@@ -143,7 +143,7 @@ def typeahead_p_astro_filename():
 @app.route('/send_update_gcn', methods=['POST'])
 def send_update_gcn():
     keys = ('superevent_id', 'skymap_filename',
-            'source_classification_filename', 'p_astro_filename')
+            'em_bright_filename', 'p_astro_filename')
     superevent_id, *_ = args = tuple(request.form.get(key) for key in keys)
     if all(args):
         app.logger.info(

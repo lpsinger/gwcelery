@@ -53,7 +53,7 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
     def download(filename, graceid):
         if '.fits' in filename:
             return toy_3d_fits_filecontents
-        elif filename == 'source_classification.json' and group == 'CBC':
+        elif filename == 'em_bright.json' and group == 'CBC':
             return json.dumps({'HasNS': 0.0, 'HasRemnant': 0.0})
         elif filename == 'psd.xml.gz':
             return pkg_resources.resource_filename(__name__, 'data/psd.xml.gz')
@@ -148,7 +148,7 @@ def test_handle_superevent_event_added(mock_get_labels):
 def superevent_initial_alert_download(filename, graceid):
     if filename == 'S1234-Initial-1.xml':
         return 'contents of S1234-Initial-1.xml'
-    elif filename == 'source_classification.json':
+    elif filename == 'em_bright.json':
         return json.dumps({'HasNS': 0.0, 'HasRemnant': 0.0})
     elif filename == 'p_astro.json':
         return json.dumps(
@@ -161,7 +161,7 @@ def superevent_initial_alert_download(filename, graceid):
        return_value=[{'tag_names': ['sky_loc', 'public'],
                       'filename': 'foobar.fits.gz'},
                      {'tag_names': ['em_bright'],
-                      'filename': 'source_classification.json'},
+                      'filename': 'em_bright.json'},
                      {'tag_names': ['p_astro'],
                       'filename': 'p_astro.json'}])
 @patch('gwcelery.tasks.gracedb.create_tag.run')

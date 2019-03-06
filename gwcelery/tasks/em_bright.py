@@ -11,7 +11,7 @@ from ..import app
 log = get_task_logger(__name__)
 
 
-def _source_classification(m1, m2, c1, c2, threshold=2.83):
+def _em_bright(m1, m2, c1, c2, threshold=2.83):
     """This is the place-holder function for the source classfication pipeline.
     This placeholder code will only act upon the mass2 point estimate value and
     classify the systems as whether they have a neutron or not."""
@@ -49,7 +49,7 @@ def classifier_other(args, graceid):
     '{"HasNS": 1.0, "HasRemnant": 1.0}'
     """
     mass1, mass2, chi1, chi2, snr = args
-    p_ns, p_em = _source_classification(mass1, mass2, chi1, chi2)
+    p_ns, p_em = _em_bright(mass1, mass2, chi1, chi2)
 
     data = json.dumps({
         'HasNS': p_ns,

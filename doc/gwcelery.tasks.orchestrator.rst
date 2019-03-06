@@ -163,7 +163,7 @@ The flow chart below illustrates the operation of these two tasks.
             label = <Create<BR/><FONT face="monospace">bayestar<BR/>.fits.gz</FONT>>
         ]
 
-        source_classification [
+        em_bright [
             href = "../gwcelery.tasks.em_bright.html#gwcelery.tasks.em_bright.classifier"
             label = <Create<BR/><FONT face="monospace">source_<BR/>classi<BR/>fication<BR/>.json</FONT>>
         ]
@@ -183,7 +183,7 @@ The flow chart below illustrates the operation of these two tasks.
         fontname = monospace
         label = "ranking_data.xml.gz"
     ]
-    download_psd -> download_coinc_psd -> bayestar -> source_classification
+    download_psd -> download_coinc_psd -> bayestar -> em_bright
     download_ranking_data -> download_coinc_ranking_data -> p_astro
 
 Initial and Update Alerts

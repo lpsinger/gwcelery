@@ -23,14 +23,6 @@
             ],
             "version": "==2.4.2"
         },
-        "appnope": {
-            "hashes": [
-                "sha256:5b26757dc6f79a3b7dc9fab95359328d5747fcb2409d331ea66d0272b90ab2a0",
-                "sha256:8b995ffe925347a2138d7ac0fe77155e4311a0ea6d6da4f5128fe4b3cbe5ed71"
-            ],
-            "markers": "sys_platform == 'darwin'",
-            "version": "==0.1.0"
-        },
         "asn1crypto": {
             "hashes": [
                 "sha256:2f1adbb7546ed199e3c90ef23ec95c5cf3585bac7d11fb7eb562a3fe89c64e87",
@@ -262,10 +254,10 @@
         },
         "flask-caching": {
             "hashes": [
-                "sha256:8c592ca7607545dc349babc5f8bdd7ca0c3aba467ce44a35f35b80aa23bf3b5f",
-                "sha256:be7e4896ec212365a8ed53cb8658a2e2f2b4f4d143101360214fcd96fa632f18"
+                "sha256:92368bd8c3a6aa4164c7322335134c912cd8462a4b83de4904929da38863de95",
+                "sha256:e1f8510b1c051c39bc8883dc5799a8b668205ad45f3eb7c4b2cb3f4dd995eca9"
             ],
-            "version": "==1.5.0"
+            "version": "==1.6.0"
         },
         "flower": {
             "git": "https://github.com/lpsinger/flower",
@@ -477,10 +469,10 @@
         },
         "ligo-followup-advocate": {
             "hashes": [
-                "sha256:3d83d3c9adc857691db49f79bb25209eb0bbf896f64dac2ae6dd4e77b5eab0ad",
-                "sha256:47c24fc978c46d744e0c9c27151fadde12bcc2a96030c9d211066def683a7db6"
+                "sha256:85646301e3713430419d54ab6f215ccf4ca5ae2ec48f3ed84215a32f571c7ac0",
+                "sha256:94b417cd8730527cd93f37aed423287841ddcf20889d18f1993414945a6f8336"
             ],
-            "version": "==0.0.21"
+            "version": "==0.0.23"
         },
         "ligo-gracedb": {
             "hashes": [
@@ -503,13 +495,13 @@
         },
         "ligo.skymap": {
             "hashes": [
-                "sha256:1728a23b65f93defedb33a2cbf87d2f424a2cce5b7a45785fe7b42c671a88213",
-                "sha256:1e639d659dff7bf0c9248ece8205fa57b8181a0ed23384394ef0c13589469e5c",
-                "sha256:2f2881ac37fbe247ae587e3360de4dddf32315da9f0e99b7fd2ee429ae915320",
-                "sha256:94c6487e0c2e5817e069c5c2bd83c039440f3ecddaeb14c057d946a88d17df46",
-                "sha256:aa25b8f59cb4d8a2bb2b29427b9af566caa1186800ebcc1ca297784b9dbe67a6"
+                "sha256:569237779d67b24d5d3f04277448d7c606889afd25e62f84ad1f1ae386f4bf00",
+                "sha256:72f415dfb90b384ed2d2583a46e1122916b82a0afb8d350a878e0b6c0143b72e",
+                "sha256:798f9d723cf45e3f51b366cb40f7e96c376ce0c2208a9211cc8a8f2cb617c3b4",
+                "sha256:b6fee2e93ba03c08d25aa2415bc373633f7891b5f57dcb07d1ef5c9189ca9b6d",
+                "sha256:f360f1406dcde5346fdd84b51298d385cfad0929fcb579ad15d8fe902ceb998b"
             ],
-            "version": "==0.1.2"
+            "version": "==0.1.3"
         },
         "ligotimegps": {
             "hashes": [
@@ -968,10 +960,10 @@
                 "flask"
             ],
             "hashes": [
-                "sha256:47ba3998599dc7e6fd36b221edb85c85306537c9f6d428eaf7fec868931e98a4",
-                "sha256:88f50a1112486d81e7145e9c29e4927ff83ffef5e2f7b1319aebd02b04e091b3"
+                "sha256:dc207c083604bae01761866b3145ca9dcf5a45f3de048c4da22eac88889d49e7",
+                "sha256:f94cca2eb41d29fd2bdbedaf9d9a262ab3b4660e5d648d9920fae262e240c368"
             ],
-            "version": "==0.7.4"
+            "version": "==0.7.6"
         },
         "service-identity": {
             "hashes": [

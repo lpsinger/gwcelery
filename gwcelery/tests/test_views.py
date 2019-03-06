@@ -39,7 +39,7 @@ def test_send_update_gcn_post(client, monkeypatch):
     response = client.post(url_for('send_update_gcn'), data={
         'superevent_id': 'MS190208a',
         'skymap_filename': 'bayestar.fits.gz',
-        'source_classification_filename': 'source_classification.json',
+        'em_bright_filename': 'em_bright.json',
         'p_astro_filename': 'p_astro.json'})
 
     assert HTTP_STATUS_CODES[response.status_code] == 'Found'
@@ -47,7 +47,7 @@ def test_send_update_gcn_post(client, monkeypatch):
         'Queued update alert for MS190208a.']
     mock_update_alert.assert_called_once_with(
         'MS190208a', 'bayestar.fits.gz',
-        'source_classification.json', 'p_astro.json')
+        'em_bright.json', 'p_astro.json')
 
 
 def test_typeahead_superevent_id(client, monkeypatch):
@@ -111,12 +111,12 @@ def test_typeahead_skymap_filename_gracedb_error_non_404(client, monkeypatch):
 
 
 @pytest.mark.parametrize('endpoint,tag', [
-    ('typeahead_source_classification_filename', 'em_bright'),
+    ('typeahead_em_bright_filename', 'em_bright'),
     ('typeahead_p_astro_filename', 'p_astro')
 ])
-def test_typeahead_source_classification_and_p_astro(
+def test_typeahead_em_bright_and_p_astro(
         endpoint, tag, client, monkeypatch):
-    """Test typeahead filtering for source_classification and p_astro files."""
+    """Test typeahead filtering for em_bright and p_astro files."""
     mock_logs = Mock()
     mock_logs.configure_mock(**{'return_value.json.return_value': {'log': [
         {'filename': 'foobar.txt', 'tag_names': [tag]},
