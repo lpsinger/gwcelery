@@ -125,11 +125,11 @@ def _start(trigtime, seglen, num_of_realizations):
 
 def _start_of_science_segment_for_one_ifo(start, trigtime, ifo, frametype):
     """Return gps start time of correctly calibrated and observing-intent data
-    on the time when interferometers are locked. In detail, this function
-    returns the last continuous data whose statevector's Bit 0 (HOFT_OK), 1
-    (OBSERVATION_INTENT) and 2 (OBSERVATION_READY) are 1. Here it is assumed
-    that data around trigtime satisfies these criterions since detection
-    pipelines already checked it.
+    on the time when interferometers are locked or trigtime if no science data
+    available. In detail, this function returns the last continuous data whose
+    statevector's Bit 0 (HOFT_OK), 1 (OBSERVATION_INTENT) and 2
+    (OBSERVATION_READY) are 1. Here it is assumed that data around trigtime
+    satisfies these criterions since detection pipelines already checked it.
 
     Parameters
     ----------
@@ -161,8 +161,14 @@ def _start_of_science_segment_for_one_ifo(start, trigtime, ifo, frametype):
                start=start, end=trigtime,
                bits=["HOFT_OK", "OBSERVATION_INTENT", "OBSERVATION_READY"]
            ).to_dqflags()
-    pe_segment = (flag['HOFT_OK'].active - ~flag['OBSERVATION_INTENT'].active -
-                  ~flag['OBSERVATION_READY'].active)[-1]
+    # treat the case where no PE-ready data is available
+    try:
+        pe_segment = (flag['HOFT_OK'].active -
+                      ~flag['OBSERVATION_INTENT'].active -
+                      ~flag['OBSERVATION_READY'].active)[-1]
+    except IndexError:
+        return trigtime
+
     return pe_segment[0]
 
 
