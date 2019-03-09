@@ -174,22 +174,26 @@ pypi:
     # Figure out which user to log in as (emfollow or emfollow-playground)
     - mkdir -p ~/.ssh
     - |
+      echo Host emfollow > ~/.ssh/config
       case $CI_ENVIRONMENT_NAME in
-      production)
-        echo User emfollow >> ~/.ssh/config
-        ;;
-      playground)
-        echo User emfollow-playground >> ~/.ssh/config
-        ;;
+        */CIT) echo HostName emfollow.ligo.caltech.edu >> ~/.ssh/config;;
+        */LHO) echo HostName emfollow.ligo-wa.caltech.edu >> ~/.ssh/config;;
+        */LLO) echo HostName emfollow.ligo-la.caltech.edu >> ~/.ssh/config;;
+      esac
+      case $CI_ENVIRONMENT_NAME in
+        production/*) echo User emfollow >> ~/.ssh/config;;
+        playground/*) echo User emfollow-playground >> ~/.ssh/config;;
       esac
 
-# Deploy on Caltech cluster
+# Continuous deployment.
+# Note that all deployments except playground/CIT are manual.
+
 .deploy-start: &deploy-start
   <<: *deploy-common
   script:
     # Update the repository.
     - |
-      gsissh -T emfollow.ligo.caltech.edu bash <<EOF
+      gsissh -T emfollow bash <<EOF
       set -e
       if [ ! -d .git ]; then git init; fi
       git fetch ${CI_REPOSITORY_URL}
@@ -197,7 +201,7 @@ pypi:
       EOF
     # Reinstall and start (new session to reload bashrc).
     - |
-      gsissh -T emfollow.ligo.caltech.edu bash <<EOF
+      gsissh -T emfollow bash <<EOF
       . .bashrc
       set -e
       pip install --upgrade pipenv pip setuptools
@@ -205,41 +209,70 @@ pypi:
       gwcelery condor resubmit
       EOF
 
-# Deploy on Caltech cluster
 .deploy-stop: &deploy-stop
   <<: *deploy-common
   script: |
-    gsissh -T emfollow.ligo.caltech.edu bash <<EOF
+    gsissh -T emfollow bash <<EOF
     . .bashrc
     set -e
     gwcelery condor rm
     EOF
 
-deploy to production:
+deploy to production at CIT:
   <<: *deploy-start
   when: manual
   environment:
-    name: production
-    on_stop: stop deployment on production
+    name: production/CIT
+    on_stop: stop deployment on production at CIT
     url: https://ldas-jobs.ligo.caltech.edu/~emfollow/flower
 
-deploy to playground:
+deploy to production at LHO:
+  <<: *deploy-start
+  when: manual
+  environment:
+    name: production/LHO
+    on_stop: stop deployment on production at LHO
+    url: https://ldas-jobs.ligo-wa.caltech.edu/~emfollow/flower
+
+deploy to playground at CIT:
   <<: *deploy-start
   environment:
-    name: playground
-    on_stop: stop deployment on playground
+    name: playground/CIT
+    on_stop: stop deployment on playground at CIT
     url: https://ldas-jobs.ligo.caltech.edu/~emfollow-playground/flower
 
-stop deployment on production:
+deploy to playground at LHO:
+  <<: *deploy-start
+  when: manual
+  environment:
+    name: playground/LHO
+    on_stop: stop deployment on playground at LHO
+    url: https://ldas-jobs.ligo-wa.caltech.edu/~emfollow-playground/flower
+
+stop deployment on production at CIT:
   <<: *deploy-stop
   when: manual
   environment:
-    name: production
+    name: production/CIT
     action: stop
 
-stop deployment on playground:
+stop deployment on production at LHO:
   <<: *deploy-stop
   when: manual
   environment:
-    name: playground
+    name: production/LHO
+    action: stop
+
+stop deployment on playground at CIT:
+  <<: *deploy-stop
+  when: manual
+  environment:
+    name: playground/CIT
+    action: stop
+
+stop deployment on playground at LHO:
+  <<: *deploy-stop
+  when: manual
+  environment:
+    name: playground/LHO
     action: stop
