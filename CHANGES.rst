@@ -16,6 +16,10 @@ Changelog
 
 -   Changed the filename ``source_classification.json`` to ``em_bright.json``.
 
+-   Change condor log directory from /var/tmp to ~/.cache/condor since gwcelery
+    workers have separate /var/tmp when they are running as condor jobs and
+    that causes problems when gwcelery tries to read log files.
+
 0.3.0 (2019-03-01)
 ------------------
 

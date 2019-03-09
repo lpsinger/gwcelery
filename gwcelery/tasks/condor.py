@@ -9,6 +9,7 @@ References
 .. [1] http://research.cs.wisc.edu/htcondor/manual/latest/condor_submit.html
 .. [2] http://research.cs.wisc.edu/htcondor/classad/refman/node3.html
 """
+from distutils.dir_util import mkpath
 import os
 import subprocess
 import tempfile
@@ -33,7 +34,9 @@ def _escape_args(args):
 
 def _mklog(suffix):
     """Create a unique path for an HTCondor log."""
-    with tempfile.NamedTemporaryFile(dir='/var/tmp', suffix=suffix) as f:
+    condor_dir = os.path.expanduser('~/.cache/condor')
+    mkpath(condor_dir)
+    with tempfile.NamedTemporaryFile(dir=condor_dir, suffix=suffix) as f:
         return f.name
 
 
