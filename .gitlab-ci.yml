@@ -220,8 +220,7 @@ pypi:
 
 deploy to production at CIT:
   <<: *deploy-start
-  when:
-    - manual
+  when: manual
   environment:
     name: production/CIT
     on_stop: stop deployment on production at CIT
@@ -229,8 +228,7 @@ deploy to production at CIT:
 
 deploy to production at LHO:
   <<: *deploy-start
-  when:
-    - manual
+  when: manual
   environment:
     name: production/LHO
     on_stop: stop deployment on production at LHO
@@ -238,9 +236,6 @@ deploy to production at LHO:
 
 deploy to playground at CIT:
   <<: *deploy-start
-  when:
-    - manual
-    - on_success
   environment:
     name: playground/CIT
     on_stop: stop deployment on playground at CIT
@@ -248,8 +243,7 @@ deploy to playground at CIT:
 
 deploy to playground at LHO:
   <<: *deploy-start
-  when:
-    - manual
+  when: manual
   environment:
     name: playground/LHO
     on_stop: stop deployment on playground at LHO
@@ -257,32 +251,28 @@ deploy to playground at LHO:
 
 stop deployment on production at CIT:
   <<: *deploy-stop
-  when:
-    - manual
+  when: manual
   environment:
     name: production/CIT
     action: stop
 
 stop deployment on production at LHO:
   <<: *deploy-stop
-  when:
-    - manual
+  when: manual
   environment:
     name: production/LHO
     action: stop
 
 stop deployment on playground at CIT:
   <<: *deploy-stop
-  when:
-    - manual
+  when: manual
   environment:
     name: playground/CIT
     action: stop
 
 stop deployment on playground at LHO:
   <<: *deploy-stop
-  when:
-    - manual
+  when: manual
   environment:
     name: playground/LHO
     action: stop
