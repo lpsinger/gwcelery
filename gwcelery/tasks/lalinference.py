@@ -179,11 +179,11 @@ def _start_of_science_segment(trigtime, seglen, ifos, frametype_dict):
     and minimum of end time
     """
     start = _start(trigtime, seglen, default_num_of_realizations)
-    for ifo in ifos:
-        start = _start_of_science_segment_for_one_ifo(
-                    start, trigtime, ifo, frametype_dict[ifo]
-                )
-    return start
+    return max(
+        _start_of_science_segment_for_one_ifo(
+            start, trigtime, ifo, frametype_dict[ifo]
+        ) for ifo in ifos
+    )
 
 
 def _psdstart_psdlength(start, trigtime, seglen):
