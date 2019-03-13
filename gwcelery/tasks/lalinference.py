@@ -378,12 +378,12 @@ def job_error_notification(request, exc, traceback, superevent_id, rundir):
             filecontents=None, filename=None, graceid=superevent_id,
             message='Job failed.', tags='pe'
         )
-    # Get paths to .log files
+    # Get paths to .log files, .err files, .out files
     paths_to_log = _find_paths_from_name(rundir, '*.log')
-    # Get paths to .err files
     paths_to_err = _find_paths_from_name(rundir, '*.err')
+    paths_to_out = _find_paths_from_name(rundir, '*.out')
     # Upload .log and .err files
-    for path in itertools.chain(paths_to_log, paths_to_err):
+    for path in itertools.chain(paths_to_log, paths_to_err, paths_to_out):
         with open(path, 'rb') as f:
             contents = f.read()
         if contents:
