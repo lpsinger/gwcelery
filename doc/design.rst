@@ -17,8 +17,7 @@ gravitational-wave candidates and sending GCN Notices to astronomers.
 
 GWCelery interacts with GraceDb by listening for LVAlert messages and making
 REST API requests through the GraceDb client. GWCelery interacts with GCN by
-listening for GCN Notices using the PyGCN_ VOEvent client and sending GCN
-notices using the Comet VOEvent broker.
+listening for and sending GCN Notices using the Comet VOEvent broker.
 
 The major subsystems of GWCelery are:
 
