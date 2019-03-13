@@ -4,7 +4,7 @@ Configuration
 =============
 
 Like any Celery application, GWCelery's configuration options are stored at run
-time in a global configuration object, :obj:`~gwcelery.app.conf`. There are
+time in a global configuration object, :obj:`gwcelery.app.conf`. There are
 options for Celery itself such as options that affect the task and result
 backends; these options are documented in the :ref:`celery:configuration`
 section of the Celery manual.
