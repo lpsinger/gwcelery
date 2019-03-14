@@ -129,9 +129,9 @@ llhoft_glob = '/dev/shm/llhoft/{detector}/*.gwf'
 llhoft_channels = {
     'H1:DMT-DQ_VECTOR': 'dmt_dq_vector_bits',
     'L1:DMT-DQ_VECTOR': 'dmt_dq_vector_bits',
-    'H1:GDS-CALIB_STATE_VECTOR': 'state_vector_bits',
-    'L1:GDS-CALIB_STATE_VECTOR': 'state_vector_bits',
-    'V1:DQ_ANALYSIS_STATE_VECTOR': 'state_vector_bits',
+    'H1:GDS-CALIB_STATE_VECTOR': 'ligo_state_vector_bits',
+    'L1:GDS-CALIB_STATE_VECTOR': 'ligo_state_vector_bits',
+    'V1:DQ_ANALYSIS_STATE_VECTOR': 'virgo_state_vector_bits',
     #  Virgo DQ veto streams, should be implemented before September O2 replay
     #  'V1:DQ_VETO_MBTA': 'no_dq_veto_mbta_bits',
     #  'V1:DQ_VETO_CWB': 'no_dq_veto_cwb_bits',

@@ -47,8 +47,8 @@ dmt_dq_vector_bits = Bits(
 """DMT DQ vector bits (LIGO only)."""
 
 
-state_vector_bits = Bits(
-    channel='GDS-CALIB_STATE_VECTOR or DQ_ANALYSIS_STATE_VECTOR',
+ligo_state_vector_bits = Bits(
+    channel='GDS-CALIB_STATE_VECTOR',
     bits={
         0: 'HOFT_OK',
         1: 'OBSERVATION_INTENT',
@@ -66,7 +66,31 @@ state_vector_bits = Bits(
         'NO_DETCHAR_HW_INJ': 'No HW injections for detector characterization'
     }
 )
-"""State vector bitfield definitions for LIGO and Virgo."""
+"""State vector bitfield definitions for LIGO."""
+
+virgo_state_vector_bits = Bits(
+    channel='DQ_ANALYSIS_STATE_VECTOR',
+    bits={
+        0: 'HOFT_OK',
+        1: 'OBSERVATION_INTENT',
+        5: 'NO_STOCH_HW_INJ',
+        6: 'NO_CBC_HW_INJ',
+        7: 'NO_BURST_HW_INJ',
+        8: 'NO_DETCHAR_HW_INJ',
+        10: 'GOOD_DATA_QUALITY_CAT1'
+    },
+    description={
+        'HOFT_OK': 'h(t) was successfully computed',
+        'OBSERVATION_INTENT': '"observation intent" button is pushed',
+        'NO_STOCH_HW_INJ': 'No stochastic HW injection',
+        'NO_CBC_HW_INJ': 'No CBC HW injection',
+        'NO_BURST_HW_INJ': 'No burst HW injection',
+        'NO_DETCHAR_HW_INJ': 'No HW injections for detector characterization',
+        'GOOD_DATA_QUALITY_CAT1': 'Good data quality (CAT1 type)'
+    }
+)
+"""State vector bitfield definitions for Virgo."""
+
 
 no_dq_veto_mbta_bits = Bits(
     channel='V1:DQ_VETO_MBTA',
@@ -250,7 +274,7 @@ def check_vector(cache, channel, start, end, bits, logic_type='all'):
     Example
     -------
     >>> check_vector(cache, 'H1:GDS-CALIB_STATE_VECTOR', 1216496260,
-                     1216496262, state_vector_bits)
+                     1216496262, ligo_state_vector_bits)
     {'H1:HOFT_OK': True,
      'H1:OBSERVATION_INTENT': True,
      'H1:NO_STOCH_HW_INJ': True,

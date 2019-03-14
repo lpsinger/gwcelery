@@ -32,7 +32,7 @@ def ifo_h1():
     old = app.conf['llhoft_channels']
     app.conf['llhoft_channels'] = {
         'H1:DMT-DQ_VECTOR': 'dmt_dq_vector_bits',
-        'H1:GDS-CALIB_STATE_VECTOR': 'state_vector_bits'}
+        'H1:GDS-CALIB_STATE_VECTOR': 'ligo_state_vector_bits'}
     yield
     app.conf['llhoft_channels'] = old
 
