@@ -93,11 +93,11 @@ def test_compute_p_astro_1(mock_url, coinc_bytes_1, ranking_data_bytes):
 def test_compute_p_astro_2(mock_url, coinc_bytes_2, ranking_data_bytes):
     """Test to call `compute_p_astro` on gracedb event G5351.
     m1 = 4.2, m2 = 1.2 solar mass for this event. FAR = 1.9e-6, P_terr
-    has a high value."""
+    has a moderate value, based on trimmed-down ranking data file."""
     files = coinc_bytes_2, ranking_data_bytes
     # FIXME graceid should be removed once fixed
     p_astros = json.loads(p_astro_gstlal.compute_p_astro(files))
-    assert p_astros['Terrestrial'] > 0.85
+    assert p_astros['Terrestrial'] > 0.3
 
 
 @patch.object(request, 'urlopen', return_value=MockResponse())
