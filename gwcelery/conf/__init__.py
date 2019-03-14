@@ -150,9 +150,6 @@ idq_pglitch_thresh = 0.95
 """Minimum p(glitch) reported by iDQ required before notice is posted to
 GraceDb"""
 
-p_astro_gstlal_ln_likelihood_threshold = 6
-"""log likelihood threshold"""
-
 p_astro_gstlal_ranking_pdf = '/home/gstlalcbc/observing/3/online/trigs/rankingstat_pdf.xml.gz'  # noqa: E501
 
 p_astro_url = \
