@@ -23,7 +23,13 @@ explanation on jinja is here http://jinja.pocoo.org . #}
     {% set neff = '300' %}
 {% endif %}
 
+{# FIXME: Focusing only on lalinfernece_mcmc is not ideal for test, but the run
+with this setting is known to finish within ~30 minutes #}
 {% if 'playground' in service_url %}
+    {% set engine = 'lalinferencemcmc' %}
+    {% set nparallel = '2' %}
+    {% set row = 'False' %}
+    {% set neff = '200' %}
     {% set disable_spin = 'disable-spin=' %}
     {% set zeroLogLike = 'zeroLogLike=' %}
 {% endif %}
