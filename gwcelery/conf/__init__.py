@@ -123,8 +123,9 @@ uses_gatedhoft = {'gstlal': False,
 """Whether or not a pipeline uses gated h(t). Determines whether or not
 the DMT-DQ_VECTOR will be analyzed for data quality."""
 
-llhoft_glob = '/dev/shm/llhoft/{detector}/*.gwf'
-"""File glob for low-latency h(t) frames."""
+llhoft_glob = '/dev/shm/kafka/{detector}_O2/*.gwf'
+"""File glob for playground low-latency h(t) frames. Currently points
+to O2 replay data."""
 
 llhoft_channels = {
     'H1:DMT-DQ_VECTOR': 'dmt_dq_vector_bits',

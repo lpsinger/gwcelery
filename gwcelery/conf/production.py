@@ -31,6 +31,9 @@ Once we switch to sending public alerts exclusively, then we can switch
 back to using port 8099 for anonymous access, requiring no prior site
 configuration."""
 
+llhoft_glob = '/dev/shm/kafka/{detector}/*.gwf'
+"""File glob for low-latency h(t) frames."""
+
 low_latency_frame_types = {'H1': 'H1_llhoft',
                            'L1': 'L1_llhoft',
                            'V1': 'V1_llhoft'}
