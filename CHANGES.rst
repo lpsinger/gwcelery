@@ -27,6 +27,9 @@ Changelog
 -   Upload a diff whenever a LIGO/Virgo VOEvent that we receive from GCN does
     not match the original that we sent.
 
+-   Wait for low-latency or high-latency frame files being transferred to the
+    cluster before parameter estimation starts.
+
 0.3.0 (2019-03-01)
 ------------------
 

@@ -103,141 +103,146 @@ def _srate(singleinspiraltable):
            ) * 2
 
 
-def _start(trigtime, seglen, num_of_realizations):
-    """Return gps start time
-
-    Parameters
-    ----------
-    trigtime : float
-        The time of target trigger
-    seglen : int
-        The length of the segment used to calculate overlap between data and
-        waveform
-    num_of_realizations : int
-        The number of noise realizations used for PSD estimation
-
-    Return
-    ------
-    start : float
-        GPS start time of the whole data used for Parameter Estimation
+def _data_exists(end, ifos, frametype_dict):
+    """Check whether data at end time can be found with gwdatafind and return
+    true it it is found.
     """
-    return trigtime + 2 - seglen - padding - num_of_realizations * seglen
-
-
-def _start_of_science_segment_for_one_ifo(start, trigtime, ifo, frametype):
-    """Return gps start time of correctly calibrated and observing-intent data
-    on the time when interferometers are locked or trigtime if no science data
-    available. In detail, this function returns the last continuous data whose
-    statevector's Bit 0 (HOFT_OK), 1 (OBSERVATION_INTENT) and 2
-    (OBSERVATION_READY) are 1. Here it is assumed that data around trigtime
-    satisfies these criterions since detection pipelines already checked it.
-
-    Parameters
-    ----------
-    start : float
-        GPS start time of the time window over which data is searched for.
-    trigtime : float
-        GPS time of a trigger
-    ifo : str
-    frametype : str
-
-    Return
-    ------
-    start : float
-        GPS start time of found science segment
-    """
-    # get gps start and end time of available data
-    datacache = Cache.from_urls(find_urls(ifo[0], frametype, start, trigtime))
-    # treat the case where nothing was found with gwdatafind
-    try:
-        available_segment = datacache.to_segmentlistdict()[ifo[0]][-1]
-    except KeyError:
-        return trigtime
-    start = max(start, available_segment[0])
-
-    # check whether data is calibrated correctly, observing-intent and taken
-    # while the inferferometers are locked
-    flag = StateVector.read(
-               datacache, app.conf['state_vector_channel_names'][ifo],
-               start=start, end=trigtime,
-               bits=["HOFT_OK", "OBSERVATION_INTENT", "OBSERVATION_READY"]
-           ).to_dqflags()
-    # treat the case where no PE-ready data is available
-    try:
-        pe_segment = (flag['HOFT_OK'].active -
-                      ~flag['OBSERVATION_INTENT'].active -
-                      ~flag['OBSERVATION_READY'].active)[-1]
-    except IndexError:
-        return trigtime
-
-    return pe_segment[0]
-
-
-def _start_of_science_segment(trigtime, seglen, ifos, frametype_dict):
-    """Calculate gps start time of ready-for-PE data with
-    _start_end_of_science_segment for each ifo and return maximum of start time
-    and minimum of end time
-    """
-    start = _start(trigtime, seglen, default_num_of_realizations)
-    return max(
-        _start_of_science_segment_for_one_ifo(
-            start, trigtime, ifo, frametype_dict[ifo]
+    return min(
+        len(
+            find_urls(ifo[0], frametype_dict[ifo], end, end + 1)
         ) for ifo in ifos
+    ) > 0
+
+
+class NotEnoughData(Exception):
+    """Raised if found data is not enough due to the latency of data
+    transfer
+    """
+
+
+@app.task(bind=True, autoretry_for=(NotEnoughData, ), default_retry_delay=1,
+          max_retries=86400, retry_backoff=True, shared=False)
+def query_data(self, trigtime, ifos):
+    """Continues to query data until it is found with gwdatafind and return
+    frametypes for the data. If data is not found in 86400 seconds = 1 day,
+    raise NotEnoughData.
+    """
+    end = trigtime + 2
+    if _data_exists(end, ifos, app.conf['low_latency_frame_types']):
+        return app.conf['low_latency_frame_types']
+    elif _data_exists(end, ifos, app.conf['high_latency_frame_types']):
+        return app.conf['high_latency_frame_types']
+    else:
+        raise NotEnoughData
+
+
+@app.task(ignore_result=True, shared=False)
+def upload_no_frame_files(request, exc, traceback, superevent_id):
+    """Upload notification when no frame files are found.
+
+    Parameters
+    ----------
+    request : Context (placeholder)
+        Task request variables
+    exc : Exception
+        Exception rased by condor.submit
+    traceback : str (placeholder)
+        Traceback message from a task
+    superevent_id : str
+        The GraceDb ID of a target superevent
+    """
+    if type(exc) is NotEnoughData:
+        gracedb.upload.delay(
+            filecontents=None, filename=None,
+            graceid=superevent_id,
+            message='Frame files have not been found.',
+            tags='pe'
+        )
+
+
+def _upload_no_pe_ready_data(superevent_id):
+    """Upload comments if data quality is not good enough for PE"""
+    gracedb.upload.delay(
+        filecontents=None, filename=None,
+        graceid=superevent_id,
+        message=('Data quality is not good enough. '
+                 'Parameter Estimation will never start automatically.'),
+        tags='pe'
     )
 
 
-def _psdstart_psdlength(start, trigtime, seglen):
-    """Return gps start time and length of data for PSD estimation as a list.
-    Note that psdlength has to be seglen multiplied by an integer"""
-    psdlength = \
-        math.floor(trigtime + 2 - seglen - padding - start) // seglen * seglen
-    return (trigtime + 2 - seglen - padding - psdlength, psdlength)
-
-
-def _find_appropriate_frametype_psdstart_psdlength(
-    trigtime, seglen, ifos, superevent_id=None
+def _find_appropriate_psdstart_psdlength(
+    trigtime, seglen, ifos, frametype_dict, superevent_id=None
 ):
-    """Return appropriate frametype, psdstart and psdlength. This function sets
-    long enough psdlength first and shorten psdlength depending on whether data
-    is available, correctly calibrated, observing-intent and taken while the
-    interferometers are locked. This function first searches for low-latency
-    frame data and, if they are not available, searches for high-latency frame
-    data. If enough data is not found finally, raise exception and report
+    """Check data quality with statevector and decide psdstart and psdlength
+    automatically. If enough data is not found, raise exception and report
     failure to GraceDB.
-    """
-    # First search for low-latecy frame data
-    frametype_dict = app.conf['low_latency_frame_types']
-    start = _start_of_science_segment(
-                trigtime, seglen, ifos, frametype_dict
-            )
-    start_threshold = _start(trigtime, seglen, 1)
-    if start <= start_threshold:
-        psdstart, psdlength = _psdstart_psdlength(start, trigtime, seglen)
-        return frametype_dict, psdstart, psdlength
 
-    # If part of low-latency data has already vanished, search for high-latency
-    # frame data
-    frametype_dict = app.conf['high_latency_frame_types']
-    start = _start_of_science_segment(
-                trigtime, seglen, ifos, frametype_dict
-            )
-    if start <= start_threshold:
-        psdstart, psdlength = _psdstart_psdlength(start, trigtime, seglen)
-        return frametype_dict, psdstart, psdlength
+    Parameters
+    ----------
+    trigtime : float
+        The trigger time
+    seglen : int
+        The length of data used for overlap calculation
+    ifos : list of str
+        eg. ['H1', 'L1', 'V1']
+    frametype_dict : dictionary
+        The dictionary relating ifos with frametypes
+        eg. {'H1': 'H1_llhoft', 'L1': 'L1_llhoft', 'V1': 'V1_llhoft'}
+
+    Returns
+    -------
+    psdstart : float
+        The GSP start time of PSD estimation
+    psdlength : int
+        The length of data used for PSD estimation
+    """
+    ideal_start_time = \
+        trigtime + 2 - seglen - padding - default_num_of_realizations * seglen
+    ideal_end_time = trigtime + 2
+
+    # check data quality and shorten data if it is not good enough for PE
+    start_times, end_times = [], []
+    for ifo in ifos:
+        datacache = Cache.from_urls(
+            find_urls(ifo[0], frametype_dict[ifo],
+                      ideal_start_time, ideal_end_time)
+        )
+        flag = StateVector.read(
+                   datacache, app.conf['state_vector_channel_names'][ifo],
+                   start=ideal_start_time, end=ideal_end_time,
+                   bits=["HOFT_OK", "OBSERVATION_INTENT", "OBSERVATION_READY"]
+               ).to_dqflags()
+        try:
+            pe_segment = (flag['HOFT_OK'].active -
+                          ~flag['OBSERVATION_INTENT'].active -
+                          ~flag['OBSERVATION_READY'].active)[-1]
+        except IndexError:
+            if superevent_id is not None:
+                _upload_no_pe_ready_data(superevent_id)
+            raise
+        start_times.append(pe_segment[0])
+        end_times.append(pe_segment[1])
+    start = max(start_times)
+    end = min(end_times)
+
+    # Make sure that we have at least one realization for PSD estimation. The
+    # end time threshold is endtime - 1.0 because Virgo's statevector has
+    # sampling rate of 1 Hz and resultant end time after statevector reading
+    # can be input end time - 1.0 second
+    if start <= trigtime + 2 - seglen - padding - seglen and end >= end - 1.0:  # noqa
+        psdlength = math.floor(
+            trigtime + 2 - seglen - padding - start
+        ) // seglen * seglen
+        return (trigtime + 2 - seglen - padding - psdlength, psdlength)
     else:
         if superevent_id is not None:
-            gracedb.upload.delay(
-                filecontents=None, filename=None,
-                graceid=superevent_id,
-                message='Available data is not long enough, and ' +
-                        'Parameter Estimation will never start automatically.',
-                tags='pe'
-            )
+            _upload_no_pe_ready_data(superevent_id)
         raise
 
 
 @app.task(shared=False)
-def prepare_ini(event, superevent_id=None):
+def prepare_ini(frametype_dict, event, superevent_id=None):
     """Determine an appropriate PE settings for the target event and return ini
     file content
     """
@@ -252,13 +257,13 @@ def prepare_ini(event, superevent_id=None):
     ifos = _ifos(event)
     seglen = _seglen(singleinspiraltable)
     # FIXME: seglen here might not be actual seglen if ROQ is used
-    frametypes, psdstart, psdlength = \
-        _find_appropriate_frametype_psdstart_psdlength(
-            trigtime, seglen, ifos, superevent_id
+    psdstart, psdlength = \
+        _find_appropriate_psdstart_psdlength(
+            trigtime, seglen, ifos, frametype_dict, superevent_id
         )
     ini_settings = {
         'service_url': gracedb.client._service_url,
-        'types': frametypes,
+        'types': frametype_dict,
         'channels': app.conf['strain_channel_names'],
         'webdir': os.path.join(app.conf['pe_results_path'], event['graceid']),
         'paths': [{'name': name, 'path': find_executable(executable)}
@@ -275,6 +280,13 @@ def prepare_ini(event, superevent_id=None):
         'psd_length': psdlength
     }
     return ini_template.render(ini_settings)
+
+
+def pre_pe_tasks(event, superevent_id):
+    """Return canvas of tasks executed before parameter estimation starts"""
+    return query_data.s(event['gpstime'], _ifos(event)).on_error(
+        upload_no_frame_files.s(superevent_id)
+    ) | prepare_ini.s(event, superevent_id)
 
 
 @app.task(shared=False)

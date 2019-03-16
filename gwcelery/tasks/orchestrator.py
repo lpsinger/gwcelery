@@ -439,7 +439,7 @@ def parameter_estimation(event, superevent_id):
     # FIXME: it will be better to start parameter estimation for 'burst'
     # events.
     if event['group'] == 'CBC' and event['search'] != 'MDC':
-        canvas = lalinference.prepare_ini.s(event, superevent_id)
+        canvas = lalinference.pre_pe_tasks(event, superevent_id)
         next_task = gracedb.upload.s(
                         filename=lalinference.ini_name,
                         graceid=superevent_id,

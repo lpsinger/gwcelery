@@ -48,7 +48,9 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
         assert graceid == 'G1234'
         return {'group': group, 'pipeline': pipeline, 'search': 'AllSky',
                 'instruments': 'H1,L1,V1', 'graceid': 'G1234',
-                'offline': offline, 'far': far}
+                'offline': offline, 'far': far, 'gpstime': 1234,
+                'extra_attributes':
+                {'CoincInspiral': {'ifos': 'H1,L1,V1'}}}
 
     def download(filename, graceid):
         if '.fits' in filename:
@@ -72,6 +74,7 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
     plot_volume = Mock()
     plot_allsky = Mock()
     send = Mock()
+    query_data = Mock()
     prepare_ini = Mock()
     start_pe = Mock()
     create_voevent = Mock(return_value='S1234-1-Preliminary.xml')
@@ -88,6 +91,8 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
                         get_superevent)
     monkeypatch.setattr('gwcelery.tasks.circulars.create_initial_circular.run',
                         create_initial_circular)
+    monkeypatch.setattr('gwcelery.tasks.lalinference.query_data.run',
+                        query_data)
     monkeypatch.setattr('gwcelery.tasks.lalinference.prepare_ini.run',
                         prepare_ini)
     monkeypatch.setattr('gwcelery.tasks.lalinference.start_pe.run',
@@ -117,6 +122,7 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
         create_initial_circular.assert_called_once()
 
     if group == 'CBC' and not offline:
+        query_data.assert_called_once()
         prepare_ini.assert_called_once()
         if far <= app.conf['pe_threshold']:
             start_pe.assert_called_once()
