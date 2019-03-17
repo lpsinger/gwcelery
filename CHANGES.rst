@@ -20,6 +20,10 @@ Changelog
     workers have separate /var/tmp when they are running as condor jobs and
     that causes problems when gwcelery tries to read log files.
 
+-   Limit the maximum version of gwpy to 0.14.0 in order to work around a unit
+    test failure that started with gwpy 0.14.1. See
+    https://git.ligo.org/emfollow/gwcelery/issues/95.
+
 0.3.0 (2019-03-01)
 ------------------
 

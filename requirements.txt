@@ -7,7 +7,7 @@ flask
 flask-caching
 flower
 gwdatafind
-gwpy
+gwpy <= 0.14.0  # https://git.ligo.org/emfollow/gwcelery/issues/95
 healpy
 jinja2
 lalsuite >= 6.52
