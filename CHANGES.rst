@@ -24,6 +24,9 @@ Changelog
     test failure that started with gwpy 0.14.1. See
     https://git.ligo.org/emfollow/gwcelery/issues/95.
 
+-   Upload a diff whenever a LIGO/Virgo VOEvent that we receive from GCN does
+    not match the original that we sent.
+
 0.3.0 (2019-03-01)
 ------------------
 
