@@ -297,10 +297,10 @@
         },
         "gwpy": {
             "hashes": [
-                "sha256:6fcd88583845884998df07eff65095acded2f79d99eca02513fe0c658ac3e73a",
-                "sha256:9648ceed2feb92b7266367552e6185214ffbc6c8bf1aac8013e03f129d497609"
+                "sha256:728c0a0bcfdee436d8c6f05ffe631da6138ccad4dd6ea39baf73dbaf74e1a464",
+                "sha256:ae43abbdfe597065a9f9e0e0c56edca764945c75bca952de19958915e9226c8e"
             ],
-            "version": "==0.14.1"
+            "version": "==0.14.0"
         },
         "h5py": {
             "hashes": [
