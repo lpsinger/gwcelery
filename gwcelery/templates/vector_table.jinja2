@@ -1,0 +1,20 @@
+<table style="width:100%;border-collapse:collapse;text-align:center;" border="1">
+<th colspan="2">{{ title }}</th>
+<tr><th>Bit</th><th>Value</th></tr>
+{% for bit in high_bit_list %}
+    <tr><td>{{ bit }}</td><td bgcolor="#0f0">1</td></tr>
+{% endfor %}
+{% for bit in low_bit_list %}
+    <tr><td>{{ bit }}</td><td bgcolor="red">0</td></tr>
+{% endfor %}
+{% for bit in unknown_bit_list %}
+    <tr><td>{{ bit }}</td><td bgcolor="yellow">unknown</td></tr>
+{% endfor %}
+{% if low_bit_list != [] %}
+    <tr bgcolor="red"><th>Overall state for all detectors</th><th>bad</th></tr>
+{% elif unknown_bit_list != [] %}
+    <tr bgcolor="yellow"><th>Overall state for all detectors</th><th>unknown</th></tr>
+{% else %}
+    <tr bgcolor="#0f0"><th>Overall state for all detectors</th><th>good</th></tr>
+{% endif %}
+</table>

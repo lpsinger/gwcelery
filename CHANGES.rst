@@ -4,7 +4,7 @@ Changelog
 0.3.2 (unreleased)
 ------------------
 
--   No changes yet.
+-   Make detchar results easier to read by formatting as HTML table.
 
 0.3.1 (2019-03-18)
 ------------------

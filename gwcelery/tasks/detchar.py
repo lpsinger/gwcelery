@@ -25,9 +25,11 @@ from gwdatafind import find_urls
 from gwpy.timeseries import Bits, StateVector, TimeSeries
 import numpy as np
 
+from . import gracedb
 from ..import app
 from ..import _version
-from . import gracedb
+from ..jinja import env
+
 
 __author__ = 'Geoffrey Mo <geoffrey.mo@ligo.org>'
 
@@ -163,6 +165,31 @@ def create_cache(ifo, start, end):
         urls = find_urls(ifo[0], '{}1_HOFT_C00'.format(ifo[0]), start, end)
         cache = Cache.from_urls(urls)
     return cache
+
+
+def generate_table(title, high_bit_list, low_bit_list, unknown_bit_list):
+    """Make a nice table which shows the status of the bits checked.
+
+    Parameters
+    ----------
+    title : str
+        Title of the table.
+    high_bit_list: list
+        List of bit names which are high.
+    low_bit_list: list
+        List of bit names which are low.
+    unknown_bit_list: list
+        List of bit names which are unknown.
+
+    Returns
+    -------
+    str
+        HTML string of the table.
+    """
+    template = env.get_template('vector_table.jinja2')
+    return template.render(title=title, high_bit_list=high_bit_list,
+                           low_bit_list=low_bit_list,
+                           unknown_bit_list=unknown_bit_list)
 
 
 def dqr_json(state, summary):
@@ -348,7 +375,8 @@ def check_vectors(event, graceid, start, end):
     pipeline = event['pipeline']
     pre, post = app.conf['check_vector_prepost'][pipeline]
     start, end = start - pre, end + post
-    prepost_msg = " within -{}/+{} seconds of superevent".format(pre, post)
+    prepost_msg = "Check looked within -{}/+{} seconds of superevent. ".format(
+        pre, post)
 
     ifos = {key.split(':')[0] for key, val in
             app.conf['llhoft_channels'].items()}
@@ -385,16 +413,16 @@ def check_vectors(event, graceid, start, end):
     # Logging iDQ to GraceDb
     if None not in idq_probs.values():
         if max(idq_probs.values()) >= app.conf['idq_pglitch_thresh']:
-            idq_msg = "iDQ glitch probabilies: {}".format(
+            idq_msg = "iDQ glitch probabilies: {}. ".format(
                 json.dumps(idq_probs)[2:-1])
         else:
             idq_msg = ("iDQ glitch probabilities at both H1 and L1"
-                       " are good (below {})").format(
+                       " are good (below {}). ").format(
                            app.conf['idq_pglitch_thresh'])
         gracedb.client.writeLog(graceid, idq_msg + prepost_msg,
                                 tag_name=['data_quality'])
     else:
-        idq_msg = "iDQ glitch probabilities unknown"
+        idq_msg = "iDQ glitch probabilities unknown. "
 
     # Labeling INJ to GraceDb
     if False in active_inj_states.values():
@@ -402,18 +430,18 @@ def check_vectors(event, graceid, start, end):
         gracedb.create_label('INJ', graceid)
     if False in inj_states.values():
         # Write all found injections into GraceDb log
-        inj_fmt = ("Looking across all ifos, {} is False. No other HW"
-                   " injections found")
+        injs = [k for k, v in inj_states.items() if v is False]
+        inj_fmt = "Injection found.\n{}\n"
         inj_msg = inj_fmt.format(
-            ', '.join(k for k, v in inj_states.items() if v is False))
+            generate_table('Injection bits', [], injs, []))
         gracedb.client.writeLog(graceid, inj_msg + prepost_msg,
                                 tag_name=['data_quality'])
     elif all(inj_states.values()) and len(inj_states.values()) > 0:
-        inj_msg = 'No HW injections found'
+        inj_msg = 'No HW injections found. '
         gracedb.client.writeLog(graceid, inj_msg + prepost_msg,
                                 tag_name=['data_quality'])
     else:
-        inj_msg = 'Injection state unknown'
+        inj_msg = 'Injection state unknown. '
 
     # Determining overall_dq_active_state
     if None in active_dq_states.values() or len(
@@ -423,16 +451,16 @@ def check_vectors(event, graceid, start, end):
         overall_dq_active_state = False
     elif all(active_dq_states.values()):
         overall_dq_active_state = True
-    fmt = ("detector state for active instruments is {}."
-           " For all instruments, bits good ({}), bad ({}), unknown ({})")
+    goods = [k for k, v in dq_states.items() if v is True]
+    bads = [k for k, v in dq_states.items() if v is False]
+    unknowns = [k for k, v in dq_states.items() if v is None]
+    fmt = "Detector state for active instruments is {}.\n{}"
     msg = fmt.format(
         {None: 'unknown', False: 'bad', True: 'good'}[overall_dq_active_state],
-        ', '.join(k for k, v in dq_states.items() if v is True),
-        ', '.join(k for k, v in dq_states.items() if v is False),
-        ', '.join(k for k, v in dq_states.items() if v is None),
+        generate_table('Data quality bits', goods, bads, unknowns)
     )
     if app.conf['uses_gatedhoft'][pipeline]:
-        gate_msg = ('. Pipeline {} uses gated h(t),'
+        gate_msg = ('Pipeline {} uses gated h(t),'
                     ' LIGO DMT-DQ_VECTOR not checked.').format(pipeline)
     else:
         gate_msg = ''
