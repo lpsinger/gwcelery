@@ -151,7 +151,7 @@ def upload_no_frame_files(request, exc, traceback, superevent_id):
     superevent_id : str
         The GraceDb ID of a target superevent
     """
-    if type(exc) is NotEnoughData:
+    if isinstance(exc, NotEnoughData):
         gracedb.upload.delay(
             filecontents=None, filename=None,
             graceid=superevent_id,
@@ -380,12 +380,12 @@ def job_error_notification(request, exc, traceback, superevent_id, rundir):
     rundir : str
         The run directory for PE
     """
-    if type(exc) is condor.JobAborted:
+    if isinstance(exc, condor.JobAborted):
         gracedb.upload.delay(
             filecontents=None, filename=None, graceid=superevent_id,
             message='Job was aborted.', tags='pe'
         )
-    elif type(exc) is condor.JobFailed:
+    elif isinstance(exc, condor.JobFailed):
         gracedb.upload.delay(
             filecontents=None, filename=None, graceid=superevent_id,
             message='Job failed.', tags='pe'
