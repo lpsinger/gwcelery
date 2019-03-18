@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.3.1 (unreleased)
+0.3.1 (2019-03-18)
 ------------------
 
 -   Fix a bug in translating keys from ``source_classification.json`` to
