@@ -4,7 +4,6 @@ from distutils.dir_util import mkpath
 import glob
 import itertools
 import json
-import math
 import os
 import shutil
 import subprocess
@@ -12,11 +11,7 @@ import tempfile
 import urllib
 
 from celery import group
-from glue.lal import Cache
 from gwdatafind import find_urls
-from gwpy.timeseries import StateVector
-import lal
-import lalsimulation
 
 from .. import app
 from ..jinja import env
@@ -48,69 +43,15 @@ executables = {'datafind': 'gw_data_find',
                'ppanalysis': 'cbcBayesPPAnalysis',
                'pos_to_sim_inspiral': 'cbcBayesPosToSimInspiral'}
 
-flow = 20.0
 
-# number of samples between end time of the data used for psd estimation and
-# start time of data for PE
-padding = 16
-
-# default number of realizations used for PSD estimation
-default_num_of_realizations = 32
-
-
-def _ifos(event):
-    """Return ifos"""
-    return event['extra_attributes']['CoincInspiral']['ifos'].split(',')
-
-
-def _chirplen(singleinspiral):
-    """Return chirplen"""
-    return lalsimulation.SimInspiralChirpTimeBound(
-               flow,
-               singleinspiral['mass1'] * lal.MSUN_SI,
-               singleinspiral['mass2'] * lal.MSUN_SI,
-               0.0, 0.0
-           )
-
-
-def _round_up_to_power_of_two(x):
-    """Return smallest power of two exceeding x"""
-    return 2**math.ceil(math.log(x, 2))
-
-
-def _seglen(singleinspiraltable):
-    """Return seglen"""
-    return max([_round_up_to_power_of_two(max(4.0, _chirplen(sngl) + 2.0))
-                for sngl in singleinspiraltable])
-
-
-def _freq_dict(freq, ifos):
-    """Return dictionary whose keys are ifos and items are frequencies"""
-    return dict((ifo, freq) for ifo in ifos)
-
-
-def _fstop(singleinspiral):
-    """Return final frequency"""
-    return lalsimulation.IMRPhenomDGetPeakFreq(
-               singleinspiral['mass1'], singleinspiral['mass2'], 0.0, 0.0
-           )
-
-
-def _srate(singleinspiraltable):
-    """Return srate we should use"""
-    return _round_up_to_power_of_two(
-               max([_fstop(sngl) for sngl in singleinspiraltable])
-           ) * 2
-
-
-def _data_exists(end, ifos, frametype_dict):
+def _data_exists(end, frametype_dict):
     """Check whether data at end time can be found with gwdatafind and return
     true it it is found.
     """
     return min(
         len(
             find_urls(ifo[0], frametype_dict[ifo], end, end + 1)
-        ) for ifo in ifos
+        ) for ifo in frametype_dict.keys()
     ) > 0
 
 
@@ -122,15 +63,15 @@ class NotEnoughData(Exception):
 
 @app.task(bind=True, autoretry_for=(NotEnoughData, ), default_retry_delay=1,
           max_retries=86400, retry_backoff=True, shared=False)
-def query_data(self, trigtime, ifos):
+def query_data(self, trigtime):
     """Continues to query data until it is found with gwdatafind and return
     frametypes for the data. If data is not found in 86400 seconds = 1 day,
     raise NotEnoughData.
     """
     end = trigtime + 2
-    if _data_exists(end, ifos, app.conf['low_latency_frame_types']):
+    if _data_exists(end, app.conf['low_latency_frame_types']):
         return app.conf['low_latency_frame_types']
-    elif _data_exists(end, ifos, app.conf['high_latency_frame_types']):
+    elif _data_exists(end, app.conf['high_latency_frame_types']):
         return app.conf['high_latency_frame_types']
     else:
         raise NotEnoughData
@@ -160,87 +101,6 @@ def upload_no_frame_files(request, exc, traceback, superevent_id):
         )
 
 
-def _upload_no_pe_ready_data(superevent_id):
-    """Upload comments if data quality is not good enough for PE"""
-    gracedb.upload.delay(
-        filecontents=None, filename=None,
-        graceid=superevent_id,
-        message=('Available data is not long enough for PSD estimation. '
-                 'Parameter Estimation will not start automatically.'),
-        tags='pe'
-    )
-
-
-def _find_appropriate_psdstart_psdlength(
-    trigtime, seglen, ifos, frametype_dict, superevent_id=None
-):
-    """Check data quality with statevector and decide psdstart and psdlength
-    automatically. If enough data is not found, raise exception and report
-    failure to GraceDB.
-
-    Parameters
-    ----------
-    trigtime : float
-        The trigger time
-    seglen : int
-        The length of data used for overlap calculation
-    ifos : list of str
-        eg. ['H1', 'L1', 'V1']
-    frametype_dict : dictionary
-        The dictionary relating ifos with frametypes
-        eg. {'H1': 'H1_llhoft', 'L1': 'L1_llhoft', 'V1': 'V1_llhoft'}
-
-    Returns
-    -------
-    psdstart : float
-        The GSP start time of PSD estimation
-    psdlength : int
-        The length of data used for PSD estimation
-    """
-    ideal_start_time = \
-        trigtime + 2 - seglen - padding - default_num_of_realizations * seglen
-    ideal_end_time = trigtime + 2
-
-    # check data quality and shorten data if it is not good enough for PE
-    start_times, end_times = [], []
-    for ifo in ifos:
-        datacache = Cache.from_urls(
-            find_urls(ifo[0], frametype_dict[ifo],
-                      ideal_start_time, ideal_end_time)
-        )
-        flag = StateVector.read(
-                   datacache, app.conf['state_vector_channel_names'][ifo],
-                   start=ideal_start_time, end=ideal_end_time,
-                   bits=["HOFT_OK", "OBSERVATION_INTENT", "OBSERVATION_READY"]
-               ).to_dqflags()
-        try:
-            pe_segment = (flag['HOFT_OK'].active -
-                          ~flag['OBSERVATION_INTENT'].active -
-                          ~flag['OBSERVATION_READY'].active)[-1]
-        except IndexError:
-            if superevent_id is not None:
-                _upload_no_pe_ready_data(superevent_id)
-            raise
-        start_times.append(pe_segment[0])
-        end_times.append(pe_segment[1])
-    start = max(start_times)
-    end = min(end_times)
-
-    # Make sure that we have at least one realization for PSD estimation. The
-    # end time threshold is endtime - 1.0 because Virgo's statevector has
-    # sampling rate of 1 Hz and resultant end time after statevector reading
-    # can be input end time - 1.0 second
-    if start <= trigtime + 2 - seglen - padding - seglen and end >= end - 1.0:  # noqa
-        psdlength = math.floor(
-            trigtime + 2 - seglen - padding - start
-        ) // seglen * seglen
-        return (trigtime + 2 - seglen - padding - psdlength, psdlength)
-    else:
-        if superevent_id is not None:
-            _upload_no_pe_ready_data(superevent_id)
-        raise
-
-
 @app.task(shared=False)
 def prepare_ini(frametype_dict, event, superevent_id=None):
     """Determine an appropriate PE settings for the target event and return ini
@@ -249,58 +109,43 @@ def prepare_ini(frametype_dict, event, superevent_id=None):
     # Get template of .ini file
     ini_template = env.get_template('online_pe.jinja2')
 
-    # Download event's info to determine PE settings
-    singleinspiraltable = event['extra_attributes']['SingleInspiral']
-    trigtime = event['gpstime']
-
     # fill out the ini template and return the resultant content
-    ifos = _ifos(event)
-    seglen = _seglen(singleinspiraltable)
-    # FIXME: seglen here might not be actual seglen if ROQ is used
-    psdstart, psdlength = \
-        _find_appropriate_psdstart_psdlength(
-            trigtime, seglen, ifos, frametype_dict, superevent_id
-        )
+    singleinspiraltable = event['extra_attributes']['SingleInspiral']
     ini_settings = {
         'service_url': gracedb.client._service_url,
         'types': frametype_dict,
         'channels': app.conf['strain_channel_names'],
+        'state_vector_channels': app.conf['state_vector_channel_names'],
         'webdir': os.path.join(app.conf['pe_results_path'], event['graceid']),
         'paths': [{'name': name, 'path': find_executable(executable)}
                   for name, executable in executables.items()],
         'q': min([sngl['mass2'] / sngl['mass1']
                   for sngl in singleinspiraltable]),
-        'ifos': ifos,
-        'seglen': seglen,
-        'flow': _freq_dict(flow, ifos),
-        'srate': _srate(singleinspiraltable),
-        'gps_start_time': psdstart - 1.0,  # to be smaller than psdstart
-        'gps_end_time': trigtime + 3.0,  # to be larger than trigtime + 2.0
-        'psd_start_time': psdstart,
-        'psd_length': psdlength
     }
     return ini_template.render(ini_settings)
 
 
 def pre_pe_tasks(event, superevent_id):
     """Return canvas of tasks executed before parameter estimation starts"""
-    return query_data.s(event['gpstime'], _ifos(event)).on_error(
+    return query_data.s(event['gpstime']).on_error(
         upload_no_frame_files.s(superevent_id)
     ) | prepare_ini.s(event, superevent_id)
 
 
 @app.task(shared=False)
-def dag_prepare(rundir, ini_contents, preferred_event_id, superevent_id):
+def dag_prepare(
+    coinc_contents, ini_contents, rundir, superevent_id
+):
     """Create a Condor DAG to run LALInference on a given event.
 
     Parameters
     ----------
-    rundir : str
-        The path to a run directory where the DAG file exits
+    coinc_contents : bytes
+        The byte contents of ``coinc.xml``
     ini_contents : str
         The content of online_pe.ini
-    preferred_event_id : str
-        The GraceDb ID of a target preferred event
+    rundir : str
+        The path to a run directory where the DAG file exits
     superevent_id : str
         The GraceDb ID of a target superevent
 
@@ -309,6 +154,11 @@ def dag_prepare(rundir, ini_contents, preferred_event_id, superevent_id):
     submit_file : str
         The path to the .sub file
     """
+    # write down coicn.xml in the run directory
+    path_to_coinc = os.path.join(rundir, 'coinc.xml')
+    with open(path_to_coinc, 'wb') as f:
+        f.write(coinc_contents)
+
     # write down .ini file in the run directory
     path_to_ini = rundir + '/' + ini_name
     with open(path_to_ini, 'w') as f:
@@ -322,7 +172,7 @@ def dag_prepare(rundir, ini_contents, preferred_event_id, superevent_id):
     )
     try:
         subprocess.run(['lalinference_pipe', '--run-path', rundir,
-                        '--gid', preferred_event_id, path_to_ini],
+                        '--coinc', path_to_coinc, path_to_ini],
                        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                        check=True)
         subprocess.run(['condor_submit_dag', '-no_submit',
@@ -533,7 +383,9 @@ def start_pe(ini_contents, preferred_event_id, superevent_id):
     rundir = tempfile.mkdtemp(dir=lalinference_dir)
 
     (
-        dag_prepare.s(rundir, ini_contents, preferred_event_id, superevent_id)
+        gracedb.download.s('coinc.xml', preferred_event_id)
+        |
+        dag_prepare.s(ini_contents, rundir, superevent_id)
         |
         condor.submit.s().on_error(
             job_error_notification.s(superevent_id, rundir)
