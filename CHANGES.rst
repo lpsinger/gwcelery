@@ -6,6 +6,9 @@ Changelog
 
 -   Make detchar results easier to read by formatting as HTML table.
 
+-   Allow iDQ to label DQV onto events based on p(glitch). 
+    Adjustable by pipeline.
+
 0.3.1 (2019-03-18)
 ------------------
 

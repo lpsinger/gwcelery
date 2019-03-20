@@ -143,13 +143,31 @@ llhoft_channels = {
 """Low-latency h(t) state vector configuration. This is a dictionary consisting
 of a channel and its bitmask, as defined in :mod:`gwcelery.tasks.detchar`."""
 
-idq_channels = ['H1:IDQ-PGLITCH_RANDOM_FOREST_16_4096',
-                'L1:IDQ-PGLITCH_RANDOM_FOREST_16_4096']
+idq_channels = ['H1:IDQ-PGLITCH_OVL_16_4096',
+                'L1:IDQ-PGLITCH_OVL_16_4096']
 """Low-latency iDQ p(glitch) channel names"""
 
 idq_pglitch_thresh = 0.95
-"""Minimum p(glitch) reported by iDQ required before notice is posted to
-GraceDb"""
+"""If P(Glitch) is above this threshold, and
+:obj:`~gwcelery.conf.idq_veto` for the pipeline is true, DQV will be labeled
+for the event.
+"""
+
+idq_veto = {'gstlal': False,
+            'spiir': False,
+            'pycbc': False,
+            'MBTAOnline': False,
+            'oLIB': False,
+            'LIB': False,
+            'CWB': False,
+            'HardwareInjection': False,
+            'Swift': False,
+            'Fermi': False,
+            'SNEWS': False}
+"""If true for a pipeline, iDQ values above the threshold defined in
+:obj:`~gwcelery.conf.idq_pglitch.thres` will cause DQV to be labeled.
+Currently all False, pending iDQ review (should be done before O3).
+"""
 
 p_astro_gstlal_ln_likelihood_threshold = 6
 """log likelihood threshold"""
