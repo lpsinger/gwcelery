@@ -399,8 +399,12 @@ def job_error_notification(request, exc, traceback, superevent_id, rundir):
         with open(path, 'rb') as f:
             contents = f.read()
         if contents:
+            # put .log suffix in log file names so that users can directly
+            # read the contents instead of downloading them when they click
+            # file names
             gracedb.upload.delay(
-                filecontents=contents, filename=os.path.basename(path),
+                filecontents=contents,
+                filename=os.path.basename(path) + '.log',
                 graceid=superevent_id,
                 message='Here is a log file for PE.',
                 tags='pe'
