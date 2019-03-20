@@ -165,8 +165,8 @@ def _upload_no_pe_ready_data(superevent_id):
     gracedb.upload.delay(
         filecontents=None, filename=None,
         graceid=superevent_id,
-        message=('Data quality is not good enough. '
-                 'Parameter Estimation will never start automatically.'),
+        message=('Available data is not long enough for PSD estimation. '
+                 'Parameter Estimation will not start automatically.'),
         tags='pe'
     )
 
