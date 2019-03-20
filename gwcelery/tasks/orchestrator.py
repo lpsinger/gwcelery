@@ -453,6 +453,14 @@ def parameter_estimation(event, superevent_id):
 
                 lalinference.start_pe.s(preferred_event_id, superevent_id)
             )
+        else:
+            next_task |= gracedb.upload.si(
+                             filecontents=None, filename=None,
+                             graceid=superevent_id,
+                             message='FAR is larger than the PE threshold, '
+                                     '{}  Hz. Parameter Estimation will not '
+                                     'start.'.format(app.conf['pe_threshold'])
+                         )
         canvas |= next_task
 
         canvas.apply_async()
