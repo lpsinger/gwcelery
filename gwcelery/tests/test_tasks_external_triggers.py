@@ -78,7 +78,7 @@ def test_handle_create_snews_event(mock_create_event, mock_get_event,
         call(
             'E1',
             ('Detector state for active instruments is unknown.\n{}'
-             'Check looked within -2/+2 seconds of superevent. ').format(
+             'Check looked within -10/+10 seconds of superevent. ').format(
                  detchar.generate_table(
                      'Data quality bits', [], [],
                      ['H1:NO_OMC_DCPD_ADC_OVERFLOW',

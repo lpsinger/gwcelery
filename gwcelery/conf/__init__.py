@@ -105,7 +105,7 @@ check_vector_prepost = {'gstlal': [2, 2],
                         'HardwareInjection': [2, 2],
                         'Swift': [2, 2],
                         'Fermi': [2, 2],
-                        'SNEWS': [2, 2]}
+                        'SNEWS': [10, 10]}
 """Seconds before and after the superevent start and end times which the DQ
 vector check will include in its check. Pipeline dependent."""
 
