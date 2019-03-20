@@ -42,8 +42,6 @@ def handle_superevent(alert):
         start = alert['object']['t_start']
         end = alert['object']['t_end']
 
-        gracedb.create_label.s('ADVREQ', superevent_id).apply_async()
-
         (
             _get_preferred_event.si(superevent_id).set(
                 countdown=app.conf['orchestrator_timeout']
@@ -392,6 +390,7 @@ def preliminary_alert(event, superevent_id):
             app.conf[
                 'preliminary_alert_far_threshold'][event['group'].lower()] \
             and {'DQV', 'INJ'}.isdisjoint(gracedb.get_labels(superevent_id)):
+        # apply ADVREQ, compose preliminary GCN and send
         canvas |= (
             _create_voevent.s(
                 superevent_id, 'preliminary',
@@ -402,6 +401,8 @@ def preliminary_alert(event, superevent_id):
             )
             |
             group(
+                gracedb.create_label.si('ADVREQ', superevent_id),
+
                 gracedb.download.s(superevent_id)
                 |
                 gcn.send.s()
