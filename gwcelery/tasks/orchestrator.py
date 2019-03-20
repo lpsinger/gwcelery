@@ -391,7 +391,7 @@ def preliminary_alert(event, superevent_id):
             and trials_factor * event['far'] <= \
             app.conf[
                 'preliminary_alert_far_threshold'][event['group'].lower()] \
-            and 'DQV' not in gracedb.get_labels(superevent_id):
+            and {'DQV', 'INJ'}.isdisjoint(gracedb.get_labels(superevent_id)):
         canvas |= (
             _create_voevent.s(
                 superevent_id, 'preliminary',

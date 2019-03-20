@@ -317,3 +317,23 @@ def test_handle_cbc_event_ignored(mock_gracedb, mock_localize,
     orchestrator.handle_cbc_event(alert)
     mock_localize.assert_not_called()
     mock_classifier.assert_not_called()
+
+
+@patch('gwcelery.tasks.orchestrator._create_voevent')
+@patch('gwcelery.tasks.circulars.create_initial_circular')
+@patch('gwcelery.tasks.gcn.send')
+@pytest.fixture(params=[{'INJ'}, {'DQV'}])
+def test_inj_stops_prelim(monkeypatch, request, send, create_initial_circular,
+                          create_voevent):
+    event = {'group': 'burst', 'pipeline': 'pipeline', 'search': 'AllSky',
+             'instruments': 'H1,L1,V1', 'graceid': 'G1234',
+             'offline': False, 'far': 1.e-10, 'gpstime': 1234,
+             'extra_attributes':
+             {'CoincInspiral': {'ifos': 'H1,L1,V1'}}}
+    monkeypatch.setattr('gwcelery.tasks.gracedb.get_labels.run',
+                        request.param)
+    supereventid = 'S12345'
+    orchestrator.preliminary_alert(event, supereventid)
+    send.assert_not_called()
+    create_initial_circular.assert_not_called()
+    create_voevent.assert_not_called()
