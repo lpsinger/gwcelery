@@ -109,7 +109,7 @@ check_vector_prepost = {'gstlal': [2, 2],
 """Seconds before and after the superevent start and end times which the DQ
 vector check will include in its check. Pipeline dependent."""
 
-uses_gatedhoft = {'gstlal': False,
+uses_gatedhoft = {'gstlal': True,
                   'spiir': True,
                   'pycbc': True,
                   'MBTAOnline': True,
