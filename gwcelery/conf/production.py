@@ -52,10 +52,6 @@ strain_channel_names = {'H1': 'H1:GDS-CALIB_STRAIN',
 """Names of h(t) channels used in Parameter Estimation with LALInference (see
 :mod:`gwcelery.tasks.lalinference`)"""
 
-pe_threshold = 1.0 / (14 * 86400)
-"""FAR threshold in Hz for Parameter Estimation. PE group now applies
-1/(2 weeks) as a threshold. 86400 seconds = 1 day and 14 days = 2 weeks."""
-
 sentry_environment = 'production'
 """Record this `environment tag
 <https://docs.sentry.io/enriching-error-data/environments/>`)` in Sentry log

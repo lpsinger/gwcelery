@@ -211,10 +211,9 @@ state_vector_channel_names = {'H1': 'H1:GDS-CALIB_STATE_VECTOR',
 """Names of state vector channels used in Parameter Estimation with
 LALInference (see :mod:`gwcelery.tasks.lalinference`)"""
 
-pe_threshold = 1.0 / 3600
-"""FAR threshold in Hz for Parameter Estimation. That threshld is 1/ (3600
-seconds = 1 hour) for playground so that PE workflow can be tested
-frequently"""
+pe_threshold = 1.0 / (14 * 86400)
+"""FAR threshold in Hz for Parameter Estimation. PE group now applies
+1/(2 weeks) as a threshold. 86400 seconds = 1 day and 14 days = 2 weeks."""
 
 pe_results_path = os.path.join(os.getenv('HOME'), 'public_html/online_pe')
 """Path to the results of Parameter Estimation (see
