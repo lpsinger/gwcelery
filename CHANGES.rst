@@ -12,6 +12,11 @@ Changelog
 -   Move functions in tasks/lalinference.py to lalinference_pipe.py in
     lalsuite.
 
+-   Take into account calibration errors in automatic Parameter Estimation.
+
+-   Do not use margphi option for automatic Parameter Estimation with ROQ
+    waveform since that option is not compatible with ROQ likelihood.
+
 0.3.1 (2019-03-18)
 ------------------
 
