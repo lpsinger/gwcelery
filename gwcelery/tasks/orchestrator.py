@@ -460,7 +460,8 @@ def parameter_estimation(event, superevent_id):
                              graceid=superevent_id,
                              message='FAR is larger than the PE threshold, '
                                      '{}  Hz. Parameter Estimation will not '
-                                     'start.'.format(app.conf['pe_threshold'])
+                                     'start.'.format(app.conf['pe_threshold']),
+                             tags='pe'
                          )
         canvas |= next_task
 
