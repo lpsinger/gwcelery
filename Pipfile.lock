@@ -454,18 +454,18 @@
         },
         "lalsuite": {
             "hashes": [
-                "sha256:20b167494933c1b9f7780ef4eaadda5382d0c7e794f2173ee3f59dc7f471635b",
-                "sha256:4b3b77d1cbe7b9e30db8d4cac3d08daf7de3d62ed516f3d7852dcbb52945c769",
-                "sha256:6ed64d24ba66e48bfbf72073299d01eb67e20a9787ad7e7f7f55f275acfccc84",
-                "sha256:714319e1926252cc7a932401bedc607ccea4ea595ca2a9e0e53a3bd13398ad62",
-                "sha256:99ca89d95ca518e2fdf2ba6681fed6d09ab89cde88333755ef48b4ce20064ca0",
-                "sha256:9c84ddc2e19187a2f2e8a463298a0168b634e6af484557fdb15f7d6940063713",
-                "sha256:ae280692119f3d13170e25acc13d521e592763100dd1aa61d230e367ca0d2a9d",
-                "sha256:b16136a0532fd6c05490e100577621259d99c189c5f589bbc14aaeba157c173f",
-                "sha256:c051c77a8f03994414f10445269254c6e0a01df30f560c4d06c0f4d72c06d6d5",
-                "sha256:f663d2811f16d8ebe93baacde46337b844cb88c95434b11c45b2151de1db9a83"
+                "sha256:0aa5df7ccfd7d9ffe230c89b003016d8466ded161d2397030b934eaec8cc3609",
+                "sha256:127cbda8945241c7f44b629524931206f72c70c6389f350b24f147f4cb5e5f77",
+                "sha256:1f91cd9e261dd4f404765527b6f4f9c99f35a48fee0239a1e325921ec2aef83e",
+                "sha256:398279d45ef7c85046ce20125cc0fe9f3ea8ac8792c13d0f25bb9a323c4652fd",
+                "sha256:4f02e0472f3d940f1a3242d30ac7256b99f0fe6aaaf26c84a444669494816514",
+                "sha256:50fa90c3b5971931b8ba52c85ad6cd83fc0535b2d3598c82ed539c3e043c2c05",
+                "sha256:7e5d27940b429bdc80b8aa3ea247669f468dbb916775872c6cda1bc5af9b52cd",
+                "sha256:a4898ead32692ff2d9a5bfc86932291f80a59582e39e92f60387c959036cc738",
+                "sha256:cc52184fe18deb5b34ad3b0f2ece720adcad7ca225e952c63e23eaeccca1f953",
+                "sha256:fa256666f7991b0308c3ef84d0045ebffde241f30fcf1acf5062ca498ecc59fa"
             ],
-            "version": "==6.53"
+            "version": "==6.53.1.dev20190325"
         },
         "ligo-followup-advocate": {
             "hashes": [
