@@ -64,7 +64,7 @@ Setting up the Flask web application on a LIGO Data Grid cluster machine is
 similar to setting up Flower. Run the Flask application with the following
 additional command line arguments::
 
-    $ FLASK_URL_PREFIX=/~${USER}/gwcelery gwcelery flask run --port=5556 --with-threads --host 0.0.0.0
+    $ gwcelery flask run --port=5556 --with-threads --host 0.0.0.0
 
 add the following lines to the file ``~/public_html/.htaccess``:
 

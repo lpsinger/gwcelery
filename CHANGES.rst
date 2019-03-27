@@ -17,6 +17,10 @@ Changelog
 -   Do not use margphi option for automatic Parameter Estimation with ROQ
     waveform since that option is not compatible with ROQ likelihood.
 
+-   Adjust WSGI middleware configuration to adapt to a change in Werkzeug
+    0.15.0 that broke redirects on form submission in the Flask app. See
+    https://github.com/pallets/werkzeug/pull/1303.
+
 0.3.1 (2019-03-18)
 ------------------
 

@@ -28,3 +28,4 @@ service_identity  # We don't actually use this package, but it silences some ann
 sleek-lvalert >= 0.0.4
 tornado < 6  # Tornado 6.0.0 breaks Flower because it removed tornado.web.asynchronous
 voeventlib >= 1.2
+werkzeug >= 0.15.0  # for werkzeug.middleware.proxy_fix.ProxyFix

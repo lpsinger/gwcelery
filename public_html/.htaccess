@@ -23,3 +23,6 @@ RewriteRule ".*" - [E=FLOWER_PORT:5557,E=FLASK_PORT:5558]
 # The reverse proxy rules themselves.
 RewriteRule ^flower/?(.*)$ http://%{ENV:PROXIED_SERVER_NAME}:%{ENV:FLOWER_PORT}/$1 [P]
 RewriteRule ^gwcelery/?(.*)$ http://%{ENV:PROXIED_SERVER_NAME}:%{ENV:FLASK_PORT}/$1 [P]
+
+# Set the X-Forwarded-Prefix header to the path where the Flask app is mounted.
+RequestHeader set X-Forwarded-Prefix "/~%{TILDE_USER}e/gwcelery/"
