@@ -4,12 +4,12 @@
 import io
 import json
 
-from ligo.lw  import ligolw
-from ligo.lw.ligolw  import LIGOLWContentHandler
-from ligo.lw  import array as ligolw_array
-from ligo.lw  import param as ligolw_param
-from ligo.lw  import utils as ligolw_utils
-from ligo.lw  import lsctables
+from ligo.lw import ligolw
+from ligo.lw.ligolw import LIGOLWContentHandler
+from ligo.lw import array as ligolw_array
+from ligo.lw import param as ligolw_param
+from ligo.lw import utils as ligolw_utils
+from ligo.lw import lsctables
 from lal import rate
 from ligo.lw import table as ligolw_table
 
@@ -77,21 +77,22 @@ class _ContentHandler_glue(LIGOLWContentHandler_glue):
 
 def noilwdchar(xmldoc):
     for table in xmldoc.getElementsByTagName(ligolw.Table.tagName):
-    # first strip table names from column names that shouldn't
-    # have them
+        # first strip table names from column names that shouldn't have them
         if table.Name in lsctables.TableByName:
             validcolumns = \
                 lsctables.TableByName[table.Name].validcolumns
             stripped_column_to_valid_column = \
                 dict((ligolw_table.Column.ColumnName(name), name)
-                    for name in validcolumns)
+                     for name in validcolumns)
             for column in table.getElementsByTagName(ligolw.Column.tagName):
                 if column.getAttribute("Name") not in validcolumns:
                     before = column.getAttribute("Name")
                     column.setAttribute("Name",
-                        stripped_column_to_valid_column[column.Name])
+                                        stripped_column_to_valid_column[
+                                            column.Name])
                     idattrs = tuple(table.columnnames[i] for i, coltype in
-                        enumerate(table.columntypes) if coltype == u"ilwd:char")
+                                    enumerate(table.columntypes) if
+                                    coltype == u"ilwd:char")
                 if not idattrs:
                     continue
                 for row in table:
