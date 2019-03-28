@@ -270,7 +270,7 @@ def check_idq(cache, channel, start, end):
         log.exception('Failed to read from low-latency iDQ frame files')
         return (channel, None)
     else:
-        return (channel, getattr(idq_prob, 'max')())
+        return (channel, float(idq_prob.max()))
 
 
 def check_vector(cache, channel, start, end, bits, logic_type='all'):
