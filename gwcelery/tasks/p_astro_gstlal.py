@@ -8,9 +8,7 @@ from ligo.lw import ligolw
 from ligo.lw.ligolw import LIGOLWContentHandler
 from ligo.lw import array as ligolw_array
 from ligo.lw import param as ligolw_param
-from ligo.lw import utils as ligolw_utils
 from ligo.lw import lsctables
-from lal import rate
 from ligo.lw import table as ligolw_table
 
 from celery.utils.log import get_task_logger
@@ -63,17 +61,20 @@ def _parse_likelihood_control_doc(xmldoc):
         raise ValueError("document does not contain likelihood ratio data")
     return rankingstatpdf
 
+
 @ligolw_array.use_in
 @ligolw_param.use_in
 @lsctables.use_in
 class _ContentHandler(LIGOLWContentHandler):
     pass
 
+
 @ligolw_array_glue.use_in
 @ligolw_param_glue.use_in
 @lsctables_glue.use_in
-class _ContentHandler_glue(LIGOLWContentHandler_glue):
+class _ContentHandlerGlue(LIGOLWContentHandler_glue):
     pass
+
 
 def noilwdchar(xmldoc):
     for table in xmldoc.getElementsByTagName(ligolw.Table.tagName):
@@ -86,7 +87,6 @@ def noilwdchar(xmldoc):
                      for name in validcolumns)
             for column in table.getElementsByTagName(ligolw.Column.tagName):
                 if column.getAttribute("Name") not in validcolumns:
-                    before = column.getAttribute("Name")
                     column.setAttribute("Name",
                                         stripped_column_to_valid_column[
                                             column.Name])
@@ -103,9 +103,10 @@ def noilwdchar(xmldoc):
     # return this, but it actually does it in place anyway...
     return xmldoc
 
+
 def _get_ln_f_over_b(ranking_data_bytes, ln_likelihood_ratios):
-    ranking_data_xmldoc_ilwdchar  = ligolw_utils_glue.load_fileobj(
-        io.BytesIO(ranking_data_bytes), contenthandler=_ContentHandler_glue)
+    ranking_data_xmldoc_ilwdchar = ligolw_utils_glue.load_fileobj(
+        io.BytesIO(ranking_data_bytes), contenthandler=_ContentHandlerGlue)
     ranking_data_xmldoc = noilwdchar(ranking_data_xmldoc_ilwdchar[0])
     #ranking_data_xmldoc = ligolw_utils.load_fileobj(
     #    io.BytesIO(ranking_data_bytes), contenthandler=_ContentHandler)
@@ -145,8 +146,8 @@ def _get_ln_f_over_b(ranking_data_bytes, ln_likelihood_ratios):
 
 
 def _get_event_ln_likelihood_ratio_svd_endtime_mass(coinc_bytes):
-    coinc_xmldoc_ilwdchar  = ligolw_utils_glue.load_fileobj(
-        io.BytesIO(coinc_bytes), contenthandler=_ContentHandler_glue)
+    coinc_xmldoc_ilwdchar = ligolw_utils_glue.load_fileobj(
+        io.BytesIO(coinc_bytes), contenthandler=_ContentHandlerGlue)
     coinc_xmldoc = noilwdchar(coinc_xmldoc_ilwdchar[0])
     coinc_event, = lsctables.CoincTable.get_table(coinc_xmldoc)
     coinc_inspiral, = lsctables.CoincInspiralTable.get_table(coinc_xmldoc)
