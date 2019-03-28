@@ -103,8 +103,11 @@ def noilwdchar(xmldoc):
     return xmldoc
 
 def _get_ln_f_over_b(ranking_data_bytes, ln_likelihood_ratios):
-    ranking_data_xmldoc = ligolw_utils.load_fileobj(
-        io.BytesIO(ranking_data_bytes), contenthandler=_ContentHandler)
+    ranking_data_xmldoc_ilwdchar  = ligolw_utils_glue.load_fileobj(
+        io.BytesIO(ranking_data_bytes), contenthandler=_ContentHandler_glue)
+    ranking_data_xmldoc = noilwdchar(ranking_data_xmldoc_ilwdchar[0])
+    #ranking_data_xmldoc = ligolw_utils.load_fileobj(
+    #    io.BytesIO(ranking_data_bytes), contenthandler=_ContentHandler)
     rankingstatpdf = _parse_likelihood_control_doc(ranking_data_xmldoc)
     # affect the zeroing of the PDFs below threshold by hacking the
     # histograms. Do the indexing ourselves to not 0 the bin @ threshold
