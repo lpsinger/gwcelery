@@ -1,4 +1,5 @@
 import json
+from unittest.mock import patch
 
 import pkg_resources
 import pytest
@@ -19,29 +20,34 @@ def fake_gcn(celeryconf, monkeypatch):
         return json.loads(
             pkg_resources.resource_string(__name__, 'data/G298048_log.json'))
 
-    def mock_create_tag(filename, tag, graceid):
-        assert filename == 'G298048-1-Initial.xml'
-        assert tag == 'gcn_received'
-        assert graceid == 'G298048'
-
     monkeypatch.setattr(
         'gwcelery.tasks.gracedb.download', mock_download)
     monkeypatch.setattr(
         'gwcelery.tasks.gracedb.get_log', mock_get_log)
-    monkeypatch.setattr(
-        'gwcelery.tasks.gracedb.create_tag', mock_create_tag)
 
     # Get the VOEvent.
     yield pkg_resources.resource_string(
         __name__, 'data/G298048-1-Initial.xml')
 
 
-def test_validate_voevent(fake_gcn):
+@patch('gwcelery.tasks.gracedb.create_tag.run')
+@patch('gwcelery.tasks.gracedb.upload.run')
+def test_validate_voevent(mock_upload, mock_create_tag, fake_gcn):
     """Test that the fake GCN notice matches what we actually sent."""
     validate(fake_gcn)
+    mock_create_tag.assert_called_once_with(
+        'G298048-1-Initial.xml', 'gcn_received', 'G298048')
+    mock_upload.assert_not_called()
 
 
-def test_validate_voevent_mismatched_param(fake_gcn):
+@patch('gwcelery.tasks.gracedb.create_tag.run')
+@patch('gwcelery.tasks.gracedb.upload.run')
+def test_validate_voevent_mismatched_param(
+        mock_upload, mock_create_tag, fake_gcn):
     """Test that we correctly detect mismatched parameter values in GCNs."""
-    with pytest.raises(AssertionError, match="^GCN does not match GraceDb$"):
+    with pytest.raises(
+            ValueError,
+            match="^VOEvent received from GCN differs from what we sent"):
         validate(fake_gcn + b'\n')
+    mock_create_tag.assert_not_called()
+    mock_upload.assert_called_once()

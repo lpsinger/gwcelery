@@ -5,6 +5,7 @@ import pytest
 from pkg_resources import resource_string
 
 from ..tasks import external_triggers
+from ..tasks import detchar
 from . import resource_json
 
 
@@ -30,18 +31,18 @@ def test_handle_create_grb_event(mock_create_event, mock_get_event,
             '"dqrjson"', ()),
         call(
             'E1',
-            ('detector state for active instruments is unknown. For all'
-             ' instruments, bits good (), bad (),'
-             ' unknown (H1:NO_OMC_DCPD_ADC_OVERFLOW,'
-             ' H1:NO_DMT-ETMY_ESD_DAC_OVERFLOW, L1:NO_OMC_DCPD_ADC_OVERFLOW,'
-             ' L1:NO_DMT-ETMY_ESD_DAC_OVERFLOW, H1:HOFT_OK,'
-             ' H1:OBSERVATION_INTENT,'
-             ' L1:HOFT_OK, L1:OBSERVATION_INTENT, V1:HOFT_OK,'
-             ' V1:OBSERVATION_INTENT)'
-             ' within -2/+2 seconds of superevent'),
-            #  , V1:NO_DQ_VETO_MBTA, V1:NO_DQ_VETO_CWB,'
-            #  ' V1:NO_DQ_VETO_GSTLAL, V1:NO_DQ_VETO_OLIB,'
-            #  ' V1:NO_DQ_VETO_PYCBC).'),
+            ('Detector state for active instruments is unknown.\n{}'
+             'Check looked within -2/+2 seconds of superevent. ').format(
+                 detchar.generate_table(
+                     'Data quality bits', [], [],
+                     ['H1:NO_OMC_DCPD_ADC_OVERFLOW',
+                      'H1:NO_DMT-ETMY_ESD_DAC_OVERFLOW',
+                      'L1:NO_OMC_DCPD_ADC_OVERFLOW',
+                      'L1:NO_DMT-ETMY_ESD_DAC_OVERFLOW',
+                      'H1:HOFT_OK', 'H1:OBSERVATION_INTENT',
+                      'L1:HOFT_OK', 'L1:OBSERVATION_INTENT',
+                      'V1:HOFT_OK', 'V1:OBSERVATION_INTENT',
+                      'V1:GOOD_DATA_QUALITY_CAT1'])),
             tag_name=['data_quality'])
     ]
     mock_write_log.assert_has_calls(calls, any_order=True)
@@ -76,18 +77,18 @@ def test_handle_create_snews_event(mock_create_event, mock_get_event,
             '"dqrjson"', ()),
         call(
             'E1',
-            ('detector state for active instruments is unknown. For all'
-             ' instruments, bits good (), bad (),'
-             ' unknown (H1:NO_OMC_DCPD_ADC_OVERFLOW,'
-             ' H1:NO_DMT-ETMY_ESD_DAC_OVERFLOW, L1:NO_OMC_DCPD_ADC_OVERFLOW,'
-             ' L1:NO_DMT-ETMY_ESD_DAC_OVERFLOW, H1:HOFT_OK,'
-             ' H1:OBSERVATION_INTENT,'
-             ' L1:HOFT_OK, L1:OBSERVATION_INTENT, V1:HOFT_OK,'
-             ' V1:OBSERVATION_INTENT)'
-             ' within -2/+2 seconds of superevent'),
-            #  , V1:NO_DQ_VETO_MBTA, V1:NO_DQ_VETO_CWB,'
-            #  ' V1:NO_DQ_VETO_GSTLAL, V1:NO_DQ_VETO_OLIB,'
-            #  ' V1:NO_DQ_VETO_PYCBC).'),
+            ('Detector state for active instruments is unknown.\n{}'
+             'Check looked within -10/+10 seconds of superevent. ').format(
+                 detchar.generate_table(
+                     'Data quality bits', [], [],
+                     ['H1:NO_OMC_DCPD_ADC_OVERFLOW',
+                      'H1:NO_DMT-ETMY_ESD_DAC_OVERFLOW',
+                      'L1:NO_OMC_DCPD_ADC_OVERFLOW',
+                      'L1:NO_DMT-ETMY_ESD_DAC_OVERFLOW',
+                      'H1:HOFT_OK', 'H1:OBSERVATION_INTENT',
+                      'L1:HOFT_OK', 'L1:OBSERVATION_INTENT',
+                      'V1:HOFT_OK', 'V1:OBSERVATION_INTENT',
+                      'V1:GOOD_DATA_QUALITY_CAT1'])),
             tag_name=['data_quality'])
     ]
     mock_write_log.assert_has_calls(calls, any_order=True)

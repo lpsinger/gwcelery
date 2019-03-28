@@ -49,8 +49,8 @@ def handle_snews_gcn(payload):
                                        group='External',
                                        pipeline=event_observatory)
     event = gracedb.get_event(graceid)
-    start = event['gpstime'] - 10
-    end = start + 10
+    start, end = event['gpstime'], event['gpstime']
+    # Pre-start and post-end padding is applied by check_vectors
     detchar.check_vectors(event, event['graceid'], start, end)
 
 

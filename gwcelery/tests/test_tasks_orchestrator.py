@@ -1,6 +1,6 @@
 import os
 import json
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, patch, call
 
 from ligo.gracedb import rest
 import pkg_resources
@@ -48,7 +48,9 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
         assert graceid == 'G1234'
         return {'group': group, 'pipeline': pipeline, 'search': 'AllSky',
                 'instruments': 'H1,L1,V1', 'graceid': 'G1234',
-                'offline': offline, 'far': far}
+                'offline': offline, 'far': far, 'gpstime': 1234,
+                'extra_attributes':
+                {'CoincInspiral': {'ifos': 'H1,L1,V1'}}}
 
     def download(filename, graceid):
         if '.fits' in filename:
@@ -72,9 +74,11 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
     plot_volume = Mock()
     plot_allsky = Mock()
     send = Mock()
+    query_data = Mock()
     prepare_ini = Mock()
     start_pe = Mock()
     create_voevent = Mock(return_value='S1234-1-Preliminary.xml')
+    create_label = Mock()
 
     monkeypatch.setattr('gwcelery.tasks.gcn.send.run', send)
     monkeypatch.setattr('gwcelery.tasks.skymaps.plot_allsky.run', plot_allsky)
@@ -88,10 +92,14 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
                         get_superevent)
     monkeypatch.setattr('gwcelery.tasks.circulars.create_initial_circular.run',
                         create_initial_circular)
+    monkeypatch.setattr('gwcelery.tasks.lalinference.query_data.run',
+                        query_data)
     monkeypatch.setattr('gwcelery.tasks.lalinference.prepare_ini.run',
                         prepare_ini)
     monkeypatch.setattr('gwcelery.tasks.lalinference.start_pe.run',
                         start_pe)
+    monkeypatch.setattr('gwcelery.tasks.gracedb.create_label.run',
+                        create_label)
 
     # Run function under test
     orchestrator.handle_superevent(alert)
@@ -102,10 +110,14 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
     if offline:
         send.assert_not_called()
         create_initial_circular.assert_not_called()
+        # No ADVREQ for offline triggers
+        assert call('ADVREQ', 'S1234') not in create_label.call_args_list
     elif app.conf['preliminary_alert_trials_factor'][group.lower()] * far > \
             app.conf['preliminary_alert_far_threshold'][group.lower()]:
         send.assert_not_called()
         create_initial_circular.assert_not_called()
+        # No ADVREQ for triggers that don't pass preliminary FAR threshold
+        assert call('ADVREQ', 'S1234') not in create_label.call_args_list
     else:
         if group == 'CBC':
             create_voevent.assert_called_once_with(
@@ -115,8 +127,10 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
                 skymap_filename='bayestar.fits.gz', skymap_type='bayestar')
         send.assert_called_once()
         create_initial_circular.assert_called_once()
+        create_label.assert_has_calls([call('ADVREQ', 'S1234')])
 
     if group == 'CBC' and not offline:
+        query_data.assert_called_once()
         prepare_ini.assert_called_once()
         if far <= app.conf['pe_threshold']:
             start_pe.assert_called_once()
@@ -311,3 +325,23 @@ def test_handle_cbc_event_ignored(mock_gracedb, mock_localize,
     orchestrator.handle_cbc_event(alert)
     mock_localize.assert_not_called()
     mock_classifier.assert_not_called()
+
+
+@patch('gwcelery.tasks.orchestrator._create_voevent')
+@patch('gwcelery.tasks.circulars.create_initial_circular')
+@patch('gwcelery.tasks.gcn.send')
+@pytest.fixture(params=[{'INJ'}, {'DQV'}])
+def test_inj_stops_prelim(monkeypatch, request, send, create_initial_circular,
+                          create_voevent):
+    event = {'group': 'burst', 'pipeline': 'pipeline', 'search': 'AllSky',
+             'instruments': 'H1,L1,V1', 'graceid': 'G1234',
+             'offline': False, 'far': 1.e-10, 'gpstime': 1234,
+             'extra_attributes':
+             {'CoincInspiral': {'ifos': 'H1,L1,V1'}}}
+    monkeypatch.setattr('gwcelery.tasks.gracedb.get_labels.run',
+                        request.param)
+    supereventid = 'S12345'
+    orchestrator.preliminary_alert(event, supereventid)
+    send.assert_not_called()
+    create_initial_circular.assert_not_called()
+    create_voevent.assert_not_called()

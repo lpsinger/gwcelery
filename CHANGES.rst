@@ -1,7 +1,27 @@
 Changelog
 =========
 
-0.3.1 (unreleased)
+0.3.2 (unreleased)
+------------------
+
+-   Make detchar results easier to read by formatting as HTML table.
+
+-   Allow iDQ to label DQV onto events based on p(glitch). 
+    Adjustable by pipeline.
+
+-   Move functions in tasks/lalinference.py to lalinference_pipe.py in
+    lalsuite.
+
+-   Take into account calibration errors in automatic Parameter Estimation.
+
+-   Do not use margphi option for automatic Parameter Estimation with ROQ
+    waveform since that option is not compatible with ROQ likelihood.
+
+-   Adjust WSGI middleware configuration to adapt to a change in Werkzeug
+    0.15.0 that broke redirects on form submission in the Flask app. See
+    https://github.com/pallets/werkzeug/pull/1303.
+
+0.3.1 (2019-03-18)
 ------------------
 
 -   Fix a bug in translating keys from ``source_classification.json`` to
@@ -19,6 +39,16 @@ Changelog
 -   Change condor log directory from /var/tmp to ~/.cache/condor since gwcelery
     workers have separate /var/tmp when they are running as condor jobs and
     that causes problems when gwcelery tries to read log files.
+
+-   Limit the maximum version of gwpy to 0.14.0 in order to work around a unit
+    test failure that started with gwpy 0.14.1. See
+    https://git.ligo.org/emfollow/gwcelery/issues/95.
+
+-   Upload a diff whenever a LIGO/Virgo VOEvent that we receive from GCN does
+    not match the original that we sent.
+
+-   Wait for low-latency or high-latency frame files being transferred to the
+    cluster before parameter estimation starts.
 
 0.3.0 (2019-03-01)
 ------------------

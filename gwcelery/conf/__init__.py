@@ -105,11 +105,11 @@ check_vector_prepost = {'gstlal': [2, 2],
                         'HardwareInjection': [2, 2],
                         'Swift': [2, 2],
                         'Fermi': [2, 2],
-                        'SNEWS': [2, 2]}
+                        'SNEWS': [10, 10]}
 """Seconds before and after the superevent start and end times which the DQ
 vector check will include in its check. Pipeline dependent."""
 
-uses_gatedhoft = {'gstlal': False,
+uses_gatedhoft = {'gstlal': True,
                   'spiir': True,
                   'pycbc': True,
                   'MBTAOnline': True,
@@ -123,15 +123,16 @@ uses_gatedhoft = {'gstlal': False,
 """Whether or not a pipeline uses gated h(t). Determines whether or not
 the DMT-DQ_VECTOR will be analyzed for data quality."""
 
-llhoft_glob = '/dev/shm/llhoft/{detector}/*.gwf'
-"""File glob for low-latency h(t) frames."""
+llhoft_glob = '/dev/shm/kafka/{detector}_O2/*.gwf'
+"""File glob for playground low-latency h(t) frames. Currently points
+to O2 replay data."""
 
 llhoft_channels = {
     'H1:DMT-DQ_VECTOR': 'dmt_dq_vector_bits',
     'L1:DMT-DQ_VECTOR': 'dmt_dq_vector_bits',
-    'H1:GDS-CALIB_STATE_VECTOR': 'state_vector_bits',
-    'L1:GDS-CALIB_STATE_VECTOR': 'state_vector_bits',
-    'V1:DQ_ANALYSIS_STATE_VECTOR': 'state_vector_bits',
+    'H1:GDS-CALIB_STATE_VECTOR': 'ligo_state_vector_bits',
+    'L1:GDS-CALIB_STATE_VECTOR': 'ligo_state_vector_bits',
+    'V1:DQ_ANALYSIS_STATE_VECTOR': 'virgo_state_vector_bits',
     #  Virgo DQ veto streams, should be implemented before September O2 replay
     #  'V1:DQ_VETO_MBTA': 'no_dq_veto_mbta_bits',
     #  'V1:DQ_VETO_CWB': 'no_dq_veto_cwb_bits',
@@ -142,13 +143,31 @@ llhoft_channels = {
 """Low-latency h(t) state vector configuration. This is a dictionary consisting
 of a channel and its bitmask, as defined in :mod:`gwcelery.tasks.detchar`."""
 
-idq_channels = ['H1:IDQ-PGLITCH_RANDOM_FOREST_16_4096',
-                'L1:IDQ-PGLITCH_RANDOM_FOREST_16_4096']
+idq_channels = ['H1:IDQ-PGLITCH_OVL_16_4096',
+                'L1:IDQ-PGLITCH_OVL_16_4096']
 """Low-latency iDQ p(glitch) channel names"""
 
 idq_pglitch_thresh = 0.95
-"""Minimum p(glitch) reported by iDQ required before notice is posted to
-GraceDb"""
+"""If P(Glitch) is above this threshold, and
+:obj:`~gwcelery.conf.idq_veto` for the pipeline is true, DQV will be labeled
+for the event.
+"""
+
+idq_veto = {'gstlal': False,
+            'spiir': False,
+            'pycbc': False,
+            'MBTAOnline': False,
+            'oLIB': False,
+            'LIB': False,
+            'CWB': False,
+            'HardwareInjection': False,
+            'Swift': False,
+            'Fermi': False,
+            'SNEWS': False}
+"""If true for a pipeline, iDQ values above the threshold defined in
+:obj:`~gwcelery.conf.idq_pglitch.thres` will cause DQV to be labeled.
+Currently all False, pending iDQ review (should be done before O3).
+"""
 
 p_astro_gstlal_ranking_pdf = '/home/gstlalcbc/observing/3/online/trigs/rankingstat_pdf.xml.gz'  # noqa: E501
 
@@ -189,9 +208,9 @@ state_vector_channel_names = {'H1': 'H1:GDS-CALIB_STATE_VECTOR',
 """Names of state vector channels used in Parameter Estimation with
 LALInference (see :mod:`gwcelery.tasks.lalinference`)"""
 
-pe_threshold = 1.0 / (1 * 86400)
-"""FAR threshold in Hz for Parameter Estimation. That threshld is 1/ (86400
-seconds = 1 day) for playground so that PE workflow can be tested daily"""
+pe_threshold = 1.0 / (14 * 86400)
+"""FAR threshold in Hz for Parameter Estimation. PE group now applies
+1/(2 weeks) as a threshold. 86400 seconds = 1 day and 14 days = 2 weeks."""
 
 pe_results_path = os.path.join(os.getenv('HOME'), 'public_html/online_pe')
 """Path to the results of Parameter Estimation (see

@@ -31,6 +31,9 @@ Once we switch to sending public alerts exclusively, then we can switch
 back to using port 8099 for anonymous access, requiring no prior site
 configuration."""
 
+llhoft_glob = '/dev/shm/kafka/{detector}/*.gwf'
+"""File glob for low-latency h(t) frames."""
+
 low_latency_frame_types = {'H1': 'H1_llhoft',
                            'L1': 'L1_llhoft',
                            'V1': 'V1_llhoft'}
@@ -48,10 +51,6 @@ strain_channel_names = {'H1': 'H1:GDS-CALIB_STRAIN',
                         'V1': 'V1:Hrec_hoft_16384Hz'}
 """Names of h(t) channels used in Parameter Estimation with LALInference (see
 :mod:`gwcelery.tasks.lalinference`)"""
-
-pe_threshold = 1.0 / (14 * 86400)
-"""FAR threshold in Hz for Parameter Estimation. PE group now applies
-1/(2 weeks) as a threshold. 86400 seconds = 1 day and 14 days = 2 weeks."""
 
 sentry_environment = 'production'
 """Record this `environment tag

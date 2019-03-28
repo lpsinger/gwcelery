@@ -32,7 +32,7 @@ def ifo_h1():
     old = app.conf['llhoft_channels']
     app.conf['llhoft_channels'] = {
         'H1:DMT-DQ_VECTOR': 'dmt_dq_vector_bits',
-        'H1:GDS-CALIB_STATE_VECTOR': 'state_vector_bits'}
+        'H1:GDS-CALIB_STATE_VECTOR': 'ligo_state_vector_bits'}
     yield
     app.conf['llhoft_channels'] = old
 
@@ -144,22 +144,24 @@ def test_check_vectors(mock_create_label, mock_write_log, mock_json,
     calls = [
         call(
             'S12345a',
-            ('detector state for active instruments is good.'
-             ' For all instruments,'
-             ' bits good (H1:NO_OMC_DCPD_ADC_OVERFLOW,'
-             ' H1:NO_DMT-ETMY_ESD_DAC_OVERFLOW, H1:HOFT_OK,'
-             ' H1:OBSERVATION_INTENT), bad (), unknown ()'
-             ' within -0.5/+0.5 seconds of superevent'),
+            ('Detector state for active instruments is good.\n{}'
+             'Check looked within -0.5/+0.5 seconds of superevent. ').format(
+                 detchar.generate_table(
+                     'Data quality bits',
+                     ['H1:NO_OMC_DCPD_ADC_OVERFLOW',
+                      'H1:NO_DMT-ETMY_ESD_DAC_OVERFLOW',
+                      'H1:HOFT_OK', 'H1:OBSERVATION_INTENT'], [], [])),
             tag_name=['data_quality']),
         call(
             'S12345a',
-            'No HW injections found within -0.5/+0.5 seconds of superevent',
+            ('No HW injections found. '
+             'Check looked within -0.5/+0.5 seconds of superevent. '),
             tag_name=['data_quality']),
         call(
             'S12345a',
             ('iDQ glitch probabilities at both H1 and L1'
-             ' are good (below {})'
-             ' within -0.5/+0.5 seconds of superevent').format(
+             ' are good (below {}). '
+             'Check looked within -0.5/+0.5 seconds of superevent. ').format(
                  app.conf['idq_pglitch_thresh']),
             tag_name=['data_quality']),
         call(
@@ -184,12 +186,33 @@ def test_gatedhoft_skips_dmtvec(mock_create_label, mock_write_log, mock_json,
     detchar.check_vectors(event, superevent_id, start, end)
     mock_write_log.assert_has_calls([
             call('S12345a',
-                 ('detector state for active instruments is good.'
-                  ' For all instruments,'
-                  ' bits good (H1:HOFT_OK,'
-                  ' H1:OBSERVATION_INTENT), bad (), unknown ()'
-                  ' within -0.5/+0.5 seconds of superevent.'
-                  ' Pipeline gatepipe uses gated h(t),'
-                  ' LIGO DMT-DQ_VECTOR not checked.'),
-                 tag_name=['data_quality'])], any_order=True
-    )
+                 ('Detector state for active instruments is good.\n{}'
+                  'Check looked within -0.5/+0.5 seconds of superevent. '
+                  'Pipeline gatepipe uses gated h(t), '
+                  'LIGO DMT-DQ_VECTOR not checked.').format(
+                      detchar.generate_table(
+                          'Data quality bits',
+                          ['H1:HOFT_OK', 'H1:OBSERVATION_INTENT'], [], [])),
+                 tag_name=['data_quality']), ], any_order=True)
+
+
+def test_detchar_generate_table():
+    result = ('<table '
+              'style="width:100%;border-collapse:collapse;text-align:center;"'
+              ' border="1">\n<th'
+              ' colspan="2">title</th>\n<tr><th>Bit</th><th>Value</th></tr>\n'
+              '    <tr><td>good_bit_1</td><td bgcolor="#0f0">1</td></tr>\n'
+              '    <tr><td>good_bit_2</td><td bgcolor="#0f0">1</td></tr>\n'
+              '    <tr><td>bad_bit_1</td><td bgcolor="red">0</td></tr>\n'
+              '    <tr><td>bad_bit_2</td><td bgcolor="red">0</td></tr>\n'
+              '    <tr><td>unknown_bit_1</td>'
+              '<td bgcolor="yellow">unknown</td></tr>\n'
+              '    <tr><td>unknown_bit_2</td>'
+              '<td bgcolor="yellow">unknown</td></tr>\n'
+              '    <tr bgcolor="red"><th>Overall state for all '
+              'detectors</th><th>bad</th></tr>\n'
+              '</table>')
+    assert detchar.generate_table(
+        'title', ['good_bit_1', 'good_bit_2'],
+        ['bad_bit_1', 'bad_bit_2'], ['unknown_bit_1', 'unknown_bit_2']
+    ) == result

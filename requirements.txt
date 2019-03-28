@@ -7,11 +7,11 @@ flask
 flask-caching
 flower
 gwdatafind
-gwpy
+gwpy <= 0.14.0  # https://git.ligo.org/emfollow/gwcelery/issues/95
 healpy
 jinja2
-lalsuite >= 6.52
-ligo-followup-advocate >= 0.0.23
+lalsuite >= 6.53.1.dev20190324
+ligo-followup-advocate >= 0.0.24
 ligo-gracedb >= 2.2.0
 ligo-raven >= 1.10
 ligo-segments
@@ -28,3 +28,4 @@ service_identity  # We don't actually use this package, but it silences some ann
 sleek-lvalert >= 0.0.4
 tornado < 6  # Tornado 6.0.0 breaks Flower because it removed tornado.web.asynchronous
 voeventlib >= 1.2
+werkzeug >= 0.15.0  # for werkzeug.middleware.proxy_fix.ProxyFix

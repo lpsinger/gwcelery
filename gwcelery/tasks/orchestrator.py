@@ -42,8 +42,6 @@ def handle_superevent(alert):
         start = alert['object']['t_start']
         end = alert['object']['t_end']
 
-        gracedb.create_label.s('ADVREQ', superevent_id).apply_async()
-
         (
             _get_preferred_event.si(superevent_id).set(
                 countdown=app.conf['orchestrator_timeout']
@@ -391,7 +389,8 @@ def preliminary_alert(event, superevent_id):
             and trials_factor * event['far'] <= \
             app.conf[
                 'preliminary_alert_far_threshold'][event['group'].lower()] \
-            and 'DQV' not in gracedb.get_labels(superevent_id):
+            and {'DQV', 'INJ'}.isdisjoint(gracedb.get_labels(superevent_id)):
+        # apply ADVREQ, compose preliminary GCN and send
         canvas |= (
             _create_voevent.s(
                 superevent_id, 'preliminary',
@@ -402,6 +401,8 @@ def preliminary_alert(event, superevent_id):
             )
             |
             group(
+                gracedb.create_label.si('ADVREQ', superevent_id),
+
                 gracedb.download.s(superevent_id)
                 |
                 gcn.send.s()
@@ -439,7 +440,7 @@ def parameter_estimation(event, superevent_id):
     # FIXME: it will be better to start parameter estimation for 'burst'
     # events.
     if event['group'] == 'CBC' and event['search'] != 'MDC':
-        canvas = lalinference.prepare_ini.s(event, superevent_id)
+        canvas = lalinference.pre_pe_tasks(event, superevent_id)
         next_task = gracedb.upload.s(
                         filename=lalinference.ini_name,
                         graceid=superevent_id,
@@ -453,6 +454,15 @@ def parameter_estimation(event, superevent_id):
 
                 lalinference.start_pe.s(preferred_event_id, superevent_id)
             )
+        else:
+            next_task |= gracedb.upload.si(
+                             filecontents=None, filename=None,
+                             graceid=superevent_id,
+                             message='FAR is larger than the PE threshold, '
+                                     '{}  Hz. Parameter Estimation will not '
+                                     'start.'.format(app.conf['pe_threshold']),
+                             tags='pe'
+                         )
         canvas |= next_task
 
         canvas.apply_async()

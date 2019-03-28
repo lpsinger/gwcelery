@@ -6,7 +6,9 @@ References
 
 .. [GCN] https://gcn.gsfc.nasa.gov
 """
-from urllib.parse import urlparse
+import html
+import difflib
+import urllib.parse
 
 from comet.utility.xml import xml_document
 import gcn
@@ -104,24 +106,42 @@ def send(self, message):
 def validate(payload):
     """Check that the contents of a public LIGO/Virgo GCN matches the original
     VOEvent in GraceDB."""
-    if not __debug__:  # pragma: no cover
-        raise RuntimeError('This task will not function correctly because '
-                           'Python assertions are disabled.')
-
     root = lxml.etree.fromstring(payload)
 
     # Which GraceDB ID does this refer to?
     graceid = root.find("./What/Param[@name='GraceID']").attrib['value']
 
     # Which VOEvent does this refer to?
-    u = urlparse(root.attrib['ivorn'])
+    u = urllib.parse.urlparse(root.attrib['ivorn'])
     local_id = u.fragment
     filename = local_id + '.xml'
 
     # Download and parse original VOEvent
     orig = gracedb.download(filename, graceid)
 
-    assert orig == payload, 'GCN does not match GraceDb'
+    # Create a diff of the two VOEvents.
+    diff = ''.join(
+        difflib.unified_diff(
+            *(
+                [
+                    line.decode('ascii', 'surrogateescape')
+                    for line in contents.splitlines(keepends=True)
+                ]
+                for contents in (orig, payload)
+            ),
+            fromfile='{} (sent)'.format(filename),
+            tofile='{} (received)'.format(filename)
+        )
+    )
 
-    # Tag the VOEvent to indicate that it was received correctly
-    gracedb.create_tag(filename, 'gcn_received', graceid)
+    if diff:
+        # Write a log message to indicate that the event differed.
+        msg = 'VOEvent received from GCN differs from what we sent.'
+        gracedb.upload.delay(
+            None, None, graceid,
+            '{}<pre>{}</pre>'.format(msg, html.escape(diff)),
+            ['em_follow'])
+        raise ValueError('{}\n\n{}'.format(msg, diff))
+    else:
+        # Tag the VOEvent to indicate that it was received correctly.
+        gracedb.create_tag.delay(filename, 'gcn_received', graceid)

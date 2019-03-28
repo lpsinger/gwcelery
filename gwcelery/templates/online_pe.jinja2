@@ -21,15 +21,12 @@ explanation on jinja is here http://jinja.pocoo.org . #}
     {% set nparallel = '10' %}
     {% set roq = 'False' %}
     {% set neff = '300' %}
+    {% set margphi = 'margphi=' %}
 {% endif %}
 
-{% if 'playground' in service_url %}
-    {% set disable_spin = 'disable-spin=' %}
-    {% set zeroLogLike = 'zeroLogLike=' %}
-{% endif %}
 
 [analysis]
-ifos={{ ifos | safe }}
+ifos=['H1', 'L1', 'V1']
 engine={{ engine }}
 nparallel={{ nparallel }}
 service-url={{ service_url }}
@@ -46,19 +43,12 @@ roq_b_matrix_directory={{ roqdir }}
 
 
 [input]
-# max-psd-length and padding are never used, but lalinference_pipe needs them.
 max-psd-length=10000
 padding=16
-gps-start-time = {{ gps_start_time }}
-gps-end-time = {{ gps_end_time }}
-psd-start-time = {{ psd_start_time }}
-psd-length = {{ psd_length }}
-{# FIXME: it would be better to determine trigger time as well here, but
-current lalinference_pipe automatically determines it from coinc.xml. #}
+minimum_realizations_number=8
 events=all
 analyse-all-time=False
 timeslides=False
-ignore-science-segments=True
 ignore-gracedb-psd=True
 
 
@@ -83,25 +73,31 @@ channels = {{ channels | safe }}
 
 
 [lalinference]
-flow = {{ flow | safe }}
+flow = {'H1': 20.0, 'L1': 20.0, 'V1': 20.0}
 
 
 [engine]
-srate={{ srate }}
-fref=100
-seglen={{ seglen }}
+fref=20
 approx={{ approx }}
 amporder=0
 neff={{ neff }}
 nlive=512
 tolerance=0.1
 ntemps=8
-margphi=
 resume=
 adapt-temps=
 progress=
-{{ disable_spin }}
-{{ zeroLogLike }}
+# The following calibration uncertainties are from
+# https://wiki.ligo.org/LSC/JRPComm/O3PreparationER13
+enable-spline-calibration=
+H1-spcal-amp-uncertainty=0.05
+L1-spcal-amp-uncertainty=0.1
+V1-spcal-amp-uncertainty=0.15
+H1-spcal-phase-uncertainty=3
+L1-spcal-phase-uncertainty=6
+V1-spcal-phase-uncertainty=3
+{{ margphi }}
+
 
 [mpi]
 mpi_task_count=8
@@ -125,11 +121,18 @@ Nchain=10
 Nbayesline=20000
 #}
 
+[statevector]
+state-vector-channel={{ state_vector_channels | safe }}
 
-[segfind]
-
-
-[segments]
+# Bits of state vector channel referred to. Use only data during the time when
+# the following bits are active. The meaning of each bit is summarized in
+# https://wiki.ligo.org/Calibration/TDCalibReview and
+# https://dcc.ligo.org/cgi-bin/private/DocDB/ShowDocument?docid=G1801125&version= .
+# The most important bits for PE are
+# Bit 0: HOFT_OK: h(t) was successfully computed
+# Bit 1: OBSERVATION_INTENT: "observation intent" button is pushed
+# Bit 2: OBSERVATION_READY: observation ready data is available
+bits=['Bit 0', 'Bit 1', 'Bit 2']
 
 
 [ppanalysis]
@@ -140,5 +143,6 @@ Nbayesline=20000
 
 [ligo-skymap-from-samples]
 enable-multiresolution=
+
 
 [ligo-skymap-plot]
