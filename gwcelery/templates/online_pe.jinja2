@@ -24,6 +24,12 @@ explanation on jinja is here http://jinja.pocoo.org . #}
     {% set margphi = 'margphi=' %}
 {% endif %}
 
+{% if 'playground' in service_url %}
+    {% set accounting_group = 'ligo.dev.o3.cbc.pe.lalinference' %}
+{% else %}
+    {% set accounting_group = 'ligo.prod.o3.cbc.pe.lalinference' %}
+{% endif %}
+
 
 [analysis]
 ifos=['H1', 'L1', 'V1']
@@ -59,7 +65,7 @@ ignore-gracedb-psd=True
 {% endfor %}
 
 mpirun=mpirun
-accounting_group=ligo.dev.o3.cbc.pe.lalinference
+accounting_group={{ accounting_group  }}
 accounting_group_user=soichiro.morisaki
 
 
