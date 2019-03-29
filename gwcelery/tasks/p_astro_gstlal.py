@@ -5,12 +5,18 @@ import io
 import json
 
 from celery.utils.log import get_task_logger
-from glue.ligolw import ligolw
-from glue.ligolw.ligolw import LIGOLWContentHandler
-from glue.ligolw import array as ligolw_array
-from glue.ligolw import param as ligolw_param
-from glue.ligolw import utils as ligolw_utils
-from glue.ligolw import lsctables
+from glue.ligolw.ligolw import LIGOLWContentHandler \
+    as GlueLIGOLWContentHandler
+from glue.ligolw import array as glue_ligolw_array
+from glue.ligolw import param as glue_ligolw_param
+from glue.ligolw import utils as glue_ligolw_utils
+from glue.ligolw import lsctables as glue_lsctables
+from ligo.lw import ligolw
+from ligo.lw.ligolw import LIGOLWContentHandler
+from ligo.lw import array as ligolw_array
+from ligo.lw import param as ligolw_param
+from ligo.lw import utils as ligolw_utils
+from ligo.lw import lsctables
 from lal import rate
 import numpy as np
 
@@ -62,8 +68,15 @@ class _ContentHandler(LIGOLWContentHandler):
     pass
 
 
+@glue_ligolw_array.use_in
+@glue_ligolw_param.use_in
+@glue_lsctables.use_in
+class _GlueContentHandler(GlueLIGOLWContentHandler):
+    pass
+
+
 def _get_ln_f_over_b(ranking_data_bytes, ln_likelihood_ratios):
-    ranking_data_xmldoc, _ = ligolw_utils.load_fileobj(
+    ranking_data_xmldoc = ligolw_utils.load_fileobj(
         io.BytesIO(ranking_data_bytes), contenthandler=_ContentHandler)
     rankingstatpdf = _parse_likelihood_control_doc(ranking_data_xmldoc)
     # affect the zeroing of the PDFs below threshold by hacking the
@@ -99,11 +112,11 @@ def _get_ln_f_over_b(ranking_data_bytes, ln_likelihood_ratios):
 
 
 def _get_event_ln_likelihood_ratio_svd_endtime_mass(coinc_bytes):
-    coinc_xmldoc, _ = ligolw_utils.load_fileobj(
-        io.BytesIO(coinc_bytes), contenthandler=_ContentHandler)
-    coinc_event, = lsctables.CoincTable.get_table(coinc_xmldoc)
-    coinc_inspiral, = lsctables.CoincInspiralTable.get_table(coinc_xmldoc)
-    sngl_inspiral = lsctables.SnglInspiralTable.get_table(coinc_xmldoc)
+    coinc_xmldoc, _ = glue_ligolw_utils.load_fileobj(
+        io.BytesIO(coinc_bytes), contenthandler=_GlueContentHandler)
+    coinc_event, = glue_lsctables.CoincTable.get_table(coinc_xmldoc)
+    coinc_inspiral, = glue_lsctables.CoincInspiralTable.get_table(coinc_xmldoc)
+    sngl_inspiral = glue_lsctables.SnglInspiralTable.get_table(coinc_xmldoc)
 
     assert all([sngl_inspiral[i].Gamma0 == sngl_inspiral[i+1].Gamma0
                 for i in range(len(sngl_inspiral)-1)]), \

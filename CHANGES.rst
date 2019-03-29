@@ -21,6 +21,10 @@ Changelog
     0.15.0 that broke redirects on form submission in the Flask app. See
     https://github.com/pallets/werkzeug/pull/1303.
 
+-   Use the new ``ligo.lw`` module for reading gstlal's
+    ``ranking_data.psd.xml.gz`` files, because these files are now written
+    using the new LIGO-LW format that uses integer row IDs.
+
 0.3.1 (2019-03-18)
 ------------------
 
