@@ -126,19 +126,18 @@ def handle_grb_lvalert(alert):
 
     if alert['alert_type'] == 'new' and \
             alert['object'].get('group', '') == 'External':
-        raven.coincidence_search(graceid, alert['object'], group='CBC').delay()
+        raven.coincidence_search(graceid, alert['object'], group='CBC')
         raven.coincidence_search(graceid, alert['object'],
-                                 group='Burst').delay()
+                                 group='Burst')
     elif graceid.startswith('S'):
         preferred_event_id = gracedb.get_superevent(graceid)['preferred_event']
         group = gracedb.get_event(preferred_event_id)['group']
         if alert['alert_type'] == 'new':
             raven.coincidence_search(graceid, alert['object'],
                                      group=group,
-                                     pipelines=['Fermi', 'Swift']).delay()
+                                     pipelines=['Fermi', 'Swift'])
         elif alert['alert_type'] == 'label_added':
             if alert['data']['name'] == 'EM_COINC':
-                raven.calculate_coincidence_far(graceid, group).delay()
                 ligo_fermi_skymaps.create_combined_skymap(graceid).delay()
                 raven.calculate_spacetime_coincidence_far(graceid,
                                                           group).delay()

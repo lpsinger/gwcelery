@@ -114,9 +114,7 @@ def test_handle_grb_exttrig_creation(mock_raven_coincidence_search):
     # Check that the correct tasks were dispatched.
     mock_raven_coincidence_search.assert_has_calls([
         call('E1234', alert['object'], group='CBC'),
-        call().delay(),
-        call('E1234', alert['object'], group='Burst'),
-        call().delay()])
+        call('E1234', alert['object'], group='Burst')])
 
 
 @pytest.mark.parametrize('calls, path',
@@ -166,10 +164,8 @@ def test_handle_superevent_creation(mock_raven_coincidence_search,
        return_value={'preferred_event': 'M4634'})
 @patch('gwcelery.tasks.gracedb.get_event', return_value={'group': 'CBC'})
 @patch('gwcelery.tasks.raven.calculate_spacetime_coincidence_far')
-@patch('gwcelery.tasks.raven.calculate_coincidence_far')
 @patch('gwcelery.tasks.ligo_fermi_skymaps.create_combined_skymap')
 def test_handle_superevent_emcoinc_label1(mock_create_combined_skymap,
-                                          mock_calculate_coincidence_far,
                                           mock_calc_spacetime_coinc_far,
                                           mock_get_event, mock_get_superevent,
                                           mock_se_cls, mock_exttrig_cls):
@@ -179,7 +175,6 @@ def test_handle_superevent_emcoinc_label1(mock_create_combined_skymap,
 
     external_triggers.handle_grb_lvalert(alert)
     mock_create_combined_skymap.assert_called_once_with('S180616h')
-    mock_calculate_coincidence_far.assert_called_once_with('S180616h', 'CBC')
     mock_calc_spacetime_coinc_far.assert_called_once_with('S180616h',
                                                           'CBC')
 

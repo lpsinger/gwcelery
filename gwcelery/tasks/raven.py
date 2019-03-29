@@ -113,11 +113,18 @@ def coincidence_search(gracedb_id, alert_object, group=None, pipelines=[]):
     else:
         raise ValueError('Invalid RAVEN search request for {0}'.format(
             gracedb_id))
-    return (
-        search.s(gracedb_id, alert_object, tl, th, group, pipelines)
-        |
-        add_exttrig_to_superevent.s(gracedb_id)
-    )
+
+    raven_search_results = search(gracedb_id, alert_object,
+                                  tl, th, group, pipelines)
+    add_exttrig_to_superevent(raven_search_results, gracedb_id)
+
+    if gracedb_id.startswith('E'):
+        for search_result in raven_search_results:
+            calculate_coincidence_far(
+                search_result['superevent_id'], group).delay()
+
+    else:
+        calculate_coincidence_far(gracedb_id, group).delay()
 
 
 @app.task(shared=False)
