@@ -25,6 +25,10 @@ Changelog
     ``ranking_data.psd.xml.gz`` files, because these files are now written
     using the new LIGO-LW format that uses integer row IDs.
 
+-   Use clean data for parameter estimation.
+
+-   Use production accounting group for PE runs on gracedb events.
+
 0.3.1 (2019-03-18)
 ------------------
 
