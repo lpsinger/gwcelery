@@ -174,8 +174,6 @@ def handle_cbc_event(alert):
             ordered_group(
                 gracedb.download.si('coinc.xml', graceid),
                 gracedb.download.si('ranking_data.xml.gz', graceid)
-                |
-                p_astro_gstlal.ligolw_no_ilwdchar.s()
             )
             |
             p_astro_gstlal.compute_p_astro.s()
