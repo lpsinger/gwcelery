@@ -138,8 +138,8 @@ def handle_grb_lvalert(alert):
                                      pipelines=['Fermi', 'Swift']).delay()
         elif alert['alert_type'] == 'label_added':
             if alert['data']['name'] == 'EM_COINC':
-                ligo_fermi_skymaps.create_combined_skymap(graceid).delay()
                 raven.calculate_coincidence_far(graceid, group).delay()
+                ligo_fermi_skymaps.create_combined_skymap(graceid).delay()
                 raven.calculate_spacetime_coincidence_far(graceid,
                                                           group).delay()
 
