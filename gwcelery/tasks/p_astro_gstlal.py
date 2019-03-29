@@ -4,20 +4,13 @@
 import io
 import json
 
-from ligo.lw import ligolw
-from ligo.lw.ligolw import LIGOLWContentHandler
-from ligo.lw import array as ligolw_array
-from ligo.lw import param as ligolw_param
-from ligo.lw import lsctables
-from ligo.lw import table as ligolw_table
-
 from celery.utils.log import get_task_logger
-from glue.ligolw.ligolw import LIGOLWContentHandler \
-    as LIGOLWContentHandler_glue
-from glue.ligolw import array as ligolw_array_glue
-from glue.ligolw import param as ligolw_param_glue
-from glue.ligolw import utils as ligolw_utils_glue
-from glue.ligolw import lsctables as lsctables_glue
+from glue.ligolw import ligolw
+from glue.ligolw.ligolw import LIGOLWContentHandler
+from glue.ligolw import array as ligolw_array
+from glue.ligolw import param as ligolw_param
+from glue.ligolw import utils as ligolw_utils
+from glue.ligolw import lsctables
 from lal import rate
 import numpy as np
 
@@ -69,63 +62,25 @@ class _ContentHandler(LIGOLWContentHandler):
     pass
 
 
-@ligolw_array_glue.use_in
-@ligolw_param_glue.use_in
-@lsctables_glue.use_in
-class _ContentHandlerGlue(LIGOLWContentHandler_glue):
-    pass
-
-
-def noilwdchar(xmldoc):
-    for table in xmldoc.getElementsByTagName(ligolw.Table.tagName):
-        # first strip table names from column names that shouldn't have them
-        if table.Name in lsctables.TableByName:
-            validcolumns = \
-                lsctables.TableByName[table.Name].validcolumns
-            stripped_column_to_valid_column = \
-                dict((ligolw_table.Column.ColumnName(name), name)
-                     for name in validcolumns)
-            for column in table.getElementsByTagName(ligolw.Column.tagName):
-                if column.getAttribute("Name") not in validcolumns:
-                    column.setAttribute("Name",
-                                        stripped_column_to_valid_column[
-                                            column.Name])
-                    idattrs = tuple(table.columnnames[i] for i, coltype in
-                                    enumerate(table.columntypes) if
-                                    coltype == u"ilwd:char")
-                if not idattrs:
-                    continue
-                for row in table:
-                    for attr in idattrs:
-                        setattr(row, attr, int(getattr(row, attr)))
-                for attr in idattrs:
-                    table.getColumnByName(attr).Type = u"int_8s"
-    # return this, but it actually does it in place anyway...
-    return xmldoc
-
-
 def _get_ln_f_over_b(ranking_data_bytes, ln_likelihood_ratios):
-    ranking_data_xmldoc_ilwdchar = ligolw_utils_glue.load_fileobj(
-        io.BytesIO(ranking_data_bytes), contenthandler=_ContentHandlerGlue)
-    ranking_data_xmldoc = noilwdchar(ranking_data_xmldoc_ilwdchar[0])
+    ranking_data_xmldoc, _ = ligolw_utils.load_fileobj(
+        io.BytesIO(ranking_data_bytes), contenthandler=_ContentHandler)
     rankingstatpdf = _parse_likelihood_control_doc(ranking_data_xmldoc)
     # affect the zeroing of the PDFs below threshold by hacking the
     # histograms. Do the indexing ourselves to not 0 the bin @ threshold
-    noise_lr_lnpdf = rankingstatpdf.noise_lr_lnpdf
-    rankingstatpdf.noise_lr_lnpdf.normalize()
-    signal_lr_lnpdf = rankingstatpdf.signal_lr_lnpdf
-    rankingstatpdf.signal_lr_lnpdf.normalize()
-    zero_lag_lr_lnpdf = rankingstatpdf.zero_lag_lr_lnpdf
-    ssorted = zero_lag_lr_lnpdf.array.cumsum()[-1] - 10000
-    idx = zero_lag_lr_lnpdf.array.cumsum().searchsorted(ssorted)
     ln_likelihood_ratio_threshold = \
-        zero_lag_lr_lnpdf.bins[0].lower()[idx]
+        app.conf['p_astro_gstlal_ln_likelihood_threshold']
+    noise_lr_lnpdf = rankingstatpdf.noise_lr_lnpdf
     rankingstatpdf.noise_lr_lnpdf.array[
         :noise_lr_lnpdf.bins[0][ln_likelihood_ratio_threshold]] \
         = 0.
+    rankingstatpdf.noise_lr_lnpdf.normalize()
+    signal_lr_lnpdf = rankingstatpdf.signal_lr_lnpdf
     rankingstatpdf.signal_lr_lnpdf.array[
         :signal_lr_lnpdf.bins[0][ln_likelihood_ratio_threshold]] \
         = 0.
+    rankingstatpdf.signal_lr_lnpdf.normalize()
+    zero_lag_lr_lnpdf = rankingstatpdf.zero_lag_lr_lnpdf
     rankingstatpdf.zero_lag_lr_lnpdf.array[
         :zero_lag_lr_lnpdf.bins[0][ln_likelihood_ratio_threshold]] \
         = 0.
@@ -144,9 +99,8 @@ def _get_ln_f_over_b(ranking_data_bytes, ln_likelihood_ratios):
 
 
 def _get_event_ln_likelihood_ratio_svd_endtime_mass(coinc_bytes):
-    coinc_xmldoc_ilwdchar = ligolw_utils_glue.load_fileobj(
-        io.BytesIO(coinc_bytes), contenthandler=_ContentHandlerGlue)
-    coinc_xmldoc = noilwdchar(coinc_xmldoc_ilwdchar[0])
+    coinc_xmldoc, _ = ligolw_utils.load_fileobj(
+        io.BytesIO(coinc_bytes), contenthandler=_ContentHandler)
     coinc_event, = lsctables.CoincTable.get_table(coinc_xmldoc)
     coinc_inspiral, = lsctables.CoincInspiralTable.get_table(coinc_xmldoc)
     sngl_inspiral = lsctables.SnglInspiralTable.get_table(coinc_xmldoc)
