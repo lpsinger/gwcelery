@@ -160,7 +160,8 @@ def test_check_vectors(mock_create_label, mock_write_log, mock_json,
         call(
             'S12345a',
             ('iDQ glitch probabilities at both H1 and L1'
-             ' are good (below {}). '
+             ' are good (below {} threshold). '
+             'Maximum p(glitch) is "H1:IDQ-PGLITCH_OVL_32_2048": 0.0. '
              'Check looked within -0.5/+0.5 seconds of superevent. ').format(
                  app.conf['idq_pglitch_thresh']),
             tag_name=['data_quality']),
