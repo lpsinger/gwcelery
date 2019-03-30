@@ -4,8 +4,6 @@ Changelog
 0.4.1 (unreleased)
 ------------------
 
--   No changes yet.
-
 -   Fixed normalization issues with p_astro_gstlal.py; normalization
     was being applied in the wrong places during Bayes factor
     computation.
