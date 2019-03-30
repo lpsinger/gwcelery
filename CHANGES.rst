@@ -14,6 +14,9 @@ Changelog
 
 -   Enable sending GCN notices for fully automated preliminary alerts.
 
+-   Add threshold_snr option in online_pe.jinja2, which is used to determine
+    the upper limit of distance prior.
+
 0.4.0 (2019-03-29)
 ------------------
 

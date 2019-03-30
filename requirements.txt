@@ -10,7 +10,7 @@ gwdatafind
 gwpy <= 0.14.0  # https://git.ligo.org/emfollow/gwcelery/issues/95
 healpy
 jinja2
-lalsuite >= 6.53.1.dev20190324
+lalsuite >= 6.53.1.dev20190401
 ligo-followup-advocate >= 0.0.24
 ligo-gracedb >= 2.2.0
 ligo-raven >= 1.10
