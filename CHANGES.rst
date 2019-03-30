@@ -1,8 +1,10 @@
 Changelog
 =========
 
-0.3.2 (unreleased)
+0.4.0 (2019-03-29)
 ------------------
+
+-   This is the penultimate release before LIGO/Virgo observing run 3 (O3).
 
 -   Make detchar results easier to read by formatting as HTML table.
 
