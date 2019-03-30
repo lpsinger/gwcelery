@@ -6,8 +6,8 @@ Changelog
 
 -   Make detchar results easier to read by formatting as HTML table.
 
--   Allow iDQ to label DQV onto events based on p(glitch). 
-    Adjustable by pipeline.
+-   Allow iDQ to label DQV onto events based on p(glitch). Adjustable by
+    pipeline.
 
 -   Move functions in tasks/lalinference.py to lalinference_pipe.py in
     lalsuite.
