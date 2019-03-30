@@ -82,20 +82,24 @@ def _get_ln_f_over_b(ranking_data_bytes, ln_likelihood_ratios):
     # affect the zeroing of the PDFs below threshold by hacking the
     # histograms. Do the indexing ourselves to not 0 the bin @ threshold
     noise_lr_lnpdf = rankingstatpdf.noise_lr_lnpdf
-    rankingstatpdf.noise_lr_lnpdf.normalize()
     signal_lr_lnpdf = rankingstatpdf.signal_lr_lnpdf
-    rankingstatpdf.signal_lr_lnpdf.normalize()
     zero_lag_lr_lnpdf = rankingstatpdf.zero_lag_lr_lnpdf
     ssorted = zero_lag_lr_lnpdf.array.cumsum()[-1] - 10000
     idx = zero_lag_lr_lnpdf.array.cumsum().searchsorted(ssorted)
+
     ln_likelihood_ratio_threshold = \
         zero_lag_lr_lnpdf.bins[0].lower()[idx]
+
     rankingstatpdf.noise_lr_lnpdf.array[
         :noise_lr_lnpdf.bins[0][ln_likelihood_ratio_threshold]] \
         = 0.
+    rankingstatpdf.noise_lr_lnpdf.normalize()
+
     rankingstatpdf.signal_lr_lnpdf.array[
         :signal_lr_lnpdf.bins[0][ln_likelihood_ratio_threshold]] \
         = 0.
+    rankingstatpdf.signal_lr_lnpdf.normalize()
+
     rankingstatpdf.zero_lag_lr_lnpdf.array[
         :zero_lag_lr_lnpdf.bins[0][ln_likelihood_ratio_threshold]] \
         = 0.

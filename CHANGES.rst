@@ -6,6 +6,10 @@ Changelog
 
 -   No changes yet.
 
+-   Fixed normalization issues with p_astro_gstlal.py; normalization
+    was being applied in the wrong places during Bayes factor
+    computation.
+
 0.4.0 (2019-03-29)
 ------------------
 
@@ -36,9 +40,9 @@ Changelog
 
 -   Use production accounting group for PE runs on gracedb events.
 
--   Change threshold from log-likelihood equals 6 to a dynamic threshold that
-    ensures that all gstlal events uploaded to gracedb get assigned a P_astro
-    value.
+-   Change threshold from log-likelihood equals 6 to a dynamic threshold
+    that ensures that all gstlal events uploaded to gracedb get assigned
+    a P_astro value.
 
 0.3.1 (2019-03-18)
 ------------------
