@@ -8,6 +8,8 @@ Changelog
     was being applied in the wrong places during Bayes factor
     computation.
 
+-   Require celery < 4.3.0 because that version breaks the nagios unit tests.
+
 0.4.0 (2019-03-29)
 ------------------
 
