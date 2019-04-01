@@ -10,6 +10,8 @@ Changelog
 
 -   Require celery < 4.3.0 because that version breaks the nagios unit tests.
 
+-   Update false alarm rate trials factors for preliminary alerts.
+
 0.4.0 (2019-03-29)
 ------------------
 
