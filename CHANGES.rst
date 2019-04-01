@@ -12,6 +12,8 @@ Changelog
 
 -   Update false alarm rate trials factors for preliminary alerts.
 
+-   Enable sending GCN notices for fully automated preliminary alerts.
+
 0.4.0 (2019-03-29)
 ------------------
 

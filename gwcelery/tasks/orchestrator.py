@@ -301,9 +301,8 @@ def preliminary_alert(event, superevent_id):
     if skymap_filename.endswith('.fits'):
         skymap_filename += '.gz'
 
-    # Make the event public.
-    # FIXME: For ER13, only expose mock events.
-    if event['search'] == 'MDC':
+    # If the event was online, then make it public.
+    if not event['offline']:
         canvas = gracedb.expose.s(superevent_id)
     else:
         canvas = chain()
@@ -395,8 +394,7 @@ def preliminary_alert(event, superevent_id):
             _create_voevent.s(
                 superevent_id, 'preliminary',
                 skymap_filename=skymap_filename,
-                # FIXME: for ER13, only send public alerts for MDC events.
-                internal=(event['search'] != 'MDC'),
+                internal=False,
                 open_alert=True
             )
             |
@@ -409,9 +407,7 @@ def preliminary_alert(event, superevent_id):
                 |
                 gracedb.create_label.si('GCN_PRELIM_SENT', superevent_id),
 
-                # FIXME: after ER13, we need to add the 'public' tag to make
-                # the VOEvent file public in GraceDb, like we do for the
-                # initial, update, and retraction alerts.
+                gracedb.create_tag.s('public', superevent_id),
 
                 circulars.create_initial_circular.si(superevent_id)
                 |
