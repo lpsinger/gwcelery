@@ -22,6 +22,9 @@ Changelog
 
 -   Do not issue public alerts for single-instrument GW events.
 
+-   Disable automated preliminary alerts for all pipelines but gstlal and cWB
+    due to outstanding review items for the other pipelines.
+
 0.4.0 (2019-03-29)
 ------------------
 

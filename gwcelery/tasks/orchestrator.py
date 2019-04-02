@@ -348,7 +348,10 @@ def preliminary_alert(event, superevent_id):
         # FIXME: For now, we do not issue public alerts for single-detecetor
         # events. Remove this after we have gotten some more experience with
         # single-instrument events.
-        and _get_number_of_instruments(preferred_event_id) != 1)
+        and _get_number_of_instruments(preferred_event_id) != 1
+        # FIXME: For now, disable automated alerts except for cWB and gstlal.
+        # Remove this after oLIB, MBTA, PyCBC, and SPIIR have completed review.
+        and event['pipeline'].lower() in {'cwb', 'gstlal'})
 
     if should_publish:
         canvas = gracedb.expose.s(superevent_id)

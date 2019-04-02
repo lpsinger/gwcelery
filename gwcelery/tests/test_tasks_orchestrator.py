@@ -131,7 +131,8 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
 
     plot_allsky.assert_called_once()
     plot_volume.assert_called_once()
-    if offline or trials_factor * far > far_threshold or len(instruments) == 1:
+    if offline or trials_factor * far > far_threshold \
+            or len(instruments) == 1 or pipeline not in {'gstlal', 'CWB'}:
         expose.assert_not_called()
         create_tag.assert_not_called()
         send.assert_not_called()
