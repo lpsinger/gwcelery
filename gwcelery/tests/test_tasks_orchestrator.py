@@ -106,20 +106,16 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
     # Run function under test
     orchestrator.handle_superevent(alert)
 
+    trials_factor = app.conf['preliminary_alert_trials_factor'][group.lower()]
+    far_threshold = app.conf['preliminary_alert_far_threshold'][group.lower()]
+
     plot_allsky.assert_called_once()
     plot_volume.assert_called_once()
-    if offline:
+    if offline or trials_factor * far > far_threshold:
         expose.assert_not_called()
         create_tag.assert_not_called()
         send.assert_not_called()
         create_initial_circular.assert_not_called()
-        # No ADVREQ for offline triggers
-        assert call('ADVREQ', 'S1234') not in create_label.call_args_list
-    elif app.conf['preliminary_alert_trials_factor'][group.lower()] * far > \
-            app.conf['preliminary_alert_far_threshold'][group.lower()]:
-        send.assert_not_called()
-        create_initial_circular.assert_not_called()
-        # No ADVREQ for triggers that don't pass preliminary FAR threshold
         assert call('ADVREQ', 'S1234') not in create_label.call_args_list
     else:
         expose.assert_called_once_with('S1234')

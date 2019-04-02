@@ -301,8 +301,17 @@ def preliminary_alert(event, superevent_id):
     if skymap_filename.endswith('.fits'):
         skymap_filename += '.gz'
 
-    # If the event was online, then make it public.
-    if not event['offline']:
+    # Determine if the event should be made public.
+    trials_factor = \
+        app.conf['preliminary_alert_trials_factor'][event['group'].lower()]
+    far_threshold = \
+        app.conf['preliminary_alert_far_threshold'][event['group'].lower()]
+    should_publish = (
+        not event['offline']
+        and trials_factor * event['far'] <= far_threshold
+        and {'DQV', 'INJ'}.isdisjoint(gracedb.get_labels(superevent_id)))
+
+    if should_publish:
         canvas = gracedb.expose.s(superevent_id)
     else:
         canvas = chain()
@@ -382,13 +391,7 @@ def preliminary_alert(event, superevent_id):
         canvas |= identity.si(None)
 
     # Send GCN notice and upload GCN circular draft for online events.
-    trials_factor = \
-        app.conf['preliminary_alert_trials_factor'][event['group'].lower()]
-    if not event['offline'] \
-            and trials_factor * event['far'] <= \
-            app.conf[
-                'preliminary_alert_far_threshold'][event['group'].lower()] \
-            and {'DQV', 'INJ'}.isdisjoint(gracedb.get_labels(superevent_id)):
+    if should_publish:
         # apply ADVREQ, compose preliminary GCN and send
         canvas |= (
             _create_voevent.s(

@@ -17,6 +17,9 @@ Changelog
 -   Add threshold_snr option in online_pe.jinja2, which is used to determine
     the upper limit of distance prior.
 
+-   Use the same criteria to decide whether to expose an event publicly in
+    GraceDB as we use to decide whether to issue a public alert.
+
 0.4.0 (2019-03-29)
 ------------------
 
