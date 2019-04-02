@@ -20,6 +20,8 @@ Changelog
 -   Use the same criteria to decide whether to expose an event publicly in
     GraceDB as we use to decide whether to issue a public alert.
 
+-   Do not issue public alerts for single-instrument GW events.
+
 0.4.0 (2019-03-29)
 ------------------
 

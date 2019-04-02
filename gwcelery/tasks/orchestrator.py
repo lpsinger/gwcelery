@@ -271,6 +271,41 @@ def _create_voevent(classification, *args, **kwargs):
     return gracedb.create_voevent(*args, **kwargs)
 
 
+def _get_number_of_instruments(gracedb_id):
+    """Get the number of gravitational-wave instruments that contributed to the
+    ranking statistic of a coincident event.
+
+    Parameters
+    ----------
+    gracedb_id : str
+        The GraceDB ID.
+
+    Returns
+    -------
+    int
+        The number of instruments that contributed to the ranking statistic for
+        the event.
+
+    Notes
+    -----
+    The number of instruments that contributed *data* to an event is given by
+    the ``instruments`` key of the GraceDB event JSON structure. However, some
+    pipelines (e.g. gstlal) have a distinction between which instruments
+    contributed *data* and which were considered in the *ranking* of the
+    candidate. For such pipelines, we infer which pipelines contributed to the
+    ranking by counting only the SingleInspiral records for which the chi
+    squared field is non-empty.
+    """
+    event = gracedb.get_event(gracedb_id)
+    attrib = event['extra_attributes']
+    try:
+        singles = attrib['SingleInspiral']
+    except KeyError:
+        return len(event.get('instruments', '').split(','))
+    else:
+        return sum(single.get('chisq') is not None for single in singles)
+
+
 @app.task(ignore_result=True, shared=False)
 def preliminary_alert(event, superevent_id):
     """Produce a preliminary alert by copying any sky maps.
@@ -309,7 +344,11 @@ def preliminary_alert(event, superevent_id):
     should_publish = (
         not event['offline']
         and trials_factor * event['far'] <= far_threshold
-        and {'DQV', 'INJ'}.isdisjoint(gracedb.get_labels(superevent_id)))
+        and {'DQV', 'INJ'}.isdisjoint(gracedb.get_labels(superevent_id))
+        # FIXME: For now, we do not issue public alerts for single-detecetor
+        # events. Remove this after we have gotten some more experience with
+        # single-instrument events.
+        and _get_number_of_instruments(preferred_event_id) != 1)
 
     if should_publish:
         canvas = gracedb.expose.s(superevent_id)

@@ -14,19 +14,22 @@ from . import resource_json
 
 
 @pytest.mark.parametrize(  # noqa: F811
-    'group,pipeline,offline,far', [['CBC', 'gstlal', False, 1.e-9],
-                                   ['CBC', 'gstlal', False, 0.5*app.conf[
-                                    'preliminary_alert_far_threshold']['cbc']],
-                                   ['Burst', 'CWB', False, 1.e-9],
-                                   ['Burst', 'CWB', False, 0.8*app.conf[
-                                    'preliminary_alert_far_threshold']['cbc']],
-                                   ['Burst', 'oLIB', False, 1.e-9],
-                                   ['CBC', 'gstlal', True, 1.e-10],
-                                   ['Burst', 'CWB', True, 1.e-10],
-                                   ['CBC', 'gstlal', False, 2.0*app.conf[
-                                    'pe_threshold']]])
+    'group,pipeline,offline,far,instruments',
+    [['CBC', 'gstlal', False, 1.e-9, ['H1']],
+     ['CBC', 'gstlal', False, 1.e-9, ['H1', 'L1']],
+     ['CBC', 'gstlal', False, 1.e-9, ['H1', 'L1', 'V1']],
+     ['CBC', 'gstlal', False, 0.5*app.conf[
+      'preliminary_alert_far_threshold']['cbc'], ['H1', 'L1', 'V1']],
+     ['Burst', 'CWB', False, 1.e-9, ['H1', 'L1', 'V1']],
+     ['Burst', 'CWB', False, 0.8*app.conf[
+      'preliminary_alert_far_threshold']['cbc'], ['H1', 'L1', 'V1']],
+     ['Burst', 'oLIB', False, 1.e-9, ['H1', 'L1', 'V1']],
+     ['CBC', 'gstlal', True, 1.e-10, ['H1', 'L1', 'V1']],
+     ['Burst', 'CWB', True, 1.e-10, ['H1', 'L1', 'V1']],
+     ['CBC', 'gstlal', False, 2.0*app.conf['pe_threshold'],
+      ['H1', 'L1', 'V1']]])
 def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
-                           group, pipeline, offline, far):
+                           group, pipeline, offline, far, instruments):
     """Test a superevent is dispatched to the correct annotation task based on
     its preferred event's search group."""
     alert = {
@@ -46,11 +49,28 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
 
     def get_event(graceid):
         assert graceid == 'G1234'
-        return {'group': group, 'pipeline': pipeline, 'search': 'AllSky',
-                'instruments': 'H1,L1,V1', 'graceid': 'G1234',
-                'offline': offline, 'far': far, 'gpstime': 1234,
-                'extra_attributes':
-                {'CoincInspiral': {'ifos': 'H1,L1,V1'}}}
+        event = {
+            'group': group,
+            'pipeline': pipeline,
+            'search': 'AllSky',
+            'graceid': 'G1234',
+            'offline': offline,
+            'far': far,
+            'gpstime': 1234,
+            'extra_attributes': {}
+        }
+        if pipeline == 'gstlal':
+            # Simulate subthreshold triggers for gstlal. Subthreshold triggers
+            # do not contribute to the significance estimate. The way that we
+            # can tell that a subthreshold trigger is present is that the chisq
+            # entry in the SingleInspiral record is empty (``None``).
+            event['extra_attributes']['SingleInspiral'] = [
+                {'chisq': 1 if instrument in instruments else None}
+                for instrument in ['H1', 'L1', 'V1']]
+            event['instruments'] = 'H1,L1,V1'
+        else:
+            event['instruments'] = ','.join(instruments)
+        return event
 
     def download(filename, graceid):
         if '.fits' in filename:
@@ -111,7 +131,7 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
 
     plot_allsky.assert_called_once()
     plot_volume.assert_called_once()
-    if offline or trials_factor * far > far_threshold:
+    if offline or trials_factor * far > far_threshold or len(instruments) == 1:
         expose.assert_not_called()
         create_tag.assert_not_called()
         send.assert_not_called()
