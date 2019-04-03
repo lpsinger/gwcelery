@@ -16,24 +16,6 @@ navigate to http://localhost:5555/ in your browser::
 
     $ gwcelery flower
 
-To set up monitoring on a LIGO Data Grid cluster machine (e.g.
-``emfollow.ligo.caltech.edu``) protected by LIGO.org authentication, start
-Flower using the following command::
-
-    $ gwcelery flower --url-prefix=~${USER}/flower
-
-add the following lines to the file ``~/public_html/.htaccess``:
-
-.. code-block:: apache
-
-    RewriteEngine on
-    RewriteRule ^flower/?(.*)$ http://emfollow.ligo.caltech.edu:5555/$1 [P]
-
-Some additional firewall configuration may be required.
-
-.. image:: _static/flower-screenshot.png
-   :alt: Screenshot of Flower
-
 Sentry
 ------
 
@@ -59,22 +41,6 @@ To start Flask for monitoring during local development, run the following
 command and then navigate to http://localhost:5000/ in your browser::
 
     $ gwcelery flask run
-
-Setting up the Flask web application on a LIGO Data Grid cluster machine is
-similar to setting up Flower. Run the Flask application with the following
-additional command line arguments::
-
-    $ gwcelery flask run --port=5556 --with-threads --host 0.0.0.0
-
-add the following lines to the file ``~/public_html/.htaccess``:
-
-.. code-block:: apache
-
-    RewriteEngine on
-    RewriteRule ^gwcelery/?(.*)$ http://emfollow.ligo.caltech.edu:5556/$1 [P]
-
-.. image:: _static/flask-screenshot.png
-   :alt: Screenshot of Flask web application
 
 Nagios
 ------

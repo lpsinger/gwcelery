@@ -51,13 +51,13 @@ error = gwcelery-voevent-worker.log
 output =
 queue
 
-arguments = "gwcelery flask run --with-threads --host 0.0.0.0"
+arguments = "gwcelery flask run --with-threads --host 127.0.0.1"
 description = gwcelery-flask
 error = gwcelery-flask.log
 output =
 queue
 
-arguments = "gwcelery flower"
+arguments = "gwcelery flower --address 127.0.0.1"
 description = gwcelery-flower
 error = gwcelery-flower.log
 output =

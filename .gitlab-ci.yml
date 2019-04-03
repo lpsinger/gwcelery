@@ -224,7 +224,7 @@ deploy to production at CIT:
   environment:
     name: production/CIT
     on_stop: stop deployment on production at CIT
-    url: https://ldas-jobs.ligo.caltech.edu/~emfollow/flower
+    url: https://emfollow.ligo.caltech.edu/flower
 
 deploy to production at LHO:
   <<: *deploy-start
@@ -232,14 +232,14 @@ deploy to production at LHO:
   environment:
     name: production/LHO
     on_stop: stop deployment on production at LHO
-    url: https://ldas-jobs.ligo-wa.caltech.edu/~emfollow/flower
+    url: https://emfollow.ligo-wa.caltech.edu/flower
 
 deploy to playground at CIT:
   <<: *deploy-start
   environment:
     name: playground/CIT
     on_stop: stop deployment on playground at CIT
-    url: https://ldas-jobs.ligo.caltech.edu/~emfollow-playground/flower
+    url: https://emfollow.ligo.caltech.edu/playground/flower
 
 deploy to playground at LHO:
   <<: *deploy-start
@@ -247,7 +247,7 @@ deploy to playground at LHO:
   environment:
     name: playground/LHO
     on_stop: stop deployment on playground at LHO
-    url: https://ldas-jobs.ligo-wa.caltech.edu/~emfollow-playground/flower
+    url: https://emfollow.ligo-wa.caltech.edu/playground/flower
 
 stop deployment on production at CIT:
   <<: *deploy-stop
