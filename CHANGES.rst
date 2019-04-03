@@ -4,7 +4,9 @@ Changelog
 0.4.2 (unreleased)
 ------------------
 
--   No changes yet.
+-   Now that LIGO/Virgo alerts are public, switch the GCN listener that we use
+    to confirm receipt of our own GCN Notices from a managed, private
+    connection to an anonymous, public connection.
 
 0.4.1 (2019-04-02)
 ------------------

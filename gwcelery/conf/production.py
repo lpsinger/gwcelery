@@ -18,19 +18,6 @@ voevent_broadcaster_whitelist = ['capella2.gsfc.nasa.gov']
 """List of hosts from which the broker will accept connections.
 If empty, then completely disable the broker's broadcast capability."""
 
-voevent_receiver_address = '68.169.57.253:8096'
-"""The VOEvent listener will connect to this address to receive GCNs.
-If empty, then completely disable the GCN listener.
-
-We are temporarily using the pre-registered port 8096 for receiving
-proprietary LIGO/Virgo alerts on emfollow.ligo.caltech.edu. This means that
-the capability to receive GCNs requires setting up a site configuration in
-advance with Scott Barthelmey.
-
-Once we switch to sending public alerts exclusively, then we can switch
-back to using port 8099 for anonymous access, requiring no prior site
-configuration."""
-
 llhoft_glob = '/dev/shm/kafka/{detector}/*.gwf'
 """File glob for low-latency h(t) frames."""
 
