@@ -108,6 +108,8 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
     monkeypatch.setattr('gwcelery.tasks.gracedb.download.run', download)
     monkeypatch.setattr('gwcelery.tasks.gracedb.expose.run', expose)
     monkeypatch.setattr('gwcelery.tasks.gracedb.get_event.run', get_event)
+    monkeypatch.setattr('gwcelery.tasks.gracedb.get_number_of_instruments',
+                        lambda _: len(instruments))
     monkeypatch.setattr('gwcelery.tasks.gracedb.create_voevent.run',
                         create_voevent)
     monkeypatch.setattr('gwcelery.tasks.gracedb.get_superevent.run',

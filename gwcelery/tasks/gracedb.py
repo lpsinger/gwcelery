@@ -98,6 +98,42 @@ def get_log(graceid):
 
 
 @task(shared=False)
+def get_number_of_instruments(gracedb_id):
+    """Get the number of gravitational-wave instruments that contributed to the
+    ranking statistic of a coincident event.
+
+    Parameters
+    ----------
+    gracedb_id : str
+        The GraceDB ID.
+
+    Returns
+    -------
+    int
+        The number of instruments that contributed to the ranking statistic for
+        the event.
+
+    Notes
+    -----
+    The number of instruments that contributed *data* to an event is given by
+    the ``instruments`` key of the GraceDB event JSON structure. However, some
+    pipelines (e.g. gstlal) have a distinction between which instruments
+    contributed *data* and which were considered in the *ranking* of the
+    candidate. For such pipelines, we infer which pipelines contributed to the
+    ranking by counting only the SingleInspiral records for which the chi
+    squared field is non-empty.
+    """
+    event = get_event(gracedb_id)
+    attrib = event['extra_attributes']
+    try:
+        singles = attrib['SingleInspiral']
+    except KeyError:
+        return len(event.get('instruments', '').split(','))
+    else:
+        return sum(single.get('chisq') is not None for single in singles)
+
+
+@task(shared=False)
 def get_superevent(graceid):
     """Retrieve a superevent from GraceDb."""
     return client.superevent(graceid).json()

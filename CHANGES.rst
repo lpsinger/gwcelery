@@ -4,7 +4,8 @@ Changelog
 0.4.2 (unreleased)
 ------------------
 
--   No changes yet.
+-   Calculation of number of instruments is now unified across superevent
+    manager and orchestrator using gracedb method ``get_number_of_instruments``.
 
 0.4.1 (2019-04-02)
 ------------------

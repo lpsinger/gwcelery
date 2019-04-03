@@ -192,7 +192,10 @@ def _get_dts(event_info):
 
 def _keyfunc(event_info):
     group = event_info['group'].lower()
-    num_ifos = len(event_info['instruments'].split(","))
+    # FIXME Currently single IFOs are determined from the SingleInspiral
+    # tables. Uncomment the line below to revert to normal behavior when fixed
+    # num_ifos = len(event_info['instruments'].split(","))
+    num_ifos = gracedb.get_number_of_instruments(event_info['graceid'])
     ifo_rank = (num_ifos <= 1)
     try:
         group_rank = ['cbc', 'burst'].index(group)
