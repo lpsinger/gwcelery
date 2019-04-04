@@ -22,6 +22,13 @@ Changelog
     Remove the htaccess file from our public_html directory, since the reverse
     proxy configuration is now the responsibility of system administrators.
 
+-   Enable automated preliminary alerts for all pipelines because disabling
+    them in the orchestrator introduced some issues due to the criteria for
+    releasing a public alert drifting away from the definition of a the
+    preferred event of a superevent. We will instead trust pipelines that are
+    still under review will upload events to the playground rather than the
+    production environment.
+
 0.4.1 (2019-04-02)
 ------------------
 
