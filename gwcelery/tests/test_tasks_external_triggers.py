@@ -132,8 +132,7 @@ def test_handle_sntrig_creation(mock_raven_coincidence_search, calls, path):
     if calls is True:
         mock_raven_coincidence_search.assert_has_calls([
                 call('E1235', alert['object'],
-                     group='Burst', pipelines=['SNEWS']),
-                call().delay()])
+                     group='Burst', pipelines=['SNEWS'])])
     else:
         mock_raven_coincidence_search.assert_not_called()
 
