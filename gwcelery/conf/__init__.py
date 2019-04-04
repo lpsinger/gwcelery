@@ -179,6 +179,12 @@ is computed. (Used by :mod:`gwcelery.tasks.p_astro_gstlal` and
 :mod:`gwcelery.tasks.p_astro_other`)
 """
 
+p_astro_weights_url = \
+    'http://emfollow.ldas.cit/data/H1L1V1-weights-1126051217-61603201.json'
+"""URL for template weights using which p_astro
+is computed. (Used by :mod:`gwcelery.tasks.p_astro_gstlal`)
+"""
+
 em_bright_url = 'http://emfollow.ldas.cit/data/em_bright_classifier.pickle'
 """URL for trained RandomForestClassifier based on which em_bright
 classification is conducted. (Used by :mod:`gwcelery.tasks.em_bright`)
