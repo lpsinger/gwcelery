@@ -29,9 +29,6 @@ Changelog
     still under review will upload events to the playground rather than the
     production environment.
 
--   Added functionality for P_astro to be computed with mass-based 
-    template weights.
-
 -   Display the GWCelery version number in the Flask application.
 
 0.4.1 (2019-04-02)
