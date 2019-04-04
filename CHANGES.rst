@@ -7,6 +7,13 @@ Changelog
 -   Calculation of number of instruments is now unified across superevent
     manager and orchestrator using gracedb method ``get_number_of_instruments``.
 
+-   Enable automated preliminary alerts for all pipelines because disabling
+    them in the orchestrator introduced some issues due to the criteria for
+    releasing a public alert drifting away from the definition of a the
+    preferred event of a superevent. We will instead trust pipelines that are
+    still under review will upload events to the playground rather than the
+    production environment.
+
 0.4.1 (2019-04-02)
 ------------------
 
