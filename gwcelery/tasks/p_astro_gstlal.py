@@ -133,7 +133,8 @@ def _get_event_ln_likelihood_ratio_svd_endtime_mass(coinc_bytes):
             sngl_inspiral[0].mass1,
             sngl_inspiral[0].mass2,
             coinc_inspiral.snr,
-            coinc_inspiral.combined_far)
+            coinc_inspiral.combined_far,
+            sngl_inspiral[0].Gamma1)
 
 
 @app.task(shared=False)
@@ -157,6 +158,8 @@ def compute_p_astro(files):
     >>> p_astros
     {'BNS': 0.999, 'BBH': 0.0, 'NSBH': 0.0, 'Terrestrial': 0.001}
     """
+    url = "p_astro_url"
+    url_weights = "p_astro_weights_url"
     coinc_bytes, ranking_data_bytes = files
 
     # Acquire information pertaining to the event from coinc.xml
@@ -164,7 +167,7 @@ def compute_p_astro(files):
     log.info(
         'Fetching ln_likelihood_ratio, svd bin, endtime, mass from coinc.xml')
     event_ln_likelihood_ratio, event_endtime, \
-        event_mass, event_mass1, event_mass2, snr, far = \
+        event_mass, event_mass1, event_mass2, snr, far, bin_num = \
         _get_event_ln_likelihood_ratio_svd_endtime_mass(coinc_bytes)
 
     # Using the zerolag log likelihood ratio value event,
@@ -186,7 +189,7 @@ def compute_p_astro(files):
     astro_bayesfac = np.exp(ln_f_over_b)[0]
 
     # Read mean values from url file
-    mean_values_dict = p_astro_other.read_mean_values(url="p_astro_url")
+    mean_values_dict = p_astro_other.read_mean_values(url=url)
 
     # Compute categorical p_astro values
     p_astro_values = \
@@ -194,7 +197,8 @@ def compute_p_astro(files):
                                                      mean_values_dict,
                                                      event_mass1,
                                                      event_mass2,
-                                                     num_bins=4)
+                                                     bin_num=int(bin_num),
+                                                     url_weights=url_weights)
 
     # Dump values in json file
     return json.dumps(p_astro_values)
