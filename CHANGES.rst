@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.4.2 (unreleased)
+0.4.2 (2019-04-05)
 ------------------
 
 -   Calculation of number of instruments is now unified across superevent
