@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.5.0 (unreleased)
+0.4.3 (2019-04-05)
 ------------------
 
 -   Now that LIGO/Virgo alerts are public, switch the GCN listener that we use
