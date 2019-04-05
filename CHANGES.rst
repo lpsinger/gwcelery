@@ -1,15 +1,12 @@
 Changelog
 =========
 
-0.4.2 (unreleased)
+0.5.0 (unreleased)
 ------------------
 
 -   Now that LIGO/Virgo alerts are public, switch the GCN listener that we use
     to confirm receipt of our own GCN Notices from a managed, private
     connection to an anonymous, public connection.
-
--   Calculation of number of instruments is now unified across superevent
-    manager and orchestrator using gracedb method ``get_number_of_instruments``.
 
 -   Migrate the Flask and Flower dashboards from ldas-jobs.ligo.caltech.edu to
     emfollow.ligo.caltech.edu. The new URLs are:
@@ -22,17 +19,23 @@ Changelog
     Remove the htaccess file from our public_html directory, since the reverse
     proxy configuration is now the responsibility of system administrators.
 
+-   Added functionality for P_astro to be computed with mass-based template
+    weights.
+
+-   Display the GWCelery version number in the Flask application.
+
+0.4.2 (2019-04-05)
+------------------
+
+-   Calculation of number of instruments is now unified across superevent
+    manager and orchestrator using gracedb method ``get_number_of_instruments``.
+
 -   Enable automated preliminary alerts for all pipelines because disabling
     them in the orchestrator introduced some issues due to the criteria for
     releasing a public alert drifting away from the definition of a the
     preferred event of a superevent. We will instead trust pipelines that are
     still under review will upload events to the playground rather than the
     production environment.
-
--   Added functionality for P_astro to be computed with mass-based 
-    template weights.
-
--   Display the GWCelery version number in the Flask application.
 
 0.4.1 (2019-04-02)
 ------------------
