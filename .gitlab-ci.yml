@@ -128,6 +128,79 @@ doc:
   dependencies:
     - sdist
 
+# SCCB request
+open SCCB issue for release:
+  image: python
+  stage: deploy
+  only:
+    - tags@emfollow/gwcelery
+  dependencies: []
+  variables:
+    GIT_STRATEGY: fetch
+    PROJECT: sccb/requests
+  script:
+    - VERSION="$(python setup.py --version)"
+    - >
+      LAST_VERSION="$(git tag -l |
+      python -c 'from pkg_resources import parse_version;
+      import sys;
+      current_version = parse_version(sys.argv[1]);
+      versions = [parse_version(line) for line in sys.stdin];
+      last_version = max(v for v in versions if v < current_version);
+      print(last_version)' "$VERSION")"
+    - MAJOR_MINOR_VERSION=$(echo "$VERSION" | cut -d . -f 1,2)
+    - LAST_MAJOR_MINOR_VERSION=$(echo "$LAST_VERSION" | cut -d . -f 1,2)
+    - TITLE="$CI_PROJECT_NAME-$VERSION"
+    - >
+      PROJECT_SLUG="$(
+      python -c 'import urllib.parse, sys;
+      print(urllib.parse.quote(sys.argv[1], safe=""))' "$PROJECT"
+      )"
+    - |
+      cat > description <<EOF
+      #### Details
+
+      - **Package name:** $CI_PROJECT_NAME
+      - **Version:** $VERSION
+      - **Source:** https://pypi.org/packages/source/${CI_PROJECT_NAME:0:1}/$CI_PROJECT_NAME/$CI_PROJECT_NAME-$VERSION.tar.gz
+
+      #### Description
+
+      See [change log]($CI_PROJECT_URL/blob/master/CHANGES.rst).
+
+      #### Distributions
+
+      Not applicable: this project uses [continuous deployment](https://gwcelery.readthedocs.io/en/latest/deployment.html#continuous-deployment).
+
+      #### Request type
+
+      Please select all of the following that apply:
+
+      - [ ] this is a new package
+      - [$(if [ "$MAJOR_MINOR_VERSION" = "$LAST_MAJOR_MINOR_VERSION" ]; then echo 'X'; else echo ' '; fi)] this is a backwards-compatible update
+      - [$(if [ "$MAJOR_MINOR_VERSION" = "$LAST_MAJOR_MINOR_VERSION" ]; then echo ' '; else echo 'X'; fi)] this is a backwards-incompatible update [API/ABI changes]
+
+      #### SCCB Voting
+
+      <!-- DO NOT EDIT THIS SECTION -->
+
+      SCCB members will here indicate their vote to approve the above request:
+
+      - [ ] Brunett
+      - [ ] Carbognani
+      - [ ] Clark
+      - [ ] Macleod
+      - [ ] Mendell
+      - [ ] Mercer
+      - [ ] Rollins
+      EOF
+    - >
+      curl --silent --show-error --fail
+      --request POST --header "Private-Token: $GITLAB_ACCESS_TOKEN"
+      --data-urlencode "title=$TITLE"
+      --data-urlencode "description@description"
+      "$CI_API_V4_URL/projects/$PROJECT_SLUG/issues"
+
 # Publish coverage
 pages:
   stage: deploy
