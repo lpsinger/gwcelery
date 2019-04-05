@@ -103,7 +103,9 @@ todo_include_todos = False
 
 autodoc_mock_imports = []
 for mod in ['astropy',
+            'click',
             'comet',
+            'flask',
             'gcn',
             'glue',
             'gwdatafind',
