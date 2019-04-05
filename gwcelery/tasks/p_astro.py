@@ -95,6 +95,6 @@ def handle(alert):
                 filename.replace('.json', '.png'), graceid,
                 message='Source classification visualization from {}'.format(
                     filename),
-                tags=['p_astro', 'public']
+                tags=['em_follow', 'p_astro', 'public']
             )
         ).delay()
