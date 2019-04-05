@@ -24,6 +24,8 @@ Changelog
 
 -   Display the GWCelery version number in the Flask application.
 
+-   Add visualizations for ``p_astro.json`` source classification files.
+
 0.4.2 (2019-04-05)
 ------------------
 
