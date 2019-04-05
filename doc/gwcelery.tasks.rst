@@ -20,6 +20,7 @@ gwcelery.tasks module
     gwcelery.tasks.lvalert
     gwcelery.tasks.orchestrator
     gwcelery.tasks.p_astro_gstlal
+    gwcelery.tasks.p_astro_other
     gwcelery.tasks.raven
     gwcelery.tasks.skymaps
     gwcelery.tasks.superevents
