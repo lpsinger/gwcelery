@@ -1,5 +1,6 @@
 import json
 from unittest.mock import patch
+from urllib import request
 
 import numpy as np
 import pkg_resources
@@ -11,32 +12,15 @@ from ..tasks import p_astro_gstlal
 
 class MockResponse(object):
     def read(self):
-        filename = "data/H1L1V1-mean_counts-1126051217-61603201.json"
-        with pkg_resources.resource_stream(__name__, filename) as f:
-            return f.read()
+        return json.dumps({
+            "counts_BNS": 2,
+            "counts_BBH": 10,
+            "counts_NSBH": 1,
+            "counts_Terrestrial": 4000,
+            "counts_MassGap": 1})
 
     def close(self):
         pass
-
-
-class MockResponseWeights(object):
-    def read(self):
-        filename = "data/H1L1V1-weights-1126051217-61603201.json"
-        with pkg_resources.resource_stream(__name__, filename) as f:
-            return f.read()
-
-    def close(self):
-        pass
-
-
-@pytest.fixture
-def mock_url(monkeypatch):
-    def _urlfunc(url):
-        if url == app.conf['p_astro_url']:
-            return MockResponse()
-        elif url == app.conf['p_astro_weights_url']:
-            return MockResponseWeights()
-    monkeypatch.setattr('urllib.request.urlopen', _urlfunc)
 
 
 @pytest.fixture
@@ -81,7 +65,7 @@ def test_get_ln_f_over_b(ranking_data_bytes):
 
 
 def test_get_event_ln_likelihood_ratio_svd_endtime_mass(coinc_bytes_1):
-    likelihood, end_time, mass, mass1, mass2, snr, far, bin_num = \
+    likelihood, end_time, mass, mass1, mass2, snr, far = \
         p_astro_gstlal._get_event_ln_likelihood_ratio_svd_endtime_mass(
             coinc_bytes_1)
     assert mass1 == pytest.approx(2.8, abs=0.1)
@@ -89,16 +73,15 @@ def test_get_event_ln_likelihood_ratio_svd_endtime_mass(coinc_bytes_1):
     assert likelihood == pytest.approx(21.65, abs=0.1)
     assert end_time == pytest.approx(1174052512)
     assert mass == pytest.approx(3.78, abs=0.1)
-    assert bin_num == pytest.approx(90, abs=0.0)
 
 
-def test_compute_p_astro_1(coinc_bytes_1, ranking_data_bytes, mock_url):
+@patch.object(request, 'urlopen', return_value=MockResponse())
+def test_compute_p_astro_1(mock_url, coinc_bytes_1, ranking_data_bytes):
     """Test to call `compute_p_astro` on gracedb event G322589.
     m1 = 2.7, m2 = 1.0 solar mass for this event"""
     files = coinc_bytes_1, ranking_data_bytes
-
+    # FIXME graceid should be removed once fixed
     p_astros = json.loads(p_astro_gstlal.compute_p_astro(files))
-
     assert p_astros['BNS'] == pytest.approx(1, abs=1e-2)
     assert p_astros['NSBH'] == pytest.approx(0, abs=1e-2)
     assert p_astros['BBH'] == pytest.approx(0, abs=1e-2)
@@ -106,18 +89,19 @@ def test_compute_p_astro_1(coinc_bytes_1, ranking_data_bytes, mock_url):
     assert p_astros['Terrestrial'] == pytest.approx(0, abs=1e-2)
 
 
-def test_compute_p_astro_2(coinc_bytes_2, ranking_data_bytes, mock_url):
+@patch.object(request, 'urlopen', return_value=MockResponse())
+def test_compute_p_astro_2(mock_url, coinc_bytes_2, ranking_data_bytes):
     """Test to call `compute_p_astro` on gracedb event G5351.
     m1 = 4.2, m2 = 1.2 solar mass for this event. FAR = 1.9e-6, P_terr
     has a moderate value."""
     files = coinc_bytes_2, ranking_data_bytes
-
+    # FIXME graceid should be removed once fixed
     p_astros = json.loads(p_astro_gstlal.compute_p_astro(files))
-
     assert p_astros['Terrestrial'] > 0.30
 
 
-def test_failing_compute_p_astro(coinc_bytes_3, ranking_data_bytes, mock_url):
+@patch.object(request, 'urlopen', return_value=MockResponse())
+def test_failing_compute_p_astro(mock_url, coinc_bytes_3, ranking_data_bytes):
     """Test the case when p_astro computation fails"""
     files = coinc_bytes_3, ranking_data_bytes
     with patch('gwcelery.tasks.p_astro_other.compute_p_astro') as p:

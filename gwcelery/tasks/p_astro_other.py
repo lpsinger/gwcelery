@@ -49,8 +49,7 @@ def evaluate_p_astro_from_bayesfac(astro_bayesfac,
                                    mean_values_dict,
                                    mass1,
                                    mass2,
-                                   bin_num=None,
-                                   url_weights=None):
+                                   num_bins):
     """
     Evaluates `p_astro` for a new event using Bayes factor,
     masses, and number of astrophysical categories.
@@ -66,10 +65,8 @@ def evaluate_p_astro_from_bayesfac(astro_bayesfac,
         event mass1
     mass2 : float
         event mass2
-    bin_num : int
-        bin number for the event
-    url_weights: str
-        url pointing to weights file
+    num_bins: int
+        number of astrophysical categories
 
     Returns
     -------
@@ -77,12 +74,12 @@ def evaluate_p_astro_from_bayesfac(astro_bayesfac,
         p_astro for all source categories
     """
 
-    if bin_num is not None and url_weights is not None:
-        a_hat_bns, a_hat_bbh, a_hat_nsbh, a_hat_mg, num_bins = \
-            make_weights_from_histograms(url_weights, bin_num, mass1, mass2)
-    else:
-        a_hat_bns, a_hat_bbh, a_hat_nsbh, a_hat_mg, num_bins = \
-            make_weights_from_hardcuts(mass1, mass2)
+    # Construct mass-based template-weights
+    a_hat_bns = int(mass1 <= 3 and mass2 <= 3)
+    a_hat_bbh = int(mass1 > 5 and mass2 > 5.)
+    a_hat_nsbh = int(min(mass1, mass2) <= 3 and
+                     max(mass1, mass2) > 5)
+    a_hat_mg = int(3 < mass1 <= 5 or 3 < mass2 <= 5)
 
     # Compute category-wise Bayes factors
     # from astrophysical Bayes factor
@@ -140,86 +137,6 @@ def read_mean_values(url):
     return mean_values_dict
 
 
-def make_weights_from_hardcuts(mass1, mass2):
-    """
-    Construct binary weights from component masses
-    based on cuts in component mass space that
-    define astrophyscal source categories.
-    To be used for MBTA, PyCBC and SPIIR.
-
-    Parameters
-    ----------
-    mass1 : float
-        heavier component mass of the event
-    mass2 : float
-        lighter component mass of the event
-
-    Returns
-    -------
-    a_bns, a_bbh, a_nshb, a_mg : floats
-        binary weights (i.e, 1 or 0)
-    """
-
-    a_hat_bns = int(mass1 <= 3 and mass2 <= 3)
-    a_hat_bbh = int(mass1 > 5 and mass2 > 5)
-    a_hat_nsbh = int(min(mass1, mass2) <= 3 and
-                     max(mass1, mass2) > 5)
-    a_hat_mg = int(3 < mass1 <= 5 or 3 < mass2 <= 5)
-    num_bins = 4
-
-    return a_hat_bns, a_hat_bbh, a_hat_nsbh, a_hat_mg, num_bins
-
-
-def make_weights_from_histograms(url_weights, bin_num, mass1, mass2):
-    """
-    Construct binary weights from bin number
-    provided by GstLAL, and a weights matrix
-    pre-constructed and stored in a file, to
-    be read from a url. If that doesn't work,
-    construct binary weights.
-
-    Parameters
-    ----------
-    url_weights : string
-        url pointing at location of weights file
-    bin_num : int
-        bin number for event
-    mass1 : float
-        heavier component mass of the event
-    mass2 : float
-        lighter component mass of the event
-
-    Returns
-    -------
-    a_bns, a_bbh, a_nshb, a_mg : floats
-        binary weights (i.e, 1 or 0)
-    """
-
-    try:
-        response = request.urlopen(app.conf[url_weights])
-        activation_counts = json.loads(response.read())
-        response.close()
-
-    except(ValueError, error.URLError):
-        activation_counts = None
-
-    if activation_counts is not None:
-        a_bns = np.array(activation_counts['bns'], dtype=float)
-        a_hat_bns = a_bns[bin_num] / np.sum(a_bns)
-        a_bbh = np.array(activation_counts['bbh'], dtype=float)
-        a_hat_bbh = a_bbh[bin_num] / np.sum(a_bbh)
-        a_nsbh = np.array(activation_counts['nsbh'], dtype=float)
-        a_hat_nsbh = a_nsbh[bin_num] / np.sum(a_nsbh)
-        a_mg = np.array(activation_counts['mg'], dtype=float)
-        a_hat_mg = a_mg[bin_num] / np.sum(a_mg)
-        num_bins = len(a_bns)
-    else:
-        a_hat_bns, a_hat_bbh, a_hat_nsbh, a_hat_mg, num_bins = \
-            make_weights_from_hardcuts(mass1, mass2)
-
-    return a_hat_bns, a_hat_bbh, a_hat_nsbh, a_hat_mg, num_bins
-
-
 @app.task(shared=False)
 def compute_p_astro(snr, far, mass1, mass2):
     """
@@ -248,10 +165,8 @@ def compute_p_astro(snr, far, mass1, mass2):
     {'BNS': 0.999, 'BBH': 0.0, 'NSBH': 0.0, 'Terrestrial': 0.001}
     """
 
-    url = "p_astro_url"
-
     # Read mean values from file
-    mean_values_dict = read_mean_values(url=url)
+    mean_values_dict = read_mean_values(url="p_astro_url")
 
     # Define constants to compute bayesfactors
     snr_star = 8.5
@@ -267,6 +182,7 @@ def compute_p_astro(snr, far, mass1, mass2):
     p_astro_values = evaluate_p_astro_from_bayesfac(astro_bayesfac,
                                                     mean_values_dict,
                                                     mass1,
-                                                    mass2)
+                                                    mass2,
+                                                    num_bins=4)
     # Dump mean values in json file
     return json.dumps(p_astro_values)

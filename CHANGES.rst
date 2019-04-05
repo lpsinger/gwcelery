@@ -19,9 +19,6 @@ Changelog
     Remove the htaccess file from our public_html directory, since the reverse
     proxy configuration is now the responsibility of system administrators.
 
--   Added functionality for P_astro to be computed with mass-based template
-    weights.
-
 -   Display the GWCelery version number in the Flask application.
 
 -   Add visualizations for ``p_astro.json`` source classification files.
