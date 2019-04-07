@@ -94,39 +94,6 @@ virgo_state_vector_bits = Bits(
 """State vector bitfield definitions for Virgo."""
 
 
-no_dq_veto_mbta_bits = Bits(
-    channel='V1:DQ_VETO_MBTA',
-    bits={0: 'NO_DQ_VETO_MBTA'},
-    description={'NO_DQ_VETO_MBTA': 'NO DQ veto for MBTA'}
-                           )
-
-no_dq_veto_cwb_bits = Bits(
-    channel='V1:DQ_VETO_CWB', bits={0: 'NO_DQ_VETO_CWB'},
-    description={'NO_DQ_VETO_CWB': 'NO DQ veto for cWB'}
-                          )
-
-no_dq_veto_gstlal_bits = Bits(
-    channel='V1:DQ_VETO_GSTLAL', bits={0: 'NO_DQ_VETO_GSTLAL'},
-    description={'NO_DQ_VETO_GSTLAL': 'NO DQ veto for gstLAL'}
-                             )
-
-no_dq_veto_olib_bits = Bits(
-    channel='V1:DQ_VETO_OLIB', bits={0: 'NO_DQ_VETO_OLIB'},
-    description={'NO_DQ_VETO_OLIB': 'NO DQ veto for oLIB'}
-                           )
-
-no_dq_veto_pycbc_bits = Bits(
-    channel='V1:DQ_VETO_PYCBC',
-    bits={0: 'NO_DQ_VETO_PYCBC'},
-    description={'NO_DQ_VETO_PYCBC': 'NO DQ veto for pyCBC'}
-                            )
-"""No DQ veto stream bitfield definitions for Virgo.
-NOTE: Since the results for these bits will be NOT()ed, the bit
-definitions are the NO_* versions of what the bit * actually is.
-This is an inelegant but the simplest solution since the logic used in these
-channels are opposite to those in all the other checked channels."""
-
-
 def create_cache(ifo, start, end):
     """Find .gwf files and create cache. Will first look in the llhoft, and
     if the frames have expired from llhoft, will call gwdatafind.
@@ -392,9 +359,6 @@ def check_vectors(event, graceid, start, end):
     for channel, bits in analysis_channels:
         states.update(check_vector(caches[channel.split(':')[0]], channel,
                                    start, end, globals()[bits]))
-        #  Hard coded not() of Virgo DQ_VETO_* streams
-        states.update({key: not(value) for key, value in states.items()
-                       if key[:10] == 'V1:DQ_VETO'})
     # Pick out DQ and injection states, then filter for active detectors
     dq_states = {key: value for key, value in states.items()
                  if key.split('_')[-1] != 'INJ'}
