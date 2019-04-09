@@ -4,7 +4,9 @@ Changelog
 0.4.4 (unreleased)
 ------------------
 
--   No changes yet.
+-   Give permissions to read the files under parameter estimation run
+    directories to non-owner people so that rota people can check their
+    progresses. The naming convention of the run directories changed.
 
 0.4.3 (2019-04-05)
 ------------------

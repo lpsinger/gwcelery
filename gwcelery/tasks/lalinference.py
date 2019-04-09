@@ -380,7 +380,11 @@ def start_pe(ini_contents, preferred_event_id, superevent_id):
     # make a run directory
     lalinference_dir = os.path.expanduser('~/.cache/lalinference')
     mkpath(lalinference_dir)
-    rundir = tempfile.mkdtemp(dir=lalinference_dir)
+    rundir = tempfile.mkdtemp(dir=lalinference_dir,
+                              prefix='{}_'.format(superevent_id))
+    # give permissions to read the files under the run directory so that PE
+    # ROTA people can check the status of parameter estimation.
+    os.chmod(rundir, 0o755)
 
     (
         gracedb.download.s('coinc.xml', preferred_event_id)
