@@ -27,7 +27,7 @@ def take_n(n, iterable):
 
 # Regular expression for parsing query strings
 # that look like GraceDb superevent names.
-typeahead_graceid_regex = re.compile(
+_typeahead_superevent_id_regex = re.compile(
     r'(?P<prefix>[MT]?)S?(?P<date>\d{0,6})(?P<suffix>[a-z]*)',
     re.IGNORECASE)
 
@@ -44,7 +44,7 @@ def typeahead_superevent_id():
     batch_results = 32  # batch size for results from server
 
     term = request.args.get('superevent_id')
-    match = typeahead_graceid_regex.fullmatch(term) if term else None
+    match = _typeahead_superevent_id_regex.fullmatch(term) if term else None
 
     if match:
         # Determine GraceDb event category from regular expression.
@@ -96,6 +96,39 @@ def typeahead_superevent_id():
     return jsonify(list(take_n(max_results, superevent_ids)))
 
 
+# Regular expression for parsing query strings
+# that look like GraceDb event names.
+_typeahead_event_id_regex = re.compile(
+    r'(?P<prefix>[GMT]?)(?P<number>\d*)',
+    re.IGNORECASE)
+
+
+@app.route('/typeahead_event_id')
+@cache.cached(query_string=True)
+def typeahead_event_id():
+    """Search GraceDb for events by ID."""
+
+    term = request.args.get('event_id')
+    match = _typeahead_event_id_regex.fullmatch(term) if term else None
+
+    if match:
+        # Determine GraceDb event category from regular expression.
+        prefix = match['prefix'].upper() or 'G'
+        number = int(match['number'] or '0')
+    else:
+        prefix = 'G'
+        number = 0
+
+    # Query GraceDb.
+    query = '{prefix}{number} {prefix}{number}0..{prefix}{number}9'.format(
+        prefix=prefix, number=number)
+    response = gracedb.client.events(query)
+    event_ids = reversed([event['graceid'] for event in response])
+
+    # Return only the first few matches.
+    return jsonify(list(event_ids))
+
+
 def _search_by_tag_and_filename(superevent_id, filename, extension, tag):
     try:
         records = gracedb.client.logs(superevent_id).json()['log']
@@ -140,6 +173,26 @@ def typeahead_p_astro_filename():
         request.args.get('filename') or '',
         '.json', 'p_astro'
     ))
+
+
+@app.route('/send_preliminary_gcn', methods=['POST'])
+def send_preliminary_gcn():
+    keys = ('superevent_id', 'event_id')
+    superevent_id, event_id, *_ = tuple(request.form.get(key) for key in keys)
+    if superevent_id and event_id:
+        (
+            gracedb.update_superevent.s(
+                superevent_id, preferred_event=event_id)
+            |
+            gracedb.get_event.si(event_id)
+            |
+            orchestrator.preliminary_alert.s(superevent_id)
+        ).delay()
+        flash('Queued preliminary alert for {}.'.format(superevent_id),
+              'success')
+    else:
+        flash('No alert sent. Please fill in all fields.', 'danger')
+    return redirect(url_for('index'))
 
 
 @app.route('/send_update_gcn', methods=['POST'])

@@ -15,6 +15,8 @@ Changelog
     are now keyed on template parameters, rather than bin numbers. This
     should make P_astro immune to binning conventions.
 
+-   Add form to manually send a preliminary GCN Notice.
+
 0.4.3 (2019-04-05)
 ------------------
 

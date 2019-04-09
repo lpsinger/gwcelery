@@ -15,6 +15,58 @@ def app():
     return flask.app
 
 
+def test_send_preliminary_gcn_post_no_data(client, monkeypatch):
+    """Test send_update_gcn endpoint with no form data."""
+    mock_update_superevent = Mock()
+    mock_get_event = Mock()
+    mock_preliminary_alert = Mock()
+    monkeypatch.setattr(
+        'gwcelery.tasks.gracedb.update_superevent.run',
+        mock_update_superevent)
+    monkeypatch.setattr(
+        'gwcelery.tasks.gracedb.get_event.run',
+        mock_get_event)
+    monkeypatch.setattr(
+        'gwcelery.tasks.orchestrator.preliminary_alert.run',
+        mock_preliminary_alert)
+
+    response = client.post(url_for('send_preliminary_gcn'))
+    assert HTTP_STATUS_CODES[response.status_code] == 'Found'
+    assert get_flashed_messages() == [
+        'No alert sent. Please fill in all fields.']
+    mock_update_superevent.assert_not_called()
+    mock_get_event.assert_not_called()
+    mock_preliminary_alert.assert_not_called()
+
+
+def test_send_preliminary_gcn_post(client, monkeypatch):
+    """Test send_update_gcn endpoint with complete form data."""
+    mock_update_superevent = Mock()
+    mock_event = Mock()
+    mock_get_event = Mock(return_value=mock_event)
+    mock_preliminary_alert = Mock()
+    monkeypatch.setattr(
+        'gwcelery.tasks.gracedb.update_superevent.run',
+        mock_update_superevent)
+    monkeypatch.setattr(
+        'gwcelery.tasks.gracedb.get_event.run',
+        mock_get_event)
+    monkeypatch.setattr(
+        'gwcelery.tasks.orchestrator.preliminary_alert.run',
+        mock_preliminary_alert)
+
+    response = client.post(url_for('send_preliminary_gcn'), data={
+        'superevent_id': 'MS190208a',
+        'event_id': 'M12345'})
+    assert HTTP_STATUS_CODES[response.status_code] == 'Found'
+    assert get_flashed_messages() == [
+        'Queued preliminary alert for MS190208a.']
+    mock_update_superevent.assert_called_once_with(
+        'MS190208a', preferred_event='M12345')
+    mock_get_event.assert_called_once_with('M12345')
+    mock_preliminary_alert.assert_called_once_with(mock_event, 'MS190208a')
+
+
 def test_send_update_gcn_get(client):
     """Test send_update_gcn endpoint with disallowed HTTP method."""
     # GET requests not allowed

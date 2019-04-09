@@ -40,6 +40,34 @@
     </div>
     <div class="card mb-3">
         <div class=card-header>
+            Issue Preliminary GCN Notice
+        </div>
+        <div class=card-body>
+            <form method=post action="{{ url_for('send_preliminary_gcn') }}">
+                <div class=form-row>
+                    <div class=form-group>
+                        <div class=form-text>Update the preferred event of a superevent and send a preliminary GCN Notice if it passes thresholds.</div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md">
+                        <label for=superevent_id>Superevent ID</label>
+                        <input name=superevent_id class="form-control typeahead">
+                    </div>
+                    <div class="form-group col-md">
+                        <label for=event_id>Preferred event ID</label>
+                        <input name=event_id class="form-control typeahead">
+                    </div>
+                    <div class="form-group col-md">
+                        <label for=submit class=w-100>&nbsp;</label>
+                        <button type=submit name=submit class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="card mb-3">
+        <div class=card-header>
             Issue Update GCN Notice
         </div>
         <div class=card-body>
@@ -47,23 +75,23 @@
                 <div class="form-row">
                     <div class="form-group col-md">
                         <label for=superevent_id>Superevent ID</label>
-                        <input id=superevent_id name=superevent_id class="form-control typeahead">
+                        <input name=superevent_id class="form-control typeahead">
                     </div>
                     <div class="form-group col-md">
                         <label for=skymap_filename>Sky Map File</label>
-                        <input id=skymap_filename name=skymap_filename class="form-control superevent-dependent typeahead" data-typeahead-url-template="{{ url_for('typeahead_skymap_filename', superevent_id='SUPEREVENT_ID', filename='TERM') }}">
+                        <input name=skymap_filename class="form-control superevent-dependent typeahead" data-typeahead-url-template="{{ url_for('typeahead_skymap_filename', superevent_id='SUPEREVENT_ID', filename='TERM') }}">
                     </div>
                     <div class="form-group col-md">
                         <label for=em_bright_filename>Classification</label>
-                        <input id=em_bright_filename name=em_bright_filename class="form-control superevent-dependent typeahead" data-typeahead-url-template="{{ url_for('typeahead_em_bright_filename', superevent_id='SUPEREVENT_ID', filename='TERM') }}">
+                        <input name=em_bright_filename class="form-control superevent-dependent typeahead" data-typeahead-url-template="{{ url_for('typeahead_em_bright_filename', superevent_id='SUPEREVENT_ID', filename='TERM') }}">
                     </div>
                     <div class="form-group col-md">
                         <label for=p_astro_filename>P_Astro</label>
-                        <input id=p_astro_filename name=p_astro_filename class="form-control superevent-dependent typeahead" data-typeahead-url-template="{{ url_for('typeahead_p_astro_filename', superevent_id='SUPEREVENT_ID', filename='TERM') }}">
+                        <input name=p_astro_filename class="form-control superevent-dependent typeahead" data-typeahead-url-template="{{ url_for('typeahead_p_astro_filename', superevent_id='SUPEREVENT_ID', filename='TERM') }}">
                     </div>
                     <div class="form-group col-md">
                         <label for=submit class=w-100>&nbsp;</label>
-                        <button type=submit id=submit class="btn btn-primary">Submit</button>
+                        <button type=submit name=submit class="btn btn-primary">Submit</button>
                     </div>
                 </div>
             </form>
@@ -83,7 +111,7 @@
                 </div>
                 <div class=form-row>
                     <div class=form-group>
-                        <button type=submit id=submit class="btn btn-primary">Submit</button>
+                        <button type=submit name=submit class="btn btn-primary">Submit</button>
                     </div>
                 </div>
             </form>
@@ -100,7 +128,7 @@
             .wrap('<div class=text-nowrap></div>')
             .after('<div style="position: relative; left: -32px" class="invisible position-relative spinner-border spinner-border-sm text-primary" role="status"></div>');
 
-        $('#superevent_id').typeahead({
+        $("[name='superevent_id']").typeahead({
             highlight: true,
             minLength: 0
         }, {
@@ -109,6 +137,20 @@
                 datumTokenizer: Bloodhound.tokenizers.whitespace,
                 remote: {
                     url: '{{ url_for('typeahead_superevent_id', superevent_id='TERM') }}',
+                    wildcard: 'TERM'
+                }
+            })
+        });
+
+        $("[name='event_id']").typeahead({
+            highlight: true,
+            minLength: 0
+        }, {
+            source: new Bloodhound({
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                datumTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: '{{ url_for('typeahead_event_id', event_id='TERM') }}',
                     wildcard: 'TERM'
                 }
             })
@@ -136,7 +178,7 @@
                 source: bloodhound
             });
 
-            $('#superevent_id').on('typeahead:change typeahead:select', ev => {
+            $(this).closest('form').find("input[name='superevent_id']").on('typeahead:change typeahead:select', ev => {
                 const superevent_id = $(ev.target).val();
                 bloodhound.prefetch.url = url.replace('SUPEREVENT_ID', superevent_id);
                 bloodhound.remote.url = url.replace('SUPEREVENT_ID', superevent_id);
