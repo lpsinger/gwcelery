@@ -120,9 +120,9 @@ def handle_cbc_event(alert):
         chi1 = extra_attributes['SingleInspiral'][0].get('spin1z', 0)
         chi2 = extra_attributes['SingleInspiral'][0].get('spin2z', 0)
 
-        # em_bright task based on pipeline
-        em_bright_task = em_bright.classifier_gstlal if pipeline == 'gstlal' \
-            else em_bright.classifier_other
+        # FIXME Changing em-bright to work on point estimates only
+        # for all pipelines until review is complete
+        em_bright_task = em_bright.classifier_other
 
         (
                 em_bright_task.si((mass1, mass2, chi1, chi2, snr), graceid)

@@ -299,8 +299,9 @@ def test_handle_cbc_event(mock_gracedb, mock_localize, mock_get_event):
     orchestrator.handle_cbc_event(alert)
     mock_localize.assert_called_once()
 
-
-@patch('gwcelery.tasks.em_bright.classifier_gstlal.run')
+# FIXME calling em-bright point estimates for all pipelines until review
+# is complete
+@patch('gwcelery.tasks.em_bright.classifier_other.run')
 def test_handle_cbc_event_new_event(mock_classifier):
     payload = {
         "uid": "G000003",

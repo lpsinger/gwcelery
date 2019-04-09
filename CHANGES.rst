@@ -8,6 +8,9 @@ Changelog
     directories to non-owner people so that rota people can check their
     progresses. The naming convention of the run directories changed.
 
+-   EM-Bright ML classification requires review, until then give answer
+    based on low-latency estimates.
+
 0.4.3 (2019-04-05)
 ------------------
 
