@@ -17,6 +17,9 @@ Changelog
 
 -   Add form to manually send a preliminary GCN Notice.
 
+-   Fix a typo in ``gwcelery.sub`` that caused the Flower dashboard to fail to
+    start.
+
 0.4.3 (2019-04-05)
 ------------------
 

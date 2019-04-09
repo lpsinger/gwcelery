@@ -57,7 +57,7 @@ error = gwcelery-flask.log
 output =
 queue
 
-arguments = "gwcelery flower --address 127.0.0.1"
+arguments = "gwcelery flower --address=127.0.0.1"
 description = gwcelery-flower
 error = gwcelery-flower.log
 output =
