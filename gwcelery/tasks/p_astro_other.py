@@ -1,7 +1,8 @@
-"""Module containing the computation of p_astro by source category
-   See https://dcc.ligo.org/LIGO-T1800072 for details.
+"""Computation of `p_astro` by source category.
+   See Kapadia et al (2019), arXiv:1903.06881, for details.
 """
 import json
+from os.path import basename
 from urllib import error, request
 
 from celery.utils.log import get_task_logger
@@ -49,7 +50,9 @@ def evaluate_p_astro_from_bayesfac(astro_bayesfac,
                                    mean_values_dict,
                                    mass1,
                                    mass2,
-                                   num_bins):
+                                   spin1z=None,
+                                   spin2z=None,
+                                   url_weights_key=None):
     """
     Evaluates `p_astro` for a new event using Bayes factor,
     masses, and number of astrophysical categories.
@@ -65,8 +68,12 @@ def evaluate_p_astro_from_bayesfac(astro_bayesfac,
         event mass1
     mass2 : float
         event mass2
-    num_bins: int
-        number of astrophysical categories
+    spin1z : float
+        event spin1z
+    spin2z : float
+        event spin2z
+    url_weights_key: str
+        url config key pointing to weights file
 
     Returns
     -------
@@ -74,12 +81,16 @@ def evaluate_p_astro_from_bayesfac(astro_bayesfac,
         p_astro for all source categories
     """
 
-    # Construct mass-based template-weights
-    a_hat_bns = int(mass1 <= 3 and mass2 <= 3)
-    a_hat_bbh = int(mass1 > 5 and mass2 > 5.)
-    a_hat_nsbh = int(min(mass1, mass2) <= 3 and
-                     max(mass1, mass2) > 5)
-    a_hat_mg = int(3 < mass1 <= 5 or 3 < mass2 <= 5)
+    if url_weights_key is None:
+        a_hat_bns, a_hat_bbh, a_hat_nsbh, a_hat_mg, num_bins = \
+            make_weights_from_hardcuts(mass1, mass2)
+    else:
+        a_hat_bns, a_hat_bbh, a_hat_nsbh, a_hat_mg, num_bins = \
+            make_weights_from_histograms(url_weights_key,
+                                         mass1,
+                                         mass2,
+                                         spin1z,
+                                         spin2z)
 
     # Compute category-wise Bayes factors
     # from astrophysical Bayes factor
@@ -107,15 +118,10 @@ def evaluate_p_astro_from_bayesfac(astro_bayesfac,
     return p_astro_values
 
 
-def read_mean_values(url):
+def read_mean_values():
     """
     Reads the mean values in the file pointed to by
     a url.
-
-    Parameters
-    ----------
-    url : string
-        url pointing at location of counts mean file
 
     Returns
     -------
@@ -124,8 +130,9 @@ def read_mean_values(url):
     """
 
     try:
-        response = request.urlopen(app.conf[url])
-        mean_values_dict = json.loads(response.read())
+        url_key = "p_astro_url"
+        response = request.urlopen(app.conf[url_key])
+        mean_values_dict = json.load(response)
         response.close()
     except (ValueError, error.URLError):
         # Fix mean values (1 per source category) from O1-O2
@@ -135,6 +142,125 @@ def read_mean_values(url):
                             "counts_MassGap": 2.40800240248,
                             "counts_Terrestrial": 3923}
     return mean_values_dict
+
+
+def make_weights_from_hardcuts(mass1, mass2):
+    """
+    Construct binary weights from component masses
+    based on cuts in component mass space that
+    define astrophyscal source categories.
+    To be used for MBTA, PyCBC and SPIIR.
+
+    Parameters
+    ----------
+    mass1 : float
+        heavier component mass of the event
+    mass2 : float
+        lighter component mass of the event
+
+    Returns
+    -------
+    a_bns, a_bbh, a_nshb, a_mg : floats
+        binary weights (i.e, 1 or 0)
+    """
+
+    a_hat_bns = int(mass1 <= 3 and mass2 <= 3)
+    a_hat_bbh = int(mass1 > 5 and mass2 > 5)
+    a_hat_nsbh = int(min(mass1, mass2) <= 3 and
+                     max(mass1, mass2) > 5)
+    a_hat_mg = int(3 < mass1 <= 5 or 3 < mass2 <= 5)
+    num_bins = 4
+
+    return a_hat_bns, a_hat_bbh, a_hat_nsbh, a_hat_mg, num_bins
+
+
+def closest_template(params, params_list):
+    """
+    Associate event's template to a template
+    in the template bank. The assumed bank
+    is the one used by Gstlal. Hence, for
+    Gstlal events, the association should
+    be exact, up to rounding errors.
+
+    Parameters
+    ----------
+    params : tuple of floats
+        intrinsic params of event template
+    params_list: list of strings
+        list of template bank's template params
+
+    Returns
+    -------
+    key : string
+        params of template in template bank
+        matching event's template
+    """
+    params_array = np.array(list(map(eval, params_list)))
+    idx = np.argmin(np.sum((params_array-params)**2, axis=1))
+    num_params = len(params_array[idx])
+    template = params_array[idx]
+    string = '(' + ', '.join(['{:3.8f}']*num_params) + ')'
+    key = string.format(*template)
+    return key
+
+
+def make_weights_from_histograms(url_weights_key,
+                                 mass1,
+                                 mass2,
+                                 spin1z,
+                                 spin2z):
+    """
+    Construct binary weights from bin number
+    provided by GstLAL, and a weights matrix
+    pre-constructed and stored in a file, to
+    be read from a url. The weights are keyed
+    on template parameters of Gstlal's template
+    bank. If that doesn't work, construct
+    binary weights.
+
+    Parameters
+    ----------
+    url_weights_key : string
+        url config key pointing at
+        location of weights file
+    mass1 : float
+        heavier component mass of the event
+    mass2 : float
+        lighter component mass of the event
+    spin1z : float
+        z component spin of heavier mass
+    spin2z : float
+        z component spin of lighter mass
+
+    Returns
+    -------
+    a_bns, a_bbh, a_nsbh, a_mg : floats
+        mass-based template weights
+    """
+
+    try:
+        response = request.urlopen(app.conf[url_weights_key])
+        activation_counts = json.load(response)
+        response.close()
+
+    except(ValueError, error.URLError):
+        activation_counts = None
+
+    if activation_counts is None:
+        a_hat_bns, a_hat_bbh, a_hat_nsbh, a_hat_mg, num_bins = \
+            make_weights_from_hardcuts(mass1, mass2)
+    else:
+        params = (mass1, mass2, spin1z, spin2z)
+        params_list = list(activation_counts.keys())
+        key = closest_template(params, params_list)
+        event_weights_dict = activation_counts[key]
+        source_types = np.sort(list(event_weights_dict.keys()))
+        a_hat_bbh, a_hat_bns, a_hat_mg, a_hat_nsbh = \
+            tuple([event_weights_dict[s] for s in source_types])
+        filename = basename(response.url)
+        num_bins = int(filename.split("-")[2].split("_")[1])
+
+    return a_hat_bns, a_hat_bbh, a_hat_nsbh, a_hat_mg, num_bins
 
 
 @app.task(shared=False)
@@ -166,7 +292,7 @@ def compute_p_astro(snr, far, mass1, mass2):
     """
 
     # Read mean values from file
-    mean_values_dict = read_mean_values(url="p_astro_url")
+    mean_values_dict = read_mean_values()
 
     # Define constants to compute bayesfactors
     snr_star = 8.5
@@ -182,7 +308,6 @@ def compute_p_astro(snr, far, mass1, mass2):
     p_astro_values = evaluate_p_astro_from_bayesfac(astro_bayesfac,
                                                     mean_values_dict,
                                                     mass1,
-                                                    mass2,
-                                                    num_bins=4)
+                                                    mass2)
     # Dump mean values in json file
     return json.dumps(p_astro_values)

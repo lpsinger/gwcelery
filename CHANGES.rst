@@ -11,6 +11,10 @@ Changelog
 -   EM-Bright ML classification requires review, until then give answer
     based on low-latency estimates.
 
+-   Compute P_astro with mass-based template weighting. Template weights
+    are now keyed on template parameters, rather than bin numbers. This
+    should make P_astro immune to binning conventions.
+
 0.4.3 (2019-04-05)
 ------------------
 

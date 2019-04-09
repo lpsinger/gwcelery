@@ -1,5 +1,5 @@
-"""Module containing the computation of p_astro by source category
-   See https://dcc.ligo.org/LIGO-T1800072 for details.
+"""Computation of `p_astro` by source category.
+   See Kapadia et al (2019), arXiv:1903.06881, for details.
 """
 import io
 import json
@@ -128,10 +128,10 @@ def _get_event_ln_likelihood_ratio_svd_endtime_mass(coinc_bytes):
                 for i in range(len(sngl_inspiral)-1)]), \
         "svd bank different between ifos!"
     return (coinc_event.likelihood,
-            coinc_inspiral.end_time,
-            coinc_inspiral.mass,
             sngl_inspiral[0].mass1,
             sngl_inspiral[0].mass2,
+            sngl_inspiral[0].spin1z,
+            sngl_inspiral[0].spin2z,
             coinc_inspiral.snr,
             coinc_inspiral.combined_far)
 
@@ -157,14 +157,15 @@ def compute_p_astro(files):
     >>> p_astros
     {'BNS': 0.999, 'BBH': 0.0, 'NSBH': 0.0, 'Terrestrial': 0.001}
     """
+    url_weights_key = "p_astro_weights_url"
     coinc_bytes, ranking_data_bytes = files
 
     # Acquire information pertaining to the event from coinc.xml
     # uploaded to GraceDB
     log.info(
-        'Fetching ln_likelihood_ratio, svd bin, endtime, mass from coinc.xml')
-    event_ln_likelihood_ratio, event_endtime, \
-        event_mass, event_mass1, event_mass2, snr, far = \
+        'Fetching event data from coinc.xml')
+    event_ln_likelihood_ratio, event_mass1, event_mass2, \
+        event_spin1z, event_spin2z, snr, far = \
         _get_event_ln_likelihood_ratio_svd_endtime_mass(coinc_bytes)
 
     # Using the zerolag log likelihood ratio value event,
@@ -186,7 +187,7 @@ def compute_p_astro(files):
     astro_bayesfac = np.exp(ln_f_over_b)[0]
 
     # Read mean values from url file
-    mean_values_dict = p_astro_other.read_mean_values(url="p_astro_url")
+    mean_values_dict = p_astro_other.read_mean_values()
 
     # Compute categorical p_astro values
     p_astro_values = \
@@ -194,7 +195,9 @@ def compute_p_astro(files):
                                                      mean_values_dict,
                                                      event_mass1,
                                                      event_mass2,
-                                                     num_bins=4)
+                                                     event_spin1z,
+                                                     event_spin2z,
+                                                     url_weights_key)
 
     # Dump values in json file
     return json.dumps(p_astro_values)
