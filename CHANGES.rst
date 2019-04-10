@@ -31,6 +31,9 @@ Changelog
     VOEvents in the playground instance. Fix this by having
     ``gwcelery.tasks.gcn.validate`` discard all VOEvents if the VOEvent
     broadcaster is disabled.
+    
+-   Update ligo-followup-advocate (the circular generating repo) version to
+    0.0.27.
 
 0.4.3 (2019-04-05)
 ------------------
