@@ -102,10 +102,20 @@ def send(self, message):
          gcn.NoticeType.LVC_INITIAL,
          gcn.NoticeType.LVC_UPDATE,
          gcn.NoticeType.LVC_RETRACTION,
-         shared=False)
-def validate(payload):
+         bind=True, shared=False)
+def validate(self, payload):
     """Check that the contents of a public LIGO/Virgo GCN matches the original
-    VOEvent in GraceDB."""
+    VOEvent in GraceDB.
+
+    Notes
+    -----
+    If the VOEvent broadcaster is disabled by setting
+    :obj:`~gwcelery.conf.voevent_broadcaster_whitelist` to an empty list, then
+    this task becomes a no-op."""
+
+    if not app.conf['voevent_broadcaster_whitelist']:
+        return
+
     root = lxml.etree.fromstring(payload)
 
     # Which GraceDB ID does this refer to?
