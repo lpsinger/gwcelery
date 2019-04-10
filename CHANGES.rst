@@ -30,10 +30,10 @@ Changelog
 -   Migrate the Flask and Flower dashboards from ldas-jobs.ligo.caltech.edu to
     emfollow.ligo.caltech.edu. The new URLs are:
 
-        * https://emfollow.ligo.caltech.edu/gwcelery
-        * https://emfollow.ligo.caltech.edu/flower
-        * https://emfollow.ligo.caltech.edu/playground/gwcelery
-        * https://emfollow.ligo.caltech.edu/playground/flower
+    *   https://emfollow.ligo.caltech.edu/gwcelery
+    *   https://emfollow.ligo.caltech.edu/flower
+    *   https://emfollow.ligo.caltech.edu/playground/gwcelery
+    *   https://emfollow.ligo.caltech.edu/playground/flower
 
     Remove the htaccess file from our public_html directory, since the reverse
     proxy configuration is now the responsibility of system administrators.
