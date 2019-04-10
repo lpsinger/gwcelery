@@ -8,12 +8,12 @@ Changelog
     directories to non-owner people so that rota people can check their
     progresses. The naming convention of the run directories changed.
 
--   EM-Bright ML classification requires review, until then give answer
-    based on low-latency estimates.
+-   EM-Bright ML classification requires review, until then give answer based
+    on low-latency estimates.
 
--   Compute P_astro with mass-based template weighting. Template weights
-    are now keyed on template parameters, rather than bin numbers. This
-    should make P_astro immune to binning conventions.
+-   Compute P_astro with mass-based template weighting. Template weights are
+    now keyed on template parameters, rather than bin numbers. This should make
+    P_astro immune to binning conventions.
 
 -   Add form to manually send a preliminary GCN Notice.
 
