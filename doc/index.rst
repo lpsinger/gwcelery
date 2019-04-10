@@ -3,7 +3,8 @@ GWCelery
 
 GWCelery is a simple and reliable package for annotating and orchestrating
 LIGO/Virgo alerts, built from widely used open source components. It is built
-on the :doc:`Celery <celery:index>` distributed task queue (hence the name). This is the design and reference manual for GWCelery.
+on the :doc:`Celery <celery:index>` distributed task queue (hence the name).
+This is the design and reference manual for GWCelery.
 
 GWCelery's responsibilities include:
 
