@@ -15,7 +15,7 @@ log = get_logger(__name__)
 
 __all__ = ('configure', 'DSN')
 
-DSN = 'http://localhost:9000/2'
+DSN = 'https://sentry.io/1425216'
 """Sentry data source name (DSN)."""
 
 

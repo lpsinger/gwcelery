@@ -22,6 +22,9 @@ Changelog
 
 -   Round iDQ p(glitch) to 3 decimal places in GraceDb log message.
 
+-   Switch log telemetry from the on-premise instance of Sentry at Caltech to a
+    cloud-hosted subscription to sentry.io.
+
 0.4.3 (2019-04-05)
 ------------------
 
