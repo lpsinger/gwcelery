@@ -75,6 +75,7 @@ spec.loader.exec_module(module)
 parsed_version = pkg_resources.parse_version(module.get_versions()['version'])
 del module, spec
 
+# The short X.Y version.
 version = parsed_version.base_version
 # The full version, including alpha/beta/rc tags.
 release = parsed_version.public
