@@ -20,6 +20,8 @@ Changelog
 -   Fix a typo in ``gwcelery.sub`` that caused the Flower dashboard to fail to
     start.
 
+-   Round iDQ p(glitch) to 3 decimal places in GraceDb log message.
+
 0.4.3 (2019-04-05)
 ------------------
 

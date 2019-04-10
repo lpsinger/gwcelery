@@ -377,9 +377,10 @@ def check_vectors(event, graceid, start, end):
     # Logging iDQ to GraceDb
     if None not in idq_probs.values():
         if max(idq_probs.values()) >= app.conf['idq_pglitch_thresh']:
+            idq_probs_readable = {k: round(v, 3) for k, v in idq_probs.items()}
             idq_msg = ("iDQ glitch probability is high: "
                        "maximum p(glitch) is {}. ").format(
-                json.dumps(idq_probs)[1:-1])
+                json.dumps(idq_probs_readable)[1:-1])
             # If iDQ p(glitch) is high and pipeline enabled, apply DQV
             if app.conf['idq_veto'][pipeline]:
                 gracedb.create_label('DQV', graceid)
