@@ -67,8 +67,6 @@ description = setup_cfg['metadata']['description']
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
-#
-# The short X.Y version.
 
 spec = importlib.util.spec_from_file_location(
     '_version', '../gwcelery/_version.py')
