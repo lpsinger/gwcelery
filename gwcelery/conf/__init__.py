@@ -197,15 +197,18 @@ classification is conducted. (Used by :mod:`gwcelery.tasks.em_bright`)
 low_latency_frame_types = {'H1': 'H1_O2_llhoft',
                            'L1': 'L1_O2_llhoft',
                            'V1': 'V1_O2_llhoft'}
-"""Types of frames used in Parameter Estimation with LALInference (see
-:mod:`gwcelery.tasks.lalinference`)"""
+"""Types of low latency frames used in Parameter Estimation with LALInference
+(see :mod:`gwcelery.tasks.lalinference`) and in cache creation for detchar
+checks (see :mod:`gwcelery.tasks.detchar`).
+"""
 
-high_latency_frame_types = {'H1': 'None',
-                            'L1': 'None',
-                            'V1': 'None'}
-"""Types of nonllhoft-frames used in Parameter Estimation with LALInference.
-They do not exist for O2Replay data. (see
-:mod:`gwcelery.tasks.lalinference`)"""
+high_latency_frame_types = {'H1': None,
+                            'L1': None,
+                            'V1': None}
+"""Types of high latency frames used in Parameter Estimation with LALInference
+and in cache creation for detchar checks. They do not exist for O2Replay data.
+(see :mod:`gwcelery.tasks.lalinference` and :mod:`gwcelery.tasks.detchar`)
+"""
 
 strain_channel_names = {'H1': 'H1:GDS-CALIB_STRAIN_O2Replay',
                         'L1': 'L1:GDS-CALIB_STRAIN_O2Replay',
