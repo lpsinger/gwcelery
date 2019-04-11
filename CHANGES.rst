@@ -8,7 +8,7 @@ Changelog
     directories to non-owner people so that rota people can check their
     progresses. The naming convention of the run directories changed.
 
--   EM-Bright ML classification requires review, until then give answer based
+-   EM-Bright ML classification requires review. Until then, give answer based
     on low-latency estimates.
 
 -   Compute P_astro with mass-based template weighting. Template weights are
@@ -25,9 +25,9 @@ Changelog
 -   Switch log telemetry from the on-premise instance of Sentry at Caltech to a
     cloud-hosted subscription to sentry.io.
 
--   In the playground configuration, the ``gwcelery.tasks.gcn.validate`` was
-    producing false alarms because the GCN receiver was receiving VOEvents from
-    the production instance, which would certainly differ in content from
+-   In the playground configuration, the ``gwcelery.tasks.gcn.validate`` task
+    was producing false alarms because the GCN receiver was receiving VOEvents
+    from the production instance, which would certainly differ in content from
     VOEvents in the playground instance. Fix this by having
     ``gwcelery.tasks.gcn.validate`` discard all VOEvents if the VOEvent
     broadcaster is disabled.
