@@ -1,47 +1,87 @@
 import json
-from urllib import request
-from unittest.mock import patch
 
+import pkg_resources
 import pytest
 
+from .. import app
 from ..tasks import p_astro_other
 
 
-class MockResponse(object):
-    def read(self):
-        return json.dumps({
-            "counts_BNS": 2,
-            "counts_BBH": 10,
-            "counts_NSBH": 1,
-            "counts_Terrestrial": 4000,
-            "counts_MassGap": 1})
+@pytest.fixture
+def mock_url(monkeypatch):
+    def _urlfunc(url):
+        filename_m = "data/H1L1V1-mean_counts-1126051217-61603201.json"
+        filename_t = "data/H1L1V1-pipeline-far_snr-thresholds.json"
+        if url == app.conf['p_astro_url']:
+            return pkg_resources.resource_stream(__name__, filename_m)
+        elif url == app.conf['p_astro_thresh_url']:
+            return pkg_resources.resource_stream(__name__, filename_t)
 
-    def close(self):
-        pass
+    monkeypatch.setattr('urllib.request.urlopen', _urlfunc)
 
 
 @pytest.mark.parametrize(
-    'snr,far,mass1,mass2', ([30., 1e-17, 1.4, 1.4],
-                            [100, 1e-10, 400, 40]))
-@patch.object(request, 'urlopen', return_value=MockResponse())
-def test_compute_p_astro(mock_response, snr, far, mass1, mass2):
+    'snr,far,mass1,mass2,pipeline,instruments',
+    ([30., 1e-17, 1.4, 1.4, 'mbtaonline', 'H1,L1,V1'],
+     [100, 3e-10, 400, 40, 'mbtaonline', 'H1,L1'],
+     [10, 3e-10, 20, 30, 'pycbc', 'L1,V1']))
+def test_compute_p_astro(snr, far, mass1, mass2,
+                         pipeline, instruments,
+                         mock_url):
     """Check if p_astros sum up to unity"""
     p_astros = json.loads(
-        p_astro_other.compute_p_astro(snr, far, mass1, mass2))
+        p_astro_other.compute_p_astro(snr, far, mass1, mass2,
+                                      pipeline, instruments))
     assert pytest.approx(sum(p_astros.values())) == 1.
 
 
-@patch.object(request, 'urlopen', return_value=MockResponse())
-def test_compute_p_astro_bns(mock_response):
-    """Test p_astro values with CBC catalog paper
-    values for GW170817
+@pytest.mark.parametrize(
+    'far,pipeline,instruments,snr_thresh,val',
+    ([1e-25, 'mbtaonline', 'H1,L1,V1', 12, 1],
+     [1e-8, 'mbtaonline', 'L1,V1', 33, 0],
+     [6e-10, 'mbtaonline', 'H1,V1', 10, 0.20],
+     [7.6e-59, 'spiir', 'H1,L1,V1', 33, 1],
+     [1e-10, 'pycbc', 'H1,L1', 10, 0.60]))
+def test_compute_p_astro_bns(far, pipeline, instruments,
+                             snr_thresh, val, mock_url):
+    """Test p_astro values using CBC catalog paper
+    values for GW170817, for various mock-FARs, to test
+    handling of this very loud event for MBTA, PyCBC
+    and spiir.
     """
     # values based on G322759
     snr = 33.
-    far = 7.6e-59
     mass1 = 1.77
     mass2 = 1.07
 
     p_astros = json.loads(
-        p_astro_other.compute_p_astro(snr, far, mass1, mass2))
-    assert pytest.approx(p_astros['BNS']) == 1.
+        p_astro_other.compute_p_astro(snr, far, mass1, mass2,
+                                      pipeline, instruments))
+
+    snr_choice = p_astro_other.choose_snr(far, snr,
+                                          pipeline, instruments)
+    assert pytest.approx(snr_thresh, abs=1e-2) == snr_choice
+    assert pytest.approx(p_astros['BNS'], abs=1e-2) == val
+
+
+@pytest.mark.parametrize(
+    'pipeline,instruments,far,snr,snr_c',
+    (['mbtaonline', 'H1,L1', 4e-10, 50, 50],
+     ['mbtaonline', 'H1,L1', 2e-10, 50, 10],
+     ['mbtaonline', 'L1,V1', 8e-10, 50, 50],
+     ['mbtaonline', 'L1,V1', 6e-10, 50, 10],
+     ['mbtaonline', 'H1,V1', 8e-10, 50, 50],
+     ['mbtaonline', 'H1,V1', 6e-10, 50, 10],
+     ['mbtaonline', 'H1,L1,V1', 1e-13, 50, 50],
+     ['mbtaonline', 'H1,L1,V1', 1e-15, 50, 12],
+     ['pycbc', 'H1,L1', 4e-10, 50, 50],
+     ['pycbc', 'H1,L1', 2e-10, 50, 10],
+     ['spiir', 'H1,L1', 4e-20, 50, 50]))
+def test_compute_choose_snr(pipeline, instruments, far,
+                            snr, snr_c, mock_url):
+    """For various mock-FARs, test the snr returned for
+       very loud MBTA, PyCBC and spiir events.
+    """
+    snr_choice = p_astro_other.choose_snr(far, snr,
+                                          pipeline, instruments)
+    assert pytest.approx(snr_choice, abs=1e-2) == snr_c

@@ -117,6 +117,7 @@ def handle_cbc_event(alert):
     # em_bright and p_astro calculation
     if alert['alert_type'] == 'new':
         pipeline = alert['object']['pipeline'].lower()
+        instruments = alert['object']['instruments']
         extra_attributes = alert['object']['extra_attributes']
         snr = extra_attributes['CoincInspiral']['snr']
         far = alert['object']['far']
@@ -147,7 +148,12 @@ def handle_cbc_event(alert):
         # p_astro calculation for other pipelines
         if pipeline != 'gstlal' or alert['object']['search'] == 'MDC':
             (
-                p_astro_other.compute_p_astro.s(snr, far, mass1, mass2)
+                p_astro_other.compute_p_astro.s(snr,
+                                                far,
+                                                mass1,
+                                                mass2,
+                                                pipeline,
+                                                instruments)
                 |
                 gracedb.upload.s(
                     'p_astro.json', graceid,

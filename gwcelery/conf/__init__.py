@@ -183,6 +183,12 @@ p_astro_weights_url = 'http://emfollow.ldas.cit/data/' \
 is computed. (Used by :mod:`gwcelery.tasks.p_astro_gstlal`)
 """
 
+p_astro_thresh_url = 'http://emfollow.ldas.cit/data/' \
+    'H1L1V1-pipeline-far_snr-thresholds.json'
+"""URL for pipeline thresholds on FAR and SNR.
+(Used by :mod:`gwcelery.tasks.p_astro_other`)
+"""
+
 em_bright_url = 'http://emfollow.ldas.cit/data/em_bright_classifier.pickle'
 """URL for trained RandomForestClassifier based on which em_bright
 classification is conducted. (Used by :mod:`gwcelery.tasks.em_bright`)

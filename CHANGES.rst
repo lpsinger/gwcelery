@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.4.5 (unreleased)
+------------------
+
+-   Ensure that P_astro accounts for very loud MBTA and PyCBC events,
+    whose FAR saturate at certain low values depending on instrument
+    combination, but whose SNRs can increase indefinitely.
+
 0.4.4 (unreleased)
 ------------------
 

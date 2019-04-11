@@ -1,6 +1,6 @@
-import json
 from unittest.mock import patch
 
+import json
 import numpy as np
 import pkg_resources
 import pytest
@@ -9,27 +9,15 @@ from .. import app
 from ..tasks import p_astro_gstlal
 
 
-class MockResponseWeights(object):
-    def __init__(self):
-        self.url = "data/H1L1V1-weights-bins_686-1126051217-61603201.json"
-
-    def read(self):
-        with pkg_resources.resource_stream(__name__, self.url) as f:
-            return f.read()
-
-    def close(self):
-        pass
-
-
 @pytest.fixture
 def mock_url(monkeypatch):
     def _urlfunc(url):
-        filename = "data/H1L1V1-weights-bins_686-1126051217-61603201.json"
+        filename_m = "data/H1L1V1-mean_counts-1126051217-61603201.json"
+        filename_w = "data/H1L1V1-weights-bins_686-1126051217-61603201.json"
         if url == app.conf['p_astro_url']:
-            with pkg_resources.resource_stream(__name__, filename) as f:
-                return f
+            return pkg_resources.resource_stream(__name__, filename_m)
         elif url == app.conf['p_astro_weights_url']:
-            return MockResponseWeights()
+            return pkg_resources.resource_stream(__name__, filename_w)
 
     monkeypatch.setattr('urllib.request.urlopen', _urlfunc)
 

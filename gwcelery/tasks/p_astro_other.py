@@ -257,21 +257,62 @@ def make_weights_from_histograms(url_weights_key,
         source_types = np.sort(list(event_weights_dict.keys()))
         a_hat_bbh, a_hat_bns, a_hat_mg, a_hat_nsbh = \
             tuple([event_weights_dict[s] for s in source_types])
-        filename = basename(response.url)
+        filename = basename(app.conf[url_weights_key])
         num_bins = int(filename.split("-")[2].split("_")[1])
 
     return a_hat_bns, a_hat_bbh, a_hat_nsbh, a_hat_mg, num_bins
 
 
+def choose_snr(far, snr, pipeline, instruments):
+    """
+    Given a pipeline and combination of instruments,
+    return an SNR that does not exceed the SNR
+    threshold for FARs below a FAR threshold.
+    The SNR and FAR thresholds are read from a
+    file containing these values keyed on pipelines
+    and instrument combinations.
+
+    Parameters
+    ----------
+    far : float
+        false alarm rate of the event
+    snr : float
+        SNR of the event
+    pipeline : string
+        pipeline that posted the event
+    instruments : string
+        instruments that detected the event
+
+    Returns
+    -------
+    snr : float
+        limiting SNR value
+    """
+
+    response = request.urlopen(app.conf["p_astro_thresh_url"])
+    threshold_dict = json.load(response)
+    response.close()
+
+    inst_sorted = ",".join(sorted(instruments.split(",")))
+    far_t = threshold_dict[pipeline][inst_sorted]["far"]
+    snr_t = threshold_dict[pipeline][inst_sorted]["snr"]
+    if far < far_t and snr > snr_t:
+        snr_choice = snr_t
+    else:
+        snr_choice = snr
+
+    return snr_choice
+
+
 @app.task(shared=False)
-def compute_p_astro(snr, far, mass1, mass2):
+def compute_p_astro(snr, far, mass1, mass2, pipeline, instruments):
     """
     Task to compute `p_astro` by source category.
 
     Parameters
     ----------
     snr : float
-        event's snr
+        event's SNR
     far : float
         event's cfar
     mass1 : float
@@ -291,6 +332,10 @@ def compute_p_astro(snr, far, mass1, mass2):
     {'BNS': 0.999, 'BBH': 0.0, 'NSBH': 0.0, 'Terrestrial': 0.001}
     """
 
+    # Ensure SNR does not increase indefinitely beyond limiting FAR
+    # for MBTA and PyCBC events
+    snr_choice = choose_snr(far, snr, pipeline, instruments)
+
     # Read mean values from file
     mean_values_dict = read_mean_values()
 
@@ -300,7 +345,7 @@ def compute_p_astro(snr, far, mass1, mass2):
 
     # Compute astrophysical bayesfactor for
     # GraceDB event
-    fground = 3 * snr_star**3 / (snr**4)
+    fground = 3 * snr_star**3 / (snr_choice**4)
     bground = far / far_star
     astro_bayesfac = fground / bground
 
