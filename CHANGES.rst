@@ -34,6 +34,9 @@ Changelog
 
 -   Update ligo-followup-advocate to 0.0.27.
 
+-   Wait for 1 minute before parameter estimation in case the preferred event
+    is updated with high latency.
+
 0.4.3 (2019-04-05)
 ------------------
 

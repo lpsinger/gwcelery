@@ -93,6 +93,11 @@ creation of a new superevent to the time that annotations begin, in order
 to let the superevent manager's decision on the preferred event
 stabilize."""
 
+pe_timeout = 60.0
+"""The orchestrator will wait this many seconds from the time of the
+creation of a new superevent to the time that parameter estimation begins, in
+case the preferred event is updated with high latency."""
+
 check_vector_prepost = {'gstlal': [2, 2],
                         'spiir': [2, 2],
                         'pycbc': [2, 2],

@@ -49,14 +49,23 @@ def handle_superevent(alert):
             |
             gracedb.get_event.s()
             |
-            group(
-                detchar.check_vectors.s(superevent_id, start, end)
-                |
-                preliminary_alert.s(superevent_id),
-
-                parameter_estimation.s(superevent_id)
-            )
+            detchar.check_vectors.s(superevent_id, start, end)
+            |
+            preliminary_alert.s(superevent_id)
         ).apply_async()
+
+        # Wait for longer time before parameter estimation in case the
+        # preferred event is updated with high latency.
+        (
+            _get_preferred_event.si(superevent_id).set(
+                countdown=app.conf['pe_timeout']
+            )
+            |
+            gracedb.get_event.s()
+            |
+            parameter_estimation.s(superevent_id)
+        ).apply_async()
+
     # check DQV label on superevent, run check_vectors if required
     elif alert['alert_type'] == 'event_added':
         new_event_id = alert['data']['preferred_event']
