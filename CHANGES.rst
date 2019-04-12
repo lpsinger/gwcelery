@@ -1,13 +1,6 @@
 Changelog
 =========
 
-0.4.5 (unreleased)
-------------------
-
--   Ensure that P_astro accounts for very loud MBTA and PyCBC events,
-    whose FAR saturate at certain low values depending on instrument
-    combination, but whose SNRs can increase indefinitely.
-
 0.4.4 (unreleased)
 ------------------
 
@@ -43,6 +36,10 @@ Changelog
 
 -   Wait for 1 minute before parameter estimation in case the preferred event
     is updated with high latency.
+
+-   Ensure that P_astro accounts for very loud MBTA and PyCBC events,
+    whose FAR saturate at certain low values depending on instrument
+    combination, but whose SNRs can increase indefinitely.
 
 0.4.3 (2019-04-05)
 ------------------
