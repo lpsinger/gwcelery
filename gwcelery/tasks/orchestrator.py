@@ -117,7 +117,7 @@ def handle_cbc_event(alert):
     # em_bright and p_astro calculation
     if alert['alert_type'] == 'new':
         pipeline = alert['object']['pipeline'].lower()
-        instruments = alert['object']['instruments']
+        instruments = gracedb.get_instruments(graceid)
         extra_attributes = alert['object']['extra_attributes']
         snr = extra_attributes['CoincInspiral']['snr']
         far = alert['object']['far']
@@ -321,7 +321,7 @@ def preliminary_alert(event, superevent_id):
         app.conf['preliminary_alert_trials_factor'][event['group'].lower()]
     far_threshold = \
         app.conf['preliminary_alert_far_threshold'][event['group'].lower()]
-    num_ifos = gracedb.get_number_of_instruments(preferred_event_id)
+    num_ifos = len(gracedb.get_instruments(preferred_event_id))
     should_publish = (
         not event['offline']
         and trials_factor * event['far'] <= far_threshold

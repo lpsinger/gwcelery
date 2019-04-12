@@ -94,8 +94,8 @@ def test_update_preferred_event(mock_db):
                     far=1e-30,
                     snr=30.0)
     with patch.object(gracedb.client, 'updateSuperevent') as p, \
-            patch('gwcelery.tasks.gracedb.get_number_of_instruments',
-                  return_value=5):
+            patch('gwcelery.tasks.gracedb.get_instruments',
+                  return_value={'I1', 'J1', 'K1', 'L1', 'M1'}):
         superevents._update_superevent('S0039',
                                        'T0212',
                                        mock_response(),
@@ -163,8 +163,8 @@ def test_upload_same_event():
     }
     with patch.object(gracedb.client, 'addEventToSuperevent') as p1, \
             patch.object(gracedb.client, 'updateSuperevent') as p2, \
-            patch('gwcelery.tasks.gracedb.get_number_of_instruments',
-                  return_value=2):
+            patch('gwcelery.tasks.gracedb.get_instruments',
+                  return_value={'H1', 'L1'}):
         superevents.handle(payload)
         p1.assert_called_once()
         p2.assert_not_called()
@@ -176,7 +176,7 @@ def test_parse_trigger_raising():
         superevents.handle(garbage_payload)
 
 
-@patch('gwcelery.tasks.gracedb.get_number_of_instruments', return_value=2)
+@patch('gwcelery.tasks.gracedb.get_instruments', return_value={'H1', 'L1'})
 def test_parse_trigger_cbc_1(mock_db):
     """New trigger G000000, less significant than already
     existing superevent. Superevent window much larger than event
@@ -202,7 +202,7 @@ def test_parse_trigger_cbc_1(mock_db):
         p2.assert_not_called()
 
 
-@patch('gwcelery.tasks.gracedb.get_number_of_instruments', return_value=2)
+@patch('gwcelery.tasks.gracedb.get_instruments', return_value={'H1', 'L1'})
 def test_parse_trigger_cbc_2(mock_db):
     """New trigger G000003, more significant than already
     existing superevent. Superevent window is much larger that
@@ -271,7 +271,7 @@ def test_parse_trigger_cbc_4(mock_db):
         p2.assert_not_called()
 
 
-@patch('gwcelery.tasks.gracedb.get_number_of_instruments', return_value=2)
+@patch('gwcelery.tasks.gracedb.get_instruments', return_value={'H1', 'L1'})
 def test_parse_trigger_burst_1(mock_db):
     """New cwb trigger G000005 with gpstime lying partially in
     S0039 window, not more significant than existing preferred
@@ -302,7 +302,7 @@ def test_parse_trigger_burst_1(mock_db):
                                    t_start=pytest.approx(1163905214, abs=1))
 
 
-@patch('gwcelery.tasks.gracedb.get_number_of_instruments', return_value=2)
+@patch('gwcelery.tasks.gracedb.get_instruments', return_value={'H1', 'L1'})
 def test_parse_trigger_burst_2(mock_db):
     """New oLIB trigger G000006 with gpstime lying partially in
     S0039 window, more significant than already existing preferred
@@ -387,7 +387,7 @@ def test_parse_trigger_burst_4(mock_db):
         p.assert_called_once()
 
 
-@patch('gwcelery.tasks.gracedb.get_number_of_instruments', return_value=1)
+@patch('gwcelery.tasks.gracedb.get_instruments', return_value={'H1'})
 def test_single_ifo_1(mock_db):
     """New single IFO trigger G000009 same event attributes as
     G000000 (except single IFO). Will be added to superevent"""
@@ -413,8 +413,8 @@ def test_single_ifo_1(mock_db):
         p2.assert_not_called()
 
 
-@patch('gwcelery.tasks.gracedb.get_number_of_instruments',
-       lambda _: 1 if _ == 'G000010' else 2)
+@patch('gwcelery.tasks.gracedb.get_instruments',
+       lambda _: {'H1'} if _ == 'G000010' else {'H1', 'L1'})
 def test_single_ifo_2(mock_db):
     """New single IFO trigger G000010 same event attributed as G000003
     (except single IFO). More significant than existing superevent, but
@@ -442,8 +442,8 @@ def test_single_ifo_2(mock_db):
         p2.assert_not_called()
 
 
-@patch('gwcelery.tasks.gracedb.get_number_of_instruments',
-       lambda _: 2 if _ == 'G000011' else 1)
+@patch('gwcelery.tasks.gracedb.get_instruments',
+       lambda _: {'H1', 'L1'} if _ == 'G000011' else {'H1'})
 def test_single_ifo_3(mock_db):
     """New multi-IFO trigger CBC trigger G000011. Existing
     preferred event is a single IFO. Preferred event
@@ -476,8 +476,8 @@ def test_single_ifo_3(mock_db):
             t_start=pytest.approx(1163905213.44, abs=1e-3))
 
 
-@patch('gwcelery.tasks.gracedb.get_number_of_instruments',
-       lambda _: 1 if _ == 'G000013' else 2)
+@patch('gwcelery.tasks.gracedb.get_instruments',
+       lambda _: {'H1'} if _ == 'G000013' else {'H1', 'L1'})
 def test_single_ifo_4(mock_db):
     """Preferred event in superevent is a Multi-IFO Burst,
     new trigger is a CBC single. Preferred event is not updated

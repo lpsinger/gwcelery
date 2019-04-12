@@ -22,9 +22,9 @@ def mock_url(monkeypatch):
 
 @pytest.mark.parametrize(
     'snr,far,mass1,mass2,pipeline,instruments',
-    ([30., 1e-17, 1.4, 1.4, 'mbtaonline', 'H1,L1,V1'],
-     [100, 3e-10, 400, 40, 'mbtaonline', 'H1,L1'],
-     [10, 3e-10, 20, 30, 'pycbc', 'L1,V1']))
+    ([30., 1e-17, 1.4, 1.4, 'mbtaonline', {'H1', 'L1', 'V1'}],
+     [100, 3e-10, 400, 40, 'mbtaonline', {'H1', 'L1'}],
+     [10, 3e-10, 20, 30, 'pycbc', {'L1', 'V1'}]))
 def test_compute_p_astro(snr, far, mass1, mass2,
                          pipeline, instruments,
                          mock_url):
@@ -37,11 +37,11 @@ def test_compute_p_astro(snr, far, mass1, mass2,
 
 @pytest.mark.parametrize(
     'far,pipeline,instruments,snr_thresh,val',
-    ([1e-25, 'mbtaonline', 'H1,L1,V1', 12, 1],
-     [1e-8, 'mbtaonline', 'L1,V1', 33, 0],
-     [6e-10, 'mbtaonline', 'H1,V1', 10, 0.20],
-     [7.6e-59, 'spiir', 'H1,L1,V1', 33, 1],
-     [1e-10, 'pycbc', 'H1,L1', 10, 0.60]))
+    ([1e-25, 'mbtaonline', {'H1', 'L1', 'V1'}, 12, 1],
+     [1e-8, 'mbtaonline', {'L1', 'V1'}, 33, 0],
+     [6e-10, 'mbtaonline', {'H1', 'V1'}, 10, 0.20],
+     [7.6e-59, 'spiir', {'H1', 'L1', 'V1'}, 33, 1],
+     [1e-10, 'pycbc', {'H1', 'L1'}, 10, 0.60]))
 def test_compute_p_astro_bns(far, pipeline, instruments,
                              snr_thresh, val, mock_url):
     """Test p_astro values using CBC catalog paper
@@ -66,17 +66,17 @@ def test_compute_p_astro_bns(far, pipeline, instruments,
 
 @pytest.mark.parametrize(
     'pipeline,instruments,far,snr,snr_c',
-    (['mbtaonline', 'H1,L1', 4e-10, 50, 50],
-     ['mbtaonline', 'H1,L1', 2e-10, 50, 10],
-     ['mbtaonline', 'L1,V1', 8e-10, 50, 50],
-     ['mbtaonline', 'L1,V1', 6e-10, 50, 10],
-     ['mbtaonline', 'H1,V1', 8e-10, 50, 50],
-     ['mbtaonline', 'H1,V1', 6e-10, 50, 10],
-     ['mbtaonline', 'H1,L1,V1', 1e-13, 50, 50],
-     ['mbtaonline', 'H1,L1,V1', 1e-15, 50, 12],
-     ['pycbc', 'H1,L1', 4e-10, 50, 50],
-     ['pycbc', 'H1,L1', 2e-10, 50, 10],
-     ['spiir', 'H1,L1', 4e-20, 50, 50]))
+    (['mbtaonline', {'H1', 'L1'}, 4e-10, 50, 50],
+     ['mbtaonline', {'H1', 'L1'}, 2e-10, 50, 10],
+     ['mbtaonline', {'L1', 'V1'}, 8e-10, 50, 50],
+     ['mbtaonline', {'L1', 'V1'}, 6e-10, 50, 10],
+     ['mbtaonline', {'H1', 'V1'}, 8e-10, 50, 50],
+     ['mbtaonline', {'H1', 'V1'}, 6e-10, 50, 10],
+     ['mbtaonline', {'H1', 'L1', 'V1'}, 1e-13, 50, 50],
+     ['mbtaonline', {'H1', 'L1', 'V1'}, 1e-15, 50, 12],
+     ['pycbc', {'H1', 'L1'}, 4e-10, 50, 50],
+     ['pycbc', {'H1', 'L1'}, 2e-10, 50, 10],
+     ['spiir', {'H1', 'L1'}, 4e-20, 50, 50]))
 def test_compute_choose_snr(pipeline, instruments, far,
                             snr, snr_c, mock_url):
     """For various mock-FARs, test the snr returned for

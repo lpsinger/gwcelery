@@ -280,8 +280,8 @@ def choose_snr(far, snr, pipeline, instruments):
         SNR of the event
     pipeline : string
         pipeline that posted the event
-    instruments : string
-        instruments that detected the event
+    instruments : set
+        set of instruments that detected the event
 
     Returns
     -------
@@ -293,7 +293,7 @@ def choose_snr(far, snr, pipeline, instruments):
     threshold_dict = json.load(response)
     response.close()
 
-    inst_sorted = ",".join(sorted(instruments.split(",")))
+    inst_sorted = ",".join(sorted(instruments))
     far_t = threshold_dict[pipeline][inst_sorted]["far"]
     snr_t = threshold_dict[pipeline][inst_sorted]["snr"]
     if far < far_t and snr > snr_t:
@@ -319,6 +319,8 @@ def compute_p_astro(snr, far, mass1, mass2, pipeline, instruments):
         event's mass1
     mass2 : float
         event's mass2
+    instruments : set
+        set of instruments that detected the event
 
     Returns
     -------

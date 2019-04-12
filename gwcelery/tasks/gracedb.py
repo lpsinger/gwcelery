@@ -98,9 +98,9 @@ def get_log(graceid):
 
 
 @task(shared=False)
-def get_number_of_instruments(gracedb_id):
-    """Get the number of gravitational-wave instruments that contributed to the
-    ranking statistic of a coincident event.
+def get_instruments(gracedb_id):
+    """Get the set of instruments that contributed to the ranking statistic of
+    a coincident event.
 
     Parameters
     ----------
@@ -109,8 +109,8 @@ def get_number_of_instruments(gracedb_id):
 
     Returns
     -------
-    int
-        The number of instruments that contributed to the ranking statistic for
+    set
+        The set of instruments that contributed to the ranking statistic for
         the event.
 
     Notes
@@ -128,9 +128,10 @@ def get_number_of_instruments(gracedb_id):
     try:
         singles = attrib['SingleInspiral']
     except KeyError:
-        return len(event.get('instruments', '').split(','))
+        return set(event.get('instruments', '').split(','))
     else:
-        return sum(single.get('chisq') is not None for single in singles)
+        return {single.ifo for single in singles
+                if single.get('chisq') is not None}
 
 
 @task(shared=False)
