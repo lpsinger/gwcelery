@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.5.0 (unreleased)
+0.5.0 (2019-04-12)
 ------------------
 
 -   Give permissions to read the files under parameter estimation run
