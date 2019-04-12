@@ -113,7 +113,7 @@ def validate(self, payload):
     :obj:`~gwcelery.conf.voevent_broadcaster_whitelist` to an empty list, then
     this task becomes a no-op."""
 
-    if not app.conf['voevent_broadcaster_whitelist']:
+    if not self.app.conf['voevent_broadcaster_whitelist']:
         return
 
     root = lxml.etree.fromstring(payload)
