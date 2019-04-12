@@ -15,9 +15,9 @@ log = get_task_logger(__name__)
 
 def p_astro_update(category, event_bayesfac_dict, mean_values_dict):
     """
-    Compute `p_astro` for a new event using mean values
-    of Poisson expected counts constructed from all the
-    previous events. Invoked with every new GraceDB entry.
+    Compute `p_astro` for a new event using mean values of Poisson expected
+    counts constructed from all the previous events. Invoked with every new
+    GraceDB entry.
 
     Parameters
     ----------
@@ -54,9 +54,8 @@ def evaluate_p_astro_from_bayesfac(astro_bayesfac,
                                    spin2z=None,
                                    url_weights_key=None):
     """
-    Evaluates `p_astro` for a new event using Bayes factor,
-    masses, and number of astrophysical categories.
-    Invoked with every new GraceDB entry.
+    Evaluates `p_astro` for a new event using Bayes factor, masses, and number
+    of astrophysical categories. Invoked with every new GraceDB entry.
 
     Parameters
     ----------
@@ -120,8 +119,7 @@ def evaluate_p_astro_from_bayesfac(astro_bayesfac,
 
 def read_mean_values():
     """
-    Reads the mean values in the file pointed to by
-    a url.
+    Reads the mean values in the file pointed to by a url.
 
     Returns
     -------
@@ -146,10 +144,9 @@ def read_mean_values():
 
 def make_weights_from_hardcuts(mass1, mass2):
     """
-    Construct binary weights from component masses
-    based on cuts in component mass space that
-    define astrophyscal source categories.
-    To be used for MBTA, PyCBC and SPIIR.
+    Construct binary weights from component masses based on cuts in component
+    mass space that define astrophysical source categories. To be used for
+    MBTA, PyCBC and SPIIR.
 
     Parameters
     ----------
@@ -176,11 +173,9 @@ def make_weights_from_hardcuts(mass1, mass2):
 
 def closest_template(params, params_list):
     """
-    Associate event's template to a template
-    in the template bank. The assumed bank
-    is the one used by Gstlal. Hence, for
-    Gstlal events, the association should
-    be exact, up to rounding errors.
+    Associate event's template to a template in the template bank. The assumed
+    bank is the one used by Gstlal. Hence, for Gstlal events, the association
+    should be exact, up to rounding errors.
 
     Parameters
     ----------
@@ -210,13 +205,10 @@ def make_weights_from_histograms(url_weights_key,
                                  spin1z,
                                  spin2z):
     """
-    Construct binary weights from bin number
-    provided by GstLAL, and a weights matrix
-    pre-constructed and stored in a file, to
-    be read from a url. The weights are keyed
-    on template parameters of Gstlal's template
-    bank. If that doesn't work, construct
-    binary weights.
+    Construct binary weights from bin number provided by GstLAL, and a weights
+    matrix pre-constructed and stored in a file, to be read from a url. The
+    weights are keyed on template parameters of Gstlal's template bank. If that
+    doesn't work, construct binary weights.
 
     Parameters
     ----------
@@ -265,12 +257,10 @@ def make_weights_from_histograms(url_weights_key,
 
 def choose_snr(far, snr, pipeline, instruments):
     """
-    Given a pipeline and combination of instruments,
-    return an SNR that does not exceed the SNR
-    threshold for FARs below a FAR threshold.
-    The SNR and FAR thresholds are read from a
-    file containing these values keyed on pipelines
-    and instrument combinations.
+    Given a pipeline and combination of instruments, return an SNR that does
+    not exceed the SNR threshold for FARs below a FAR threshold. The SNR and
+    FAR thresholds are read from a file containing these values keyed on
+    pipelines and instrument combinations.
 
     Parameters
     ----------

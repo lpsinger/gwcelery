@@ -35,8 +35,8 @@ class _RankingStatPDF(object):
     @classmethod
     def from_xml(cls, xml, name):
         """
-        Find the root of the XML tree containing the
-        serialization of this object
+        Find the root of the XML tree containing the serialization of this
+        object
         """
         xml, = [elem for elem in
                 xml.getElementsByTagName(ligolw.LIGO_LW.tagName)
