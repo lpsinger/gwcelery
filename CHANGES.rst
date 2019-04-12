@@ -44,6 +44,9 @@ Changelog
 -   When a user triggers a Preliminary or Update alert through the Flask
     interface, create a GraceDB log message to record the username.
 
+-   The Flask interface will now show a confirmation dialog before sending any
+    alerts.
+
 0.4.3 (2019-04-05)
 ------------------
 
