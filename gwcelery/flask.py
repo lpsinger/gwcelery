@@ -10,8 +10,19 @@ from . import app as celery_app
 __all__ = ('app', 'cache')
 
 
+# From http://flask.pocoo.org/snippets/69/
+class RemoteUserMiddleware(object):
+    def __init__(self, app):
+        self.app = app
+    def __call__(self, environ, start_response):
+        user = environ.pop('HTTP_X_PROXY_REMOTE_USER', None)
+        environ['REMOTE_USER'] = user
+        return self.app(environ, start_response)
+
+
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_host=1, x_prefix=1)
+app.wsgi_app = RemoteUserMiddleware(app.wsgi_app)
 
 # Default secret key: secure and random. However, sessions are not preserved
 # across different Python processes.
