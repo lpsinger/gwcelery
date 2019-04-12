@@ -166,7 +166,8 @@ open SCCB issue for release:
 
       #### Description
 
-      See [change log]($CI_PROJECT_URL/blob/master/CHANGES.rst).
+      See [change log]($CI_PROJECT_URL/blob/master/CHANGES.rst) and
+      [diff from last release](https://git.ligo.org/emfollow/gwcelery/compare/v${LAST_VERSION}...v${VERSION}).
 
       #### Distributions
 
