@@ -1,6 +1,6 @@
+import json
 from unittest.mock import patch
 
-import json
 import numpy as np
 import pkg_resources
 import pytest
