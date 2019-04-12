@@ -22,11 +22,23 @@
             {% endfor %}
         {% endif %}
     {% endwith %}
-    <div class="card mb-3">
+    <div class="card text-white bg-danger mb-3">
         <div class=card-header>
-            Configuration
+            DANGER ZONE
         </div>
         <div class=card-body>
+            <p>
+                This page is a dashboard for sending LIGO/Virgo public alerts.
+                You can view it because you have authenticated with LIGO.ORG credentials.
+                However, submission of any of the forms on this page is protected and can only be done by authorized follow-up advocates.
+            </p>
+            <p>
+                This page is <emph>live</emph> and your actions here have consequences.
+                Please be careful.
+                You have been warned!
+            </p>
+        </div>
+        <div class=card-footer>
             <div class=form-row>
                 <div class="form-group col-md">
                     <label for=gracedb-host>GraceDb Host</label>

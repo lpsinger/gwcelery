@@ -47,6 +47,9 @@ Changelog
 -   The Flask interface will now show a confirmation dialog before sending any
     alerts.
 
+-   Add a terrifying warning to the Flask interface to make it clear that the
+    interface is live.
+
 0.4.3 (2019-04-05)
 ------------------
 
