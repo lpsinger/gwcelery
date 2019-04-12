@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.4.4 (unreleased)
+0.5.0 (unreleased)
 ------------------
 
 -   Give permissions to read the files under parameter estimation run
