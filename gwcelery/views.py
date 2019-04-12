@@ -181,7 +181,13 @@ def send_preliminary_gcn():
     superevent_id, event_id, *_ = tuple(request.form.get(key) for key in keys)
     if superevent_id and event_id:
         (
-            gracedb.update_superevent.s(
+            gracedb.upload.s(
+                None, None, superevent_id,
+                'User {} queued a Preliminary alert through the dashboard.'
+                .format(request.remote_user or '(unknown)'),
+                tags=['em_follow'])
+            |
+            gracedb.update_superevent.si(
                 superevent_id, preferred_event=event_id)
             |
             gracedb.get_event.si(event_id)
@@ -203,7 +209,15 @@ def send_update_gcn():
     if all(args):
         app.logger.info(
             'Calling update_alert%r', args)
-        orchestrator.update_alert(*args)
+        (
+            gracedb.upload.s(
+                None, None, superevent_id,
+                'User {} queued a Preliminary alert through the dashboard.'
+                .format(request.remote_user or '(unknown)'),
+                tags=['em_follow'])
+            |
+            orchestrator.update_alert.si(*args)
+        ).delay()
         flash('Queued update alert for {}.'.format(superevent_id), 'success')
     else:
         flash('No alert sent. Please fill in all fields.', 'danger')

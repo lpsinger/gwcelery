@@ -41,6 +41,9 @@ Changelog
     saturate at certain low values depending on instrument combination, but
     whose SNRs can increase indefinitely.
 
+-   When a user triggers a Preliminary or Update alert through the Flask
+    interface, create a GraceDB log message to record the username.
+
 0.4.3 (2019-04-05)
 ------------------
 
