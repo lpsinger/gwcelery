@@ -11,7 +11,7 @@ from ..import app
 log = get_task_logger(__name__)
 
 
-def _em_bright(m1, m2, c1, c2, threshold=2.83):
+def _em_bright(m1, m2, c1, c2, threshold=3.0):
     """This is the place-holder function for the source classfication pipeline.
     This placeholder code will only act upon the mass2 point estimate value and
     classify the systems as whether they have a neutron or not."""

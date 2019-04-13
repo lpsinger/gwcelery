@@ -4,7 +4,8 @@ Changelog
 0.5.1 (unreleased)
 ------------------
 
--   No changes yet.
+-   Changed default for em-bright from 2.83 to 3.0 M_sun to be consistent with
+    notices.
 
 0.5.0 (2019-04-12)
 ------------------
