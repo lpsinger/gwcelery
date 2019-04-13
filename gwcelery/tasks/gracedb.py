@@ -130,7 +130,7 @@ def get_instruments(gracedb_id):
     except KeyError:
         return set(event.get('instruments', '').split(','))
     else:
-        return {single.ifo for single in singles
+        return {single['ifo'] for single in singles
                 if single.get('chisq') is not None}
 
 

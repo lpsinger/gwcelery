@@ -4,7 +4,7 @@ Changelog
 0.5.2 (unreleased)
 ------------------
 
--   No changes yet.
+-   Fix typo in ``gracedb.get_instruments``.
 
 0.5.1 (2019-04-12)
 ------------------
