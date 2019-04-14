@@ -5,6 +5,7 @@ Changelog
 ------------------
 
 -   Fix typo in ``gracedb.get_instruments``.
+-   Fix calling of choose_snr in p_astro_gstlal's failure case.
 
 0.5.1 (2019-04-12)
 ------------------

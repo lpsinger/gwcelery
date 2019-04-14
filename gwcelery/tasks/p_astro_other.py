@@ -279,17 +279,20 @@ def choose_snr(far, snr, pipeline, instruments):
         limiting SNR value
     """
 
-    response = request.urlopen(app.conf["p_astro_thresh_url"])
-    threshold_dict = json.load(response)
-    response.close()
-
-    inst_sorted = ",".join(sorted(instruments))
-    far_t = threshold_dict[pipeline][inst_sorted]["far"]
-    snr_t = threshold_dict[pipeline][inst_sorted]["snr"]
-    if far < far_t and snr > snr_t:
-        snr_choice = snr_t
-    else:
+    if pipeline == "gstlal" and instruments is None:
         snr_choice = snr
+    else:
+        response = request.urlopen(app.conf["p_astro_thresh_url"])
+        threshold_dict = json.load(response)
+        response.close()
+
+        inst_sorted = ",".join(sorted(instruments))
+        far_t = threshold_dict[pipeline][inst_sorted]["far"]
+        snr_t = threshold_dict[pipeline][inst_sorted]["snr"]
+        if far < far_t and snr > snr_t:
+            snr_choice = snr_t
+        else:
+            snr_choice = snr
 
     return snr_choice
 

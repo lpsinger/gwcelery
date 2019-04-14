@@ -178,10 +178,14 @@ def compute_p_astro(files):
                                        zerolag_ln_likelihood_ratios)
     except ValueError:
         log.exception("NaN encountered, using approximate method ...")
+        pipeline = "gstlal"
+        instruments = None
         return p_astro_other.compute_p_astro(snr,
                                              far,
                                              event_mass1,
-                                             event_mass2)
+                                             event_mass2,
+                                             pipeline,
+                                             instruments)
 
     # Compute astrophysical Bayes factor
     astro_bayesfac = np.exp(ln_f_over_b)[0]

@@ -76,7 +76,8 @@ def test_compute_p_astro_bns(far, pipeline, instruments,
      ['mbtaonline', {'H1', 'L1', 'V1'}, 1e-15, 50, 12],
      ['pycbc', {'H1', 'L1'}, 4e-10, 50, 50],
      ['pycbc', {'H1', 'L1'}, 2e-10, 50, 10],
-     ['spiir', {'H1', 'L1'}, 4e-20, 50, 50]))
+     ['spiir', {'H1', 'L1'}, 4e-20, 50, 50],
+     ['gstlal', None, 4e-20, 50, 50]))
 def test_compute_choose_snr(pipeline, instruments, far,
                             snr, snr_c, mock_url):
     """For various mock-FARs, test the snr returned for
