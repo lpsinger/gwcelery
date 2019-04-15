@@ -4,7 +4,7 @@ Changelog
 0.5.3 (unreleased)
 ------------------
 
--   No changes yet.
+-   Stop using unreviewed cleaned data for parameter estimation.
 
 0.5.2 (2019-04-15)
 ------------------
