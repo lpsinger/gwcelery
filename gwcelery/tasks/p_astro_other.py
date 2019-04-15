@@ -279,7 +279,7 @@ def choose_snr(far, snr, pipeline, instruments):
         limiting SNR value
     """
 
-    if pipeline == "gstlal" and instruments is None:
+    if pipeline == "gstlal":
         snr_choice = snr
     else:
         response = request.urlopen(app.conf["p_astro_thresh_url"])

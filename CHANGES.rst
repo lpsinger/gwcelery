@@ -15,6 +15,11 @@ Changelog
     Thus, choose_snr has now been fixed to also handle gstlal 
     as a pipeline.
 
+-   Ensure that choose_snr also works when P_astro_other is called
+    for MDC gstlal events. This fix essentially removes any condition
+    on the instruments variable within choose_snr, when a gstlal event
+    is to be assigned a P_astro.
+
 0.5.1 (2019-04-12)
 ------------------
 
