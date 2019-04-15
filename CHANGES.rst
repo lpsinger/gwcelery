@@ -8,19 +8,12 @@ Changelog
     ``single.ifo``, which should have been the dictionary lookup
     ``single[ifo]``.
 
--   Fix calling of choose_snr in p_astro_gstlal's failure case.
-    choose_snr did not previously expect to be called for gstlal,
-    since it is typically only invoked for other pipelines.
-    However, there is one case when choose_snr is invoked
-    for gstlal, which is when the ranking_data file from gstlal
-    is corrupted with NaNs, causing P_astro for gstlal to fail.
-    Thus, choose_snr has now been fixed to also handle gstlal 
-    as a pipeline.
-
--   Ensure that choose_snr also works when P_astro_other is called
-    for MDC gstlal events. This fix essentially removes any condition
-    on the instruments variable within choose_snr, when a gstlal event
-    is to be assigned a P_astro.
+-   Fix ``gwcelery.tasks.p_astro_other.choose_snr`` for gstlal. This method did
+    not previously expect to be called for gstlal, since it is typically only
+    invoked for other pipelines. However, there is one case when ``choose_snr``
+    is invoked for gstlal, which is when the ranking_data file from gstlal is
+    corrupted with NaNs, causing P_astro for gstlal to fail. Thus, choose_snr
+    has now been fixed to also handle gstlal as a pipeline.
 
 0.5.1 (2019-04-12)
 ------------------
