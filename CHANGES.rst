@@ -4,7 +4,9 @@ Changelog
 0.5.2 (unreleased)
 ------------------
 
--   Fix typo in ``gracedb.get_instruments``.
+-   Fix typo in ``gracedb.get_instruments``: there was the attribute lookup
+    ``single.ifo``, which should have been the dictionary lookup
+    ``single[ifo]``.
 
 -   Fix calling of choose_snr in p_astro_gstlal's failure case.
     choose_snr did not previously expect to be called for gstlal,
