@@ -5,7 +5,15 @@ Changelog
 ------------------
 
 -   Fix typo in ``gracedb.get_instruments``.
+
 -   Fix calling of choose_snr in p_astro_gstlal's failure case.
+    choose_snr did not previously expect to be called for gstlal,
+    since it is typically only invoked for other pipelines.
+    However, there is one case when choose_snr is invoked
+    for gstlal, which is when the ranking_data file from gstlal
+    is corrupted with NaNs, causing P_astro for gstlal to fail.
+    Thus, choose_snr has now been fixed to also handle gstlal 
+    as a pipeline.
 
 0.5.1 (2019-04-12)
 ------------------
