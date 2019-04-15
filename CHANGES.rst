@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.5.2 (unreleased)
+0.5.2 (2019-04-15)
 ------------------
 
 -   Fix typo in ``gracedb.get_instruments``: there was the attribute lookup
