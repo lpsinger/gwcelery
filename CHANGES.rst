@@ -26,9 +26,6 @@ Changelog
 -   Changed default for em-bright from 2.83 to 3.0 M_sun to be consistent with
     notices.
 
--   Cycle through llhoft, high latency frames, and low latency frames in
-    detchar's cache creation.
-
 0.5.0 (2019-04-12)
 ------------------
 
