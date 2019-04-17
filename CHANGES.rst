@@ -4,6 +4,8 @@ Changelog
 0.5.3 (unreleased)
 ------------------
 
+-   Update ligo-followup-advocate to 0.0.28.
+
 -   Stop using unreviewed cleaned data for parameter estimation.
 
 0.5.2 (2019-04-15)
