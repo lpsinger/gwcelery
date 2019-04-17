@@ -129,20 +129,9 @@ def create_cache(ifo, start, end):
         log.exception('Files do not exist in llhoft_glob')
         return cache  # returns empty cache
     if start < cache_starttime:  # required data has left llhoft
-        high_latency = app.conf['high_latency_frame_types'][ifo]
-        urls = find_urls(ifo[0], high_latency, start, end)
-        if len(urls) != 0:
-            return Cache.from_urls(urls)
-        else:  # required data not in high latency frames
-            low_latency = app.conf['low_latency_frame_types'][ifo]
-            urls = find_urls(ifo[0], low_latency, start, end)
-            if len(urls) != 0:
-                return Cache.from_urls(urls)
-            else:  # required data not in low latency frames
-                error_msg = "This data cannot be found, or does not exist."
-                log.exception(error_msg)
-    else:
-        return cache
+        urls = find_urls(ifo[0], '{}1_HOFT_C00'.format(ifo[0]), start, end)
+        cache = Cache.from_urls(urls)
+    return cache
 
 
 def generate_table(title, high_bit_list, low_bit_list, unknown_bit_list):

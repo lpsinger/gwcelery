@@ -25,17 +25,13 @@ low_latency_frame_types = {'H1': 'H1_llhoft',
                            'L1': 'L1_llhoft',
                            'V1': 'V1_llhoft'}
 """Types of frames used in Parameter Estimation with LALInference (see
-:mod:`gwcelery.tasks.lalinference`) and in cache creation for detchar
-checks (see :mod:`gwcelery.tasks.detchar`).
-"""
+:mod:`gwcelery.tasks.lalinference`)"""
 
 high_latency_frame_types = {'H1': 'H1_HOFT_C00',
                             'L1': 'L1_HOFT_C00',
                             'V1': 'V1Online'}
-"""Types of high latency frames used in Parameter Estimation with LALInference
-(see :mod:`gwcelery.tasks.lalinference`) and in cache creation for detchar
-checks (see :mod:`gwcelery.tasks.detchar`).
-"""
+"""Types of nonllhoft-frames used in Parameter Estimation with LALInference
+(see :mod:`gwcelery.tasks.lalinference`)"""
 
 strain_channel_names = {'H1': 'H1:GDS-CALIB_STRAIN',
                         'L1': 'L1:GDS-CALIB_STRAIN',
