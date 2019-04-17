@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.5.3 (unreleased)
+0.5.3 (2019-04-17)
 ------------------
 
 -   Update ligo-followup-advocate to 0.0.28.
