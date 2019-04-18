@@ -4,7 +4,8 @@ Changelog
 0.5.4 (unreleased)
 ------------------
 
--   No changes yet.
+-   Cycle through llhoft, high latency frames, and low latency frames in
+    detchar's cache creation.
 
 0.5.3 (2019-04-17)
 ------------------
