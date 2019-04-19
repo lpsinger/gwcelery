@@ -7,6 +7,9 @@ Changelog
 -   Cycle through llhoft, high latency frames, and low latency frames in
     detchar's cache creation.
 
+-   Turn on Redis database persistence so that Celery task state is preserved
+    across restarts.
+
 0.5.3 (2019-04-17)
 ------------------
 
