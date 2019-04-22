@@ -204,10 +204,17 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js" integrity="sha256-RWiU4omUU7tQ2M3wmRQNW9UL50MB4CucbRPCbsQv+X0=" crossorigin="anonymous"></script>
 <script>
     (function() {
+        /* Show a spinner whenever a typeahead completion is loading. */
         $('.typeahead')
             .wrap('<div class=text-nowrap></div>')
-            .after('<div style="position: relative; left: -32px" class="invisible position-relative spinner-border spinner-border-sm text-primary" role="status"></div>');
+            .after('<div style="position: relative; left: -32px" class="invisible position-relative spinner-border spinner-border-sm text-primary" role="status"></div>')
+            .on('typeahead:asyncrequest', ev => {
+                $(ev.target).parent().next('.spinner-border').removeClass('invisible');
+            }).on('typeahead:asynccancel typeahead:asyncreceive', ev => {
+                $(ev.target).parent().next('.spinner-border').addClass('invisible');
+            });
 
+        /* Enable typeahead completion for superevent ID fields. */
         $("[name='superevent_id']").typeahead({
             highlight: true,
             minLength: 0
@@ -222,6 +229,7 @@
             })
         });
 
+        /* Enable typeahead completion for event ID fields. */
         $("[name='event_id']").typeahead({
             highlight: true,
             minLength: 0
@@ -236,6 +244,8 @@
             })
         });
 
+        /* Enable typeahead completion for fields whose options depend on the
+         * superevent ID. */
         $('.typeahead.superevent-dependent').each(function() {
             const url = $(this).data('typeahead-url-template');
 
@@ -265,14 +275,6 @@
                 bloodhound.identify = (datum => stringify({superevent_id: superevent_id, datum: datum}));
                 bloodhound.initialize();
             });
-        });
-
-        $('.typeahead').on('typeahead:asyncrequest', ev => {
-            $(ev.target).parent().next('.spinner-border').removeClass('invisible');
-        });
-
-        $('.typeahead').on('typeahead:asynccancel typeahead:asyncreceive', ev => {
-            $(ev.target).parent().next('.spinner-border').addClass('invisible');
         });
 
         /* For forms that contain a <div class=modal> element to provide a
