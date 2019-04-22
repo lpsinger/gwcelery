@@ -202,8 +202,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha256-63ld7aiYP6UxBifJWEzz87ldJyVnETUABZAYs5Qcsmc=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js" integrity="sha256-RWiU4omUU7tQ2M3wmRQNW9UL50MB4CucbRPCbsQv+X0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.0/anchor.min.js" integrity="sha256-m1eTvwEHwmsw4+XKF7BshClVJEPwTVycveNl0CS0Mkk=" crossorigin="anonymous"></script>
 <script>
     (function() {
+        /* Add hover anchor links for individual forms. */
+        anchors.add('.card-header');
+
         /* Show a spinner whenever a typeahead completion is loading. */
         $('.typeahead')
             .wrap('<div class=text-nowrap></div>')
