@@ -30,6 +30,10 @@ app.wsgi_app = RemoteUserMiddleware(app.wsgi_app)
 # across different Python processes.
 app.config['SECRET_KEY'] = os.urandom(24)
 
+# When running Flask in development mode, reload the application upon changes
+# to the templates.
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+
 # Set up a server-side cache to store autocomplete responses in order to reduce
 # traffic to GraceDb. The cache's backend is the same Redis database that
 # Celery uses, although the Redis keys will have a different prefix so that
