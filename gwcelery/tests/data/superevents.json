@@ -86,6 +86,16 @@
                 "files": "https://gracedb-dev1.ligo.org/api/superevents/S0039/files/",
                 "emobservations": "TBD"
             }
+        },
+        {
+            "superevent_id": "S190421ar",
+            "created": "2019-04-21 21:39:16 UTC",
+            "preferred_event": "G330308",
+            "t_start": 1239917953.250977,
+            "t_0": 1239917954.40918,
+            "t_end": 1239917955.40918,
+            "gw_events": ["G330308"],
+            "far": 1.48874654585461e-08
         }
     ],
     "links": {

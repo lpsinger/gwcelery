@@ -20,6 +20,7 @@ from . import lalinference
 from . import lvalert
 from . import p_astro_gstlal, p_astro_other
 from . import skymaps
+from . import superevents
 
 
 @lvalert.handler('superevent',
@@ -120,7 +121,8 @@ def handle_cbc_event(alert):
     # em_bright and p_astro calculation
     if alert['alert_type'] == 'new':
         pipeline = alert['object']['pipeline'].lower()
-        instruments = gracedb.get_instruments(graceid)
+        instruments = superevents.get_instruments(
+            superevents._get_event_info(alert))
         extra_attributes = alert['object']['extra_attributes']
         snr = extra_attributes['CoincInspiral']['snr']
         far = alert['object']['far']
@@ -316,21 +318,9 @@ def preliminary_alert(event, superevent_id):
         skymap_filename += '.gz'
 
     # Determine if the event should be made public.
-    trials_factor = \
-        app.conf['preliminary_alert_trials_factor'][event['group'].lower()]
-    far_threshold = \
-        app.conf['preliminary_alert_far_threshold'][event['group'].lower()]
-    num_ifos = len(gracedb.get_instruments(preferred_event_id))
-    should_publish = (
-        not event['offline']
-        and trials_factor * event['far'] <= far_threshold
-        and {'DQV', 'INJ'}.isdisjoint(gracedb.get_labels(superevent_id))
-        # FIXME: For now, we do not issue public alerts for single-detecetor
-        # events. Remove this after we have gotten some more experience with
-        # single-instrument events.
-        and num_ifos != 1)
+    is_publishable = superevents.should_publish(event)
 
-    if should_publish:
+    if is_publishable:
         canvas = gracedb.expose.s(superevent_id)
     else:
         canvas = chain()
@@ -410,7 +400,7 @@ def preliminary_alert(event, superevent_id):
         canvas |= identity.si(None)
 
     # Send GCN notice and upload GCN circular draft for online events.
-    if should_publish:
+    if is_publishable:
         # apply ADVREQ, compose preliminary GCN and send
         canvas |= (
             _create_voevent.s(

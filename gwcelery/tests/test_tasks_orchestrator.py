@@ -9,6 +9,7 @@ import pytest
 from .. import app
 from ..tasks import lalinference
 from ..tasks import orchestrator
+from ..tasks import superevents
 from .test_tasks_skymaps import toy_3d_fits_filecontents  # noqa: F401
 from . import resource_json
 
@@ -108,8 +109,6 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
     monkeypatch.setattr('gwcelery.tasks.gracedb.download.run', download)
     monkeypatch.setattr('gwcelery.tasks.gracedb.expose.run', expose)
     monkeypatch.setattr('gwcelery.tasks.gracedb.get_event.run', get_event)
-    monkeypatch.setattr('gwcelery.tasks.gracedb.get_instruments',
-                        lambda _: set(instruments))
     monkeypatch.setattr('gwcelery.tasks.gracedb.create_voevent.run',
                         create_voevent)
     monkeypatch.setattr('gwcelery.tasks.gracedb.get_superevent.run',
@@ -128,12 +127,11 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
     # Run function under test
     orchestrator.handle_superevent(alert)
 
-    trials_factor = app.conf['preliminary_alert_trials_factor'][group.lower()]
-    far_threshold = app.conf['preliminary_alert_far_threshold'][group.lower()]
-
     plot_allsky.assert_called_once()
     plot_volume.assert_called_once()
-    if offline or trials_factor * far > far_threshold or len(instruments) == 1:
+
+    _event_info = get_event('G1234')    # this gets the preferred event info
+    if not superevents.should_publish(_event_info):
         expose.assert_not_called()
         create_tag.assert_not_called()
         send.assert_not_called()
@@ -322,7 +320,10 @@ def test_handle_cbc_event_new_event(mock_classifier):
                     "mass1": 3.0,
                     "mass2": 1.0,
                     "spin1z": 0.0,
-                    "spin2z": 0.0
+                    "spin2z": 0.0,
+                    "snr": 20,
+                    "ifo": "H1",
+                    "chisq": 1.571
                 }]
             },
             "offline": False

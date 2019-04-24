@@ -30,6 +30,12 @@ Changelog
     playground environments, because GCN does not support multiple receiver
     connections from the same client IP address to the same server.
 
+-   Change the preferred event assignment logic to not let accidental candidates
+    like G330298 which have low FAR but high SNR values to become the preferred
+    event. From now on, ``superevents.should_publish`` takes maximum precedence
+    for selecting the preferred event. The same is also used by orchestrator
+    to expose events.
+
 0.5.3 (2019-04-17)
 ------------------
 

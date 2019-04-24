@@ -143,12 +143,14 @@ def _get_event_info(payload):
         graceid=payload['graceid'],
         gpstime=payload['gpstime'],
         far=payload['far'],
+        offline=payload['offline'],
         instruments=payload['instruments'],
         group=payload['group'],
         pipeline=payload['pipeline'],
         search=payload.get('search'),
-        alert_type=alert_type)
-    # pull pipeline based extra attributes
+        alert_type=alert_type,
+        extra_attributes=payload['extra_attributes'])
+    # pull pipeline based extra attributes for convenience
     if payload['group'].lower() == 'cbc':
         event_info['snr'] = \
              payload['extra_attributes']['CoincInspiral']['snr']
@@ -190,23 +192,59 @@ def _get_dts(event_info):
     return d_t_start, d_t_end
 
 
+def get_instruments(event_info):
+    """Get the participating instruments from the lvalert packet
+
+    Parameters
+    ----------
+    event_info : dict
+        Dictionary storing event information
+
+    Returns
+    -------
+    set
+        The set of instruments that contributed to the ranking statistic for
+        the event.
+
+    Notes
+    -----
+    The number of instruments that contributed *data* to an event is given by
+    the ``instruments`` key of the GraceDB event JSON structure. However, some
+    pipelines (e.g. gstlal) have a distinction between which instruments
+    contributed *data* and which were considered in the *ranking* of the
+    candidate. For such pipelines, we infer which pipelines contributed to the
+    ranking by counting only the SingleInspiral records for which the chi
+    squared field is non-empty.
+    """
+    try:
+        attrib = event_info['extra_attributes']
+        ifos = {single['ifo'] for single in attrib['SingleInspiral']
+                if single.get('chisq') is not None}
+    except KeyError:
+        ifos = set(event_info['instruments'].split(','))
+    return ifos
+
+
+def should_publish(event_info):
+    """Determine whether an event should be published as a public alert."""
+    group = event_info['group'].lower()
+    trials_factor = app.conf['preliminary_alert_trials_factor'][group]
+    far_threshold = app.conf['preliminary_alert_far_threshold'][group]
+    far = trials_factor * event_info['far']
+    ifos = get_instruments(event_info)
+    num_ifos = len(ifos)
+    return not event_info['offline'] and num_ifos > 1 and far <= far_threshold
+
+
 def _keyfunc(event_info):
     group = event_info['group'].lower()
-    # FIXME Currently single IFOs are determined from the SingleInspiral
-    # tables. Uncomment the line below to revert to normal behavior when fixed
-    # num_ifos = len(event_info['instruments'].split(","))
-    num_ifos = len(gracedb.get_instruments(event_info['graceid']))
-    ifo_rank = (num_ifos <= 1)
     try:
         group_rank = ['cbc', 'burst'].index(group)
     except ValueError:
         group_rank = float('inf')
-    # return the index of group and negative snr in spirit
-    # of rank being lower for higher SNR for CBC
-    if group == 'cbc':
-        return ifo_rank, group_rank, -1.0*event_info['snr']
-    else:
-        return ifo_rank, group_rank, event_info['far']
+    tie_breaker = -event_info['snr'] if group == 'cbc' \
+        else event_info['far']
+    return not should_publish(event_info), group_rank, tie_breaker
 
 
 def _update_superevent(superevent_id, preferred_event, new_event_dict,
