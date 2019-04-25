@@ -11,10 +11,12 @@ import tempfile
 import urllib
 
 from celery import group
+from ligo.gracedb.exceptions import HTTPError
 from gwdatafind import find_urls
 
 from .. import app
 from ..jinja import env
+from .core import ordered_group
 from . import condor
 from . import gracedb
 from . import skymaps
@@ -134,14 +136,14 @@ def pre_pe_tasks(event, superevent_id):
 
 @app.task(shared=False)
 def dag_prepare(
-    coinc_contents, ini_contents, rundir, superevent_id
+    coinc_psd, ini_contents, rundir, superevent_id
 ):
     """Create a Condor DAG to run LALInference on a given event.
 
     Parameters
     ----------
-    coinc_contents : bytes
-        The byte contents of ``coinc.xml``
+    coinc_psd : tuple
+        The tuple of the byte contents of ``coinc.xml`` and ``psd.xml.gz``
     ini_contents : str
         The content of online_pe.ini
     rundir : str
@@ -154,10 +156,21 @@ def dag_prepare(
     submit_file : str
         The path to the .sub file
     """
+    coinc_contents, psd_contents = coinc_psd
+
     # write down coicn.xml in the run directory
     path_to_coinc = os.path.join(rundir, 'coinc.xml')
     with open(path_to_coinc, 'wb') as f:
         f.write(coinc_contents)
+
+    # write down psd.xml.gz
+    if psd_contents is not None:
+        path_to_psd = os.path.join(rundir, 'psd.xml.gz')
+        with open(path_to_psd, 'wb') as f:
+            f.write(psd_contents)
+        psd_arg = ['--psd', path_to_psd]
+    else:
+        psd_arg = []
 
     # write down .ini file in the run directory
     path_to_ini = rundir + '/' + ini_name
@@ -171,10 +184,10 @@ def dag_prepare(
         tags='pe'
     )
     try:
-        subprocess.run(['lalinference_pipe', '--run-path', rundir,
-                        '--coinc', path_to_coinc, path_to_ini],
-                       stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                       check=True)
+        lalinference_arg = ['lalinference_pipe', '--run-path', rundir,
+                            '--coinc', path_to_coinc, path_to_ini] + psd_arg
+        subprocess.run(lalinference_arg, stdout=subprocess.PIPE,
+                       stderr=subprocess.PIPE, check=True)
         subprocess.run(['condor_submit_dag', '-no_submit',
                         rundir + '/multidag.dag'],
                        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
@@ -364,6 +377,17 @@ def dag_finished(rundir, preferred_event_id, superevent_id):
         clean_up.si(rundir)
 
 
+@gracedb.task(shared=False)
+def _download_psd(gid):
+    """Download ``psd.xml.gz`` and return its content. If that file does not
+    exist, return None.
+    """
+    try:
+        return gracedb.download("psd.xml.gz", gid)
+    except HTTPError:
+        return None
+
+
 @app.task(ignore_result=True, shared=False)
 def start_pe(ini_contents, preferred_event_id, superevent_id):
     """Run LALInference on a given event.
@@ -387,7 +411,10 @@ def start_pe(ini_contents, preferred_event_id, superevent_id):
     os.chmod(rundir, 0o755)
 
     (
-        gracedb.download.s('coinc.xml', preferred_event_id)
+        ordered_group(
+            gracedb.download.s('coinc.xml', preferred_event_id),
+            _download_psd.s(preferred_event_id)
+        )
         |
         dag_prepare.s(ini_contents, rundir, superevent_id)
         |

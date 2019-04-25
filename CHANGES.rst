@@ -13,6 +13,9 @@ Changelog
 -   Add explanations on options in online_pe.jinja2 for those who start
     parameter estimation based on the ini files uploaded to GraceDB.
 
+-   Calculate horizon distance with psd.xml.gz to determine the upper limit of
+    distance prior for parameter estimation.
+
 0.5.3 (2019-04-17)
 ------------------
 
