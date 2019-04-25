@@ -123,12 +123,8 @@ def handle_cbc_event(alert):
         far = alert['object']['far']
         mass1 = extra_attributes['SingleInspiral'][0]['mass1']
         mass2 = extra_attributes['SingleInspiral'][0]['mass2']
-        # FIXME: GraceDb's JSON representations of LIGO-LW tables strips out
-        # fields whose values are zero. We did not notice this before because
-        # it's uncommon for most fields *except* spin to be zero.
-        # See https://git.ligo.org/emfollow/gwcelery/issues/85.
-        chi1 = extra_attributes['SingleInspiral'][0].get('spin1z', 0)
-        chi2 = extra_attributes['SingleInspiral'][0].get('spin2z', 0)
+        chi1 = extra_attributes['SingleInspiral'][0]['spin1z']
+        chi2 = extra_attributes['SingleInspiral'][0]['spin2z']
 
         # FIXME Changing em-bright to work on point estimates only
         # for all pipelines until review is complete
