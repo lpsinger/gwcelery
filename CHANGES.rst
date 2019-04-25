@@ -10,6 +10,9 @@ Changelog
 -   Turn on Redis database persistence so that Celery task state is preserved
     across restarts.
 
+-   Add explanations on options in online_pe.jinja2 for those who start
+    parameter estimation based on the ini files uploaded to GraceDB.
+
 0.5.3 (2019-04-17)
 ------------------
 

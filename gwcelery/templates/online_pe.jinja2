@@ -44,6 +44,8 @@ osg=False
 
 
 [paths]
+# Replace the webdir with a directory under your public_html when you start a
+# run manually based on this ini file.
 webdir={{ webdir }}
 roq_b_matrix_directory={{ roqdir }}
 
@@ -65,13 +67,43 @@ threshold-snr=3
 {{ path.name }}={{ path.path }}
 {% endfor %}
 
+# When you start a run manually based on this ini file, delete the above
+# executable paths and specify the paths to your own executables with the
+# following scripts.
+#
+# lalsuite-install=/home/albert.einstein/opt/lalsuite/
+# datafind=%(lalsuite-install)s/bin/gw_data_find
+# mergeNSscript=%(lalsuite-install)s/bin/lalinference_nest2pos
+# mergeMCMCscript=%(lalsuite-install)s/bin/cbcBayesMCMC2pos
+# combinePTMCMCh5script=%(lalsuite-install)s/bin/cbcBayesCombinePTMCMCh5s
+# resultspage=%(lalsuite-install)s/bin/cbcBayesPostProc
+# segfind=%(lalsuite-install)s/bin/ligolw_segment_query
+# ligolw_print=%(lalsuite-install)s/bin/ligolw_print
+# coherencetest=%(lalsuite-install)s/bin/lalinference_coherence_test
+# lalinferencenest=%(lalsuite-install)s/bin/lalinference_nest
+# lalinferencemcmc=%(lalsuite-install)s/bin/lalinference_mcmc
+# lalinferencebambi=%(lalsuite-install)s/bin/lalinference_bambi
+# lalinferencedatadump=%(lalsuite-install)s/bin/lalinference_datadump
+# ligo-skymap-from-samples=%(lalsuite-install)s/bin/ligo-skymap-from-samples
+# ligo-skymap-plot=%(lalsuite-install)s/bin/ligo-skymap-plot
+# processareas=%(lalsuite-install)s/bin/process_areas
+# computeroqweights=%(lalsuite-install)s/bin/lalinference_compute_roq_weights
+# mpiwrapper=%(lalsuite-install)s/bin/lalinference_mpi_wrapper
+# gracedb=%(lalsuite-install)s/bin/gracedb
+# ppanalysis=%(lalsuite-install)s/bin/cbcBayesPPAnalysis
+# pos_to_sim_inspiral=%(lalsuite-install)s/bin/cbcBayesPosToSimInspiral
+
 mpirun=mpirun
 accounting_group={{ accounting_group  }}
+# Remove the following line when you start a run manually based on this ini
+# file.
 accounting_group_user=soichiro.morisaki
 
 
 [datafind]
 url-type=file
+# Use types = {'H1': 'H1_HOFT_C00', 'L1': 'L1_HOFT_C00', 'V1': 'V1Online'} when
+# you start a run manually.
 types = {{ types | safe }}
 
 
@@ -104,7 +136,10 @@ H1-spcal-phase-uncertainty=2.86
 L1-spcal-phase-uncertainty=5.73
 V1-spcal-phase-uncertainty=2.86
 {{ margphi }}
-
+# You can use your own PSDs by specifying their paths.
+# H1-psd=
+# L1-psd=
+# V1-psd=
 
 [mpi]
 mpi_task_count=8
