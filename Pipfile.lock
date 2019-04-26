@@ -448,18 +448,18 @@
         },
         "lalsuite": {
             "hashes": [
-                "sha256:15baca9f99e7f409ded09b80ef9f12da24b177d9bca0a6f770a1ea617765b71a",
-                "sha256:2844604df1b97c6ca8d4f3e49801edef43cf0d14fedad0bfbac1e39f61cd48e5",
-                "sha256:3c9b0e8a81ba72b659202407e592f6a2c71da9b30e6992b5682ab7a42101523e",
-                "sha256:56bd479b7350cf73a615426398e2dd052a349c669e93b6ddc68cb031498d20e5",
-                "sha256:79e5f613443f0ba1dac16060aa13653f5c4ff47505e1be48554da20b45168b4a",
-                "sha256:7efa95e8b372b541f4fa1e04f9cf2815710787f9f4ea8e076296e0ce4b8185d0",
-                "sha256:83c747acc9a9c6e1db552456d2c1e08d5f658ddaa9a03103e4e71eec30abcf8b",
-                "sha256:84a493dd67ccce71307d12dca2be09df6baca8032384fd012534683e7015ee58",
-                "sha256:d851337bb01a2d2f96841241d05b73150e54a2e1b6a4d99c363e0445fd65fec3",
-                "sha256:ea4d80197ce9a0c997ece0b229645f4375e58c3a30a2569f23f654ee7a32cd3f"
+                "sha256:1bb28edd472cfc27eddd0fe6ba4491331bde712bb38d05c40d8a522d3f914c3a",
+                "sha256:80d104b03f1bc30f42949bf5ab9a0e0d8c690c453acfe0a1d33f230b04fb7fe2",
+                "sha256:8692118f702af2ec55d4ae973026d74d1b82346b1ae30078a8777bf6e1ea0919",
+                "sha256:886c50cfd08a88403f9216cb688085206ed6aa3f698edb0b806faf7d4eaa29e6",
+                "sha256:a73de5d1686d1f009cf42fefd23a3b2a9adefb3393280b448c68c979d905466c",
+                "sha256:aee939891015fea9487adf6a6e9a12a32f09e9708a318ce1cff5fda64610a507",
+                "sha256:dcde50a3ff5a74fb99af1fea789ffceff2759ddbfd948833ddaafd18711d04ac",
+                "sha256:e52ab2abe5930ff3de18a256ac3136a3fcff15f942427a2c4c12343f768dd2c0",
+                "sha256:f16e1de1ac91c51c3e49075d0dfbef741198843135ad34d3c67450932d9224f7",
+                "sha256:f49a108207a900d62b1c94f9135742ae0db1ddde9a7f37882bed8091a240c954"
             ],
-            "version": "==6.53.1.dev20190402"
+            "version": "==6.53.1.dev20190426"
         },
         "ligo-followup-advocate": {
             "hashes": [
