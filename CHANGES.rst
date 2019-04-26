@@ -22,6 +22,8 @@ Changelog
 -   Provide a value for terrestrial count for P_astro for non-gstlal
     pipelines that is consistent with the FAR threshold used.
 
+-   Update the calibration uncertainties used for parameter estimation.
+
 0.5.3 (2019-04-17)
 ------------------
 
