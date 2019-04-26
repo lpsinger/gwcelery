@@ -24,6 +24,9 @@ Changelog
 
 -   Update the calibration uncertainties used for parameter estimation.
 
+-   Handle an exception in VOEvent parsing of Fermi subthreshold alerts
+    due to different param names.
+
 0.5.3 (2019-04-17)
 ------------------
 

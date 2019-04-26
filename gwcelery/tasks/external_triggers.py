@@ -1,5 +1,6 @@
 from lxml import etree
 from urllib.parse import urlparse
+from celery.utils.log import get_logger
 
 from celery import chain
 
@@ -10,6 +11,8 @@ from . import gracedb
 from . import ligo_fermi_skymaps
 from . import lvalert
 from . import raven
+
+log = get_logger(__name__)
 
 
 @gcn.handler(gcn.NoticeType.SNEWS,
@@ -71,10 +74,17 @@ def handle_grb_gcn(payload):
     stream_path = u.path
 
     #  Get TrigID
-    trig_id = root.find("./What/Param[@name='TrigID']").attrib['value']
+    try:
+        trig_id = root.find("./What/Param[@name='TrigID']").attrib['value']
+    except AttributeError:
+        trig_id = root.find("./What/Param[@name='EventID']").attrib['value']
+        log.info('Could not find TrigID field,'
+                 'getting trigger ID %s from event ID',
+                 trig_id)
 
     stream_obsv_dict = {'/SWIFT': 'Swift',
-                        '/Fermi': 'Fermi'}
+                        '/Fermi': 'Fermi',
+                        '/UntargetedSubGRB': 'Fermi'}
     event_observatory = stream_obsv_dict[stream_path]
     query = 'group: External pipeline: {} grbevent.trigger_id = "{}"'.format(
         event_observatory, trig_id)

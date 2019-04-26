@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VOEvent ivorn="ivo://nasa.nsstc.gbm/UntargetedSubGRB#3762" role="test" version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ivoa.net/xml/VOEvent/v2.0 http://www.ivoa.net/xml/VOEvent/VOEvent-v2.0.xsd">
+ <original_prefix>
+  voe
+ </original_prefix>
+ <Who>
+  <Description>
+   This VOEvent message was created with Fermi-GBM untargeted subthreshold search version: 1.0
+  </Description>
+  <Date>
+   2019-04-27T08:00:44
+  </Date>
+  <Author>
+   <contactEmail>
+    Michael.Briggs@uah.edu
+   </contactEmail>
+   <contactName>
+    Michael Briggs
+   </contactName>
+   <shortName>
+    FermiGBM
+   </shortName>
+   <title>
+    Fermi Gamma-ray Burst Monitor (GBM)
+   </title>
+  </Author>
+ </Who>
+ <What>
+  <Description>
+   Untargeted Sub-Threshold Search Notice
+  </Description>
+  <Param name="EventID" ucd="meta.id" value="578032460"/>
+  <Param dataType="float" name="Event_Timescale" ucd="time.interval" unit="sec" value="0.064"/>
+  <Param dataType="int" name="Algorithm" value="1"/>
+  <Param dataType="float" name="rank" value="6.72e-127"/>
+  <Group name="Misc_Flags">
+   <Param dataType="string" name="trigger" value="False"/>
+   <Param dataType="string" name="soft" value="False"/>
+   <Param dataType="string" name="long" value="False"/>
+  </Group>
+  <Group name="Spacecraft_coordinates">
+   <Param dataType="float" name="Phi" ucd="pos.az.azi" unit="deg" value="99.0"/>
+   <Param dataType="float" name="Theta" ucd="pos.az.zd" unit="deg" value="111.0"/>
+  </Group>
+  <Group name="Galactic_coordinates">
+   <Param dataType="float" name="Galactic_Long" ucd="pos.galactic.lon" unit="deg" value="73.3"/>
+   <Param dataType="float" name="Galactic_Lat" ucd="pos.galactic.lat" unit="deg" value="28.13"/>
+  </Group>
+ </What>
+ <WhereWhen>
+  <ObsDataLocation>
+   <ObservatoryLocation id="GEOLUN"/>
+   <ObservationLocation>
+    <AstroCoordSystem id="UTC-FK5-GEO"/>
+    <AstroCoords coord_system_id="UTC-FK5-GEO">
+     <Time unit="s">
+      <TimeInstant>
+       <ISOTime>
+        2019-04-27T04:34:15.079999
+       </ISOTime>
+      </TimeInstant>
+     </Time>
+     <Position2D unit="deg">
+      <Name1>
+       RA
+      </Name1>
+      <Name2>
+       Dec
+      </Name2>
+      <Value2>
+       <C1>
+        269.53
+       </C1>
+       <C2>
+        46.33
+       </C2>
+      </Value2>
+      <Error2Radius>
+       6.31
+      </Error2Radius>
+     </Position2D>
+    </AstroCoords>
+   </ObservationLocation>
+  </ObsDataLocation>
+ </WhereWhen>
+</VOEvent>
