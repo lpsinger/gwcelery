@@ -10,13 +10,13 @@ from . import resource_json
 
 
 @patch('gwcelery.tasks.detchar.dqr_json', return_value='dqrjson')
-@patch('gwcelery.tasks.gracedb.client.writeLog')
+@patch('gwcelery.tasks.gracedb.upload')
 @patch('gwcelery.tasks.gracedb.get_event', return_value={
     'graceid': 'E1', 'gpstime': 1, 'instruments': '', 'pipeline': 'Fermi',
     'extra_attributes': {'GRB': {'trigger_duration': 1}}})
 @patch('gwcelery.tasks.gracedb.create_event')
 def test_handle_create_grb_event(mock_create_event, mock_get_event,
-                                 mock_write_log, mock_json):
+                                 mock_upload, mock_json):
     text = resource_string(__name__, 'data/fermi_grb_gcn.xml')
     external_triggers.handle_grb_gcn(payload=text)
     mock_create_event.assert_called_once_with(filecontents=text,
@@ -25,12 +25,10 @@ def test_handle_create_grb_event(mock_create_event, mock_get_event,
                                               group='External')
     calls = [
         call(
-            'E1',
-            'DQR-compatible json generated from check_vectors results',
-            'gwcelerydetcharcheckvectors-E1.json',
-            '"dqrjson"', ()),
+            '"dqrjson"', 'gwcelerydetcharcheckvectors-E1.json', 'E1',
+            'DQR-compatible json generated from check_vectors results'),
         call(
-            'E1',
+            None, None, 'E1',
             ('Detector state for active instruments is unknown.\n{}'
              'Check looked within -2/+2 seconds of superevent. ').format(
                  detchar.generate_table(
@@ -43,9 +41,9 @@ def test_handle_create_grb_event(mock_create_event, mock_get_event,
                       'L1:HOFT_OK', 'L1:OBSERVATION_INTENT',
                       'V1:HOFT_OK', 'V1:OBSERVATION_INTENT',
                       'V1:GOOD_DATA_QUALITY_CAT1'])),
-            tag_name=['data_quality'])
+            ['data_quality'])
     ]
-    mock_write_log.assert_has_calls(calls, any_order=True)
+    mock_upload.assert_has_calls(calls, any_order=True)
 
 
 @patch('gwcelery.tasks.gracedb.get_events', return_value=[])
@@ -79,12 +77,12 @@ def test_handle_replace_grb_event(mock_get_events, mock_replace_event):
 
 
 @patch('gwcelery.tasks.detchar.dqr_json', return_value='dqrjson')
-@patch('gwcelery.tasks.gracedb.client.writeLog')
+@patch('gwcelery.tasks.gracedb.upload')
 @patch('gwcelery.tasks.gracedb.get_event', return_value={
     'graceid': 'E1', 'gpstime': 1, 'instruments': '', 'pipeline': 'SNEWS'})
 @patch('gwcelery.tasks.gracedb.create_event')
 def test_handle_create_snews_event(mock_create_event, mock_get_event,
-                                   mock_write_log, mock_json):
+                                   mock_upload, mock_json):
     text = resource_string(__name__, 'data/snews_gcn.xml')
     external_triggers.handle_snews_gcn(payload=text)
     mock_create_event.assert_called_once_with(filecontents=text,
@@ -93,12 +91,10 @@ def test_handle_create_snews_event(mock_create_event, mock_get_event,
                                               group='External')
     calls = [
         call(
-            'E1',
-            'DQR-compatible json generated from check_vectors results',
-            'gwcelerydetcharcheckvectors-E1.json',
-            '"dqrjson"', ()),
+            '"dqrjson"', 'gwcelerydetcharcheckvectors-E1.json', 'E1',
+            'DQR-compatible json generated from check_vectors results'),
         call(
-            'E1',
+            None, None, 'E1',
             ('Detector state for active instruments is unknown.\n{}'
              'Check looked within -10/+10 seconds of superevent. ').format(
                  detchar.generate_table(
@@ -111,9 +107,9 @@ def test_handle_create_snews_event(mock_create_event, mock_get_event,
                       'L1:HOFT_OK', 'L1:OBSERVATION_INTENT',
                       'V1:HOFT_OK', 'V1:OBSERVATION_INTENT',
                       'V1:GOOD_DATA_QUALITY_CAT1'])),
-            tag_name=['data_quality'])
+            ['data_quality'])
     ]
-    mock_write_log.assert_has_calls(calls, any_order=True)
+    mock_upload.assert_has_calls(calls, any_order=True)
 
 
 @patch('gwcelery.tasks.gracedb.replace_event')

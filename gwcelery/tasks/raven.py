@@ -173,8 +173,8 @@ def add_exttrig_to_superevent(raven_search_results, gracedb_id):
     if gracedb_id.startswith('E'):
         for superevent in raven_search_results:
             superevent_id = superevent['superevent_id']
-            gracedb.client.addEventToSuperevent(superevent_id, gracedb_id)
+            gracedb.add_event_to_superevent(superevent_id, gracedb_id)
     else:
         for exttrig in raven_search_results:
             exttrig_id = exttrig['graceid']
-            gracedb.client.addEventToSuperevent(gracedb_id, exttrig_id)
+            gracedb.add_event_to_superevent(gracedb_id, exttrig_id)

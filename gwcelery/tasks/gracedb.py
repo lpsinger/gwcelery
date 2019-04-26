@@ -29,13 +29,13 @@ def create_event(filecontents, search, pipeline, group):
 @task(ignore_result=True, shared=False)
 def create_label(label, graceid):
     """Create a label in GraceDb."""
-    client.writeLabel(graceid, label)
+    client.writeLabel(graceid, label).json()
 
 
 @task(ignore_result=True, shared=False)
 def create_signoff(status, comment, signoff_type, graceid):
     """Create a label in GraceDb."""
-    client.create_signoff(graceid, signoff_type, status, comment)
+    client.create_signoff(graceid, signoff_type, status, comment).json()
 
 
 @task(ignore_result=True, shared=False)
@@ -44,7 +44,7 @@ def create_tag(filename, tag, graceid):
     log = get_log(graceid)
     entry, = (e for e in log if e['filename'] == filename)
     log_number = entry['N']
-    client.addTag(graceid, log_number, tag)
+    client.addTag(graceid, log_number, tag).json()
 
 
 @task(shared=False)
@@ -69,7 +69,7 @@ def download(filename, graceid):
 @task(ignore_result=True, shared=False)
 def expose(graceid):
     """Expose an event to the public."""
-    client.modify_permissions(graceid, 'expose')
+    client.modify_permissions(graceid, 'expose').json()
 
 
 @task(shared=False)
@@ -106,13 +106,13 @@ def get_superevent(graceid):
 @task(shared=False)
 def replace_event(graceid, payload):
     """Get an event from GraceDb."""
-    client.replaceEvent(graceid, 'initial.data', filecontents=payload)
+    client.replaceEvent(graceid, 'initial.data', filecontents=payload).json()
 
 
 @task(ignore_result=True, shared=False)
 def upload(filecontents, filename, graceid, message, tags=()):
     """Upload a file to GraceDB."""
-    client.writeLog(graceid, message, filename, filecontents, tags)
+    client.writeLog(graceid, message, filename, filecontents, tags).json()
 
 
 @app.task(shared=False)
@@ -153,7 +153,7 @@ def update_superevent(superevent_id, t_start=None,
         uid of the preferred event, unchanged if None
     """
     client.updateSuperevent(superevent_id, t_start=t_start, t_end=t_end,
-                            t_0=t_0, preferred_event=preferred_event)
+                            t_0=t_0, preferred_event=preferred_event).json()
 
 
 @task(ignore_result=True, shared=False)
@@ -176,10 +176,10 @@ def create_superevent(graceid, t0, d_t_start, d_t_end, category):
     ts = t0 - d_t_start
     te = t0 + d_t_end
     client.createSuperevent(ts, t0, te, preferred_event=graceid,
-                            category=category)
+                            category=category).json()
 
 
 @task(ignore_result=True, shared=False)
 def add_event_to_superevent(superevent_id, graceid):
     """Add an event to a superevent in GraceDb."""
-    client.addEventToSuperevent(superevent_id, graceid)
+    client.addEventToSuperevent(superevent_id, graceid).json()

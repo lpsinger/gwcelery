@@ -59,7 +59,9 @@ def test_raven_search(mock_raven_search, mock_se_cls, mock_exttrig_cls,
     'graceid,raven_search_results',
     [['S1234', [{'graceid': 'E1'}, {'graceid': 'E2'}, {'graceid': 'E3'}]],
      ['E1234', [{'superevent_id': 'S1'}]]])
-def test_add_exttrig_to_superevent(monkeypatch, graceid, raven_search_results):
+@patch('gwcelery.tasks.gracedb.add_event_to_superevent')
+def test_add_exttrig_to_superevent(mock_add_event_to_superevent,
+                                   graceid, raven_search_results):
     """Test that external triggers are correctly used to update superevents."""
 
     # run function under test
@@ -67,10 +69,10 @@ def test_add_exttrig_to_superevent(monkeypatch, graceid, raven_search_results):
     if graceid.startswith('E'):
         for superevent in raven_search_results:
             superevent_id = superevent['superevent_id']
-            gracedb.client.addEventToSuperevent.assert_called_with(
+            mock_add_event_to_superevent.assert_called_with(
                 superevent_id, graceid)
     if graceid.startswith('S'):
-        gracedb.client.addEventToSuperevent.assert_has_calls([
+        mock_add_event_to_superevent.assert_has_calls([
              call(graceid, exttrig['graceid'])
              for exttrig in raven_search_results])
 

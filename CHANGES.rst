@@ -39,6 +39,11 @@ Changelog
 -   Update RAVEN coinc far task call which uses string params versus
     un-pickleable class object params.
 
+-   Make sure to consume the entire response from every GraceDb API request.
+    This will ensure that GraceDb API call has completed before the pipeline
+    continues, and will fix errors like we encountered with S190426c where
+    the pipeline would march along before uploads had finished.
+
 0.5.3 (2019-04-17)
 ------------------
 

@@ -133,9 +133,9 @@ def test_check_vectors_skips_mdc(caplog):
 
 
 @patch('gwcelery.tasks.detchar.dqr_json', return_value='dqrjson')
-@patch('gwcelery.tasks.gracedb.client.writeLog')
+@patch('gwcelery.tasks.gracedb.upload')
 @patch('gwcelery.tasks.gracedb.create_label')
-def test_check_vectors(mock_create_label, mock_write_log, mock_json,
+def test_check_vectors(mock_create_label, mock_upload, mock_json,
                        llhoft_glob_pass, ifo_h1, ifo_h1_idq):
     event = {'search': 'AllSky', 'instruments': 'H1', 'pipeline': 'oLIB'}
     superevent_id = 'S12345a'
@@ -143,7 +143,7 @@ def test_check_vectors(mock_create_label, mock_write_log, mock_json,
     detchar.check_vectors(event, superevent_id, start, end)
     calls = [
         call(
-            'S12345a',
+            None, None, 'S12345a',
             ('Detector state for active instruments is good.\n{}'
              'Check looked within -0.5/+0.5 seconds of superevent. ').format(
                  detchar.generate_table(
@@ -151,42 +151,40 @@ def test_check_vectors(mock_create_label, mock_write_log, mock_json,
                      ['H1:NO_OMC_DCPD_ADC_OVERFLOW',
                       'H1:NO_DMT-ETMY_ESD_DAC_OVERFLOW',
                       'H1:HOFT_OK', 'H1:OBSERVATION_INTENT'], [], [])),
-            tag_name=['data_quality']),
+            ['data_quality']),
         call(
-            'S12345a',
+            None, None, 'S12345a',
             ('No HW injections found. '
              'Check looked within -0.5/+0.5 seconds of superevent. '),
-            tag_name=['data_quality']),
+            ['data_quality']),
         call(
-            'S12345a',
+            None, None, 'S12345a',
             ('iDQ glitch probabilities at both H1 and L1'
              ' are good (below {} threshold). '
              'Maximum p(glitch) is "H1:IDQ-PGLITCH_OVL_32_2048": 0.0. '
              'Check looked within -0.5/+0.5 seconds of superevent. ').format(
                  app.conf['idq_pglitch_thresh']),
-            tag_name=['data_quality']),
+            ['data_quality']),
         call(
-            'S12345a',
-            'DQR-compatible json generated from check_vectors results',
-            'gwcelerydetcharcheckvectors-S12345a.json',
-            '"dqrjson"', ()),
+            '"dqrjson"', 'gwcelerydetcharcheckvectors-S12345a.json', 'S12345a',
+            'DQR-compatible json generated from check_vectors results'),
     ]
-    mock_write_log.assert_has_calls(calls, any_order=True)
+    mock_upload.assert_has_calls(calls, any_order=True)
     mock_create_label.assert_called_with('DQOK', 'S12345a')
 
 
 @patch('gwcelery.tasks.detchar.dqr_json', return_value='dqrjson')
-@patch('gwcelery.tasks.gracedb.client.writeLog')
+@patch('gwcelery.tasks.gracedb.upload')
 @patch('gwcelery.tasks.gracedb.create_label')
-def test_gatedhoft_skips_dmtvec(mock_create_label, mock_write_log, mock_json,
+def test_gatedhoft_skips_dmtvec(mock_create_label, mock_upload, mock_json,
                                 llhoft_glob_pass, ifo_h1, ifo_h1_idq,
                                 gatedpipe, gatedpipe_prepost):
     event = {'search': 'AllSky', 'instruments': 'H1', 'pipeline': 'gatepipe'}
     superevent_id = 'S12345a'
     start, end = 1216577977, 1216577979
     detchar.check_vectors(event, superevent_id, start, end)
-    mock_write_log.assert_has_calls([
-            call('S12345a',
+    mock_upload.assert_has_calls([
+            call(None, None, 'S12345a',
                  ('Detector state for active instruments is good.\n{}'
                   'Check looked within -0.5/+0.5 seconds of superevent. '
                   'Pipeline gatepipe uses gated h(t), '
@@ -194,7 +192,7 @@ def test_gatedhoft_skips_dmtvec(mock_create_label, mock_write_log, mock_json,
                       detchar.generate_table(
                           'Data quality bits',
                           ['H1:HOFT_OK', 'H1:OBSERVATION_INTENT'], [], [])),
-                 tag_name=['data_quality']), ], any_order=True)
+                 ['data_quality']), ], any_order=True)
 
 
 def test_detchar_generate_table():

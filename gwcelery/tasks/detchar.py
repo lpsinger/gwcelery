@@ -414,8 +414,8 @@ def check_vectors(event, graceid, start, end):
                            json.dumps(idq_probs)[1:-1])
     else:
         idq_msg = "iDQ glitch probabilities unknown. "
-    gracedb.client.writeLog(graceid, idq_msg + prepost_msg,
-                            tag_name=['data_quality'])
+    gracedb.upload(
+        None, None, graceid, idq_msg + prepost_msg, ['data_quality'])
 
     # Labeling INJ to GraceDb
     if False in active_inj_states.values():
@@ -431,8 +431,8 @@ def check_vectors(event, graceid, start, end):
         inj_msg = 'No HW injections found. '
     else:
         inj_msg = 'Injection state unknown. '
-    gracedb.client.writeLog(graceid, inj_msg + prepost_msg,
-                            tag_name=['data_quality'])
+    gracedb.upload(
+        None, None, graceid, inj_msg + prepost_msg, ['data_quality'])
 
     # Determining overall_dq_active_state
     if None in active_dq_states.values() or len(
@@ -457,8 +457,8 @@ def check_vectors(event, graceid, start, end):
         gate_msg = ''
 
     # Labeling DQOK/DQV to GraceDb
-    gracedb.client.writeLog(
-        graceid, msg + prepost_msg + gate_msg, tag_name=['data_quality'])
+    gracedb.upload(
+        None, None, graceid, msg + prepost_msg + gate_msg, ['data_quality'])
     if overall_dq_active_state is True:
         state = "pass"
         gracedb.create_label('DQOK', graceid)
