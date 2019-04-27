@@ -348,6 +348,17 @@ def check_vectors(event, graceid, start, end):
                  event['graceid'])
         return event
 
+    # Check the full template duration
+    pref_event = event.get('preferred_event')
+    if pref_event is not None:  # external events won't have preferred events
+        try:
+            template_dur = pref_event[
+                'extra_attributes']['SingleInspiral'][0]['template_duration']
+            start = start - template_dur
+        except KeyError:
+            # preferred event is a burst or has no template duration
+            pass
+
     # Create caches for all detectors
     instruments = event['instruments'].split(',')
     pipeline = event['pipeline']

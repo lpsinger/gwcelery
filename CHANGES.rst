@@ -46,6 +46,8 @@ Changelog
 
 -   Stop using unreviewed cleaned data for parameter estimation.
 
+-   Update detchar check to analyze full template duration for CBC events.
+
 0.5.2 (2019-04-15)
 ------------------
 
