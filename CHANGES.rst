@@ -16,6 +16,9 @@ Changelog
 -   Calculate horizon distance with psd.xml.gz to determine the upper limit of
     distance prior for parameter estimation.
 
+-   Provide a value for terrestrial count for P_astro for non-gstlal
+    pipelines that is consistent with the FAR threshold used.
+
 0.5.3 (2019-04-17)
 ------------------
 
