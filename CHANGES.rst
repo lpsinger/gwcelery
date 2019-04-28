@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.5.4 (unreleased)
+------------------
+
+-   Provide a value for terrestrial count for P_astro for non-gstlal
+    pipelines that is consistent with the FAR threshold used.
+
 0.5.3 (2019-04-17)
 ------------------
 
