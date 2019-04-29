@@ -16,6 +16,9 @@ Changelog
 -   Calculate horizon distance with psd.xml.gz to determine the upper limit of
     distance prior for parameter estimation.
 
+-   Start parameter estimation when the lowest far of the events in a
+    superevent is lower than the threshold.
+
 0.5.3 (2019-04-17)
 ------------------
 

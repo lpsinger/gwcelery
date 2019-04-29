@@ -45,7 +45,7 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
 
     def get_superevent(superevent_id):
         assert superevent_id == 'S1234'
-        return {'preferred_event': 'G1234'}
+        return {'preferred_event': 'G1234', 'gw_events': ['G1234']}
 
     def get_event(graceid):
         assert graceid == 'G1234'

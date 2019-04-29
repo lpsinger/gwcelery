@@ -61,7 +61,10 @@ def handle_superevent(alert):
                 countdown=app.conf['pe_timeout']
             )
             |
-            gracedb.get_event.s()
+            ordered_group(
+                _get_lowest_far.si(superevent_id),
+                gracedb.get_event.s()
+            )
             |
             parameter_estimation.s(superevent_id)
         ).apply_async()
@@ -442,8 +445,16 @@ def preliminary_alert(event, superevent_id):
     canvas.apply_async()
 
 
+@gracedb.task(shared=False)
+def _get_lowest_far(superevent_id):
+    """Obtain the lowest FAR of the events contained in the target
+    superevent"""
+    return min(gracedb.get_event(gid)['far'] for gid in
+               gracedb.get_superevent(superevent_id)["gw_events"])
+
+
 @app.task(ignore_result=True, shared=False)
-def parameter_estimation(event, superevent_id):
+def parameter_estimation(far_event, superevent_id):
     """Tasks for Parameter Estimation Followup with LALInference
 
     This consists of the following steps:
@@ -451,6 +462,7 @@ def parameter_estimation(event, superevent_id):
     1.   Upload an ini file which is suitable for the target event.
     2.   Start Parameter Estimation if FAR is smaller than the PE threshold.
     """
+    far, event = far_event
     preferred_event_id = event['graceid']
     # FIXME: it will be better to start parameter estimation for 'burst'
     # events.
@@ -463,7 +475,7 @@ def parameter_estimation(event, superevent_id):
                                 'configuration file for this event.',
                         tags='pe'
                     )
-        if event['far'] <= app.conf['pe_threshold']:
+        if far <= app.conf['pe_threshold']:
             next_task = group(
                 next_task,
 
