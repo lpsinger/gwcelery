@@ -344,6 +344,10 @@ def compute_p_astro(snr, far, mass1, mass2, pipeline, instruments):
     bground = far / far_star
     astro_bayesfac = fground / bground
 
+    # Update terrestrial count based on far threshold
+    lam_0 = far_star * app.conf["p_astro_livetime"]
+    mean_values_dict["counts_Terrestrial"] = lam_0
+
     # Compute categorical p_astro values
     p_astro_values = evaluate_p_astro_from_bayesfac(astro_bayesfac,
                                                     mean_values_dict,

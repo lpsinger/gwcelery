@@ -19,6 +19,9 @@ Changelog
 -   Start parameter estimation when the lowest far of the events in a
     superevent is lower than the threshold.
 
+-   Provide a value for terrestrial count for P_astro for non-gstlal
+    pipelines that is consistent with the FAR threshold used.
+
 0.5.3 (2019-04-17)
 ------------------
 
