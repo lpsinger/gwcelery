@@ -24,6 +24,8 @@ Changelog
 -   Handle an exception in VOEvent parsing of Fermi subthreshold alerts
     due to different param names.
 
+-   Stop uploading corner plots of intrinsic parameters.
+
 0.5.3 (2019-04-17)
 ------------------
 

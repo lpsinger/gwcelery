@@ -366,10 +366,6 @@ def dag_finished(rundir, preferred_event_id, superevent_id):
                 'Corner plot for extrinsic parameters', 'pe'
             ),
             _upload_result(
-                pe_results_path, 'intrinsic.png', superevent_id,
-                'Corner plot for intrinsic parameters', 'pe'
-            ),
-            _upload_result(
                 pe_results_path, 'sourceFrame.png', superevent_id,
                 'Corner plot for source frame parameters', 'pe'
             )
