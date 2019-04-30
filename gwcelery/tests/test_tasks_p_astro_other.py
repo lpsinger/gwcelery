@@ -38,11 +38,10 @@ def test_compute_p_astro(snr, far, mass1, mass2,
 @pytest.mark.parametrize(
     'far,pipeline,instruments,snr_thresh,val',
     ([1e-25, 'mbtaonline', {'H1', 'L1', 'V1'}, 12, 1],
-     [1e-8, 'mbtaonline', {'L1', 'V1'}, 33, 0.08],
-     [6e-10, 'mbtaonline', {'H1', 'V1'}, 10, 0.99],
+     [1e-8, 'mbtaonline', {'L1', 'V1'}, 33, 0],
+     [6e-10, 'mbtaonline', {'H1', 'V1'}, 10, 0.20],
      [7.6e-59, 'spiir', {'H1', 'L1', 'V1'}, 33, 1],
-     [1e-10, 'pycbc', {'H1', 'L1'}, 10, 1],
-     [1e-10, 'pycbc', {'H1', 'L1', 'V1'}, 10, 1]))
+     [1e-10, 'pycbc', {'H1', 'L1'}, 10, 0.60]))
 def test_compute_p_astro_bns(far, pipeline, instruments,
                              snr_thresh, val, mock_url):
     """Test p_astro values using CBC catalog paper
