@@ -26,6 +26,10 @@ Changelog
 
 -   Stop uploading corner plots of intrinsic parameters.
 
+-   Connect to different GCN servers to receive alerts in the production and
+    playground environments, because GCN does not support multiple receiver
+    connections from the same client IP address to the same server.
+
 0.5.3 (2019-04-17)
 ------------------
 
