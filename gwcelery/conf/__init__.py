@@ -42,11 +42,10 @@ voevent_broadcaster_whitelist = []
 """List of hosts from which the broker will accept connections.
 If empty, then completely disable the broker's broadcast capability."""
 
-voevent_receiver_address = '68.169.57.253:8099'
-"""The VOEvent listener will connect to this address to receive GCNs. For
-options, see `GCN's list of available VOEvent servers
-<https://gcn.gsfc.nasa.gov/voevent.html#tc2>`. If this is an empty string, then
-completely disable the GCN listener."""
+voevent_receiver_address = '68.169.57.253:8099' """The VOEvent listener will
+connect to this address to receive GCNs. For options, see `GCN's list of
+available VOEvent servers <https://gcn.gsfc.nasa.gov/voevent.html#tc2>`_. If
+this is an empty string, then completely disable the GCN listener."""
 
 superevent_d_t_start = {'gstlal': 1.0,
                         'spiir': 1.0,
