@@ -18,8 +18,8 @@ from . import gcn
 from . import gracedb
 from . import lalinference
 from . import lvalert
-from . import skymaps
 from . import p_astro_gstlal, p_astro_other
+from . import skymaps
 
 
 @lvalert.handler('superevent',
