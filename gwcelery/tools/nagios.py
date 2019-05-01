@@ -6,12 +6,10 @@ from sys import exit
 from traceback import format_exc, format_exception
 
 from celery.bin.base import Command
-from celery_eternal import EternalTask
 import kombu.exceptions
-import sleek_lvalert
 
 # Make sure that all tasks are registered
-from .. import tasks
+from .. import tasks  # noqa: F401
 
 
 class NagiosPluginStatus(IntEnum):
@@ -32,19 +30,9 @@ def get_active_queues(inspector):
             for queue in queues}
 
 
-def get_active_tasks(inspector):
-    return {task['name']
-            for tasks in inspector.active().values()
-            for task in tasks}
-
-
-def get_active_lvalert_nodes(app):
-    client = sleek_lvalert.LVAlertClient(server=app.conf['lvalert_host'])
-    client.connect()
-    client.process(block=False)
-    active = set(client.get_subscriptions())
-    client.disconnect()
-    return active
+def get_active_lvalert_nodes(inspector):
+    return {node for stat in inspector.stats().values()
+            for node in stat.get('lvalert-nodes', ())}
 
 
 def get_expected_queues(app):
@@ -57,13 +45,8 @@ def get_expected_queues(app):
     return result
 
 
-def get_expected_tasks(app):
-    return {name for name, task in app.tasks.items()
-            if isinstance(task, EternalTask)}
-
-
-def get_expected_lvalert_nodes():
-    return set(tasks.lvalert.handler.keys())
+def get_expected_lvalert_nodes(app):
+    return app.conf['lvalert_nodes']
 
 
 def get_active_voevent_peers(inspector):
@@ -90,15 +73,8 @@ def check_status(app):
         raise NagiosCriticalError('Not all expected queues are active') from \
               AssertionError('Missing queues: ' + ', '.join(missing))
 
-    active = get_active_tasks(inspector)
-    expected = get_expected_tasks(app)
-    missing = expected - active
-    if missing:
-        raise NagiosCriticalError('Not all expected tasks are active') from \
-              AssertionError('Missing tasks: ' + ', '.join(missing))
-
-    active = get_active_lvalert_nodes(app)
-    expected = get_expected_lvalert_nodes()
+    active = get_active_lvalert_nodes(inspector)
+    expected = get_expected_lvalert_nodes(app)
     missing = expected - active
     extra = active - expected
     if missing:

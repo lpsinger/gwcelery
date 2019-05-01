@@ -121,19 +121,6 @@
             ],
             "version": "==4.3.0"
         },
-        "celery-eternal": {
-            "hashes": [
-                "sha256:7ad22d9a26ce3c7774d73d52ae556d68e214122acbc50c6e1e7e358401b96ac1",
-                "sha256:b20bda2c9ccf9bca2617467c2ae2bf4c8d6ecdbaf84940f42401956ef574ab16"
-            ],
-            "version": "==0.1.1"
-        },
-        "celery-singleton": {
-            "hashes": [
-                "sha256:a6741832bd19d20228b2eacc145cc549510cb2423ee2b2ae08a0b974b876d584"
-            ],
-            "version": "==0.1.3"
-        },
         "certifi": {
             "hashes": [
                 "sha256:59b7658e26ca9c7339e00f8f4636cdfe59d34fa37b9b04f6f9e9926b3cece1a5",

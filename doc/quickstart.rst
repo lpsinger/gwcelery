@@ -104,7 +104,7 @@ GWCelery itself consists of five :ref:`Celery workers <celery:guide-workers>`
 and one `Flask`_ web application. Start them all by running each of the
 following commands::
 
-    $ gwcelery worker -l info -n gwcelery-worker -Q celery -B
+    $ gwcelery worker -l info -n gwcelery-worker -Q celery -B --lvalert
     $ gwcelery worker -l info -n gwcelery-exttrig-worker -Q exttrig -c 1
     $ gwcelery worker -l info -n gwcelery-openmp-worker -Q openmp -c 1
     $ gwcelery worker -l info -n gwcelery-superevent-worker -Q superevent -c 1

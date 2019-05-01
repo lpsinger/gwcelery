@@ -14,6 +14,11 @@ Changelog
     ``bayestar.multiorder.fits`` to distinguish from them from the
     flat-resolution HEALPix files, which are still named ``bayestar.fits.gz``.
 
+-   Reimplement LVAlert listener as a Celery bootstep to avoid needing to track
+    a singleton task using a Redis lock, because Redis locks do not play nicely
+    with Redis persistence. The ``--lvalert`` command line option must now be
+    passed in order to enable the LVAlert listener.
+
 0.6.0 (2019-05-20)
 ------------------
 

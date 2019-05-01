@@ -4,6 +4,7 @@ from celery import Celery
 
 from ._version import get_versions
 from .conf import playground
+from . import lvalert
 from . import sentry
 from . import voevent
 
@@ -16,7 +17,8 @@ del get_versions
 app = Celery(__name__, broker='redis://', autofinalize=False)
 """Celery application object."""
 
-# Register VOEvent subsystem.
+# Register LVAlert and VOEvent subsystems.
+lvalert.install(app)
 voevent.install(app)
 
 # Register all tasks.

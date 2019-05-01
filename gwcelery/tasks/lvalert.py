@@ -1,12 +1,10 @@
 """LVAlert client."""
 import json
-import time
 
-from celery_eternal import EternalTask
 from celery.utils.log import get_task_logger
-import sleek_lvalert
 
-from ..import app
+from ..lvalert.signals import lvalert_received
+from .. import app
 from .core import DispatchHandler
 from . import gracedb
 
@@ -14,6 +12,14 @@ log = get_task_logger(__name__)
 
 
 class _LVAlertDispatchHandler(DispatchHandler):
+
+    def __call__(self, *keys, **kwargs):
+        try:
+            lvalert_nodes = app.conf['lvalert_nodes']
+        except KeyError:
+            lvalert_nodes = app.conf['lvalert_nodes'] = set()
+        lvalert_nodes.update(keys)
+        return super().__call__(*keys, **kwargs)
 
     def process_args(self, node, payload):
         # Determine GraceDB service URL
@@ -64,27 +70,6 @@ Declare a new handler like this::
 """
 
 
-@app.task(base=EternalTask, bind=True, shared=False)
-def listen(self):
-    """Listen for LVAlert messages forever. LVAlert messages are dispatched
-    asynchronously to tasks that have been registered with
-    :meth:`gwcelery.tasks.lvalert.handler`."""
-
-    log.info('Starting client')
-    client = sleek_lvalert.LVAlertClient(server=app.conf['lvalert_host'])
-    client.connect()
-    client.process(block=False)
-
-    log.info('Updating subscriptions')
-    current_subscriptions = set(client.get_subscriptions())
-    needed_subscriptions = set(handler.keys())
-    client.subscribe(*(needed_subscriptions - current_subscriptions))
-
-    log.info('Listening for pubsub messages')
-    client.listen(handler.dispatch)
-
-    while not self.is_aborted():
-        time.sleep(1)
-    log.info('Disconnecting')
-    client.abort()
-    log.info('Exiting')
+@lvalert_received.connect
+def _on_lvalert_received(node, payload, **kwargs):
+    handler.dispatch(node, payload)

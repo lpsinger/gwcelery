@@ -21,7 +21,7 @@ error = gwcelery-beat.log
 output =
 queue
 
-arguments = "gwcelery worker -l info -n gwcelery-worker -Q celery"
+arguments = "gwcelery worker -l info -n gwcelery-worker -Q celery --lvalert"
 description = gwcelery-worker
 error = gwcelery-worker.log
 output =

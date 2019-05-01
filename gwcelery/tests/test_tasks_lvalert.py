@@ -23,27 +23,6 @@ def netrc_lvalert(tmpdir):
         yield
 
 
-@patch('sleek_lvalert.LVAlertClient')
-@patch('gwcelery.tasks.lvalert.listen.is_aborted', side_effect=[False, True])
-def test_listen(mock_is_aborted, mock_client, netrc_lvalert):
-    client_instance = mock_client.return_value
-    client_instance.get_subscriptions.return_value = ['superevent']
-
-    # Run function under test
-    lvalert.listen()
-
-    mock_client.assert_called_once()
-    client_instance.connect.assert_called_once_with()
-    client_instance.process.assert_called_once_with(block=False)
-    client_instance.subscribe.assert_called_once()
-    # In our test scenario, we were already subscribed to 'superevent',
-    # but not to 'cbc_gstlal'.
-    assert 'superevent' not in client_instance.subscribe.call_args[0]
-    assert 'cbc_gstlal' in client_instance.subscribe.call_args[0]
-    client_instance.listen.assert_called_once_with(lvalert.handler.dispatch)
-    client_instance.abort.assert_called_once_with()
-
-
 @pytest.fixture
 def fake_lvalert():
     with pkg_resources.resource_stream(__name__, 'data/lvalert_xmpp.xml') as f:

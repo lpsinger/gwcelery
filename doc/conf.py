@@ -257,8 +257,6 @@ texinfo_documents = [
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'celery': ('https://celery.readthedocs.io/en/latest/', None),
-    'celery_eternal': ('https://celery-eternal.readthedocs.io/en/latest/',
-                       None),
     'comet': ('https://comet.readthedocs.io/en/stable/', None),
     'data-quality-report': (
         'https://docs.ligo.org/detchar/data-quality-report/', None),
