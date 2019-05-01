@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.5.4 (unreleased)
+0.5.4 (2019-05-01)
 ------------------
 
 -   Provide a value for terrestrial count for P_astro for non-gstlal
