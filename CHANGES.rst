@@ -18,8 +18,8 @@ Changelog
 
 -   Update the calibration uncertainties used for parameter estimation.
 
--   Handle an exception in VOEvent parsing of Fermi subthreshold alerts
-    due to different param names.
+-   Handle an exception in VOEvent parsing of Fermi subthreshold alerts due to
+    different param names.
 
 -   Stop uploading corner plots of intrinsic parameters.
 
