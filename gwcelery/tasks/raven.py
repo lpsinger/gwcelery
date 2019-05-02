@@ -27,8 +27,6 @@ def calculate_spacetime_coincidence_far(gracedb_id, group):
         gracedb_id superevent
     """
     preferred_skymap = ligo_fermi_skymaps.get_preferred_skymap(gracedb_id)
-    se = gracedb_events.SE(gracedb_id, fitsfile=preferred_skymap,
-                           gracedb=gracedb.client)
     em_events = gracedb.get_superevent(gracedb_id)['em_events']
 
     if group == 'CBC':
@@ -39,10 +37,9 @@ def calculate_spacetime_coincidence_far(gracedb_id, group):
     canvas = chain()
     for exttrig_id in em_events:
         if gracedb.download('glg_healpix_all_bn_v00.fit', exttrig_id):
-            exttrig = gracedb_events.ExtTrig(exttrig_id,
-                                             gracedb=gracedb.client)
             canvas |= (
-                calc_signif.si(se, exttrig, tl, th, incl_sky=True))
+                calc_signif.si(gracedb_id, exttrig_id, tl, th, incl_sky=True,
+                               se_fitsfile=preferred_skymap))
 
     return canvas
 
@@ -59,7 +56,6 @@ def calculate_coincidence_far(gracedb_id, group):
         CBC or Burst; group of the preferred_event associated with the
         gracedb_id superevent
     """
-    se = gracedb_events.SE(gracedb_id, gracedb=gracedb.client)
     em_events = gracedb.get_superevent(gracedb_id)['em_events']
 
     if group == 'CBC':
@@ -70,19 +66,18 @@ def calculate_coincidence_far(gracedb_id, group):
     canvas = chain()
     for exttrig_id in em_events:
         if gracedb.get_event(exttrig_id)['search'] == 'GRB':
-            exttrig = gracedb_events.ExtTrig(exttrig_id,
-                                             gracedb=gracedb.client)
             canvas |= (
-                calc_signif.si(se, exttrig, tl, th, incl_sky=False))
+                calc_signif.si(gracedb_id, exttrig_id, tl, th, incl_sky=False))
 
     return canvas
 
 
 @app.task(shared=False)
-def calc_signif(se, exttrig, tl, th, incl_sky):
+def calc_signif(se_id, exttrig_id, tl, th, incl_sky, se_fitsfile=None):
     """Calculate FAR of GRB exttrig-GW coincidence"""
-    return ligo.raven.search.calc_signif_gracedb(se, exttrig, tl, th,
-                                                 incl_sky=incl_sky)
+    return ligo.raven.search.calc_signif_gracedb(
+        se_id, exttrig_id, tl, th, se_fitsfile=se_fitsfile, incl_sky=incl_sky,
+        gracedb=gracedb.client)
 
 
 def coincidence_search(gracedb_id, alert_object, group=None, pipelines=[]):

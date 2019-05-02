@@ -91,11 +91,8 @@ def mock_get_event(exttrig_id):
 @patch('gwcelery.tasks.gracedb.get_superevent',
        return_value={'em_events': ['E1', 'E2', 'E3']})
 @patch('gwcelery.tasks.raven.calc_signif')
-@patch('ligo.raven.gracedb_events.ExtTrig')
-@patch('ligo.raven.gracedb_events.SE')
 def test_calculate_coincidence_far(
-        mock_se_cls, mock_exttrig_cls, mock_calc_signif,
-        mock_get_superevent, group):
+        mock_calc_signif, mock_get_superevent, group):
     raven.calculate_coincidence_far('S1234', group).delay().get()
 
 
@@ -106,40 +103,31 @@ def test_calculate_coincidence_far(
 @patch('gwcelery.tasks.ligo_fermi_skymaps.get_preferred_skymap',
        return_value='bayestar.fits.gz')
 @patch('gwcelery.tasks.raven.calc_signif')
-@patch('ligo.raven.gracedb_events.ExtTrig')
-@patch('ligo.raven.gracedb_events.SE')
 def test_calculate_spacetime_coincidence_far(
-        mock_se_cls, mock_exttrig_cls, mock_calc_signif,
-        mock_get_preferred_skymap, mock_get_superevent, mock_download, group,
-        toy_fits_filecontents):  # noqa: F811
+        mock_calc_signif, mock_get_preferred_skymap, mock_get_superevent,
+        mock_download, group, toy_fits_filecontents):  # noqa: F811
     mock_download.return_value = toy_fits_filecontents
     raven.calculate_spacetime_coincidence_far(
         'S1234', group).delay().get()
 
 
-@patch('ligo.raven.gracedb_events.ExtTrig')
-@patch('ligo.raven.gracedb_events.SE')
 @patch('ligo.raven.search.calc_signif_gracedb')
 def test_calc_signif(
-        mock_raven_calc_signif, mock_se_cls, mock_exttrig_cls):
-    se = mock_se_cls('S1', gracedb=gracedb.client)
-    exttrig = mock_exttrig_cls('E1', gracedb=gracedb.client)
+        mock_raven_calc_signif):
     tl, th = -1, 5
-    raven.calc_signif(se, exttrig, tl, th, incl_sky=False)
+    raven.calc_signif('S1234', 'E1234', tl, th, incl_sky=False)
 
     mock_raven_calc_signif.assert_called_once_with(
-        se, exttrig, tl, th, incl_sky=False)
+        'S1234', 'E1234', tl, th, se_fitsfile=None, incl_sky=False,
+        gracedb=gracedb.client)
 
 
-@patch('ligo.raven.gracedb_events.ExtTrig')
-@patch('ligo.raven.gracedb_events.SE')
 @patch('ligo.raven.search.calc_signif_gracedb')
-def test_calc_signif_skymaps(
-        mock_raven_calc_signif, mock_se_cls, mock_exttrig_cls):
-    se = mock_se_cls('S1', fitsfile='bayestar.fits.gz', gracedb=gracedb.client)
-    exttrig = mock_exttrig_cls('E1', gracedb=gracedb.client)
+def test_calc_signif_skymaps(mock_raven_calc_signif):
     tl, th = -1, 5
-    raven.calc_signif(se, exttrig, tl, th, incl_sky=True)
+    raven.calc_signif('S1234', 'E1234', tl, th, incl_sky=True,
+                      se_fitsfile='bayestar.fits.gz')
 
     mock_raven_calc_signif.assert_called_once_with(
-        se, exttrig, tl, th, incl_sky=True)
+        'S1234', 'E1234', tl, th, se_fitsfile='bayestar.fits.gz',
+        incl_sky=True, gracedb=gracedb.client)

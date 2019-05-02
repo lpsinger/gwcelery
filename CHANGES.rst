@@ -36,6 +36,9 @@ Changelog
     for selecting the preferred event. The same is also used by orchestrator
     to expose events.
 
+-   Update RAVEN coinc far task call which uses string params versus
+    un-pickleable class object params.
+
 0.5.3 (2019-04-17)
 ------------------
 
