@@ -13,7 +13,7 @@ Changelog
 -   Calculate horizon distance with psd.xml.gz to determine the upper limit of
     distance prior for parameter estimation.
 
--   Start parameter estimation when the lowest far of the events in a
+-   Start parameter estimation when the lowest FAR of the events in a
     superevent is lower than the threshold.
 
 -   Provide a value for terrestrial count for P_astro for non-gstlal
@@ -36,7 +36,7 @@ Changelog
     for selecting the preferred event. The same is also used by orchestrator
     to expose events.
 
--   Update RAVEN coinc far task call which uses string params versus
+-   Update RAVEN coinc FAR task call which uses string params versus
     un-pickleable class object params.
 
 -   Make sure to consume the entire response from every GraceDb API request.
