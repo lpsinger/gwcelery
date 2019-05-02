@@ -15,6 +15,8 @@ Changelog
 -   Have ``gwcelery.detchar.check_vectors`` task apply all GraceDb log messages
     in order to increase robustness to recoverable GraceDb API errors.
 
+-   Port over majority of P_astro code from gwcelery to the p-astro package.
+
 0.5.5 (2019-05-03)
 ------------------
 

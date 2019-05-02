@@ -59,31 +59,4 @@ def test_compute_p_astro_bns(far, pipeline, instruments,
         p_astro_other.compute_p_astro(snr, far, mass1, mass2,
                                       pipeline, instruments))
 
-    snr_choice = p_astro_other.choose_snr(far, snr,
-                                          pipeline, instruments)
-    assert pytest.approx(snr_thresh, abs=1e-2) == snr_choice
     assert pytest.approx(p_astros['BNS'], abs=1e-2) == val
-
-
-@pytest.mark.parametrize(
-    'pipeline,instruments,far,snr,snr_c',
-    (['mbtaonline', {'H1', 'L1'}, 4e-10, 50, 50],
-     ['mbtaonline', {'H1', 'L1'}, 2e-10, 50, 10],
-     ['mbtaonline', {'L1', 'V1'}, 8e-10, 50, 50],
-     ['mbtaonline', {'L1', 'V1'}, 6e-10, 50, 10],
-     ['mbtaonline', {'H1', 'V1'}, 8e-10, 50, 50],
-     ['mbtaonline', {'H1', 'V1'}, 6e-10, 50, 10],
-     ['mbtaonline', {'H1', 'L1', 'V1'}, 1e-13, 50, 50],
-     ['mbtaonline', {'H1', 'L1', 'V1'}, 1e-15, 50, 12],
-     ['pycbc', {'H1', 'L1'}, 4e-10, 50, 50],
-     ['pycbc', {'H1', 'L1'}, 2e-10, 50, 10],
-     ['spiir', {'H1', 'L1'}, 4e-20, 50, 50],
-     ['gstlal', None, 4e-20, 50, 50]))
-def test_compute_choose_snr(pipeline, instruments, far,
-                            snr, snr_c, mock_url):
-    """For various mock-FARs, test the snr returned for
-       very loud MBTA, PyCBC and spiir events.
-    """
-    snr_choice = p_astro_other.choose_snr(far, snr,
-                                          pipeline, instruments)
-    assert pytest.approx(snr_choice, abs=1e-2) == snr_c

@@ -167,15 +167,10 @@ idq_veto = {'gstlal': False,
 Currently all False, pending iDQ review (should be done before O3).
 """
 
-p_astro_gstlal_ln_likelihood_threshold = 6
-"""log likelihood threshold"""
-
 p_astro_livetime = 14394240
 """livetime (units: sec) corresponding to mean values of Poisson counts.
    (Used by :mod:`gwcelery.tasks.p_astro_other`)
 """
-
-p_astro_gstlal_ranking_pdf = '/home/gstlalcbc/observing/3/online/trigs/rankingstat_pdf.xml.gz'  # noqa: E501
 
 p_astro_url = \
     'http://emfollow.ldas.cit/data/H1L1V1-mean_counts-1126051217-61603201.json'
