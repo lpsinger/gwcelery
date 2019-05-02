@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.5.4 (unreleased)
+0.5.5 (unreleased)
 ------------------
 
 -   Cycle through llhoft, high latency frames, and low latency frames in
@@ -15,9 +15,6 @@ Changelog
 
 -   Start parameter estimation when the lowest FAR of the events in a
     superevent is lower than the threshold.
-
--   Provide a value for terrestrial count for P_astro for non-gstlal
-    pipelines that is consistent with the FAR threshold used.
 
 -   Update the calibration uncertainties used for parameter estimation.
 
@@ -43,6 +40,12 @@ Changelog
     This will ensure that GraceDb API call has completed before the pipeline
     continues, and will fix errors like we encountered with S190426c where
     the pipeline would march along before uploads had finished.
+
+0.5.4 (2019-05-01)
+------------------
+
+-   Provide a value for terrestrial count for P_astro for non-gstlal
+    pipelines that is consistent with the FAR threshold used.
 
 0.5.3 (2019-04-17)
 ------------------
