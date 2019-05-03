@@ -29,7 +29,14 @@ def create_event(filecontents, search, pipeline, group):
 @task(ignore_result=True, shared=False)
 def create_label(label, graceid):
     """Create a label in GraceDb."""
-    client.writeLabel(graceid, label).json()
+    try:
+        client.writeLabel(graceid, label).json()
+    except rest.HTTPError as e:
+        # If we got a 400 error because no change was made, then ignore
+        # the exception and return successfully to preserve idempotency.
+        if e.message != \
+                b'"The fields superevent, label must make a unique set."':
+            raise
 
 
 @task(ignore_result=True, shared=False)
