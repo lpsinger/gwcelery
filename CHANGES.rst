@@ -48,6 +48,9 @@ Changelog
 
 -   Add Nagios checks for GCN connectivity.
 
+-   Improve uploaded comments so that it is easily understood which event has
+    triggered parameter estimation.
+
 0.5.4 (2019-05-01)
 ------------------
 

@@ -178,11 +178,6 @@ def dag_prepare(
         f.write(ini_contents)
 
     # run lalinference_pipe
-    gracedb.upload.delay(
-        filecontents=None, filename=None, graceid=superevent_id,
-        message='starting LALInference online parameter estimation',
-        tags='pe'
-    )
     try:
         lalinference_arg = ['lalinference_pipe', '--run-path', rundir,
                             '--coinc', path_to_coinc, path_to_ini] + psd_arg
@@ -397,6 +392,13 @@ def start_pe(ini_contents, preferred_event_id, superevent_id):
     superevent_id : str
         The GraceDb ID of a target superevent
     """
+    gracedb.upload.delay(
+        filecontents=None, filename=None, graceid=superevent_id,
+        message=('starting LALInference online parameter estimation '
+                 'for {}').format(preferred_event_id),
+        tags='pe'
+    )
+
     # make a run directory
     lalinference_dir = os.path.expanduser('~/.cache/lalinference')
     mkpath(lalinference_dir)
