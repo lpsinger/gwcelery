@@ -46,6 +46,8 @@ Changelog
 -   Update LALSuite to version 6.54. We are now using a stable version again
     instead of a nightly build.
 
+-   Add Nagios checks for GCN connectivity.
+
 0.5.4 (2019-05-01)
 ------------------
 

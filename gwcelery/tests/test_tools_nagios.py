@@ -90,11 +90,36 @@ def test_nagios(capsys, monkeypatch, socket_enabled,
     out, err = capsys.readouterr()
     assert 'CRITICAL: Too many lvalert nodes are subscribed' in out
 
-    # success
+    # LVAlert nodes present, no VOEvent broker peers
 
     mock_lvalert_client.configure_mock(**{
         'return_value.get_subscriptions.return_value':
         nagios.get_expected_lvalert_nodes()})
+
+    with pytest.raises(SystemExit) as excinfo:
+        app.start(['gwcelery', 'nagios'])
+    assert excinfo.value.code == nagios.NagiosPluginStatus.CRITICAL
+    out, err = capsys.readouterr()
+    assert 'CRITICAL: The VOEvent broker has no active connections' in out
+
+    # VOEvent broker peers, no VOEvent receiver peers
+
+    monkeypatch.setattr(
+        'celery.app.control.Inspect.stats',
+        Mock(return_value={'foo': {'voevent-broker-peers': ['127.0.0.1']}}))
+
+    with pytest.raises(SystemExit) as excinfo:
+        app.start(['gwcelery', 'nagios'])
+    assert excinfo.value.code == nagios.NagiosPluginStatus.CRITICAL
+    out, err = capsys.readouterr()
+    assert 'CRITICAL: The VOEvent receiver has no active connections' in out
+
+    # success
+
+    monkeypatch.setattr(
+        'celery.app.control.Inspect.stats',
+        Mock(return_value={'foo': {'voevent-broker-peers': ['127.0.0.1'],
+                                   'voevent-receiver-peers': ['127.0.0.1']}}))
 
     with pytest.raises(SystemExit) as excinfo:
         app.start(['gwcelery', 'nagios'])

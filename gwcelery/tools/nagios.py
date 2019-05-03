@@ -66,6 +66,14 @@ def get_expected_lvalert_nodes():
     return set(tasks.lvalert.handler.keys())
 
 
+def get_active_voevent_peers(inspector):
+    stats = inspector.stats()
+    broker_peers, receiver_peers = (
+        {peer for stat in stats.values() for peer in stat.get(key, ())}
+        for key in ['voevent-broker-peers', 'voevent-receiver-peers'])
+    return broker_peers, receiver_peers
+
+
 def check_status(app):
     connection = app.connection()
     try:
@@ -99,6 +107,18 @@ def check_status(app):
     if extra:
         raise NagiosCriticalError('Too many lvalert nodes are subscribed') \
             from AssertionError('Extra nodes: ' + ', '.join(extra))
+
+    broker_peers, receiver_peers = get_active_voevent_peers(inspector)
+    if app.conf['voevent_broadcaster_whitelist'] and not broker_peers:
+        raise NagiosCriticalError(
+            'The VOEvent broker has no active connections') \
+                from AssertionError('voevent_broadcaster_whitelist: {}'.format(
+                    app.conf['voevent_broadcaster_whitelist']))
+    if app.conf['voevent_receiver_address'] and not receiver_peers:
+        raise NagiosCriticalError(
+            'The VOEvent receiver has no active connections') \
+                from AssertionError('voevent_receiver_address: {}'.format(
+                    app.conf['voevent_receiver_address']))
 
 
 class NagiosCommand(Command):
