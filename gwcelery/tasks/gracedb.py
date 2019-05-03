@@ -157,6 +157,8 @@ def update_superevent(superevent_id, t_start=None,
                                 t_start=t_start, t_end=t_end, t_0=t_0,
                                 preferred_event=preferred_event).json()
     except rest.HTTPError as e:
+        # If we got a 400 error because no change was made, then ignore
+        # the exception and return successfully to preserve idempotency.
         if e.message != b'"Request would not modify the superevent"':
             raise
 
