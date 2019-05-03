@@ -43,6 +43,9 @@ Changelog
 
 -   Apply ADVREQ label earlier in the preliminary alert workflow.
 
+-   Update LALSuite to version 6.54. We are now using a stable version again
+    instead of a nightly build.
+
 0.5.4 (2019-05-01)
 ------------------
 
