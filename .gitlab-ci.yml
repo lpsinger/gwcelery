@@ -72,12 +72,14 @@ dependencies/python3.6:
   script:
     - tar --strip-components 1 -xf *.tar.*
     - pip install pytest-cov
-    - python setup.py test --addopts='-vv --cov --cov-report=html --cov-report=term'
+    - python setup.py test --addopts='-vv --cov --cov-report=html --cov-report=term --junit-xml=junit.xml'
   dependencies:
     - sdist
   artifacts:
     paths:
       - htmlcov/
+    reports:
+      junit: junit.xml
 test/python3.6:
   image: $CI_REGISTRY_IMAGE/dependencies/python3.6:$CI_COMMIT_REF_NAME
   <<: *test
