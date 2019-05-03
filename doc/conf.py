@@ -167,7 +167,8 @@ html_theme_options = {
     'description': description,
     'github_button': False,
     'logo': 'logo.png',
-    'logo_name': True
+    'logo_name': True,
+    'show_relbars': True
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
