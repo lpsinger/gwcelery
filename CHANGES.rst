@@ -41,6 +41,8 @@ Changelog
     continues, and will fix errors like we encountered with S190426c where
     the pipeline would march along before uploads had finished.
 
+-   Apply ADVREQ label earlier in the preliminary alert workflow.
+
 0.5.4 (2019-05-01)
 ------------------
 
