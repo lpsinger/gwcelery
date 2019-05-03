@@ -152,8 +152,13 @@ def update_superevent(superevent_id, t_start=None,
     preferred_event : str
         uid of the preferred event, unchanged if None
     """
-    client.updateSuperevent(superevent_id, t_start=t_start, t_end=t_end,
-                            t_0=t_0, preferred_event=preferred_event).json()
+    try:
+        client.updateSuperevent(superevent_id,
+                                t_start=t_start, t_end=t_end, t_0=t_0,
+                                preferred_event=preferred_event).json()
+    except rest.HTTPError as e:
+        if e.message != b'"Request would not modify the superevent"':
+            raise
 
 
 @task(ignore_result=True, shared=False)
