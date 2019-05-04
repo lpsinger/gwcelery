@@ -77,10 +77,7 @@ def handle_grb_gcn(payload):
     try:
         trig_id = root.find("./What/Param[@name='TrigID']").attrib['value']
     except AttributeError:
-        trig_id = root.find("./What/Param[@name='EventID']").attrib['value']
-        log.info('Could not find TrigID field,'
-                 'getting trigger ID %s from event ID',
-                 trig_id)
+        trig_id = root.find("./What/Param[@name='Trans_Num']").attrib['value']
 
     stream_obsv_dict = {'/SWIFT': 'Swift',
                         '/Fermi': 'Fermi',

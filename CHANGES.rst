@@ -23,6 +23,9 @@ Changelog
     ``gwcelery.tasks.detchar.check_vectors`` adds one of the ``DQOK`` or
     ``DQV`` labels, it will now first remove the other label.
 
+-   Change exception in VOEevent parsing of Fermi subtreshold alerts to 
+    match real incoming alerts.
+
 0.5.6 (2018-05-08)
 ------------------
 

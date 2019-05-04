@@ -59,7 +59,7 @@ def test_handle_create_subthreshold_grb_event(mock_check_vectors,
     mock_get_events.assert_called_once_with(query=(
                                             'group: External pipeline: '
                                             'Fermi grbevent.trigger_id '
-                                            '= "578032460"'))
+                                            '= "578679123"'))
     # Note that this is the exact ID in the .xml file
     mock_create_event.assert_called_once_with(filecontents=text,
                                               search='GRB',
