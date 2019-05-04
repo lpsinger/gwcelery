@@ -31,8 +31,8 @@ def catch_retryable_http_errors(f):
         except rest.HTTPError as e:
             if e.status in {502, 503, 504}:
                 raise RetryableHTTPError(e.status, e.reason, e.message)
-        else:
-            raise
+            else:
+                raise
 
     return wrapper
 
