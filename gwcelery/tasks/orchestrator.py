@@ -340,10 +340,8 @@ def preliminary_alert(event, superevent_id):
                     message='Localization copied from {}'.format(
                         preferred_event_id),
                     tags=['sky_loc', 'public']
-                )
-                |
-                _download.si(original_skymap_filename, superevent_id)
-                |
+                ),
+
                 skymaps.flatten.s(skymap_filename)
                 |
                 gracedb.upload.s(
@@ -355,18 +353,14 @@ def preliminary_alert(event, superevent_id):
                 )
                 |
                 gracedb.create_label.si('SKYMAP_READY', superevent_id),
+
+                skymaps.annotate_fits(
+                    original_skymap_filename,
+                    superevent_id,
+                    ['sky_loc', 'public']
+                )
             )
         )
-
-        (
-            _download.si(original_skymap_filename, superevent_id)
-            |
-            skymaps.annotate_fits(
-                original_skymap_filename,
-                superevent_id,
-                ['sky_loc', 'public']
-            )
-        ).apply_async()
 
     # If this is a CBC event, then copy the EM bright classification.
     if event['group'] == 'CBC':

@@ -8,6 +8,10 @@ Changelog
     to an empty list, then suppress the normal error message that would occur
     when attempting to send a VOEvent when there are no broker connections.
 
+-   Rearrange preliminary alert workflow so that sky map plots are generated
+    for the newly added FITS file rather than an older FITS file that
+    coincidentally has the same name.
+
 0.5.5 (2019-05-03)
 ------------------
 
