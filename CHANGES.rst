@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.5.5 (unreleased)
+0.5.5 (2019-05-03)
 ------------------
 
 -   Cycle through llhoft, high latency frames, and low latency frames in
