@@ -4,7 +4,9 @@ Changelog
 0.5.6 (unreleased)
 ------------------
 
--   No changes yet.
+-   If the VOEvent broker is disabled by setting ``voevent_broker_whitelist``
+    to an empty list, then suppress the normal error message that would occur
+    when attempting to send a VOEvent when there are no broker connections.
 
 0.5.5 (2019-05-03)
 ------------------

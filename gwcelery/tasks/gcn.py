@@ -90,12 +90,13 @@ def send(self, message):
         connected to the VOEvent broadcaster.
     """
     broadcasters = self.app.conf['voevent_broadcaster_factory'].broadcasters
-    if not broadcasters:
+    if broadcasters:
+        event = xml_document(message)
+        for broadcaster in broadcasters:
+            reactor.callFromThread(broadcaster.send_event, event)
+    elif self.app.conf['voevent_broadcaster_whitelist']:
         raise SendingError('Not sending the event because there are no '
                            'subscribers connected to the GCN broker.')
-    event = xml_document(message)
-    for broadcaster in broadcasters:
-        reactor.callFromThread(broadcaster.send_event, event)
 
 
 @handler(gcn.NoticeType.LVC_PRELIMINARY,
