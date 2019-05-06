@@ -30,9 +30,9 @@ log = get_task_logger(__name__)
                  shared=False)
 def handle(payload):
     """LVAlert handler for superevent manager.
-    Recieves payload from test and production nodes and
-    serially processes them to create/modify superevents
-    """
+
+    Recieves payload from test and production nodes and serially processes them
+    to create/modify superevents."""
     if payload['alert_type'] != 'new':
         return
 
