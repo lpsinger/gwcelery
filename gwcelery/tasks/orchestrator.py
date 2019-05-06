@@ -121,10 +121,9 @@ def handle_cbc_event(alert):
     # em_bright and p_astro calculation
     if alert['alert_type'] == 'new':
         pipeline = alert['object']['pipeline'].lower()
-        instruments = superevents.get_instruments(
-            superevents._get_event_info(alert))
+        instruments = superevents.get_instruments(alert['object'])
         extra_attributes = alert['object']['extra_attributes']
-        snr = extra_attributes['CoincInspiral']['snr']
+        snr = superevents.get_snr(alert['object'])
         far = alert['object']['far']
         mass1 = extra_attributes['SingleInspiral'][0]['mass1']
         mass2 = extra_attributes['SingleInspiral'][0]['mass2']

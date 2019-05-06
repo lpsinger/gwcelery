@@ -52,9 +52,9 @@ def handle(payload):
             log.info("Skipping processing of %s because of low FAR", gid)
             return
 
-    event_info = _get_event_info(payload)
+    event_info = payload['object']
 
-    if event_info['search'] == 'MDC':
+    if event_info.get('search') == 'MDC':
         category = 'mdc'
     elif event_info['group'] == 'Test':
         category = 'test'
@@ -73,7 +73,7 @@ def handle(payload):
     else:
         sid = None  # No matching superevent
 
-    d_t_start, d_t_end = _get_dts(event_info)
+    d_t_start, d_t_end = get_dts(event_info)
 
     if sid is None:
         log.debug('Entered 1st if')
@@ -83,8 +83,8 @@ def handle(payload):
                                event_info['graceid'],
                                event_info['group'],
                                event_info['pipeline'],
-                               event_info['search'],
-                               event_dict=payload)
+                               event_info.get('search'),
+                               event_dict=event_info)
 
         superevent = _partially_intersects(superevents, event_segment)
 
@@ -132,58 +132,19 @@ def handle(payload):
                      sid, gid)
 
 
-def _get_event_info(payload):
-    """Helper function to fetch required event info (from GraceDb)
-    at once and reduce polling
-    """
-    # pull basic info
-    alert_type = payload.get('alert_type')
-    payload = payload.get('object', payload)
-    event_info = dict(
-        graceid=payload['graceid'],
-        gpstime=payload['gpstime'],
-        far=payload['far'],
-        offline=payload['offline'],
-        instruments=payload['instruments'],
-        group=payload['group'],
-        pipeline=payload['pipeline'],
-        search=payload.get('search'),
-        alert_type=alert_type,
-        extra_attributes=payload['extra_attributes'])
-    # pull pipeline based extra attributes for convenience
-    if payload['group'].lower() == 'cbc':
-        event_info['snr'] = \
-             payload['extra_attributes']['CoincInspiral']['snr']
-    if payload['pipeline'].lower() == 'cwb':
-        extra_attributes = ['duration', 'start_time', 'snr']
-        event_info.update(
-            {attr:
-             payload['extra_attributes']['MultiBurst'][attr]
-             for attr in extra_attributes})
-    elif payload['pipeline'].lower() == 'olib':
-        extra_attributes = ['quality_mean', 'frequency_mean']
-        event_info.update(
-            {attr:
-             payload['extra_attributes']['LalInferenceBurst'][attr]
-             for attr in extra_attributes})
-        # oLIB snr key has a different name, call it snr
-        event_info['snr'] = \
-            payload[
-                'extra_attributes']['LalInferenceBurst']['omicron_snr_network']
-    return event_info
-
-
-def _get_dts(event_info):
+def get_dts(event):
     """
     Returns the d_t_start and d_t_end values based on CBC/Burst
     type alerts
     """
-    pipeline = event_info['pipeline'].lower()
+    pipeline = event['pipeline'].lower()
     if pipeline == 'cwb':
-        d_t_start = d_t_end = event_info['duration']
+        attribs = event['extra_attributes']['MultiBurst']
+        d_t_start = d_t_end = attribs['duration']
     elif pipeline == 'olib':
-        d_t_start = d_t_end = (event_info['quality_mean'] /
-                               event_info['frequency_mean'])
+        attribs = event['extra_attributes']['LalInferenceBurst']
+        d_t_start = d_t_end = (attribs['quality_mean'] /
+                               attribs['frequency_mean'])
     else:
         d_t_start = app.conf['superevent_d_t_start'].get(
             pipeline, app.conf['superevent_default_d_t_start'])
@@ -192,13 +153,45 @@ def _get_dts(event_info):
     return d_t_start, d_t_end
 
 
-def get_instruments(event_info):
-    """Get the participating instruments from the lvalert packet
+def get_snr(event):
+    """Get the SNR from the LVAlert packet.
+
+    Different groups and pipelines store the SNR in different fields.
 
     Parameters
     ----------
-    event_info : dict
-        Dictionary storing event information
+    event : dict
+        Event dictionary (e.g., the return value from
+        :meth:`gwcelery.tasks.gracedb.get_event`).
+
+    Returns
+    -------
+    snr : float
+        The SNR.
+    """
+    group = event['group'].lower()
+    pipeline = event['pipeline'].lower()
+    if group == 'cbc':
+        attribs = event['extra_attributes']['CoincInspiral']
+        return attribs['snr']
+    elif pipeline == 'cwb':
+        attribs = event['extra_attributes']['MultiBurst']
+        return attribs['snr']
+    elif pipeline == 'olib':
+        attribs = event['extra_attributes']['LalInferenceBurst']
+        return attribs['omicron_snr_network']
+    else:
+        raise NotImplementedError('SNR attribute not found')
+
+
+def get_instruments(event):
+    """Get the participating instruments from the LVAlert packet.
+
+    Parameters
+    ----------
+    event : dict
+        Event dictionary (e.g., the return value from
+        :meth:`gwcelery.tasks.gracedb.get_event`).
 
     Returns
     -------
@@ -217,34 +210,33 @@ def get_instruments(event_info):
     squared field is non-empty.
     """
     try:
-        attrib = event_info['extra_attributes']
-        ifos = {single['ifo'] for single in attrib['SingleInspiral']
+        attribs = event['extra_attributes']['SingleInspiral']
+        ifos = {single['ifo'] for single in attribs
                 if single.get('chisq') is not None}
     except KeyError:
-        ifos = set(event_info['instruments'].split(','))
+        ifos = set(event['instruments'].split(','))
     return ifos
 
 
-def should_publish(event_info):
+def should_publish(event):
     """Determine whether an event should be published as a public alert."""
-    group = event_info['group'].lower()
+    group = event['group'].lower()
     trials_factor = app.conf['preliminary_alert_trials_factor'][group]
     far_threshold = app.conf['preliminary_alert_far_threshold'][group]
-    far = trials_factor * event_info['far']
-    ifos = get_instruments(event_info)
+    far = trials_factor * event['far']
+    ifos = get_instruments(event)
     num_ifos = len(ifos)
-    return not event_info['offline'] and num_ifos > 1 and far <= far_threshold
+    return not event['offline'] and num_ifos > 1 and far <= far_threshold
 
 
-def _keyfunc(event_info):
-    group = event_info['group'].lower()
+def _keyfunc(event):
+    group = event['group'].lower()
     try:
         group_rank = ['cbc', 'burst'].index(group)
     except ValueError:
         group_rank = float('inf')
-    tie_breaker = -event_info['snr'] if group == 'cbc' \
-        else event_info['far']
-    return not should_publish(event_info), group_rank, tie_breaker
+    tie_breaker = -get_snr(event) if group == 'cbc' else event['far']
+    return not should_publish(event), group_rank, tie_breaker
 
 
 def _update_superevent(superevent_id, preferred_event, new_event_dict,
@@ -271,7 +263,7 @@ def _update_superevent(superevent_id, preferred_event, new_event_dict,
     t_end : float
         end time of `superevent_id`, None for no change
     """
-    preferred_event_dict = _get_event_info(gracedb.get_event(preferred_event))
+    preferred_event_dict = gracedb.get_event(preferred_event)
 
     kwargs = {}
     if t_start is not None:
