@@ -1,30 +1,27 @@
-import json
 import pytest
 from unittest.mock import patch
 
 from ..tasks import gracedb, superevents
 from . import resource_json
 
-lvalert_content = json.loads(
-    '''{
-    "object":
-        {
-            "graceid": "",
-            "gpstime": "",
-            "pipeline": "",
-            "group": "",
-            "created": "",
-            "far": "",
-            "instruments": "",
-            "labels": {},
-            "extra_attributes":{},
-            "submitter": "deep.chatterjee@ligo.org",
-            "offline": false
-        },
-    "alert_type": "new",
-    "uid": ""
-    }'''
-)
+lvalert_content = {
+    'object': {
+        'graceid': '',
+        'gpstime': '',
+        'pipeline': '',
+        'group': '',
+        'created': '',
+        'far': '',
+        'instruments': '',
+        'labels': [],
+        'extra_attributes': [],
+        'submitter': 'deep.chatterjee@ligo.org',
+        'offline': False
+    },
+    'alert_type': 'new',
+    'uid': ''
+}
+
 
 
 class T0212HTTPResponse(object):
@@ -57,28 +54,67 @@ class G000012HTTPResponse(object):
 
 class G330308HTTPResponse(object):
     def json(self):
-        return json.loads(
-            '{"graceid": "G330308", "gpstime": 1239917954.250977,'
-            '"pipeline": "pycbc", "group": "CBC", "offline": false,'
-            '"far": 1.48874654585461e-08, "instruments": "H1,L1",'
-            '"extra_attributes": {"SingleInspiral":'
-            '[{"chisq": 1.07, "snr": 7.95, "ifo": "L1"},'
-            '{"chisq": 0.54, "snr": 6.35, "ifo": "H1"}],'
-            '"CoincInspiral": {"snr": 10.17}},'
-            '"search": "AllSky", "superevent": "S190421ar"}')
+        return {
+            'graceid': 'G330308',
+            'gpstime': 1239917954.250977,
+            'pipeline': 'pycbc',
+            'group': 'CBC',
+            'offline': False,
+            'far': 1.48874654585461e-08,
+            'instruments': 'H1,L1',
+            'extra_attributes': {
+                'SingleInspiral': [
+                    {
+                        'chisq': 1.07,
+                        'snr': 7.95,
+                        'ifo': 'L1'
+                    },
+                    {
+                        'chisq': 0.54,
+                        'snr': 6.35,
+                        'ifo': 'H1'
+                    }
+                ],
+                'CoincInspiral': {
+                    'snr': 10.17
+                }
+            },
+            'search': 'AllSky',
+            'superevent': 'S190421ar'
+        }
+
 
 
 class G330298HTTPResponse(object):
     def json(self):
-        return json.loads(
-            '{"graceid": "G330298", "gpstime": 1239917954.40918,'
-            '"pipeline": "spiir", "group": "CBC", "offline": false,'
-            '"far": 5.57979637960671e-06, "instruments": "H1,L1",'
-            '"extra_attributes": {"SingleInspiral":'
-            '[{"chisq": 0.61, "snr": 6.64, "ifo": "L1"},'
-            '{"chisq": 1.10, "snr": 8.14, "ifo": "H1"}],'
-            '"CoincInspiral": {"snr": 10.51}},'
-            '"search": "HighMass", "superevent": "S190421ar"}')
+        return {
+            'graceid': 'G330298',
+            'gpstime': 1239917954.40918,
+            'pipeline': 'spiir',
+            'group': 'CBC',
+            'offline': False,
+            'far': 5.57979637960671e-06,
+            'instruments': 'H1,L1',
+            'extra_attributes': {
+                'SingleInspiral': [
+                    {
+                        'chisq': 0.61,
+                        'snr': 6.64,
+                        'ifo': 'L1'
+                    },
+                    {
+                        'chisq': 1.1,
+                        'snr': 8.14,
+                        'ifo': 'H1'
+                    }
+                ],
+                'CoincInspiral': {
+                    'snr': 10.51
+                }
+            },
+            'search': 'HighMass',
+            'superevent': 'S190421ar'
+        }
 
 
 @pytest.fixture(autouse=True)
