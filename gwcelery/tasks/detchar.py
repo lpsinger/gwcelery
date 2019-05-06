@@ -341,6 +341,11 @@ def check_vectors(event, graceid, start, end):
         GraceID of event to which to log.
     start, end : int or float
         GPS start and end times desired.
+
+    Returns
+    -------
+    event : dict
+        Details of the event, reflecting any labels that were added.
     """
     # Skip MDC events.
     if event.get('search') == 'MDC':
@@ -406,6 +411,8 @@ def check_vectors(event, graceid, start, end):
             # If iDQ p(glitch) is high and pipeline enabled, apply DQV
             if app.conf['idq_veto'][pipeline]:
                 gracedb.create_label('DQV', graceid)
+                # Add labels to return value to avoid querying GraceDb again.
+                event = dict(event, labels=event.get('labels', []) + ['DQV'])
         else:
             idq_msg = ("iDQ glitch probabilities at both H1 and L1 "
                        "are good (below {} threshold). "
@@ -421,6 +428,8 @@ def check_vectors(event, graceid, start, end):
     if False in active_inj_states.values():
         # Label 'INJ' if injection found in active IFOs
         gracedb.create_label('INJ', graceid)
+        # Add labels to return value to avoid querying GraceDb again.
+        event = dict(event, labels=event.get('labels', []) + ['INJ'])
     if False in inj_states.values():
         # Write all found injections into GraceDb log
         injs = [k for k, v in inj_states.items() if v is False]
@@ -462,9 +471,13 @@ def check_vectors(event, graceid, start, end):
     if overall_dq_active_state is True:
         state = "pass"
         gracedb.create_label('DQOK', graceid)
+        # Add labels to return value to avoid querying GraceDb again.
+        event = dict(event, labels=event.get('labels', []) + ['DQOK'])
     elif overall_dq_active_state is False:
         state = "fail"
         gracedb.create_label('DQV', graceid)
+        # Add labels to return value to avoid querying GraceDb again.
+        event = dict(event, labels=event.get('labels', []) + ['DQV'])
     else:
         state = "unknown"
 
