@@ -1,11 +1,10 @@
 """Module containing the functionality for creation and management of
 superevents.
 
-    * There is serial processing of triggers from low latency
-      pipelines.
-    * Dedicated **superevent** queue for this purpose.
-    * Primary logic to respond to low latency triggers contained
-      in :meth:`handle` function.
+*   There is serial processing of triggers from low latency pipelines.
+*   Dedicated **superevent** queue for this purpose.
+*   Primary logic to respond to low latency triggers contained in
+    :meth:`handle` function.
 """
 from celery.utils.log import get_task_logger
 from ligo.gracedb.exceptions import HTTPError
