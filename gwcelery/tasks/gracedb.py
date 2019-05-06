@@ -215,7 +215,7 @@ def update_superevent(superevent_id, t_start=None,
 
 @task(ignore_result=True, shared=False)
 @catch_retryable_http_errors
-def create_superevent(graceid, t0, d_t_start, d_t_end, category):
+def create_superevent(graceid, t0, t_start, t_end, category):
     """Create new superevent in GraceDb with `graceid`
 
     Parameters
@@ -224,16 +224,14 @@ def create_superevent(graceid, t0, d_t_start, d_t_end, category):
         graceid with which superevent is created.
     t0 : float
         ``t_0`` parameter of superevent
-    d_t_start : float
-        superevent `t_start` = `t0 - d_t_start`
-    d_t_end : float
-        superevent `t_end` = `t0 + t_end`
+    t_start : float
+        ``t_start`` parameter of superevent
+    t_end : float
+        ``t_end`` parameter of superevent
     category : str
         superevent category
     """
-    ts = t0 - d_t_start
-    te = t0 + d_t_end
-    client.createSuperevent(ts, t0, te, preferred_event=graceid,
+    client.createSuperevent(t_start, t0, t_end, preferred_event=graceid,
                             category=category).json()
 
 

@@ -68,13 +68,12 @@ def handle(payload):
     else:
         sid = None  # No matching superevent
 
-    d_t_start, d_t_end = get_dts(event_info)
+    t_start, t_end = get_ts(event_info)
 
     if sid is None:
         log.debug('Entered 1st if')
         event_segment = _Event(event_info['gpstime'],
-                               event_info['gpstime'] - d_t_start,
-                               event_info['gpstime'] + d_t_end,
+                               t_start, t_end,
                                event_info['graceid'],
                                event_info['group'],
                                event_info['pipeline'],
@@ -88,9 +87,7 @@ def handle(payload):
                      'creating new superevent', gid)
             gracedb.create_superevent(event_info['graceid'],
                                       event_info['gpstime'],
-                                      d_t_start,
-                                      d_t_end,
-                                      category)
+                                      t_start, t_end, category)
             return
 
         log.info('Event %s in window of %s. Adding event to superevent',
@@ -119,7 +116,7 @@ def handle(payload):
                      sid, gid)
 
 
-def get_dts(event):
+def get_ts(event):
     """Get time extent of an event, depending on CBC or burst parameters.
 
     Parameters
@@ -130,11 +127,11 @@ def get_dts(event):
 
     Returns
     -------
-    d_t_start : float
-        Time difference in seconds between event time and segment start.
+    t_start : float
+        Segment start time in GPS seconds.
 
-    d_t_end : float
-        Time difference in seconds between segment end and event time.
+    t_end : float
+        Segment end time in GPS seconds.
     """
     pipeline = event['pipeline'].lower()
     if pipeline == 'cwb':
@@ -149,7 +146,7 @@ def get_dts(event):
             pipeline, app.conf['superevent_default_d_t_start'])
         d_t_end = app.conf['superevent_d_t_end'].get(
             pipeline, app.conf['superevent_default_d_t_end'])
-    return d_t_start, d_t_end
+    return event['gpstime'] - d_t_start, event['gpstime'] + d_t_end
 
 
 def get_snr(event):
