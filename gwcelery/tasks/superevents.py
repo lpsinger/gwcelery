@@ -130,9 +130,21 @@ def handle(payload):
 
 
 def get_dts(event):
-    """
-    Returns the d_t_start and d_t_end values based on CBC/Burst
-    type alerts
+    """Get time extent of an event, depending on CBC or burst parameters.
+
+    Parameters
+    ----------
+    event : dict
+        Event dictionary (e.g., the return value from
+        :meth:`gwcelery.tasks.gracedb.get_event`).
+
+    Returns
+    -------
+    d_t_start : float
+        Time difference in seconds between event time and segment start.
+
+    d_t_end : float
+        Time difference in seconds between segment end and event time.
     """
     pipeline = event['pipeline'].lower()
     if pipeline == 'cwb':
@@ -275,9 +287,8 @@ def _update_superevent(superevent_id, preferred_event, new_event_dict,
 
 
 def _superevent_segment_list(superevents):
-    """Ingests a list of superevent dictionaries, and returns
-    a segmentlist with start and end times as the duration of
-    each segment
+    """Ingests a list of superevent dictionaries, and returns a segmentlist
+    with start and end times as the duration of each segment.
 
     Parameters
     ----------
@@ -300,11 +311,9 @@ def _superevent_segment_list(superevents):
 
 
 def _partially_intersects(superevents, event_segment):
-    """Similar to :meth:`segmentlist.find`
-    except it also returns the segment of
-    `superevents` which partially intersects argument.
-    If there are more than one intersections,
-    first occurence is returned.
+    """Similar to :meth:`segmentlist.find` except it also returns the segment
+    of `superevents` which partially intersects argument. If there are more
+    than one intersections, first occurence is returned.
 
     Parameters
     ----------
@@ -328,9 +337,7 @@ def _partially_intersects(superevents, event_segment):
 
 
 class _Event(segment):
-    """An event implemented as an extension of
-    :class:`segment`
-    """
+    """An event implemented as an extension of :class:`segment`."""
     def __new__(cls, t0, t_start, t_end, *args, **kwargs):
         return super().__new__(cls, t_start, t_end)
 
@@ -345,9 +352,7 @@ class _Event(segment):
 
 
 class _SuperEvent(segment):
-    """An superevent implemented as an extension of
-    :class:`segment`
-    """
+    """An superevent implemented as an extension of :class:`segment`."""
     def __new__(cls, t_start, t_end, *args, **kwargs):
         return super().__new__(cls, t_start, t_end)
 
