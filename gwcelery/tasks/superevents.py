@@ -33,10 +33,7 @@ def handle(payload):
     Recieves payload from test and production nodes and
     serially processes them to create/modify superevents
     """
-    alert_type = payload['alert_type']
-
-    if alert_type != 'new':
-        log.info('Not new type alert, passing...')
+    if payload['alert_type'] != 'new':
         return
 
     gid = payload['uid']
