@@ -27,12 +27,12 @@ lvalert_content = json.loads(
 )
 
 
-class T0212TTPResponse(object):
+class T0212HTTPResponse(object):
     def json(self):
         return resource_json(__name__, 'data/T0212_S0039_preferred.json')
 
 
-class SingleT0212TTPResponse(object):
+class SingleT0212HTTPResponse(object):
     def __init__(self, event):
         if event != 'T0212':
             raise ValueError("Called with incorrect preferred event")
@@ -50,12 +50,12 @@ class SingleT0212TTPResponse(object):
         return response
 
 
-class G000012TTPResponse(object):
+class G000012HTTPResponse(object):
     def json(self):
         return resource_json(__name__, 'data/G000012_S0040_preferred.json')
 
 
-class G330308TTPResponse(object):
+class G330308HTTPResponse(object):
     def json(self):
         return json.loads(
             '{"graceid": "G330308", "gpstime": 1239917954.250977,'
@@ -68,7 +68,7 @@ class G330308TTPResponse(object):
             '"search": "AllSky", "superevent": "S190421ar"}')
 
 
-class G330298TTPResponse(object):
+class G330298HTTPResponse(object):
     def json(self):
         return json.loads(
             '{"graceid": "G330298", "gpstime": 1239917954.40918,'
@@ -102,13 +102,13 @@ def mock_db(monkeypatch):
 
         def event(self, gid):
             if gid == "T0212":
-                return T0212TTPResponse()
+                return T0212HTTPResponse()
             elif gid == "G000012":
-                return G000012TTPResponse()
+                return G000012HTTPResponse()
             elif gid == "G330308":
-                return G330308TTPResponse()
+                return G330308HTTPResponse()
             elif gid == "G330298":
-                return G330298TTPResponse()
+                return G330298HTTPResponse()
             else:
                 raise ValueError("Called with incorrect preferred event %s"
                                  % (gid))
@@ -512,7 +512,7 @@ def test_single_ifo_3(mock_db):
                                    'snr': 10.0}}},
                    alert_type='new',
                    uid='G000011')
-    setattr(gracedb.client, 'event', SingleT0212TTPResponse)
+    setattr(gracedb.client, 'event', SingleT0212HTTPResponse)
     # addEventToSuperevent should be called
     # preferred event should be updated
     with patch.object(gracedb.client, 'addEventToSuperevent') as p1, \
