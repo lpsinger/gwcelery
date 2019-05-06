@@ -223,7 +223,7 @@ def create_superevent(graceid, t0, d_t_start, d_t_end, category):
     graceid : str
         graceid with which superevent is created.
     t0 : float
-        `t_0` parameter of superevent
+        ``t_0`` parameter of superevent
     d_t_start : float
         superevent `t_start` = `t0 - d_t_start`
     d_t_end : float
