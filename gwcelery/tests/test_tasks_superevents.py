@@ -23,7 +23,6 @@ lvalert_content = {
 }
 
 
-
 class T0212HTTPResponse(object):
     def json(self):
         return resource_json(__name__, 'data/T0212_S0039_preferred.json')
@@ -82,7 +81,6 @@ class G330308HTTPResponse(object):
             'search': 'AllSky',
             'superevent': 'S190421ar'
         }
-
 
 
 class G330298HTTPResponse(object):
