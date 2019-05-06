@@ -118,19 +118,18 @@ def mock_db(monkeypatch):
 
 
 def test_update_preferred_event(mock_db):
-    def mock_response():
-        return dict(graceid="T1234",
-                    instruments="I1,J1,K1,L1,M1",
-                    group="CBC",
-                    pipeline="gstlal",
-                    offline=False,
-                    superevent="some_superevent",
-                    far=1e-30,
-                    extra_attributes=dict(CoincInspiral=dict(snr=30.0)))
+    payload = dict(graceid="T1234",
+                   instruments="I1,J1,K1,L1,M1",
+                   group="CBC",
+                   pipeline="gstlal",
+                   offline=False,
+                   superevent="some_superevent",
+                   far=1e-30,
+                   extra_attributes=dict(CoincInspiral=dict(snr=30.0)))
     with patch.object(gracedb.client, 'updateSuperevent') as p:
         superevents._update_superevent('S0039',
                                        'T0212',
-                                       mock_response(),
+                                       payload,
                                        None,
                                        None)
         p.assert_called_with('S0039', preferred_event='T1234',
