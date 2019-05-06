@@ -414,7 +414,7 @@ def check_vectors(event, graceid, start, end):
                            json.dumps(idq_probs)[1:-1])
     else:
         idq_msg = "iDQ glitch probabilities unknown. "
-    gracedb.upload(
+    gracedb.upload.delay(
         None, None, graceid, idq_msg + prepost_msg, ['data_quality'])
 
     # Labeling INJ to GraceDb
@@ -431,7 +431,7 @@ def check_vectors(event, graceid, start, end):
         inj_msg = 'No HW injections found. '
     else:
         inj_msg = 'Injection state unknown. '
-    gracedb.upload(
+    gracedb.upload.delay(
         None, None, graceid, inj_msg + prepost_msg, ['data_quality'])
 
     # Determining overall_dq_active_state
@@ -457,7 +457,7 @@ def check_vectors(event, graceid, start, end):
         gate_msg = ''
 
     # Labeling DQOK/DQV to GraceDb
-    gracedb.upload(
+    gracedb.upload.delay(
         None, None, graceid, msg + prepost_msg + gate_msg, ['data_quality'])
     if overall_dq_active_state is True:
         state = "pass"
@@ -477,7 +477,7 @@ def check_vectors(event, graceid, start, end):
     file = dqr_json(json_state, state_summary)
     filename = 'gwcelerydetcharcheckvectors-{}.json'.format(graceid)
     message = "DQR-compatible json generated from check_vectors results"
-    gracedb.upload(
+    gracedb.upload.delay(
         json.dumps(file), filename, graceid, message)
 
     return event

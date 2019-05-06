@@ -10,7 +10,7 @@ from . import resource_json
 
 
 @patch('gwcelery.tasks.detchar.dqr_json', return_value='dqrjson')
-@patch('gwcelery.tasks.gracedb.upload')
+@patch('gwcelery.tasks.gracedb.upload.run')
 @patch('gwcelery.tasks.gracedb.get_event', return_value={
     'graceid': 'E1', 'gpstime': 1, 'instruments': '', 'pipeline': 'Fermi',
     'extra_attributes': {'GRB': {'trigger_duration': 1}}})
@@ -77,7 +77,7 @@ def test_handle_replace_grb_event(mock_get_events, mock_replace_event):
 
 
 @patch('gwcelery.tasks.detchar.dqr_json', return_value='dqrjson')
-@patch('gwcelery.tasks.gracedb.upload')
+@patch('gwcelery.tasks.gracedb.upload.run')
 @patch('gwcelery.tasks.gracedb.get_event', return_value={
     'graceid': 'E1', 'gpstime': 1, 'instruments': '', 'pipeline': 'SNEWS'})
 @patch('gwcelery.tasks.gracedb.create_event')

@@ -133,7 +133,7 @@ def test_check_vectors_skips_mdc(caplog):
 
 
 @patch('gwcelery.tasks.detchar.dqr_json', return_value='dqrjson')
-@patch('gwcelery.tasks.gracedb.upload')
+@patch('gwcelery.tasks.gracedb.upload.run')
 @patch('gwcelery.tasks.gracedb.create_label')
 def test_check_vectors(mock_create_label, mock_upload, mock_json,
                        llhoft_glob_pass, ifo_h1, ifo_h1_idq):
@@ -174,7 +174,7 @@ def test_check_vectors(mock_create_label, mock_upload, mock_json,
 
 
 @patch('gwcelery.tasks.detchar.dqr_json', return_value='dqrjson')
-@patch('gwcelery.tasks.gracedb.upload')
+@patch('gwcelery.tasks.gracedb.upload.run')
 @patch('gwcelery.tasks.gracedb.create_label')
 def test_gatedhoft_skips_dmtvec(mock_create_label, mock_upload, mock_json,
                                 llhoft_glob_pass, ifo_h1, ifo_h1_idq,

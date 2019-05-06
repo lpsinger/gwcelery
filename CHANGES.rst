@@ -12,6 +12,9 @@ Changelog
     for the newly added FITS file rather than an older FITS file that
     coincidentally has the same name.
 
+-   Have ``gwcelery.detchar.check_vectors`` task apply all GraceDb log messages
+    in order to increase robustness to recoverable GraceDb API errors.
+
 0.5.5 (2019-05-03)
 ------------------
 
