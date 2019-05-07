@@ -71,7 +71,7 @@ dependencies/python3.6:
     - apt-get update -qq && apt-get install -y -qq redis-server
   script:
     - tar --strip-components 1 -xf *.tar.*
-    - pip install pytest-cov
+    - pip install pytest-cov -r test-requirements.txt
     - python setup.py test --addopts='-vv --cov --cov-report=html --cov-report=term --junit-xml=junit.xml'
   dependencies:
     - sdist
