@@ -39,7 +39,7 @@ def plot(contents):
     Notes
     -----
     The unusually small size of the plot (2.5 x 2 inches) is optimized for
-    viewing in GraceDB's image display widget.
+    viewing in GraceDb's image display widget.
 
     Examples
     --------

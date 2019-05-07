@@ -89,7 +89,7 @@ def compute_p_astro(snr, far, mass1, mass2, pipeline, instruments):
     far_star = 1 / (30 * 86400)
 
     # Compute astrophysical bayesfactor for
-    # GraceDB event
+    # GraceDb event
     fground = 3 * snr_star**3 / (snr_choice**4)
     bground = far / far_star
     astro_bayesfac = fground / bground

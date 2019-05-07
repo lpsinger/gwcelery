@@ -198,7 +198,7 @@ def get_instruments(event):
     Notes
     -----
     The number of instruments that contributed *data* to an event is given by
-    the ``instruments`` key of the GraceDB event JSON structure. However, some
+    the ``instruments`` key of the GraceDb event JSON structure. However, some
     pipelines (e.g. gstlal) have a distinction between which instruments
     contributed *data* and which were considered in the *ranking* of the
     candidate. For such pipelines, we infer which pipelines contributed to the
