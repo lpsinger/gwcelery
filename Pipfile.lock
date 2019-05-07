@@ -636,10 +636,10 @@
         },
         "p-astro": {
             "hashes": [
-                "sha256:3b84b06b587069f32c9b98a5f5aaafa8107ffbc555ff7d6a260897c3097cbff9",
-                "sha256:957d9b4ed8055a8ba194a2ce24b09b64b3ce79f13353d8e6304517d6f3daa2c0"
+                "sha256:8a6c06b47efe2f5472699d29ef07defe1124384118b146477f907da008b0877e",
+                "sha256:d5cdacfbe29835685baafe1fd32f78d1c8236aa419c1e68bfd1b9ea8fcffb56f"
             ],
-            "version": "==0.4"
+            "version": "==0.5"
         },
         "pandas": {
             "hashes": [
