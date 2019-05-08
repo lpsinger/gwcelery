@@ -1,12 +1,12 @@
 gwcelery.tasks.superevents module
 ---------------------------------
 
-`Superevents` are a new abstraction of gravitational-wave candidates
-introduced in the third LIGO/Virgo observing (O3). Each superevent is
-intended to represent a single astrophysical event. A superevent
-consists of one or more event candidates, possibly from different
-pipelines, that are neighbors in ``gpstime``. One event belonging
-to the superevent is identified as the preferred event.
+`Superevents` are a new abstraction of gravitational-wave candidates introduced
+in the third LIGO/Virgo observing (O3). Each superevent is intended to
+represent a single astrophysical event. A superevent consists of one or more
+event candidates, possibly from different pipelines, that are neighbors in
+``gpstime``. One event belonging to the superevent is identified as the
+preferred event.
 
 Flow Chart
 ~~~~~~~~~~
