@@ -117,7 +117,14 @@ def handle(payload):
 
 
 def get_ts(event):
-    """Get time extent of an event, depending on CBC or burst parameters.
+    """Get time extent of an event, depending on pipeline-specific parameters.
+
+    *   For CWB, use the event's ``duration`` field.
+    *   For oLIB, use the ratio of the event's ``quality_mean`` and
+        ``frequency_mean`` fields.
+    *   For all other pipelines, use the
+        :obj:`~gwcelery.conf.superevent_d_t_start` and
+        :obj:`~gwcelery.conf.superevent_d_t_start` configuration values.
 
     Parameters
     ----------
