@@ -256,7 +256,29 @@ def should_publish(event):
     return not event['offline'] and num_ifos > 1 and far <= far_threshold
 
 
-def _keyfunc(event):
+def keyfunc(event):
+    """Key function for selection of the preferred event.
+
+    Return a value suitable for identifying the preferred event. Given events
+    ``a`` and ``b``, ``a`` is preferred over ``b`` if
+    ``keyfunc(a) < keyfunc(b)``, else ``b`` is preferred.
+
+    Parameters
+    ----------
+    event : dict
+        Event dictionary (e.g., the return value from
+        :meth:`gwcelery.tasks.gracedb.get_event`).
+
+    Returns
+    -------
+    key : tuple
+        The comparison key.
+
+    Notes
+    -----
+    Tuples are compared lexicographically in Python: they are compared
+    element-wise until an unequal pair of elements is found.
+    """
     group = event['group'].lower()
     try:
         group_rank = ['cbc', 'burst'].index(group)
