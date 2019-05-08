@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.5.6 (unreleased)
+0.5.6 (2018-05-08)
 ------------------
 
 -   Extend the ``orchestrator_timeout`` to 300s and the ``pe_timeout`` to
