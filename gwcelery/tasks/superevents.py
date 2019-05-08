@@ -317,7 +317,7 @@ def _update_superevent(superevent_id, preferred_event, new_event_dict,
         kwargs['t_start'] = t_start
     if t_end is not None:
         kwargs['t_end'] = t_end
-    if _keyfunc(new_event_dict) < _keyfunc(preferred_event_dict):
+    if keyfunc(new_event_dict) < keyfunc(preferred_event_dict):
         kwargs['preferred_event'] = new_event_dict['graceid']
 
     if kwargs:
