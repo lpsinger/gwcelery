@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.5.6 (unreleased)
+0.5.7 (unreleased)
 ------------------
 
 -   If the VOEvent broker is disabled by setting ``voevent_broker_whitelist``
@@ -18,6 +18,9 @@ Changelog
 -   Port over majority of P_astro code from gwcelery to the p-astro package.
 
 -   Use cleaned data for parameter estimation.
+
+0.5.6 (2018-05-08)
+------------------
 
 -   Extend the ``orchestrator_timeout`` to 300s and the ``pe_timeout`` to
     345s. The previous timeout was not sufficient for the online pipelines
