@@ -19,6 +19,10 @@ Changelog
 
 -   Use cleaned data for parameter estimation.
 
+-   Extend the ``orchestrator_timeout`` to 300s and the ``pe_timeout`` to
+    345s. The previous timeout was not sufficient for the online pipelines
+    to upload all of their possible candidates, hence the extension.
+
 0.5.5 (2019-05-03)
 ------------------
 
