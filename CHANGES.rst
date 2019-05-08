@@ -17,6 +17,8 @@ Changelog
 
 -   Port over majority of P_astro code from gwcelery to the p-astro package.
 
+-   Use cleaned data for parameter estimation.
+
 0.5.5 (2019-05-03)
 ------------------
 

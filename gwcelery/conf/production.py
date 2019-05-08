@@ -43,8 +43,8 @@ high_latency_frame_types = {'H1': 'H1_HOFT_C00',
 checks (see :mod:`gwcelery.tasks.detchar`).
 """
 
-strain_channel_names = {'H1': 'H1:GDS-CALIB_STRAIN',
-                        'L1': 'L1:GDS-CALIB_STRAIN',
+strain_channel_names = {'H1': 'H1:GDS-CALIB_STRAIN_CLEAN',
+                        'L1': 'L1:GDS-CALIB_STRAIN_CLEAN',
                         'V1': 'V1:Hrec_hoft_16384Hz'}
 """Names of h(t) channels used in Parameter Estimation with LALInference (see
 :mod:`gwcelery.tasks.lalinference`)"""
