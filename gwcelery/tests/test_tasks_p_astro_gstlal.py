@@ -12,7 +12,7 @@ from ..tasks import p_astro_gstlal
 def mock_url(monkeypatch):
     def _urlfunc(url):
         filename_m = "data/H1L1V1-mean_counts-1126051217-61603201.json"
-        filename_w = "data/H1L1V1-weights-bins_686-1126051217-61603201.json"
+        filename_w = "data/H1L1V1-weights-bins_686-1126051217-61603201.h5"
         if url == app.conf['p_astro_url']:
             return pkg_resources.resource_stream(__name__, filename_m)
         elif url == app.conf['p_astro_weights_url']:

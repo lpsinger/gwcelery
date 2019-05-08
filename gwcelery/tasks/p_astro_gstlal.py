@@ -3,18 +3,39 @@
 """
 import json
 from os.path import basename
+import shutil
+import tempfile
 from urllib import error, request
 
 from celery.utils.log import get_task_logger
+import h5py
 from ligo import p_astro_gstlal_utils as gstlal
 from ligo import p_astro_computation as pastrocomp
 import numpy as np
 
 from ..import app
+from ..util import PromiseProxy
 
 from . import p_astro_other
 
 log = get_task_logger(__name__)
+
+
+def _get_activation_counts_hf():
+    try:
+        with tempfile.NamedTemporaryFile() as f:
+            response = request.urlopen(app.conf['p_astro_weights_url'])
+            try:
+                shutil.copyfileobj(response, f)
+                f.flush()
+            finally:
+                response.close()
+            return h5py.File(f.name, 'r')
+    except (ValueError, error.URLError):
+        return None
+
+
+_activation_counts_hf = PromiseProxy(_get_activation_counts_hf)
 
 
 @app.task(shared=False)
@@ -75,17 +96,8 @@ def compute_p_astro(files):
     mean_values_dict = p_astro_other.read_mean_values()
     mean_values_dict["counts_Terrestrial"] = lam_0
 
-    # Read weights from url file
-    try:
-        url_key = "p_astro_weights_url"
-        response = request.urlopen(app.conf[url_key])
-        activation_counts_dict = json.load(response)
-        response.close()
-    except (ValueError, error.URLError):
-        activation_counts_dict = None
-
     # Get the number of bins
-    filename = basename(app.conf[url_key])
+    filename = basename(app.conf['p_astro_weights_url'])
     num_bins = int(filename.split("-")[2].split("_")[1])
 
     # Compute categorical p_astro values
@@ -97,7 +109,7 @@ def compute_p_astro(files):
                                                   event_spin1z,
                                                   event_spin2z,
                                                   num_bins,
-                                                  activation_counts_dict)
+                                                  _activation_counts_hf)
 
     # Dump values in json file
     return json.dumps(p_astro_values)

@@ -10,6 +10,8 @@ Changelog
 -   Remove redundant key in handle_lvalert_grb to prevent double calls to
     RAVEN.
 
+-   Read template weights for P_astro from hdf5 file using h5py for speedup.
+
 0.5.7 (2019-05-13)
 ------------------
 

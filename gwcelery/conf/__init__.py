@@ -180,7 +180,7 @@ is computed. (Used by :mod:`gwcelery.tasks.p_astro_gstlal` and
 """
 
 p_astro_weights_url = 'http://emfollow.ldas.cit/data/' \
-    'H1L1V1-weights-bins_686-1126051217-61603201.json'
+    'H1L1V1-weights-bins_686-1126051217-61603201.h5'
 """URL for template weights using which p_astro
 is computed. (Used by :mod:`gwcelery.tasks.p_astro_gstlal`)
 """
