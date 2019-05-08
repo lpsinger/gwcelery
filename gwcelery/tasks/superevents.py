@@ -222,7 +222,31 @@ def get_instruments(event):
 
 
 def should_publish(event):
-    """Determine whether an event should be published as a public alert."""
+    """Determine whether an event should be published as a public alert.
+
+    All of the following conditions must be true for a public alert:
+
+    *   The event's ``offline`` flag is not set.
+    *   The event's significance was estimated using data from 2 or more
+        gravitational-wave detectors.
+    *   The event's false alarm rate, weighted by the group-specific trials
+        factor as specified by the
+        :obj:`~gwcelery.conf.preliminary_alert_trials_factor` configuration
+        setting, is less than or equal to
+        :obj:`~gwcelery.conf.preliminary_alert_far_threshold`.
+
+    Parameters
+    ----------
+    event : dict
+        Event dictionary (e.g., the return value from
+        :meth:`gwcelery.tasks.gracedb.get_event`).
+
+    Returns
+    -------
+    should_publish : bool
+        :obj:`True` if the event meets the criteria for a public alert or
+        :obj:`False` if it does not.
+    """
     group = event['group'].lower()
     trials_factor = app.conf['preliminary_alert_trials_factor'][group]
     far_threshold = app.conf['preliminary_alert_far_threshold'][group]
