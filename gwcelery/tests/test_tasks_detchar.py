@@ -134,9 +134,10 @@ def test_check_vectors_skips_mdc(caplog):
 
 @patch('gwcelery.tasks.detchar.dqr_json', return_value='dqrjson')
 @patch('gwcelery.tasks.gracedb.upload.run')
+@patch('gwcelery.tasks.gracedb.remove_label')
 @patch('gwcelery.tasks.gracedb.create_label')
-def test_check_vectors(mock_create_label, mock_upload, mock_json,
-                       llhoft_glob_pass, ifo_h1, ifo_h1_idq):
+def test_check_vectors(mock_create_label, mock_remove_label, mock_upload,
+                       mock_json, llhoft_glob_pass, ifo_h1, ifo_h1_idq):
     event = {'search': 'AllSky', 'instruments': 'H1', 'pipeline': 'oLIB'}
     superevent_id = 'S12345a'
     start, end = 1216577977, 1216577979
@@ -171,14 +172,20 @@ def test_check_vectors(mock_create_label, mock_upload, mock_json,
     ]
     mock_upload.assert_has_calls(calls, any_order=True)
     mock_create_label.assert_called_with('DQOK', 'S12345a')
+    mock_remove_label.assert_has_calls(
+        [call('DQV', 'S12345a'),
+         call('INJ', 'S12345a')],
+        any_order=True)
 
 
 @patch('gwcelery.tasks.detchar.dqr_json', return_value='dqrjson')
 @patch('gwcelery.tasks.gracedb.upload.run')
+@patch('gwcelery.tasks.gracedb.remove_label')
 @patch('gwcelery.tasks.gracedb.create_label')
-def test_gatedhoft_skips_dmtvec(mock_create_label, mock_upload, mock_json,
-                                llhoft_glob_pass, ifo_h1, ifo_h1_idq,
-                                gatedpipe, gatedpipe_prepost):
+def test_gatedhoft_skips_dmtvec(mock_create_label, mock_remove_label,
+                                mock_upload, mock_json, llhoft_glob_pass,
+                                ifo_h1, ifo_h1_idq, gatedpipe,
+                                gatedpipe_prepost):
     event = {'search': 'AllSky', 'instruments': 'H1', 'pipeline': 'gatepipe'}
     superevent_id = 'S12345a'
     start, end = 1216577977, 1216577979
@@ -193,6 +200,11 @@ def test_gatedhoft_skips_dmtvec(mock_create_label, mock_upload, mock_json,
                           'Data quality bits',
                           ['H1:HOFT_OK', 'H1:OBSERVATION_INTENT'], [], [])),
                  ['data_quality']), ], any_order=True)
+    mock_remove_label.assert_has_calls(
+        [call('DQV', superevent_id),
+         call('INJ', superevent_id)],
+        any_order=True)
+    mock_create_label.assert_called_once_with('DQOK', superevent_id)
 
 
 def test_detchar_generate_table():

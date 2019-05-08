@@ -410,9 +410,14 @@ def check_vectors(event, graceid, start, end):
                 json.dumps(idq_probs_readable)[1:-1])
             # If iDQ p(glitch) is high and pipeline enabled, apply DQV
             if app.conf['idq_veto'][pipeline]:
+                gracedb.remove_label('DQOK', graceid)
                 gracedb.create_label('DQV', graceid)
                 # Add labels to return value to avoid querying GraceDb again.
                 event = dict(event, labels=event.get('labels', []) + ['DQV'])
+                try:
+                    event['labels'].remove('DQOK')
+                except ValueError:  # not in list
+                    pass
         else:
             idq_msg = ("iDQ glitch probabilities at both H1 and L1 "
                        "are good (below {} threshold). "
@@ -438,6 +443,12 @@ def check_vectors(event, graceid, start, end):
             generate_table('Injection bits', [], injs, []))
     elif all(inj_states.values()) and len(inj_states.values()) > 0:
         inj_msg = 'No HW injections found. '
+        gracedb.remove_label('INJ', graceid)
+        event = dict(event, labels=list(event.get('labels', [])))
+        try:
+            event['labels'].remove('INJ')
+        except ValueError:  # not in list
+            pass
     else:
         inj_msg = 'Injection state unknown. '
     gracedb.upload.delay(
@@ -470,14 +481,24 @@ def check_vectors(event, graceid, start, end):
         None, None, graceid, msg + prepost_msg + gate_msg, ['data_quality'])
     if overall_dq_active_state is True:
         state = "pass"
+        gracedb.remove_label('DQV', graceid)
         gracedb.create_label('DQOK', graceid)
         # Add labels to return value to avoid querying GraceDb again.
         event = dict(event, labels=event.get('labels', []) + ['DQOK'])
+        try:
+            event['labels'].remove('DQV')
+        except ValueError:  # not in list
+            pass
     elif overall_dq_active_state is False:
         state = "fail"
+        gracedb.remove_label('DQOK', graceid)
         gracedb.create_label('DQV', graceid)
         # Add labels to return value to avoid querying GraceDb again.
         event = dict(event, labels=event.get('labels', []) + ['DQV'])
+        try:
+            event['labels'].remove('DQOK')
+        except ValueError:  # not in list
+            pass
     else:
         state = "unknown"
 

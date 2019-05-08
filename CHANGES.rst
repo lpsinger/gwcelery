@@ -19,6 +19,10 @@ Changelog
 
 -   Use cleaned data for parameter estimation.
 
+-   The ``DQOK`` and ``DQV`` labels should be mutually exclusive. When
+    ``gwcelery.tasks.detchar.check_vectors`` adds one of the ``DQOK`` or
+    ``DQV`` labels, it will now first remove the other label.
+
 0.5.6 (2018-05-08)
 ------------------
 
