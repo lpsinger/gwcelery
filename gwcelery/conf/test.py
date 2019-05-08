@@ -7,7 +7,7 @@ lvalert_host = 'lvalert-test.cgca.uwm.edu'
 """LVAlert host."""
 
 gracedb_host = 'gracedb-test.ligo.org'
-"""GraceDb host."""
+"""GraceDB host."""
 
 sentry_environment = 'test'
 """Record this `environment tag

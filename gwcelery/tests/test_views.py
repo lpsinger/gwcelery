@@ -138,7 +138,7 @@ def test_typeahead_superevent_id_invalid_date(client, monkeypatch):
 
 
 def test_typeahead_skymap_filename_gracedb_error_404(client, monkeypatch):
-    """Test that the typeahead endpoints return an empty list if GraceDb
+    """Test that the typeahead endpoints return an empty list if GraceDB
     returns a 404 error."""
     monkeypatch.setattr('gwcelery.tasks.gracedb.client.logs',
                         Mock(side_effect=GraceDbHTTPError(404, None, None)))
@@ -151,7 +151,7 @@ def test_typeahead_skymap_filename_gracedb_error_404(client, monkeypatch):
 
 
 def test_typeahead_skymap_filename_gracedb_error_non_404(client, monkeypatch):
-    """Test that the typeahead raises an internal error if GraceDb
+    """Test that the typeahead raises an internal error if GraceDB
     returns an error other than 404."""
     monkeypatch.setattr('gwcelery.tasks.gracedb.client.logs',
                         Mock(side_effect=GraceDbHTTPError(403, None, None)))

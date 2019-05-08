@@ -4,7 +4,7 @@ settings from :mod:`gwcelery.conf.test`, with the exceptions below."""
 from .test import *  # noqa: F401, F403
 
 gracedb_host = 'gracedb-dev1.ligo.org'
-"""GraceDb host."""
+"""GraceDB host."""
 
 sentry_environment = 'development'
 """Record this `environment tag

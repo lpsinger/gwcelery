@@ -47,7 +47,7 @@ def task(*args, **kwargs):
 @task(shared=False)
 @catch_retryable_http_errors
 def create_event(filecontents, search, pipeline, group):
-    """Create an event in GraceDb."""
+    """Create an event in GraceDB."""
     response = client.createEvent(group=group, pipeline=pipeline,
                                   filename='initial.data', search=search,
                                   filecontents=filecontents)
@@ -57,7 +57,7 @@ def create_event(filecontents, search, pipeline, group):
 @task(ignore_result=True, shared=False)
 @catch_retryable_http_errors
 def create_label(label, graceid):
-    """Create a label in GraceDb."""
+    """Create a label in GraceDB."""
     try:
         client.writeLabel(graceid, label).json()
     except rest.HTTPError as e:
@@ -71,11 +71,11 @@ def create_label(label, graceid):
 @task(ignore_result=True, shared=False)
 @catch_retryable_http_errors
 def remove_label(label, graceid):
-    """Create a label in GraceDb."""
+    """Create a label in GraceDB."""
     try:
         client.removeLabel(graceid, label).json()
     except rest.HTTPError as e:
-        # If the label did not exist, then GraceDb will return a 404 error.
+        # If the label did not exist, then GraceDB will return a 404 error.
         # Don't treat this as a failure because we got what we wanted: for the
         # label to be removed.
         if e.status != 404:
@@ -85,14 +85,14 @@ def remove_label(label, graceid):
 @task(ignore_result=True, shared=False)
 @catch_retryable_http_errors
 def create_signoff(status, comment, signoff_type, graceid):
-    """Create a label in GraceDb."""
+    """Create a label in GraceDB."""
     client.create_signoff(graceid, signoff_type, status, comment).json()
 
 
 @task(ignore_result=True, shared=False)
 @catch_retryable_http_errors
 def create_tag(filename, tag, graceid):
-    """Create a tag in GraceDb."""
+    """Create a tag in GraceDB."""
     log = get_log(graceid)
     entry, = (e for e in log if e['filename'] == filename)
     log_number = entry['N']
@@ -130,7 +130,7 @@ def expose(graceid):
 @task(shared=False)
 @catch_retryable_http_errors
 def get_events(query=None, orderby=None, count=None, columns=None):
-    """Get events from GraceDb."""
+    """Get events from GraceDB."""
     return list(client.events(query=query, orderby=orderby,
                 count=count, columns=columns))
 
@@ -138,35 +138,35 @@ def get_events(query=None, orderby=None, count=None, columns=None):
 @task(shared=False)
 @catch_retryable_http_errors
 def get_event(graceid):
-    """Retrieve an event from GraceDb."""
+    """Retrieve an event from GraceDB."""
     return client.event(graceid).json()
 
 
 @task(shared=False)
 @catch_retryable_http_errors
 def get_labels(graceid):
-    """Get all labels for an event in GraceDb."""
+    """Get all labels for an event in GraceDB."""
     return {row['name'] for row in client.labels(graceid).json()['labels']}
 
 
 @task(shared=False)
 @catch_retryable_http_errors
 def get_log(graceid):
-    """Get all log messages for an event in GraceDb."""
+    """Get all log messages for an event in GraceDB."""
     return client.logs(graceid).json()['log']
 
 
 @task(shared=False)
 @catch_retryable_http_errors
 def get_superevent(graceid):
-    """Retrieve a superevent from GraceDb."""
+    """Retrieve a superevent from GraceDB."""
     return client.superevent(graceid).json()
 
 
 @task(shared=False)
 @catch_retryable_http_errors
 def replace_event(graceid, payload):
-    """Get an event from GraceDb."""
+    """Get an event from GraceDB."""
     client.replaceEvent(graceid, 'initial.data', filecontents=payload).json()
 
 
@@ -230,7 +230,7 @@ def update_superevent(superevent_id, t_start=None,
 @task(ignore_result=True, shared=False)
 @catch_retryable_http_errors
 def create_superevent(graceid, t0, t_start, t_end, category):
-    """Create new superevent in GraceDb with `graceid`
+    """Create new superevent in GraceDB with `graceid`
 
     Parameters
     ----------
@@ -252,5 +252,5 @@ def create_superevent(graceid, t0, t_start, t_end, category):
 @task(ignore_result=True, shared=False)
 @catch_retryable_http_errors
 def add_event_to_superevent(superevent_id, graceid):
-    """Add an event to a superevent in GraceDb."""
+    """Add an event to a superevent in GraceDB."""
     client.addEventToSuperevent(superevent_id, graceid).json()

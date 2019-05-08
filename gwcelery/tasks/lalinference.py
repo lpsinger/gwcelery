@@ -92,7 +92,7 @@ def upload_no_frame_files(request, exc, traceback, superevent_id):
     traceback : str (placeholder)
         Traceback message from a task
     superevent_id : str
-        The GraceDb ID of a target superevent
+        The GraceDB ID of a target superevent
     """
     if isinstance(exc, NotEnoughData):
         gracedb.upload.delay(
@@ -149,7 +149,7 @@ def dag_prepare(
     rundir : str
         The path to a run directory where the DAG file exits
     superevent_id : str
-        The GraceDb ID of a target superevent
+        The GraceDB ID of a target superevent
 
     Returns
     -------
@@ -234,7 +234,7 @@ def job_error_notification(request, exc, traceback, superevent_id, rundir):
     traceback : str (placeholder)
         Traceback message from a task
     superevent_id : str
-        The GraceDb ID of a target superevent
+        The GraceDB ID of a target superevent
     rundir : str
         The run directory for PE
     """
@@ -301,7 +301,7 @@ def _get_result_contents(pe_results_path, filename):
 
 def _upload_result(pe_results_path, filename, graceid, message, tag):
     """Return a canvas to get the contents of a PE result file and upload it to
-    GraceDb.
+    GraceDB.
     """
     return _get_result_contents.si(pe_results_path, filename) | \
         gracedb.upload.s(filename, graceid, message, tag)
@@ -337,9 +337,9 @@ def dag_finished(rundir, preferred_event_id, superevent_id):
     rundir : str
         The path to a run directory where the DAG file exits
     preferred_event_id : str
-        The GraceDb ID of a target preferred event
+        The GraceDB ID of a target preferred event
     superevent_id : str
-        The GraceDb ID of a target superevent
+        The GraceDB ID of a target superevent
 
     Returns
     -------
@@ -388,9 +388,9 @@ def start_pe(ini_contents, preferred_event_id, superevent_id):
     ini_contents : str
         The content of online_pe.ini
     preferred_event_id : str
-        The GraceDb ID of a target preferred event
+        The GraceDB ID of a target preferred event
     superevent_id : str
-        The GraceDb ID of a target superevent
+        The GraceDB ID of a target superevent
     """
     gracedb.upload.delay(
         filecontents=None, filename=None, graceid=superevent_id,

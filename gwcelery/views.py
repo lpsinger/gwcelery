@@ -26,7 +26,7 @@ def take_n(n, iterable):
 
 
 # Regular expression for parsing query strings
-# that look like GraceDb superevent names.
+# that look like GraceDB superevent names.
 _typeahead_superevent_id_regex = re.compile(
     r'(?P<prefix>[MT]?)S?(?P<date>\d{0,6})(?P<suffix>[a-z]*)',
     re.IGNORECASE)
@@ -35,9 +35,9 @@ _typeahead_superevent_id_regex = re.compile(
 @app.route('/typeahead_superevent_id')
 @cache.cached(query_string=True)
 def typeahead_superevent_id():
-    """Search GraceDb for superevents by ID.
+    """Search GraceDB for superevents by ID.
 
-    This involves some date parsing because GraceDb does not support directly
+    This involves some date parsing because GraceDB does not support directly
     searching for superevents by ID substring."""
 
     max_results = 8  # maximum number of results to return
@@ -47,7 +47,7 @@ def typeahead_superevent_id():
     match = _typeahead_superevent_id_regex.fullmatch(term) if term else None
 
     if match:
-        # Determine GraceDb event category from regular expression.
+        # Determine GraceDB event category from regular expression.
         prefix = match['prefix'].upper() + 'S'
         category = {'T': 'test', 'M': 'MDC'}.get(
             match['prefix'].upper(), 'production')
@@ -68,7 +68,7 @@ def typeahead_superevent_id():
         date_end = date_start + datetime.timedelta(
             days=[36600, 3660, 366, 320, 32, 11, 1.1][date_partial_length])
 
-        # Determine GraceDb event suffix from regular expression.
+        # Determine GraceDB event suffix from regular expression.
         suffix = match['suffix'].lower()
     else:
         prefix = 'S'
@@ -79,7 +79,7 @@ def typeahead_superevent_id():
         date_partial_length = 0
         suffix = ''
 
-    # Query GraceDb.
+    # Query GraceDB.
     query = 'category: {} t_0: {} .. {}'.format(
         category, Time(date_start).gps, Time(date_end).gps)
     response = gracedb.client.superevents(
@@ -97,7 +97,7 @@ def typeahead_superevent_id():
 
 
 # Regular expression for parsing query strings
-# that look like GraceDb event names.
+# that look like GraceDB event names.
 _typeahead_event_id_regex = re.compile(
     r'(?P<prefix>[GMT]?)(?P<number>\d*)',
     re.IGNORECASE)
@@ -106,20 +106,20 @@ _typeahead_event_id_regex = re.compile(
 @app.route('/typeahead_event_id')
 @cache.cached(query_string=True)
 def typeahead_event_id():
-    """Search GraceDb for events by ID."""
+    """Search GraceDB for events by ID."""
 
     term = request.args.get('event_id')
     match = _typeahead_event_id_regex.fullmatch(term) if term else None
 
     if match:
-        # Determine GraceDb event category from regular expression.
+        # Determine GraceDB event category from regular expression.
         prefix = match['prefix'].upper() or 'G'
         number = int(match['number'] or '0')
     else:
         prefix = 'G'
         number = 0
 
-    # Query GraceDb.
+    # Query GraceDB.
     query = '{prefix}{number} {prefix}{number}0..{prefix}{number}9'.format(
         prefix=prefix, number=number)
     response = gracedb.client.events(query)

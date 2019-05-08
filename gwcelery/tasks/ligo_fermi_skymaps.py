@@ -14,7 +14,7 @@ from ..util.tempfile import NamedTemporaryFile
 
 def create_combined_skymap(graceid):
     """Creates and uploads the combined LVC-Fermi skymap. This also
-    uploads the external trigger skymap to the external trigger GraceDb
+    uploads the external trigger skymap to the external trigger GraceDB
     page."""
     preferred_skymap = get_preferred_skymap(graceid)
     message = 'Combined LVC-Fermi sky map using {0}.'.format(preferred_skymap)

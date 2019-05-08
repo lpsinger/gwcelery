@@ -52,7 +52,7 @@ def test_remove_label(mock_gracedb):
 
 @patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
 def test_create_signoff(mock_gracedb):
-    """Create a label in GraceDb."""
+    """Create a label in GraceDB."""
     gracedb.create_signoff('status', 'comment', 'signoff_type', 'graceid')
     mock_gracedb.create_signoff.assert_called_once_with(
         'graceid', 'signoff_type', 'status', 'comment')

@@ -35,7 +35,7 @@ app.config['SECRET_KEY'] = os.urandom(24)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 # Set up a server-side cache to store autocomplete responses in order to reduce
-# traffic to GraceDb. The cache's backend is the same Redis database that
+# traffic to GraceDB. The cache's backend is the same Redis database that
 # Celery uses, although the Redis keys will have a different prefix so that
 # they are ignored by Celery.
 cache = Cache(app, config={'CACHE_DEFAULT_TIMEOUT': 30,  # lifetime in seconds

@@ -28,7 +28,7 @@ def localize(coinc_psd, graceid, filename='bayestar.fits.gz',
         ``coinc.xml`` and ``psd.xml.gz`` files.
     graceid : str
         The GraceDB ID, used for FITS metadata and recording log messages
-        to GraceDb.
+        to GraceDB.
     filename : str, optional
         The name of the FITS file.
     disabled_detectors : list, optional

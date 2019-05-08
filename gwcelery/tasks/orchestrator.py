@@ -206,7 +206,7 @@ def handle_cbc_event(alert):
           default_retry_delay=20.0, retry_backoff=True,
           retry_kwargs=dict(max_retries=500), shared=False)
 def _download(*args, **kwargs):
-    """Download a file from GraceDb.
+    """Download a file from GraceDB.
 
     This works just like :func:`gwcelery.tasks.gracedb.download`, except that
     it is retried for both :class:`TimeoutError` and
@@ -228,10 +228,10 @@ def _update_if_dqok(superevent_id, event_id):
 
 @gracedb.task(shared=False)
 def _get_preferred_event(superevent_id):
-    """Determine preferred event for a superevent by querying GraceDb.
+    """Determine preferred event for a superevent by querying GraceDB.
 
     This works just like :func:`gwcelery.tasks.gracedb.get_superevent`, except
-    that it returns only the preferred event, and not the entire GraceDb JSON
+    that it returns only the preferred event, and not the entire GraceDB JSON
     response."""
     return gracedb.get_superevent(superevent_id)['preferred_event']
 
@@ -267,7 +267,7 @@ def _create_voevent(classification, *args, **kwargs):
             kwargs.update(json.loads(text))
 
     # FIXME: These keys have differ between em_bright.json
-    # and the GraceDb REST API.
+    # and the GraceDB REST API.
     try:
         kwargs['ProbHasNS'] = kwargs.pop('HasNS')
     except KeyError:

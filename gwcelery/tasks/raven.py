@@ -21,7 +21,7 @@ def calculate_spacetime_coincidence_far(gracedb_id, group):
     Parameters
     ----------
     gracedb_id: str
-        ID of the superevent trigger used by GraceDb
+        ID of the superevent trigger used by GraceDB
     group: str
         CBC or Burst; group of the preferred_event associated with the
         gracedb_id superevent
@@ -51,7 +51,7 @@ def calculate_coincidence_far(gracedb_id, group):
     Parameters
     ----------
     gracedb_id: str
-        ID of the superevent trigger used by GraceDb
+        ID of the superevent trigger used by GraceDB
     group: str
         CBC or Burst; group of the preferred_event associated with the
         gracedb_id superevent
@@ -87,7 +87,7 @@ def coincidence_search(gracedb_id, alert_object, group=None, pipelines=[]):
     Parameters
     ----------
     gracedb_id: str
-        ID of the trigger used by GraceDb
+        ID of the trigger used by GraceDB
     alert_object: dict
         lvalert['object']
     group: str
@@ -131,7 +131,7 @@ def search(gracedb_id, alert_object, tl=-5, th=5, group=None,
     Parameters
     ----------
     gracedb_id: str
-        ID of the trigger used by GraceDb
+        ID of the trigger used by GraceDB
     alert_object: dict
         lvalert['object']
     tl: int

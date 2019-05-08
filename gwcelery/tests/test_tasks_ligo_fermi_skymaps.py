@@ -36,7 +36,7 @@ def mock_get_log(graceid):
 def mock_download(monkeypatch, toy_3d_fits_filecontents):  # noqa: F811
 
     def download(filename, graceid):
-        """Mocks GraceDb download functionality"""
+        """Mocks GraceDB download functionality"""
         if graceid == 'S12345' and filename == 'bayestar.fits.gz':
             return toy_3d_fits_filecontents
         elif (graceid == 'E12345' and

@@ -31,7 +31,7 @@ lvalert_host = 'lvalert-playground.cgca.uwm.edu'
 """LVAlert host."""
 
 gracedb_host = 'gracedb-playground.ligo.org'
-"""GraceDb host."""
+"""GraceDB host."""
 
 voevent_broadcaster_address = ':5342'
 """The VOEvent broker will bind to this address to send GCNs.

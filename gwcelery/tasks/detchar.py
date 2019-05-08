@@ -309,7 +309,7 @@ def check_vector(cache, channel, start, end, bits, logic_type='all'):
 @app.task(shared=False)
 def check_vectors(event, graceid, start, end):
     """Perform data quality checks for an event and labels/logs results to
-    GraceDb.
+    GraceDB.
 
     Depending on the pipeline, a certain amount of time (specified in
     :obj:`~gwcelery.conf.check_vector_prepost`) is appended to either side of
@@ -321,15 +321,15 @@ def check_vectors(event, graceid, start, end):
     involved in the event. Then, the bits and channels specified in the
     configuration file (:obj:`~gwcelery.conf.llhoft_channels`) are checked.
     If an injection is found in the active detectors, 'INJ' is labeled to
-    GraceDb. If an injection is found in any detector, a message with the
-    injection found is logged to GraceDb. If no injections are found across
-    all detectors, this is logged to GraceDb.
+    GraceDB. If an injection is found in any detector, a message with the
+    injection found is logged to GraceDB. If no injections are found across
+    all detectors, this is logged to GraceDB.
 
     A similar task is performed for the DQ states described in the
     DMT-DQ_VECTOR, LIGO GDS-CALIB_STATE_VECTOR, and Virgo
     DQ_ANALYSIS_STATE_VECTOR. If no DQ issues are found in active detectors,
-    'DQOK' is labeled to GraceDb. Otherwise, 'DQV' is labeled. In all cases,
-    the DQ states of all the state vectors checked are logged to GraceDb.
+    'DQOK' is labeled to GraceDB. Otherwise, 'DQV' is labeled. In all cases,
+    the DQ states of all the state vectors checked are logged to GraceDB.
 
     This skips MDC events.
 
@@ -401,7 +401,7 @@ def check_vectors(event, graceid, start, end):
                                channel, start, end)
                      for channel in app.conf['idq_channels'])
 
-    # Logging iDQ to GraceDb
+    # Logging iDQ to GraceDB
     if None not in idq_probs.values():
         if max(idq_probs.values()) >= app.conf['idq_pglitch_thresh']:
             idq_probs_readable = {k: round(v, 3) for k, v in idq_probs.items()}
@@ -412,7 +412,7 @@ def check_vectors(event, graceid, start, end):
             if app.conf['idq_veto'][pipeline]:
                 gracedb.remove_label('DQOK', graceid)
                 gracedb.create_label('DQV', graceid)
-                # Add labels to return value to avoid querying GraceDb again.
+                # Add labels to return value to avoid querying GraceDB again.
                 event = dict(event, labels=event.get('labels', []) + ['DQV'])
                 try:
                     event['labels'].remove('DQOK')
@@ -429,14 +429,14 @@ def check_vectors(event, graceid, start, end):
     gracedb.upload.delay(
         None, None, graceid, idq_msg + prepost_msg, ['data_quality'])
 
-    # Labeling INJ to GraceDb
+    # Labeling INJ to GraceDB
     if False in active_inj_states.values():
         # Label 'INJ' if injection found in active IFOs
         gracedb.create_label('INJ', graceid)
-        # Add labels to return value to avoid querying GraceDb again.
+        # Add labels to return value to avoid querying GraceDB again.
         event = dict(event, labels=event.get('labels', []) + ['INJ'])
     if False in inj_states.values():
-        # Write all found injections into GraceDb log
+        # Write all found injections into GraceDB log
         injs = [k for k, v in inj_states.items() if v is False]
         inj_fmt = "Injection found.\n{}\n"
         inj_msg = inj_fmt.format(
@@ -476,14 +476,14 @@ def check_vectors(event, graceid, start, end):
     else:
         gate_msg = ''
 
-    # Labeling DQOK/DQV to GraceDb
+    # Labeling DQOK/DQV to GraceDB
     gracedb.upload.delay(
         None, None, graceid, msg + prepost_msg + gate_msg, ['data_quality'])
     if overall_dq_active_state is True:
         state = "pass"
         gracedb.remove_label('DQV', graceid)
         gracedb.create_label('DQOK', graceid)
-        # Add labels to return value to avoid querying GraceDb again.
+        # Add labels to return value to avoid querying GraceDB again.
         event = dict(event, labels=event.get('labels', []) + ['DQOK'])
         try:
             event['labels'].remove('DQV')
@@ -493,7 +493,7 @@ def check_vectors(event, graceid, start, end):
         state = "fail"
         gracedb.remove_label('DQOK', graceid)
         gracedb.create_label('DQV', graceid)
-        # Add labels to return value to avoid querying GraceDb again.
+        # Add labels to return value to avoid querying GraceDB again.
         event = dict(event, labels=event.get('labels', []) + ['DQV'])
         try:
             event['labels'].remove('DQOK')

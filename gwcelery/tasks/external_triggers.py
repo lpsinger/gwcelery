@@ -34,7 +34,7 @@ def handle_snews_gcn(payload):
     events = gracedb.get_events(query=query)
 
     if events:
-        assert len(events) == 1, 'Found more than one matching GraceDb entry'
+        assert len(events) == 1, 'Found more than one matching GraceDB entry'
         event, = events
         graceid = event['graceid']
         gracedb.replace_event(graceid, payload)
@@ -91,7 +91,7 @@ def handle_grb_gcn(payload):
     events = gracedb.get_events(query=query)
 
     if events:
-        assert len(events) == 1, 'Found more than one matching GraceDb entry'
+        assert len(events) == 1, 'Found more than one matching GraceDB entry'
         event, = events
         graceid = event['graceid']
         gracedb.replace_event(graceid, payload)
@@ -131,7 +131,7 @@ def handle_grb_lvalert(alert):
     * The ``EM_COINC`` label triggers the creation of a combined GW-GRB sky map
       using :meth:`gwcelery.tasks.ligo_fermi_skymaps.create_combined_skymap`.
     """
-    # Determine GraceDb ID
+    # Determine GraceDB ID
     graceid = alert['uid']
 
     if alert['alert_type'] == 'new' and \
@@ -173,7 +173,7 @@ def handle_snews_lvalert(alert):
     * Any new event triggers a coincidence search with
       :meth:`gwcelery.tasks.raven.coincidence_search`.
     """
-    # Determine GraceDb ID
+    # Determine GraceDB ID
     graceid = alert['uid']
 
     if alert['object'].get('group', '') == 'Test':
@@ -207,7 +207,7 @@ def handle_emcoinc_lvalert(alert):
     * Any EM_COINC label application triggers
       :meth:`gwcelery.tasks.circulars.create_emcoinc_circular`.
     """
-    # Determine GraceDb ID
+    # Determine GraceDB ID
     graceid = alert['uid']
     if alert['alert_type'] == 'label_added':
         if alert['data']['name'] == 'EM_COINC':
