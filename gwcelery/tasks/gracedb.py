@@ -70,6 +70,20 @@ def create_label(label, graceid):
 
 @task(ignore_result=True, shared=False)
 @catch_retryable_http_errors
+def remove_label(label, graceid):
+    """Create a label in GraceDb."""
+    try:
+        client.removeLabel(graceid, label).json()
+    except rest.HTTPError as e:
+        # If the label did not exist, then GraceDb will return a 404 error.
+        # Don't treat this as a failure because we got what we wanted: for the
+        # label to be removed.
+        if e.status != 404:
+            raise
+
+
+@task(ignore_result=True, shared=False)
+@catch_retryable_http_errors
 def create_signoff(status, comment, signoff_type, graceid):
     """Create a label in GraceDb."""
     client.create_signoff(graceid, signoff_type, status, comment).json()
