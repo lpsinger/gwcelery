@@ -41,7 +41,7 @@ def compute_p_astro(files):
     coinc_bytes, ranking_data_bytes = files
 
     # Acquire information pertaining to the event from coinc.xml
-    # uploaded to GraceDb
+    # uploaded to GraceDB
     log.info(
         'Fetching event data from coinc.xml')
     event_ln_likelihood_ratio, event_mass1, event_mass2, \

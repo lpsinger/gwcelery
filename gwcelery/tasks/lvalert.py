@@ -16,7 +16,7 @@ log = get_task_logger(__name__)
 class _LVAlertDispatchHandler(DispatchHandler):
 
     def process_args(self, node, payload):
-        # Determine GraceDb service URL
+        # Determine GraceDB service URL
         alert = json.loads(payload)
         try:
             try:

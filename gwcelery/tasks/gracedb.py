@@ -1,4 +1,4 @@
-"""Communication with GraceDb."""
+"""Communication with GraceDB."""
 import functools
 
 from ligo.gracedb import rest
@@ -116,7 +116,7 @@ def create_voevent(graceid, voevent_type, **kwargs):
 @task(shared=False)
 @catch_retryable_http_errors
 def download(filename, graceid):
-    """Download a file from GraceDb."""
+    """Download a file from GraceDB."""
     return client.files(graceid, filename, raw=True).read()
 
 
@@ -173,7 +173,7 @@ def replace_event(graceid, payload):
 @task(ignore_result=True, shared=False)
 @catch_retryable_http_errors
 def upload(filecontents, filename, graceid, message, tags=()):
-    """Upload a file to GraceDb."""
+    """Upload a file to GraceDB."""
     client.writeLog(graceid, message, filename, filecontents, tags).json()
 
 

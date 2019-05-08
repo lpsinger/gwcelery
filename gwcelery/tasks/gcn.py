@@ -106,7 +106,7 @@ def send(self, message):
          bind=True, shared=False)
 def validate(self, payload):
     """Check that the contents of a public LIGO/Virgo GCN matches the original
-    VOEvent in GraceDb.
+    VOEvent in GraceDB.
 
     Notes
     -----
@@ -119,7 +119,7 @@ def validate(self, payload):
 
     root = lxml.etree.fromstring(payload)
 
-    # Which GraceDb ID does this refer to?
+    # Which GraceDB ID does this refer to?
     graceid = root.find("./What/Param[@name='GraceID']").attrib['value']
 
     # Which VOEvent does this refer to?

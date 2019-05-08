@@ -66,7 +66,7 @@ def combine_skymaps(skymap1filebytes, skymap2filebytes):
 
 @app.task(shared=False)
 def external_trigger(graceid):
-    """Returns the associated external trigger GraceDb ID."""
+    """Returns the associated external trigger GraceDB ID."""
     em_events = gracedb.get_superevent(graceid)['em_events']
     if len(em_events):
         for exttrig in em_events:
