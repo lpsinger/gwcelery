@@ -245,13 +245,11 @@ def _keyfunc(event):
 def _update_superevent(superevent_id, preferred_event, new_event_dict,
                        t_start, t_end):
     """
-    Update preferred event and/or change time window.
-    Events with multiple detectors take precedence over
-    single-detector events, then CBC events take precedence
-    over burst events, and any remaining tie is broken by SNR/FAR
-    values for CBC/Burst. Single detector are not promoted
-    to preferred event status, if existing preferred event is
-    multi-detector
+    Update preferred event and/or change time window. Events with multiple
+    detectors take precedence over single-detector events, then CBC events take
+    precedence over burst events, and any remaining tie is broken by SNR/FAR
+    values for CBC/Burst. Single detector are not promoted to preferred event
+    status, if existing preferred event is multi-detector
 
     Parameters
     ----------
