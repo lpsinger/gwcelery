@@ -133,12 +133,12 @@ for mod in ['astropy',
             'lxml.etree',
             'matplotlib',
             'numpy',
+            'pytest',
             'safe_netrc',
             'scipy',
             'sentry_sdk',
             'sleek_lvalert',
             'twisted',
-            'pytest',
             'werkzeug',
             'zope']:
     try:
