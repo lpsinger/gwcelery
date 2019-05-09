@@ -139,6 +139,7 @@ for mod in ['astropy',
             'sleek_lvalert',
             'twisted',
             'pytest',
+            'werkzeug',
             'zope']:
     try:
         importlib.import_module(mod)
