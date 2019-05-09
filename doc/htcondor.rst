@@ -54,7 +54,7 @@ The following command is a shortcut for
 Managing multiple deployments
 -----------------------------
 
-There should generally be at most one full deployment of GWCelery per GraceDb
+There should generally be at most one full deployment of GWCelery per GraceDB
 server running at one time. The ``gwcelery condor`` shortcut command is
 designed to protect you from accidentally starting multiple deployments of
 GWCelery by inspecting the HTCondor job queue before submitting new jobs. If
@@ -68,7 +68,7 @@ you will get the following error message::
 
 However, there are situations where you may actually want to run multiple
 instances of GWCelery on the same machine. For example, you may want to run one
-instance for the 'production' GraceDb server and one for the 'playground'
+instance for the 'production' GraceDB server and one for the 'playground'
 server. To accomplish this, just start the two instances of gwcelery in
 different directories. Here is an example::
 

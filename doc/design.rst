@@ -5,24 +5,24 @@ Conceptual overview
 -------------------
 
 Several online gravitational-wave transient search pipelines (currently Gstlal,
-PyCBC, cWB, and oLIB) upload candidates in real time to GraceDb, the central
+PyCBC, cWB, and oLIB) upload candidates in real time to GraceDB, the central
 database and web portal for low-latency LIGO/Virgo analyses. Whenever an event
-is uploaded or altered, GraceDb pushes machine-readable notifications through
+is uploaded or altered, GraceDB pushes machine-readable notifications through
 LVAlert, a pubsub system based on XMPP_.
 
 The business logic for selecting and sending alerts to astronomers resides not
-in GraceDb itself but in GWCelery. The role of GWCelery in the LIGO/Virgo alert
+in GraceDB itself but in GWCelery. The role of GWCelery in the LIGO/Virgo alert
 infrastructure is to drive the workflow of aggregating and annotating
 gravitational-wave candidates and sending GCN Notices to astronomers.
 
-GWCelery interacts with GraceDb by listening for LVAlert messages and making
-REST API requests through the GraceDb client. GWCelery interacts with GCN by
+GWCelery interacts with GraceDB by listening for LVAlert messages and making
+REST API requests through the GraceDB client. GWCelery interacts with GCN by
 listening for and sending GCN Notices using the Comet VOEvent broker.
 
 The major subsystems of GWCelery are:
 
 * the LVAlert listener
-* the GraceDb client
+* the GraceDB client
 * the GCN listener
 * the GCN broker
 * the Superevent Manager, which clusters and merges related candidates into
@@ -57,7 +57,7 @@ documentation.
     ]
 
     gracedb [
-        label = "GraceDb"
+        label = "GraceDB"
     ]
 
     lvalert [
@@ -102,7 +102,7 @@ documentation.
 
             gracedb_client [
                 href = "../gwcelery.tasks.gracedb.html"
-                label = "GraceDb\nClient"
+                label = "GraceDB\nClient"
             ]
         }
 
@@ -259,7 +259,7 @@ of several processes:
 5.  **Superevent Worker**
 
     A Celery worker that is dedicated to serially process triggers from low
-    latency pipelines and create/modify superevents in GraceDb. There is only
+    latency pipelines and create/modify superevents in GraceDB. There is only
     one task that runs on the Superevent queue:
 
     *  :meth:`gwcelery.tasks.superevents.handle`
@@ -268,7 +268,7 @@ of several processes:
 
     A Celery worker that is dedicated to serially process external triggers from GRB
     alerts received from Fermi, Swift and neutrino alerts received from SNEWS 
-    and create/modify external trigger events in GraceDb:
+    and create/modify external trigger events in GraceDB:
 
     *  :meth:`gwcelery.tasks.external_triggers.handle_gcn`
 

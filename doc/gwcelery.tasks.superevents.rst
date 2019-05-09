@@ -9,7 +9,7 @@ time, one event belonging to the superevent is identified as the *preferred
 event*.
 
 This module provides the Superevent Manager, an LVAlert handler that creates
-and updates superevents whenever new events are uploaded to GraceDb.
+and updates superevents whenever new events are uploaded to GraceDB.
 
 Flow Chart
 ~~~~~~~~~~
@@ -51,7 +51,7 @@ preferred event.
         ]
 
         fetch_superevents [
-            label = "Fetch superevents\nwith nearby trigger\ntimes from GraceDb"
+            label = "Fetch superevents\nwith nearby trigger\ntimes from GraceDB"
         ]
 
         {

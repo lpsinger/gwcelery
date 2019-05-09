@@ -11,11 +11,11 @@ section of the Celery manual.
 
 The configuration object also holds all of the options that are specific to
 GWCelery and affect the behavior of individual GWCelery tasks; examples include
-the GraceDb and LVAlert service URLs, GCN hostnames, and frame file types and
+the GraceDB and LVAlert service URLs, GCN hostnames, and frame file types and
 channel names. For a list of all GWCelery-specific options, see the
 API documentation for the :mod:`gwcelery.conf` module.
 
-GWCelery provides four preset configurations, one for each GraceDb server
+GWCelery provides four preset configurations, one for each GraceDB server
 instance (production, deployment, testing, or playground). The default
 configuration preset is for the playground server,
 ``gracedb-playground.ligo.org``. The recommended way to select a different
@@ -29,12 +29,12 @@ Authentication
 --------------
 
 There are a few files that must be present in order to provide authentication
-tokens for GraceDb and LValert.
+tokens for GraceDB and LValert.
 
-.. rubric:: GraceDb
+.. rubric:: GraceDB
 
 You must provide valid LSC DataGrid credentials in order for requests to the
-GraceDb REST API to work. During development and testing, you can use your
+GraceDB REST API to work. During development and testing, you can use your
 personal credentials obtained from the `LSC DataGrid Client`_ by running
 ``ligo-proxy-init``. However, credentials obtained this way expire after a few
 days or whenever your machine's temporary directory is wiped (e.g., at system

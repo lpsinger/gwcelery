@@ -52,7 +52,7 @@ Guidelines for tasks
    :ref:`celery:task-best-practices` section.
 
 -  **Tasks should avoid saving files to disk.** Output should be placed
-   directly in GraceDb. Temporary files that are written in ``/tmp`` are OK but
+   directly in GraceDB. Temporary files that are written in ``/tmp`` are OK but
    should be cleaned up promptly.
 
    See also the Celery manual's notes on :ref:`celery:task-data-locality` and

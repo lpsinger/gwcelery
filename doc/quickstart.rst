@@ -45,14 +45,14 @@ With ``setup.py``::
 To start
 --------
 
-Before starting GWCelery, you need to authenticate for access to GraceDb and
+Before starting GWCelery, you need to authenticate for access to GraceDB and
 LVAlert and make sure that you have a Redis server running. Once you have
 completed those steps, you can start each of the GWCelery manually.
 
 Authentication
 ~~~~~~~~~~~~~~
 
-To authenticate for GraceDb, obtain grid credentials from the `LSC
+To authenticate for GraceDB, obtain grid credentials from the `LSC
 DataGrid Client`_ by running ``ligo-proxy-init``::
 
     $ ligo-proxy-init albert.einstein

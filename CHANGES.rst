@@ -12,8 +12,8 @@ Changelog
     for the newly added FITS file rather than an older FITS file that
     coincidentally has the same name.
 
--   Have ``gwcelery.detchar.check_vectors`` task apply all GraceDb log messages
-    in order to increase robustness to recoverable GraceDb API errors.
+-   Have ``gwcelery.detchar.check_vectors`` task apply all GraceDB log messages
+    in order to increase robustness to recoverable GraceDB API errors.
 
 -   Port over majority of P_astro code from gwcelery to the p-astro package.
 
@@ -65,8 +65,8 @@ Changelog
 -   Update RAVEN coinc FAR task call which uses string params versus
     un-pickleable class object params.
 
--   Make sure to consume the entire response from every GraceDb API request.
-    This will ensure that GraceDb API call has completed before the pipeline
+-   Make sure to consume the entire response from every GraceDB API request.
+    This will ensure that GraceDB API call has completed before the pipeline
     continues, and will fix errors like we encountered with S190426c where
     the pipeline would march along before uploads had finished.
 
@@ -134,7 +134,7 @@ Changelog
 -   Fix a typo in ``gwcelery.sub`` that caused the Flower dashboard to fail to
     start.
 
--   Round iDQ p(glitch) to 3 decimal places in GraceDb log message.
+-   Round iDQ p(glitch) to 3 decimal places in GraceDB log message.
 
 -   Switch log telemetry from the on-premise instance of Sentry at Caltech to a
     cloud-hosted subscription to sentry.io.
@@ -261,7 +261,7 @@ Changelog
 ------------------
 
 -   Fix a bug in translating keys from ``source_classification.json`` to
-    keyword arguments for ``GraceDb.createVOEvent`` that caused VOEvents to
+    keyword arguments for ``GraceDB.createVOEvent`` that caused VOEvents to
     be missing the ``HasNS`` and ``HasRemnant`` fields.
 
 -   FAR threshold for sending preliminary notices for CBC is changed to
@@ -359,10 +359,10 @@ Changelog
 0.2.4 (2018-12-17)
 ------------------
 
--   Fix broken links in log messages due to changes in GraceDb URL routes.
+-   Fix broken links in log messages due to changes in GraceDB URL routes.
 
 -   Whenever we send a public VOEvent using GCN, also make the corresponding
-    VOEvent file in GraceDb public.
+    VOEvent file in GraceDB public.
 
 -   Don't include Mollweide projection PNG file in VOEvents. The sky map
     visualizations take longer to generate than the FITS files themselves, so
@@ -433,7 +433,7 @@ Changelog
     over, we need to carefully audit the code and make sure that test events
     are handled appropriately.
 
--   Enable public GraceDb entries and public GCNs for mock (MDC) events. For
+-   Enable public GraceDB entries and public GCNs for mock (MDC) events. For
     **real** events in ER13, disable public preliminary GCNs. Instead, advocate
     signoffs will trigger making events and GCN notices public: ``ADVOK`` for
     initial notices and ``ADVNO`` for retraction notices.
@@ -471,14 +471,14 @@ Changelog
     LALInference for Python 3 support.
 
 -   Send static example VOEvents from the Open Alert Users Guide.
-    This will provide a stream of example alerts for astronomers until GraceDb
+    This will provide a stream of example alerts for astronomers until GraceDB
     is ready for public access.
 
 -   Add trials factor correction to the event FAR when comparing against
     FAR threshold to send out preliminary GCN.
 
 -   Require that LIGO/Virgo VOEvents that we receive from GCN match the
-    original VOEvents from GraceDb byte-for-byte, since GCN will now pass
+    original VOEvents from GraceDB byte-for-byte, since GCN will now pass
     through our VOEvents without modification.
 
 0.1.4 (2018-10-29)
@@ -511,7 +511,7 @@ Changelog
 -   Preliminary GCN is not sent for superevents created from offline gw events.
 
 -   Add ``dqr_json`` function to ``gwcelery.tasks.detchar``, which uploads a 
-    DQR-compatible json to GraceDb with the results of the detchar checks.
+    DQR-compatible json to GraceDB with the results of the detchar checks.
 
 -   Depend on ligo.skymap >= 0.0.17.
 
@@ -522,26 +522,26 @@ Changelog
 ------------------
 
 -   Setted ``vetted`` flag to true for all initial, update, and retraction
-    alerts that are triggered by GraceDb signoffs.
+    alerts that are triggered by GraceDB signoffs.
 
--   Write GraceDb signoffs, instead of just labels, to simulate initial and
+-   Write GraceDB signoffs, instead of just labels, to simulate initial and
     retraction alerts for mock events, because merely creating the ``ADVNO``
-    or ``ADVOK`` label does not cause GraceDb to erase the ``ADVREQ`` label.
+    or ``ADVOK`` label does not cause GraceDB to erase the ``ADVREQ`` label.
     This change makes mock alerts more realistic.
 
 -   Change filename of cWB sky maps from ``skyprobcc_cWB.fits`` to
     ``cWB.fits.gz`` for consistency with other pipelines.
 
--   Any time that we send a VOEvent, first change the GraceDb permissions on
+-   Any time that we send a VOEvent, first change the GraceDB permissions on
     the corresponding superevent so that it is visible to the public. Note that
     this has no effect during the ongoing software engineering runs because
-    LVEM and unauthenticated access are currently disabled in GraceDb.
+    LVEM and unauthenticated access are currently disabled in GraceDB.
 
 0.1.1 (2018-10-04)
 ------------------
 
 -   Use the ``public`` tag instead of the ``lvem`` tag to mark preliminary sky
-    maps for public access rather than LV-EM partner access. Note that GraceDb
+    maps for public access rather than LV-EM partner access. Note that GraceDB
     has not yet actually implemented unauthenticated access, so this should
     have no effect during our ongoing software engineering runs.
 
@@ -588,7 +588,7 @@ Changelog
 
 -   Add human vetting for initial GCN notices. For each new superevent that
     passes state vector checks, the ``ADVREQ`` label is applied. Rapid response
-    team users should set their GraceDb notification preferences to alert
+    team users should set their GraceDB notification preferences to alert
     them on ``ADVREQ`` labels. If a user sets the ``ADVOK`` label, then an
     initial notice is issued. If a user sets the ``ADVNO`` label, then a
     retraction notice is issued.
@@ -747,8 +747,8 @@ Changelog
 -   Process gstlal-spiir events.
 
 -   Create combined LVC-Fermi skymap in case of coincident triggers and
-    upload to GraceDb superevent page. Also upload the original external
-    trigger sky map to the external trigger GraceDb page.
+    upload to GraceDB superevent page. Also upload the original external
+    trigger sky map to the external trigger GraceDB page.
 
 -   Generalize conditional processing of complex canvases by replacing the
     ``continue_if_group_is()`` task with a more general task that can be used
@@ -764,11 +764,11 @@ Changelog
 0.0.21 (2018-07-10)
 -------------------
 
--   MBTA events in GraceDb leave the ``search`` field blank. Work around this
+-   MBTA events in GraceDB leave the ``search`` field blank. Work around this
     in ``gwcelery.tasks.detchar.check_vectors`` where we expected the field
     to be present.
 
--   Track change in GraceDb JSON response for VOEvent creation.
+-   Track change in GraceDB JSON response for VOEvent creation.
 
 0.0.20 (2018-07-09)
 -------------------
@@ -824,7 +824,7 @@ Changelog
 -   Add rudimentary burst event workflow to orchestrator: it just generates
     VOEvents and circulars.
 
--   Create a label in GraceDb whenever ``em_bright`` or ``bayestar`` completes.
+-   Create a label in GraceDB whenever ``em_bright`` or ``bayestar`` completes.
 
 0.0.14 (2018-06-28)
 -------------------
@@ -848,7 +848,7 @@ Changelog
 -   Added logic to select CBC events as preferred event over Burst. FAR acts
     as tie breaker when groups for preferred event and new event match.
 
--   BAYESTAR now adds GraceDb URLs of events to FITS headers.
+-   BAYESTAR now adds GraceDB URLs of events to FITS headers.
 
 0.0.12 (2018-06-28)
 -------------------
@@ -871,12 +871,12 @@ Changelog
 
 -   Submit handler tasks to Celery as a single group.
 
--   Retry GraceDb tasks that raise a ``TimeoutError`` exception.
+-   Retry GraceDB tasks that raise a ``TimeoutError`` exception.
 
 -   The superevent handler now skips LVAlert messages that do not affect
     the false alarm rate of an event (e.g. simple log messages).
 
-    (Note that the false alarm rate in GraceDb is set by the initial event
+    (Note that the false alarm rate in GraceDB is set by the initial event
     upload and can be updated by replacing the event; however replacing the
     event does not produce an LVAlert message at all, so there is no way to
     intercept it.)
@@ -914,7 +914,7 @@ Changelog
     superevents may change the superevent window and also the
     preferred event.
 
--   Change default GraceDb server to https://gracedb-playground.ligo.org/
+-   Change default GraceDB server to https://gracedb-playground.ligo.org/
     for open public alert challenge.
 
 -   Update to ligo-gracedb >= 1.29dev1.
@@ -929,7 +929,7 @@ Changelog
 -   Model the time extent of events and superevents using the
     ``glue.segments`` module.
 
--   Replace GraceDb.get with GraceDb.superevents from the recent dev
+-   Replace GraceDB.get with GraceDB.superevents from the recent dev
     release of gracedb-client.
 
 -   Fix possible false positive matches between GCNs for unrelated GRBs
@@ -946,7 +946,7 @@ Changelog
 
 -   Introduce ``Production``, ``Development``, ``Test``, and ``Playground``
     application configuration objects in order to facilitate quickly switching
-    between GraceDb servers.
+    between GraceDB servers.
 
 -   Pipeline specific start and end times for superevent segments. These values
     are controlled via configuration variables.
@@ -965,9 +965,9 @@ Changelog
 0.0.7 (2018-05-31)
 ------------------
 
--   Ingest Swift, Fermi, and SNEWS GCN notices and save them in GraceDb.
+-   Ingest Swift, Fermi, and SNEWS GCN notices and save them in GraceDB.
 
--   Depend on the pre-release version of the GraceDb client, ligo-gracedb
+-   Depend on the pre-release version of the GraceDB client, ligo-gracedb
     1.29.dev0, because this is the only version that supports superevents at
     the moment.
 
@@ -1017,8 +1017,8 @@ Changelog
             alert = json.loads(alert_content)
             # do work here...
 
--   Instead of carrying around the GraceDb service URL in tasks, store the
-    GraceDb host name in the Celery application config.
+-   Instead of carrying around the GraceDB service URL in tasks, store the
+    GraceDB host name in the Celery application config.
 
 -   Create superevents by simple clustering in time. Currently this is only
     supported by the ``gracedb-dev1`` host.
