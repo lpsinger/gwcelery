@@ -70,7 +70,7 @@ the decision tree below.
     ]
 
     group_differs [
-        label = "Are the\nevents from\ndifferent groups?"
+        label = "Are the events\nfrom different\nsearch groups?"
         shape = diamond
     ]
 
@@ -79,7 +79,7 @@ the decision tree below.
     ]
 
     which_group [
-        label = "From which\ngroup are\nthe events?"
+        label = "From which\nsearch group are\nthe events?"
         shape = diamond
     ]
 
