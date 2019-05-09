@@ -331,8 +331,8 @@ def _superevent_segment_list(superevents):
     Parameters
     ----------
     superevents : list
-        list of superevent dictionaries, usually fetched by
-        :meth:`GraceDb.superevents()`.
+        List of superevent dictionaries (e.g., the return value from
+        :meth:`gwcelery.tasks.gracedb.get_superevents`).
 
     Returns
     -------
