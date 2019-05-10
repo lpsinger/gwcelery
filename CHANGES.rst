@@ -26,6 +26,8 @@ Changelog
 -   Change exception in VOEevent parsing of Fermi subtreshold alerts to 
     match real incoming alerts.
 
+-   Update Celery to 4.3.0.
+
 0.5.6 (2018-05-08)
 ------------------
 
