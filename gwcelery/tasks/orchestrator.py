@@ -391,7 +391,7 @@ def preliminary_alert(event, superevent_id):
             gracedb.create_label.si('PASTRO_READY', superevent_id)
             |
             _download.si('p_astro.json', superevent_id)
-        ) | identity.s()  # FIXME: necessary to pass result to next task?
+        )
     else:
         canvas |= identity.si(None)
 
