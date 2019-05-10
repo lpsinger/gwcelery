@@ -9,10 +9,12 @@ from .process import starter  # noqa: F401
 
 
 @pytest.fixture(scope='session', autouse=True)
-def celeryconf():
+def celeryconf(tmp_path_factory):
+    broker_url = 'redis+socket://' + str(
+        tmp_path_factory.mktemp('sockets') / 'sock')
     new_conf = dict(
-        broker_url='memory://',
-        result_backend='cache+memory://',
+        broker_url=broker_url,
+        result_backend=broker_url,
         voevent_broadcaster_address='127.0.0.1:53410',
         voevent_broadcaster_whitelist=['127.0.0.0/8'],
         voevent_receiver_address='gcn.invalid:8099',
