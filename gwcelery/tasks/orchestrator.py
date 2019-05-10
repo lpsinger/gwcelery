@@ -532,34 +532,30 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None,
             gracedb.download.si(p_astro_filename, superevent_id)
         )
         |
-        # FIXME: random single task group here is needed for last group to run
-        # Check Celery issues on GitHub about this
+        _create_voevent.s(
+            superevent_id,
+            alert_type,
+            skymap_filename=skymap_filename,
+            internal=False,
+            open_alert=True,
+            vetted=True
+        )
+        |
         group(
-            _create_voevent.s(
-                superevent_id,
-                alert_type,
-                skymap_filename=skymap_filename,
-                internal=False,
-                open_alert=True,
-                vetted=True
-            )
+            gracedb.download.s(superevent_id)
             |
-            group(
-                gracedb.download.s(superevent_id)
-                |
-                gcn.send.s(),
+            gcn.send.s(),
 
-                circulars.create_initial_circular.si(superevent_id)
-                |
-                gracedb.upload.s(
-                    '{}-circular.txt'.format(alert_type),
-                    superevent_id,
-                    'Template for {} GCN Circular'.format(alert_type),
-                    tags=['em_follow']
-                ),
+            circulars.create_initial_circular.si(superevent_id)
+            |
+            gracedb.upload.s(
+                '{}-circular.txt'.format(alert_type),
+                superevent_id,
+                'Template for {} GCN Circular'.format(alert_type),
+                tags=['em_follow']
+            ),
 
-                gracedb.create_tag.s('public', superevent_id)
-            )
+            gracedb.create_tag.s('public', superevent_id)
         )
     ).apply_async()
 
