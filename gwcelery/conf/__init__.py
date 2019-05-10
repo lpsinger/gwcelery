@@ -89,7 +89,7 @@ factor is the number of pipelines. CBC pipelines are gstlal, pycbc, mbtaonline,
 spiir-highmass, spiir-lowmass. Burst searches are cwb.allsky, cwb.bbh, cwb.imbh
 and olib.allsky."""
 
-orchestrator_timeout = 15.0
+orchestrator_timeout = 300.0
 """The orchestrator will wait this many seconds from the time of the
 creation of a new superevent to the time that annotations begin, in order
 to let the superevent manager's decision on the preferred event
