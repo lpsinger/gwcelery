@@ -64,6 +64,9 @@ Changelog
 
 -   Update Celery to 4.3.0.
 
+-   Automatically select the most up-to-date calibration uncertainties for
+    parameter estimation.
+
 0.5.6 (2018-05-08)
 ------------------
 

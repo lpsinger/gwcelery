@@ -128,9 +128,9 @@ adapt-temps=
 progress=
 spcal-nodes = 10
 enable-spline-calibration =
-H1-spcal-envelope = /home/cbc/pe/O3/calibrationenvelopes/LIGO_Hanford/Apr-10-2019_O3_LHO_GPSTime_1238974225_C00_RelativeResponseUncertainty_FinalResults.txt
-L1-spcal-envelope = /home/cbc/pe/O3/calibrationenvelopes/LIGO_Livingston/May-01-2019_O3_LLO_GPSTime_1240789943_C00_RelativeResponseUncertainty_FinalResults.txt
-V1-spcal-envelope = /home/cbc/pe/O3/calibrationenvelopes/Virgo/V_earlyO3_calibrationUncertaintyEnvelope_magnitude5percent_phase2degrees10microseconds.txt
+H1-spcal-envelope = {{ h1_calibration }}
+L1-spcal-envelope = {{ l1_calibration }}
+V1-spcal-envelope = {{ v1_calibration }}
 {{ margphi }}
 # You can use your own PSDs by specifying their paths.
 # H1-psd=

@@ -11,8 +11,9 @@ import tempfile
 import urllib
 
 from celery import group
-from ligo.gracedb.exceptions import HTTPError
 from gwdatafind import find_urls
+from ligo.gracedb.exceptions import HTTPError
+import numpy as np
 
 from .. import app
 from ..jinja import env
@@ -103,6 +104,42 @@ def upload_no_frame_files(request, exc, traceback, superevent_id):
         )
 
 
+def _find_appropriate_cal_env(trigtime, dir_name):
+    """Return the path to the calibration uncertainties estimated at the time
+    before and closest to the trigger time. If there are no calibration
+    uncertainties estimated before the trigger time, return the oldest one. The
+    gpstimes at which the calibration uncertainties were estimated and the
+    names of the files containing the uncertaintes are saved in
+    [HLV]_CalEnvs.txt.
+
+    Parameters
+    ----------
+    trigtime : float
+        The trigger time of a target event
+    dir_name : str
+        The path to the directory where files containing calibration
+        uncertainties exist
+
+    Return
+    ------
+    path : str
+        The path to the calibration uncertainties appropriate for a target
+        event
+    """
+    filename, = glob.glob(os.path.join(dir_name, '[HLV]_CalEnvs.txt'))
+    calibration_index = np.atleast_1d(
+        np.recfromtxt(filename, names=['gpstime', 'filename'])
+    )
+    gpstimes = calibration_index['gpstime']
+    candidate_gpstimes = gpstimes < trigtime
+    if np.any(candidate_gpstimes):
+        idx = np.argmax(gpstimes * candidate_gpstimes)
+        appropriate_cal = calibration_index['filename'][idx]
+    else:
+        appropriate_cal = calibration_index['filename'][np.argmin(gpstimes)]
+    return os.path.join(dir_name, appropriate_cal.decode('utf-8'))
+
+
 @app.task(shared=False)
 def prepare_ini(frametype_dict, event, superevent_id=None):
     """Determine an appropriate PE settings for the target event and return ini
@@ -113,6 +150,7 @@ def prepare_ini(frametype_dict, event, superevent_id=None):
 
     # fill out the ini template and return the resultant content
     singleinspiraltable = event['extra_attributes']['SingleInspiral']
+    trigtime = event['gpstime']
     ini_settings = {
         'service_url': gracedb.client._service_url,
         'types': frametype_dict,
@@ -121,6 +159,18 @@ def prepare_ini(frametype_dict, event, superevent_id=None):
         'webdir': os.path.join(app.conf['pe_results_path'], event['graceid']),
         'paths': [{'name': name, 'path': find_executable(executable)}
                   for name, executable in executables.items()],
+        'h1_calibration': _find_appropriate_cal_env(
+            trigtime,
+            '/home/cbc/pe/O3/calibrationenvelopes/LIGO_Hanford'
+        ),
+        'l1_calibration': _find_appropriate_cal_env(
+            trigtime,
+            '/home/cbc/pe/O3/calibrationenvelopes/LIGO_Livingston'
+        ),
+        'v1_calibration': _find_appropriate_cal_env(
+            trigtime,
+            '/home/cbc/pe/O3/calibrationenvelopes/Virgo'
+        ),
         'q': min([sngl['mass2'] / sngl['mass1']
                   for sngl in singleinspiraltable]),
     }
