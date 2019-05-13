@@ -21,9 +21,6 @@ log = get_task_logger(__name__)
                  'cbc_mbtaonline',
                  'burst_olib',
                  'burst_cwb',
-                 'test_gstlal',
-                 'test_pycbc',
-                 'test_mbtaonline',
                  queue='superevent',
                  shared=False)
 def handle(payload):
