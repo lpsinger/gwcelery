@@ -151,7 +151,6 @@ def handle_grb_lvalert(alert):
 
 @lvalert.handler('superevent',
                  'mdc_superevent',
-                 'test_superevent',
                  'external_snews',
                  'external_snews_supernova',
                  shared=False)
