@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.5.7 (unreleased)
+0.5.7 (2019-05-13)
 ------------------
 
 -   If the VOEvent broker is disabled by setting ``voevent_broker_whitelist``
