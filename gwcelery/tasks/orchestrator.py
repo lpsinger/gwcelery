@@ -319,10 +319,14 @@ def preliminary_alert(event, superevent_id):
     # Determine if the event should be made public.
     is_publishable = superevents.should_publish(event)
 
+    canvas = chain()
+
     if is_publishable:
-        canvas = gracedb.expose.s(superevent_id)
-    else:
-        canvas = chain()
+        canvas |= (
+            gracedb.create_label.si('ADVREQ', superevent_id)
+            |
+            gracedb.expose.si(superevent_id)
+        )
 
     # If there is a sky map, then copy it to the superevent and create plots.
     if skymap_filename is not None:
@@ -394,7 +398,7 @@ def preliminary_alert(event, superevent_id):
 
     # Send GCN notice and upload GCN circular draft for online events.
     if is_publishable:
-        # apply ADVREQ, compose preliminary GCN and send
+        # compose preliminary GCN and send
         canvas |= (
             _create_voevent.s(
                 superevent_id, 'preliminary',
@@ -404,8 +408,6 @@ def preliminary_alert(event, superevent_id):
             )
             |
             group(
-                gracedb.create_label.si('ADVREQ', superevent_id),
-
                 gracedb.download.s(superevent_id)
                 |
                 gcn.send.s()
