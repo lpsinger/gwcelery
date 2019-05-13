@@ -320,10 +320,7 @@ def preliminary_alert(event, superevent_id):
     is_publishable = superevents.should_publish(event)
 
     if is_publishable:
-        canvas = group(
-            gracedb.expose.s(superevent_id),
-            gracedb.create_label.si('ADVREQ', superevent_id)
-        )
+        canvas = gracedb.expose.s(superevent_id)
     else:
         canvas = chain()
 
@@ -407,6 +404,8 @@ def preliminary_alert(event, superevent_id):
             )
             |
             group(
+                gracedb.create_label.si('ADVREQ', superevent_id),
+
                 gracedb.download.s(superevent_id)
                 |
                 gcn.send.s()
