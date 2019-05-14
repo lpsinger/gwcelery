@@ -4,7 +4,8 @@ Changelog
 0.5.8 (unreleased)
 ------------------
 
--   No changes yet.
+-   Lower PE FAR threshold since there are too many events with far lower than
+    the current threshold.
 
 0.5.7 (2019-05-13)
 ------------------
