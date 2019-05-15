@@ -12,6 +12,10 @@ Changelog
 
 -   Read template weights for P_astro from hdf5 file using h5py for speedup.
 
+-   Change the name of BAYESTAR localization files to
+   ``bayestar.multiorder.fits`` to distinguish from them from the
+   flat-resolution HEALPix files, which are still named ``bayestar.fits.gz``.
+
 0.5.7 (2019-05-13)
 ------------------
 
