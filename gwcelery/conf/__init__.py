@@ -226,7 +226,7 @@ LALInference (see :mod:`gwcelery.tasks.lalinference`)"""
 
 pe_threshold = 1.0 / (28 * 86400)
 """FAR threshold in Hz for Parameter Estimation. PE group now applies
-1/(2 weeks) as a threshold. 86400 seconds = 1 day and 14 days = 2 weeks."""
+1/(4 weeks) as a threshold. 86400 seconds = 1 day and 28 days = 4 weeks."""
 
 pe_results_path = os.path.join(os.getenv('HOME'), 'public_html/online_pe')
 """Path to the results of Parameter Estimation (see
