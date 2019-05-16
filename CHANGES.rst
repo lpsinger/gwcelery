@@ -30,6 +30,10 @@ Changelog
             rcParams.get('text.latex.preamble', []) + tex.MACROS),
         E   TypeError: can only concatenate str (not "list") to str
 
+-   Make ``gwcelery.tasks.gracedb.get_superevents`` and
+    ``gwcelery.tasks.gracedb.get_events``  take any number of keyword
+    arguments to be passed to corresponding client methods.
+
 0.5.7 (2019-05-13)
 ------------------
 

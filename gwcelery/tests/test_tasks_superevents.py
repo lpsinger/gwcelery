@@ -124,7 +124,7 @@ def mock_db(monkeypatch):
         def createSuperevent(self, *args, **kwargs):    # noqa: N802
             pass
 
-        def superevents(self, **kwargs):
+        def superevents(self, *args, **kwargs):
             response = resource_json(__name__, 'data/superevents.json')
             return (s for s in response['superevents'])
 

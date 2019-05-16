@@ -129,10 +129,9 @@ def expose(graceid):
 
 @task(shared=False)
 @catch_retryable_http_errors
-def get_events(query=None, orderby=None, count=None, columns=None):
+def get_events(*args, **kwargs):
     """Get events from GraceDB."""
-    return list(client.events(query=query, orderby=orderby,
-                count=count, columns=columns))
+    return list(client.events(*args, **kwargs))
 
 
 @task(shared=False)
@@ -179,20 +178,22 @@ def upload(filecontents, filename, graceid, message, tags=()):
 
 @app.task(shared=False)
 @catch_retryable_http_errors
-def get_superevents(query):
+def get_superevents(*args, **kwargs):
     """List matching superevents in gracedb.
 
     Parameters
     ----------
-    query : str
-        query to be passed to :meth:`superevents`
+    *args
+        arguments passed to :meth:`GraceDb.superevents`
+    **kwargs
+        keyword arguments passed to :meth:`GraceDb.superevents`
 
     Returns
     -------
     superevents : list
         The list of the superevents.
     """
-    return list(client.superevents(query=query, orderby='t_0'))
+    return list(client.superevents(*args, **kwargs))
 
 
 @task(ignore_result=True, shared=False)

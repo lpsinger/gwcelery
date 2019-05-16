@@ -131,7 +131,7 @@ def test_get_superevent(mock_gracedb):
 @patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
 def test_get_superevents(mock_gracedb):
     gracedb.get_superevents('query')
-    mock_gracedb.superevents.assert_called_once_with('query', orderby='t_0')
+    mock_gracedb.superevents.assert_called_once_with('query')
 
 
 @patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
