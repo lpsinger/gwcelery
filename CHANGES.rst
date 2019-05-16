@@ -7,6 +7,9 @@ Changelog
 -   Lower PE FAR threshold since there are too many events with far lower than
     the current threshold.
 
+-   Remove redundant key in handle_lvalert_grb to prevent double calls to
+    RAVEN.
+
 0.5.7 (2019-05-13)
 ------------------
 
