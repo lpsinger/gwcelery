@@ -1,4 +1,4 @@
-Git ref: *Insert git reference using [GitLab Flavored Markdown](https://git.ligo.org/help/user/markdown.md#special-gitlab-references)*
+**Git ref:** <!-- insert git reference -->
 
 1. [ ] Has the CI pipeline succeeded, including all unit tests and code quality checks?
 2. [ ] Does CHANGES.rst list all significant changes since the last release? Is it free from spelling and grammatical errors?
