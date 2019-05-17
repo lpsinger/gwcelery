@@ -34,6 +34,9 @@ Changelog
     ``gwcelery.tasks.gracedb.get_events``  take any number of keyword
     arguments to be passed to corresponding client methods.
 
+-   Modify ``_update_superevent`` to update superevent ``t_0`` when the
+    preferred event changes.
+
 0.5.7 (2019-05-13)
 ------------------
 

@@ -165,6 +165,7 @@ def test_update_preferred_event(mock_db):
                                        'T0212',
                                        payload,
                                        None,
+                                       None,
                                        None)
         p.assert_called_with('S0039', preferred_event='T1234',
                              t_start=None, t_end=None, t_0=None)
@@ -300,13 +301,14 @@ def test_parse_trigger_cbc_2(mock_db):
                    alert_type='new',
                    uid='G000003')
     # addEventToSuperevent should be called
-    # preferred event should be updated
+    # preferred event should be updated, t_0 should change
     with patch.object(gracedb.client, 'addEventToSuperevent') as p1, \
             patch.object(gracedb.client, 'updateSuperevent') as p2:
         superevents.handle(payload)
         p1.assert_called_once()
         p2.assert_called_once_with('S0039', preferred_event='G000003',
-                                   t_0=None, t_start=None, t_end=None)
+                                   t_0=1163905224.4332082, t_start=None,
+                                   t_end=None)
 
 
 def test_parse_trigger_cbc_3(mock_db):
@@ -554,7 +556,7 @@ def test_single_ifo_3(mock_db):
         p1.assert_called_once()
         p2.assert_called_once_with(
             'S0039', preferred_event='G000011',
-            t_0=None,
+            t_0=1163905214.44,
             t_end=pytest.approx(1163905239.44, abs=1e-3),
             t_start=pytest.approx(1163905213.44, abs=1e-3))
 

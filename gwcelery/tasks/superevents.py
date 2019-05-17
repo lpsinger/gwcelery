@@ -65,7 +65,7 @@ def handle(payload):
     else:
         sid = None  # No matching superevent
 
-    t_start, t_end = get_ts(event_info)
+    t_0, t_start, t_end = get_ts(event_info)
 
     if sid is None:
         log.debug('Entered 1st if')
@@ -83,8 +83,7 @@ def handle(payload):
             log.info('New event %s with no superevent in GraceDB, '
                      'creating new superevent', gid)
             gracedb.create_superevent(event_info['graceid'],
-                                      event_info['gpstime'],
-                                      t_start, t_end, category)
+                                      t_0, t_start, t_end, category)
             return
 
         log.info('Event %s in window of %s. Adding event to superevent',
@@ -106,6 +105,7 @@ def handle(payload):
         _update_superevent(superevent.superevent_id,
                            superevent.preferred_event,
                            event_info,
+                           t_0=t_0,
                            t_start=new_t_start,
                            t_end=new_t_end)
     else:
@@ -131,6 +131,8 @@ def get_ts(event):
 
     Returns
     -------
+    t_0: float
+        Segment center time in GPS seconds.
     t_start : float
         Segment start time in GPS seconds.
 
@@ -150,7 +152,8 @@ def get_ts(event):
             pipeline, app.conf['superevent_default_d_t_start'])
         d_t_end = app.conf['superevent_d_t_end'].get(
             pipeline, app.conf['superevent_default_d_t_end'])
-    return event['gpstime'] - d_t_start, event['gpstime'] + d_t_end
+    return (event['gpstime'], event['gpstime'] - d_t_start,
+            event['gpstime'] + d_t_end)
 
 
 def get_snr(event):
@@ -286,7 +289,7 @@ def keyfunc(event):
 
 
 def _update_superevent(superevent_id, preferred_event, new_event_dict,
-                       t_start, t_end):
+                       t_0, t_start, t_end):
     """
     Update preferred event and/or change time window. Events with multiple
     detectors take precedence over single-detector events, then CBC events take
@@ -302,6 +305,8 @@ def _update_superevent(superevent_id, preferred_event, new_event_dict,
         preferred event id of the superevent
     new_event_dict : dict
         event info of the new trigger as a dictionary
+    t_0 : float
+        center time of `superevent_id`, None for no change
     t_start : float
         start time of `superevent_id`, None for no change
     t_end : float
@@ -315,6 +320,7 @@ def _update_superevent(superevent_id, preferred_event, new_event_dict,
     if t_end is not None:
         kwargs['t_end'] = t_end
     if keyfunc(new_event_dict) < keyfunc(preferred_event_dict):
+        kwargs['t_0'] = t_0
         kwargs['preferred_event'] = new_event_dict['graceid']
 
     if kwargs:
