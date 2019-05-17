@@ -207,8 +207,6 @@ def send_update_gcn():
             'em_bright_filename', 'p_astro_filename')
     superevent_id, *_ = args = tuple(request.form.get(key) for key in keys)
     if all(args):
-        app.logger.info(
-            'Calling update_alert%r', args)
         (
             gracedb.upload.s(
                 None, None, superevent_id,
