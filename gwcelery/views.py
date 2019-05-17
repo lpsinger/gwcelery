@@ -212,7 +212,7 @@ def send_update_gcn():
         (
             gracedb.upload.s(
                 None, None, superevent_id,
-                'User {} queued a Preliminary alert through the dashboard.'
+                'User {} queued an Update alert through the dashboard.'
                 .format(request.remote_user or '(unknown)'),
                 tags=['em_follow'])
             |
