@@ -7,4 +7,4 @@
 3. [ ] Has the playground deployment run for at least 10 minutes?
 4. [ ] Has the playground deployment connected successfully to LVAlert?
 
-/label Release
+/label ~Release
