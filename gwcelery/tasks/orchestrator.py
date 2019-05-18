@@ -530,7 +530,7 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None,
     (
         gracedb.expose.s(superevent_id)
         |
-        ordered_group(
+        group(
             gracedb.download.si(em_bright_filename, superevent_id),
             gracedb.download.si(p_astro_filename, superevent_id)
         )
