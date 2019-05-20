@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.6.0 (unreleased)
+0.6.0 (2019-05-20)
 ------------------
 
 -   Work around a bug in complex Celery canvases (see `celery/celery#5512`_)
