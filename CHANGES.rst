@@ -4,13 +4,13 @@ Changelog
 0.5.8 (unreleased)
 ------------------
 
--   Work around a bug in complex Celery canvases (see `celery/celery#5512 `_)
+-   Work around a bug in complex Celery canvases (see `celery/celery#5512`_)
     that prevented initial GCN notices from being sent. As a side effect of
     this workaround, the initial, update, and retraction canvases will not
     automatically expose events to the public. (That is still done by the
     preliminary alert canvas.)
 
-..  _`celery/celery#5512`: https://github.com/celery/celery/issues/5512
+    ..  _`celery/celery#5512`: https://github.com/celery/celery/issues/5512
 
 -   Lower PE FAR threshold since there are too many events with far lower than
     the current threshold.
