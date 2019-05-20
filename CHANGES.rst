@@ -22,8 +22,8 @@ Changelog
 -   Reduce the false alarm rate threshold for parameter estimation to decrease
     cluster load.
 
--   Remove redundant key in handle_lvalert_grb to prevent double calls to
-    RAVEN.
+-   Remove redundant LVAlert subscription in handle_lvalert_grb to prevent
+    double calls to RAVEN.
 
 -   Read template weights for P_astro from hdf5 file using h5py for speedup.
 
@@ -34,11 +34,10 @@ Changelog
         E   TypeError: can only concatenate str (not "list") to str
 
 -   Make ``gwcelery.tasks.gracedb.get_superevents`` and
-    ``gwcelery.tasks.gracedb.get_events``  take any number of keyword
-    arguments to be passed to corresponding client methods.
+    ``gwcelery.tasks.gracedb.get_events`` take any number of keyword arguments
+    to be passed to corresponding client methods.
 
--   Modify ``_update_superevent`` to update superevent ``t_0`` when the
-    preferred event changes.
+-   Update the superevent ``t_0`` field whenever the preferred event changes.
 
 0.5.7 (2019-05-13)
 ------------------
