@@ -111,7 +111,7 @@ def handle_cbc_event(alert):
     ============================== =====================================================
     File                           Task
     ============================== =====================================================
-    ``bayestar.multiorder.fits``   :meth:`gwcelery.tasks.bayestar.localize`
+    ``bayestar.fits``              :meth:`gwcelery.tasks.bayestar.localize`
     ``em_bright.json``             :meth:`gwcelery.tasks.em_bright.classifier`
     ``p_astro.json``               :meth:`gwcelery.tasks.p_astro_gstlal.compute_p_astro`
     ============================== =====================================================
@@ -178,7 +178,7 @@ def handle_cbc_event(alert):
             bayestar.localize.s(graceid)
             |
             gracedb.upload.s(
-                'bayestar.multiorder.fits', graceid,
+                'bayestar.fits', graceid,
                 'sky localization complete', ['sky_loc', 'public']
             )
             |
@@ -304,7 +304,7 @@ def preliminary_alert(event, superevent_id):
     preferred_event_id = event['graceid']
 
     if event['group'] == 'CBC':
-        skymap_filename = 'bayestar.multiorder.fits'
+        skymap_filename = 'bayestar.fits'
     elif event['pipeline'] == 'CWB':
         skymap_filename = 'cWB.fits.gz'
     elif event['pipeline'] == 'oLIB':
@@ -313,8 +313,6 @@ def preliminary_alert(event, superevent_id):
         skymap_filename = None
 
     original_skymap_filename = skymap_filename
-    if skymap_filename.endswith('.multiorder.fits'):
-        skymap_filename = skymap_filename.replace('.multiorder.fits', '.fits')
     if skymap_filename.endswith('.fits'):
         skymap_filename += '.gz'
 
