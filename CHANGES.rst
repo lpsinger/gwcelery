@@ -19,7 +19,7 @@ Changelog
     ..  _`celery/celery#5512`: https://github.com/celery/celery/issues/5512
     ..  _`emfollow/followup-advocate-guide!2`: https://git.ligo.org/emfollow/followup-advocate-guide/merge_requests/2
 
--   Reduce the false alarm rate threshold for parameter estimation to reduce
+-   Reduce the false alarm rate threshold for parameter estimation to decrease
     cluster load.
 
 -   Remove redundant key in handle_lvalert_grb to prevent double calls to
