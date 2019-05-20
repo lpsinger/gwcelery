@@ -19,8 +19,8 @@ Changelog
     ..  _`celery/celery#5512`: https://github.com/celery/celery/issues/5512
     ..  _`emfollow/followup-advocate-guide!2`: https://git.ligo.org/emfollow/followup-advocate-guide/merge_requests/2
 
--   Lower PE FAR threshold since there are too many events with far lower than
-    the current threshold.
+-   Reduce the false alarm rate threshold for parameter estimation to reduce
+    cluster load.
 
 -   Remove redundant key in handle_lvalert_grb to prevent double calls to
     RAVEN.
