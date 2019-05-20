@@ -7,10 +7,17 @@ Changelog
 -   Work around a bug in complex Celery canvases (see `celery/celery#5512`_)
     that prevented initial GCN notices from being sent. As a side effect of
     this workaround, the initial, update, and retraction canvases will not
-    automatically expose events to the public. (That is still done by the
-    preliminary alert canvas.)
+    automatically expose events to the public.
+
+    The preliminary alert canvas still *does* expose events to the public, so
+    under normal circumstances, the follow-up advocate should not have to
+    manually do that. However, if the event has not been exposed to the public
+    for whatever reason, then the follow-up advocate should expose it to the
+    public manually before applying the ``ADVOK`` label.
+    See `emfollow/followup-advocate-guide!2`_.
 
     ..  _`celery/celery#5512`: https://github.com/celery/celery/issues/5512
+    ..  _`emfollow/followup-advocate-guide!2`: https://git.ligo.org/emfollow/followup-advocate-guide/merge_requests/2
 
 -   Lower PE FAR threshold since there are too many events with far lower than
     the current threshold.
