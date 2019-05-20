@@ -238,17 +238,17 @@ def check_idq(cache, channel, start, end):
                   1216496260, 1216496262)
     ('H1:IDQ-PGLITCH-OVL-100-1000', 0.87)
     """
-    try:
-        idq_prob = TimeSeries.read(
-            cache, channel, start=start, end=end)
-    except (IndexError, RuntimeError):
-        # FIXME: figure out how to get access to low-latency frames outside
-        # of the cluster. Until we figure that out, actual I/O errors have
-        # to be non-fatal.
-        log.exception('Failed to read from low-latency iDQ frame files')
-        return (channel, None)
-    else:
-        return (channel, float(idq_prob.max()))
+    if cache:
+        try:
+            idq_prob = TimeSeries.read(
+                cache, channel, start=start, end=end)
+            return (channel, float(idq_prob.max()))
+        except RuntimeError:
+            log.exception('Failed to read from low-latency iDQ frame files')
+    # FIXME: figure out how to get access to low-latency frames outside
+    # of the cluster. Until we figure that out, actual I/O errors have
+    # to be non-fatal.
+    return (channel, None)
 
 
 def check_vector(cache, channel, start, end, bits, logic_type='all'):
@@ -290,20 +290,20 @@ def check_vector(cache, channel, start, end, bits, logic_type='all'):
     if logic_type not in ('any', 'all'):
         raise ValueError("logic_type must be either 'all' or 'any'.")
     bitname = '{}:{}'
-    try:
-        statevector = StateVector.read(cache, channel, start=start, end=end,
-                                       bits=bits)
-    except IndexError:
-        # FIXME: figure out how to get access to low-latency frames outside
-        # of the cluster. Until we figure that out, actual I/O errors have
-        # to be non-fatal.
-        log.exception('Failed to read from low-latency frame files')
-        return {bitname.format(channel.split(':')[0], key):
-                None for key in bits if key is not None}
-    else:
-        return {bitname.format(channel.split(':')[0], key):
-                bool(getattr(np, logic_type)(getattr(value, 'value')))
-                for key, value in statevector.get_bit_series().items()}
+    if cache:
+        try:
+            statevector = StateVector.read(cache, channel,
+                                           start=start, end=end, bits=bits)
+            return {bitname.format(channel.split(':')[0], key):
+                    bool(getattr(np, logic_type)(getattr(value, 'value')))
+                    for key, value in statevector.get_bit_series().items()}
+        except IndexError:
+            log.exception('Failed to read from low-latency frame files')
+    # FIXME: figure out how to get access to low-latency frames outside
+    # of the cluster. Until we figure that out, actual I/O errors have
+    # to be non-fatal.
+    return {bitname.format(channel.split(':')[0], key):
+            None for key in bits if key is not None}
 
 
 @app.task(shared=False)

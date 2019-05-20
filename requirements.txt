@@ -6,7 +6,7 @@ flask
 flask-caching
 flower
 gwdatafind
-gwpy <= 0.14.0  # https://git.ligo.org/emfollow/gwcelery/issues/95
+gwpy
 healpy
 jinja2
 lalsuite >= 6.54
@@ -17,7 +17,6 @@ ligo-segments
 ligo.skymap >= 0.1.1
 lscsoft-glue
 lxml
-matplotlib < 3.1  # matplotlib 3.1 breaks gwpy
 numpy
 p_astro==0.7
 pygcn >= 0.1.19

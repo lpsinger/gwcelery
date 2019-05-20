@@ -25,6 +25,9 @@ Changelog
 -   Turn on Redis database persistence so that Celery task state is preserved
     across restarts.
 
+-   Update to the latest version of GWPy and un-pin Matplotlib because GWPy
+    now supports Matplotlib 3.1.
+
 0.6.0 (2019-05-20)
 ------------------
 
