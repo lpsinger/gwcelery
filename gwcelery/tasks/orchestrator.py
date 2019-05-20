@@ -357,7 +357,7 @@ def preliminary_alert(event, superevent_id):
                 gracedb.create_label.si('SKYMAP_READY', superevent_id),
 
                 skymaps.annotate_fits(
-                    original_skymap_filename,
+                    skymap_filename,
                     superevent_id,
                     ['sky_loc', 'public']
                 )
