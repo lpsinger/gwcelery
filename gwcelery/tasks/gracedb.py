@@ -129,8 +129,15 @@ def download(filename, graceid):
 @task(ignore_result=True, shared=False)
 @catch_retryable_http_errors
 def expose(graceid):
-    """Expose an event to the public."""
-    client.modify_permissions(graceid, 'expose').json()
+    """Expose an event to the public.
+
+    Notes
+    -----
+    If :obj:`~gwcelery.conf.expose_to_public` is False, then this because a
+    no-op.
+    """
+    if app.conf['expose_to_public']:
+        client.modify_permissions(graceid, 'expose').json()
 
 
 @task(shared=False)

@@ -21,7 +21,8 @@ def celeryconf(tmp_path_factory):
         task_always_eager=True,
         task_eager_propagates=True,
         lvalert_host='lvalert.invalid',
-        gracedb_host='gracedb.invalid'
+        gracedb_host='gracedb.invalid',
+        expose_to_public=True
     )
     tmp = {key: app.conf[key] for key in new_conf.keys()}
     app.conf.update(new_conf)

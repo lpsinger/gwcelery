@@ -19,6 +19,9 @@ Changelog
     with Redis persistence. The ``--lvalert`` command line option must now be
     passed in order to enable the LVAlert listener.
 
+-   Add ``expose_to_public`` setting to disable exposing GraceDB events to the
+    public in all environments except for production.
+
 0.6.0 (2019-05-20)
 ------------------
 

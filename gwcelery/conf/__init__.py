@@ -27,6 +27,10 @@ task_serializer = 'pickle'
 
 # GWCelery-specific settings.
 
+expose_to_public = False
+"""Set to True if events meeting the public alert threshold really should be
+exposed to the public."""
+
 lvalert_host = 'lvalert-playground.cgca.uwm.edu'
 """LVAlert host."""
 

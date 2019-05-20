@@ -3,6 +3,10 @@ from :mod:`gwcelery.conf.playground`, with the exceptions below."""
 
 from . import *  # noqa: F401, F403
 
+expose_to_public = True
+"""Set to True if events meeting the public alert threshold really should be
+exposed to the public."""
+
 lvalert_host = 'lvalert.cgca.uwm.edu'
 """LVAlert host."""
 
