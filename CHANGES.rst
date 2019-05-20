@@ -10,7 +10,7 @@ Changelog
     automatically expose events to the public. (That is still done by the
     preliminary alert canvas.)
 
-    .. _`celery/celery#5512`: https://github.com/celery/celery/issues/5512
+..  _`celery/celery#5512`: https://github.com/celery/celery/issues/5512
 
 -   Lower PE FAR threshold since there are too many events with far lower than
     the current threshold.
