@@ -207,7 +207,7 @@ open SCCB issue for release:
     - >
       curl --silent --show-error --fail
       --request POST --header "Private-Token: $GITLAB_ACCESS_TOKEN"
-      --data-urlencode "labels=Requested"
+      --data-urlencode "labels=Requested,Expedite"
       --data-urlencode "title=$TITLE"
       --data-urlencode "description@description"
       "$CI_API_V4_URL/projects/$PROJECT_SLUG/issues"
