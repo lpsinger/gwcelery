@@ -16,6 +16,12 @@ Changelog
     ``bayestar.multiorder.fits`` to distinguish from them from the
     flat-resolution HEALPix files, which are still named ``bayestar.fits.gz``.
 
+-   Require matplotlib < 3.1 becuase matplotlib 3.1 breaks importing gwpy::
+
+        /usr/local/lib/python3.7/site-packages/gwpy/plot/rc.py:79: in <module>
+            rcParams.get('text.latex.preamble', []) + tex.MACROS),
+        E   TypeError: can only concatenate str (not "list") to str
+
 0.5.7 (2019-05-13)
 ------------------
 
