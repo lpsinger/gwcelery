@@ -204,6 +204,45 @@ def handle_cbc_event(alert):
         ).delay()
 
 
+@lvalert.handler('superevent',
+                 'mdc_superevent',
+                 shared=False)
+def handle_posterior_samples(alert):
+    """Generate multi-resolution and flat-resolution fits files and skymaps
+    from an uploaded HDF5 file containing posterior samples.
+    """
+    if alert['alert_type'] != 'log' or \
+            not alert['data']['filename'].endswith('.posterior_samples.hdf5'):
+        return
+    superevent_id = alert['uid']
+    filename = alert['data']['filename']
+    prefix, _ = filename.rsplit('.posterior_samples.')
+    # FIXME: It is assumed that posterior samples always come from
+    # lalinference. After bilby or rift is integrated, this has to be fixed.
+    (
+        gracedb.download.si(filename, superevent_id)
+        |
+        skymaps.skymap_from_samples.s()
+        |
+        group(
+            skymaps.annotate_fits('{}.multiorder.fits'.format(prefix),
+                                  superevent_id, ['pe', 'sky_loc']),
+            gracedb.upload.s(
+                '{}.multiorder.fits'.format(prefix), superevent_id,
+                'Multiresolution fits file generated from {}'.format(filename),
+                ['pe', 'sky_loc']
+            ),
+            skymaps.flatten.s('{}.fits.gz'.format(prefix))
+            |
+            gracedb.upload.s(
+                '{}.fits.gz'.format(prefix), superevent_id,
+                'Flat-resolution fits file created from {}'.format(filename),
+                ['pe', 'sky_loc']
+            )
+        )
+    ).delay()
+
+
 @app.task(autoretry_for=(gaierror, HTTPError, URLError, TimeoutError),
           default_retry_delay=20.0, retry_backoff=True,
           retry_kwargs=dict(max_retries=500), shared=False)

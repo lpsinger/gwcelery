@@ -15,6 +15,10 @@ Changelog
 -   Prevent subthreshold GRBs with low reliability from being processed as
     external events. 
 
+-   Add a task in orchestrator.py to generate fits files and skymaps
+    automatically whennever a hdf5 file containing posterior samples is
+    uploaded.
+
 0.6.1 (2019-05-24)
 ------------------
 

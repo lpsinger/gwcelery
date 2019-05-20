@@ -20,7 +20,6 @@ from ..jinja import env
 from .core import ordered_group
 from . import condor
 from . import gracedb
-from . import skymaps
 
 
 ini_name = 'online_pe.ini'
@@ -349,22 +348,15 @@ def _get_result_contents(pe_results_path, filename):
     return contents
 
 
-def _upload_result(pe_results_path, filename, graceid, message, tag):
+def _upload_result(pe_results_path, filename, graceid, message, tag,
+                   uploaded_filename=None):
     """Return a canvas to get the contents of a PE result file and upload it to
     GraceDB.
     """
+    if uploaded_filename is None:
+        uploaded_filename = filename
     return _get_result_contents.si(pe_results_path, filename) | \
-        gracedb.upload.s(filename, graceid, message, tag)
-
-
-def _upload_skymap(pe_results_path, graceid):
-    return _get_result_contents.si(pe_results_path, 'LALInference.fits') | \
-        group(
-            skymaps.annotate_fits('LALInference.fits',
-                                  graceid, ['pe', 'sky_loc']),
-            gracedb.upload.s('LALInference.fits', graceid,
-                             'LALInference FITS sky map', ['pe', 'sky_loc'])
-        )
+        gracedb.upload.s(uploaded_filename, graceid, message, tag)
 
 
 @app.task(ignore_result=True, shared=False)
@@ -405,14 +397,20 @@ def dag_finished(rundir, preferred_event_id, superevent_id):
     return \
         _upload_url.si(pe_results_path, superevent_id) | \
         group(
-            _upload_skymap(pe_results_path, superevent_id),
+            _upload_result(
+                rundir, 'posterior*.hdf5', superevent_id,
+                'LALInference posterior samples', 'pe',
+                'LALInference.posterior_samples.hdf5'
+            ),
             _upload_result(
                 pe_results_path, 'extrinsic.png', superevent_id,
-                'Corner plot for extrinsic parameters', 'pe'
+                'Corner plot for extrinsic parameters', 'pe',
+                'LALInference.extrinsic.png'
             ),
             _upload_result(
                 pe_results_path, 'sourceFrame.png', superevent_id,
-                'Corner plot for source frame parameters', 'pe'
+                'Corner plot for source frame parameters', 'pe',
+                'LALInference.intrinsic.png'
             )
         ) | gracedb.create_label.si('PE_READY', superevent_id) | \
         clean_up.si(rundir)

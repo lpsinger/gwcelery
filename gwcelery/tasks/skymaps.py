@@ -6,6 +6,7 @@ from astropy.io import fits
 from astropy import table
 from celery import group
 from ligo.skymap.tool import ligo_skymap_flatten
+from ligo.skymap.tool import ligo_skymap_from_samples
 from ligo.skymap.tool import ligo_skymap_plot
 from ligo.skymap.tool import ligo_skymap_plot_volume
 from matplotlib import pyplot as plt
@@ -115,3 +116,16 @@ def flatten(filecontents, filename):
         outfilename = os.path.join(tmpdir, filename)
         ligo_skymap_flatten.main([infile.name, outfilename])
         return open(outfilename, 'rb').read()
+
+
+@app.task(shared=False)
+def skymap_from_samples(samplefilecontents):
+    """Generate multi-resolution fits file from samples"""
+    with NamedTemporaryFile(content=samplefilecontents) as samplefile, \
+            tempfile.TemporaryDirectory() as tmpdir:
+        outfilename = os.path.join(tmpdir, 'temp.fits')
+        ligo_skymap_from_samples.main(
+            ['--fitsoutname', outfilename, samplefile.name]
+        )
+        with open(outfilename, 'rb') as f:
+            return f.read()

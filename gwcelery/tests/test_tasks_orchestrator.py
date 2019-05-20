@@ -299,6 +299,53 @@ def test_handle_cbc_event(mock_gracedb, mock_localize, mock_get_event):
     mock_localize.assert_called_once()
 
 
+@pytest.mark.parametrize(
+    'alert_type,filename',
+    [['new', ''], ['log', 'psd.xml.gz'],
+     ['log', 'test.posterior_samples.hdf5']])
+def test_handle_posterior_samples(monkeypatch, alert_type, filename):
+    alert = {
+        'alert_type': alert_type,
+        'uid': 'S1234',
+        'data': {'filename': filename}
+    }
+
+    download = Mock()
+    skymap_from_samples = Mock()
+    fits_header = Mock()
+    plot_allsky = Mock()
+    annotate_fits_volume = Mock()
+    upload = Mock()
+    flatten = Mock()
+
+    monkeypatch.setattr('gwcelery.tasks.gracedb.download._orig_run', download)
+    monkeypatch.setattr('gwcelery.tasks.skymaps.skymap_from_samples.run',
+                        skymap_from_samples)
+    monkeypatch.setattr('gwcelery.tasks.skymaps.fits_header.run', fits_header)
+    monkeypatch.setattr('gwcelery.tasks.skymaps.plot_allsky.run', plot_allsky)
+    monkeypatch.setattr('gwcelery.tasks.skymaps.annotate_fits_volume.run',
+                        annotate_fits_volume)
+    monkeypatch.setattr('gwcelery.tasks.gracedb.upload._orig_run', upload)
+    monkeypatch.setattr('gwcelery.tasks.skymaps.flatten.run', flatten)
+
+    # Run function under test
+    orchestrator.handle_posterior_samples(alert)
+
+    if alert['alert_type'] != 'log' or \
+            not alert['data']['filename'].endswith('.posterior_samples.hdf5'):
+        skymap_from_samples.assert_not_called()
+        fits_header.assert_not_called()
+        plot_allsky.assert_not_called()
+        annotate_fits_volume.assert_not_called()
+        flatten.assert_not_called()
+    else:
+        skymap_from_samples.assert_called_once()
+        fits_header.assert_called_once()
+        plot_allsky.assert_called_once()
+        annotate_fits_volume.assert_called_once()
+        flatten.assert_called_once()
+
+
 # FIXME calling em-bright point estimates for all pipelines until review
 # is complete
 @patch('gwcelery.tasks.em_bright.classifier_other.run')
