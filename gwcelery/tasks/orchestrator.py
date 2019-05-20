@@ -528,8 +528,6 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None,
                 p_astro_filename = f
 
     (
-        gracedb.expose.s(superevent_id)
-        |
         group(
             gracedb.download.si(em_bright_filename, superevent_id),
             gracedb.download.si(p_astro_filename, superevent_id)
@@ -622,8 +620,6 @@ def retraction_alert(superevent_id):
     """Produce a retraction alert. This is currently just a stub and does
     nothing more than create and send a VOEvent."""
     (
-        gracedb.expose.s(superevent_id)
-        |
         _create_voevent.si(
             None, superevent_id, 'retraction',
             internal=False,

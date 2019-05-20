@@ -203,13 +203,12 @@ def superevent_initial_alert_download(filename, graceid):
 @patch('gwcelery.tasks.gracedb.create_tag.run')
 @patch('gwcelery.tasks.gracedb.create_voevent.run',
        return_value='S1234-Initial-1.xml')
-@patch('gwcelery.tasks.gracedb.expose.run')
 @patch('gwcelery.tasks.gracedb.download.run',
        superevent_initial_alert_download)
 @patch('gwcelery.tasks.gcn.send.run')
 @patch('gwcelery.tasks.circulars.create_initial_circular.run')
 def test_handle_superevent_initial_alert(mock_create_initial_circular,
-                                         mock_send, mock_expose,
+                                         mock_send,
                                          mock_create_voevent,
                                          mock_create_tag, mock_get_log):
     """Test that the ``ADVOK`` label triggers an initial alert."""
@@ -222,7 +221,6 @@ def test_handle_superevent_initial_alert(mock_create_initial_circular,
     # Run function under test
     orchestrator.handle_superevent(alert)
 
-    mock_expose.assert_called_once_with('S1234')
     mock_create_voevent.assert_called_once_with(
         'S1234', 'initial', BBH=0.02, BNS=0.94, NSBH=0.03, ProbHasNS=0.0,
         ProbHasRemnant=0.0, Terrestrial=0.01, internal=False, open_alert=True,
@@ -243,13 +241,12 @@ def superevent_retraction_alert_download(filename, graceid):
 @patch('gwcelery.tasks.gracedb.create_tag.run')
 @patch('gwcelery.tasks.gracedb.create_voevent.run',
        return_value='S1234-Retraction-2.xml')
-@patch('gwcelery.tasks.gracedb.expose.run')
 @patch('gwcelery.tasks.gracedb.download.run',
        superevent_retraction_alert_download)
 @patch('gwcelery.tasks.gcn.send.run')
 @patch('gwcelery.tasks.circulars.create_retraction_circular.run')
 def test_handle_superevent_retraction_alert(mock_create_retraction_circular,
-                                            mock_send, mock_expose,
+                                            mock_send,
                                             mock_create_voevent,
                                             mock_create_tag):
     """Test that the ``ADVNO`` label triggers a retraction alert."""
@@ -262,7 +259,6 @@ def test_handle_superevent_retraction_alert(mock_create_retraction_circular,
     # Run function under test
     orchestrator.handle_superevent(alert)
 
-    mock_expose.assert_called_once_with('S1234')
     mock_create_voevent.assert_called_once_with(
         'S1234', 'retraction', internal=False, open_alert=True, vetted=True)
     mock_send.assert_called_once_with('contents of S1234-Retraction-2.xml')
