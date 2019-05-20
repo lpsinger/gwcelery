@@ -22,6 +22,9 @@ Changelog
 -   Add ``expose_to_public`` setting to disable exposing GraceDB events to the
     public in all environments except for production.
 
+-   Turn on Redis database persistence so that Celery task state is preserved
+    across restarts.
+
 0.6.0 (2019-05-20)
 ------------------
 
