@@ -10,6 +10,10 @@ Changelog
 
     ..  _`getsentry/sentry-python#370`: https://github.com/getsentry/sentry-python/issues/370
 
+-   Change the name of BAYESTAR localization files to
+    ``bayestar.multiorder.fits`` to distinguish from them from the
+    flat-resolution HEALPix files, which are still named ``bayestar.fits.gz``.
+
 0.6.0 (2019-05-20)
 ------------------
 
