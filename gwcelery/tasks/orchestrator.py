@@ -212,7 +212,9 @@ def _download(*args, **kwargs):
     it is retried for both :class:`TimeoutError` and
     :class:`~urllib.error.URLError`. In particular, it will be retried for 404
     (not found) errors."""
-    return gracedb.download(*args, **kwargs)
+    # FIXME: remove ._orig_run when this bug is fixed:
+    # https://github.com/getsentry/sentry-python/issues/370
+    return gracedb.download._orig_run(*args, **kwargs)
 
 
 @app.task(shared=False, ignore_result=True)
@@ -233,7 +235,9 @@ def _get_preferred_event(superevent_id):
     This works just like :func:`gwcelery.tasks.gracedb.get_superevent`, except
     that it returns only the preferred event, and not the entire GraceDB JSON
     response."""
-    return gracedb.get_superevent(superevent_id)['preferred_event']
+    # FIXME: remove ._orig_run when this bug is fixed:
+    # https://github.com/getsentry/sentry-python/issues/370
+    return gracedb.get_superevent._orig_run(superevent_id)['preferred_event']
 
 
 @gracedb.task(shared=False)
@@ -283,7 +287,9 @@ def _create_voevent(classification, *args, **kwargs):
         skymap_type = re.sub(r'\.fits(\..+)?$', '', skymap_filename)
         kwargs.setdefault('skymap_type', skymap_type)
 
-    return gracedb.create_voevent(*args, **kwargs)
+    # FIXME: remove ._orig_run when this bug is fixed:
+    # https://github.com/getsentry/sentry-python/issues/370
+    return gracedb.create_voevent._orig_run(*args, **kwargs)
 
 
 @app.task(ignore_result=True, shared=False)
@@ -434,8 +440,10 @@ def preliminary_alert(event, superevent_id):
 def _get_lowest_far(superevent_id):
     """Obtain the lowest FAR of the events contained in the target
     superevent"""
-    return min(gracedb.get_event(gid)['far'] for gid in
-               gracedb.get_superevent(superevent_id)["gw_events"])
+    # FIXME: remove ._orig_run when this bug is fixed:
+    # https://github.com/getsentry/sentry-python/issues/370
+    return min(gracedb.get_event._orig_run(gid)['far'] for gid in
+               gracedb.get_superevent._orig_run(superevent_id)["gw_events"])
 
 
 @app.task(ignore_result=True, shared=False)

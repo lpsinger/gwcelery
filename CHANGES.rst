@@ -4,7 +4,11 @@ Changelog
 0.6.1 (unreleased)
 ------------------
 
--   No changes yet.
+-   Work around a bug in the Sentry Python SDK that caused excessive reporting
+    of certain GraceDB exceptions that are listed in tasks' ``autoretry_for``
+    settings. See `getsentry/sentry-python#370`_.
+
+    ..  _`getsentry/sentry-python#370`: https://github.com/getsentry/sentry-python/issues/370
 
 0.6.0 (2019-05-20)
 ------------------

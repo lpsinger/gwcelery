@@ -105,13 +105,15 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
     monkeypatch.setattr('gwcelery.tasks.gcn.send.run', send)
     monkeypatch.setattr('gwcelery.tasks.skymaps.plot_allsky.run', plot_allsky)
     monkeypatch.setattr('gwcelery.tasks.skymaps.plot_volume.run', plot_volume)
-    monkeypatch.setattr('gwcelery.tasks.gracedb.create_tag.run', create_tag)
-    monkeypatch.setattr('gwcelery.tasks.gracedb.download.run', download)
-    monkeypatch.setattr('gwcelery.tasks.gracedb.expose.run', expose)
-    monkeypatch.setattr('gwcelery.tasks.gracedb.get_event.run', get_event)
-    monkeypatch.setattr('gwcelery.tasks.gracedb.create_voevent.run',
+    monkeypatch.setattr('gwcelery.tasks.gracedb.create_tag._orig_run',
+                        create_tag)
+    monkeypatch.setattr('gwcelery.tasks.gracedb.download._orig_run', download)
+    monkeypatch.setattr('gwcelery.tasks.gracedb.expose._orig_run', expose)
+    monkeypatch.setattr('gwcelery.tasks.gracedb.get_event._orig_run',
+                        get_event)
+    monkeypatch.setattr('gwcelery.tasks.gracedb.create_voevent._orig_run',
                         create_voevent)
-    monkeypatch.setattr('gwcelery.tasks.gracedb.get_superevent.run',
+    monkeypatch.setattr('gwcelery.tasks.gracedb.get_superevent._orig_run',
                         get_superevent)
     monkeypatch.setattr('gwcelery.tasks.circulars.create_initial_circular.run',
                         create_initial_circular)
@@ -121,7 +123,7 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
                         prepare_ini)
     monkeypatch.setattr('gwcelery.tasks.lalinference.start_pe.run',
                         start_pe)
-    monkeypatch.setattr('gwcelery.tasks.gracedb.create_label.run',
+    monkeypatch.setattr('gwcelery.tasks.gracedb.create_label._orig_run',
                         create_label)
 
     # Run function under test
@@ -200,10 +202,10 @@ def superevent_initial_alert_download(filename, graceid):
                       'filename': 'em_bright.json'},
                      {'tag_names': ['p_astro'],
                       'filename': 'p_astro.json'}])
-@patch('gwcelery.tasks.gracedb.create_tag.run')
-@patch('gwcelery.tasks.gracedb.create_voevent.run',
+@patch('gwcelery.tasks.gracedb.create_tag._orig_run')
+@patch('gwcelery.tasks.gracedb.create_voevent._orig_run',
        return_value='S1234-Initial-1.xml')
-@patch('gwcelery.tasks.gracedb.download.run',
+@patch('gwcelery.tasks.gracedb.download._orig_run',
        superevent_initial_alert_download)
 @patch('gwcelery.tasks.gcn.send.run')
 @patch('gwcelery.tasks.circulars.create_initial_circular.run')
@@ -238,10 +240,10 @@ def superevent_retraction_alert_download(filename, graceid):
         raise ValueError
 
 
-@patch('gwcelery.tasks.gracedb.create_tag.run')
-@patch('gwcelery.tasks.gracedb.create_voevent.run',
+@patch('gwcelery.tasks.gracedb.create_tag._orig_run')
+@patch('gwcelery.tasks.gracedb.create_voevent._orig_run',
        return_value='S1234-Retraction-2.xml')
-@patch('gwcelery.tasks.gracedb.download.run',
+@patch('gwcelery.tasks.gracedb.download._orig_run',
        superevent_retraction_alert_download)
 @patch('gwcelery.tasks.gcn.send.run')
 @patch('gwcelery.tasks.circulars.create_retraction_circular.run')
@@ -277,13 +279,13 @@ def mock_download(filename, graceid, *args, **kwargs):
 
 
 @patch(
-    'gwcelery.tasks.gracedb.get_event.run',
+    'gwcelery.tasks.gracedb.get_event._orig_run',
     return_value={'graceid': 'T250822', 'group': 'CBC', 'pipeline': 'gstlal',
                   'far': 1e-7,
                   'extra_attributes':
                       {'CoincInspiral': {'snr': 10.},
                        'SingleInspiral': [{'mass1': 10., 'mass2': 5.}]}})
-@patch('gwcelery.tasks.gracedb.download.run', mock_download)
+@patch('gwcelery.tasks.gracedb.download._orig_run', mock_download)
 @patch('gwcelery.tasks.bayestar.localize.run')
 @patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
 def test_handle_cbc_event(mock_gracedb, mock_localize, mock_get_event):
@@ -330,13 +332,13 @@ def test_handle_cbc_event_new_event(mock_classifier):
 
 
 @patch(
-    'gwcelery.tasks.gracedb.get_event.run',
+    'gwcelery.tasks.gracedb.get_event._orig_run',
     return_value={'graceid': 'T250822', 'group': 'CBC', 'pipeline': 'gstlal',
                   'far': 1e-7,
                   'extra_attributes':
                       {'CoincInspiral': {'snr': 10.},
                        'SingleInspiral': [{'mass1': 10., 'mass2': 5.}]}})
-@patch('gwcelery.tasks.gracedb.download.run', mock_download)
+@patch('gwcelery.tasks.gracedb.download._orig_run', mock_download)
 @patch('gwcelery.tasks.em_bright.classifier_gstlal.run')
 @patch('gwcelery.tasks.bayestar.localize.run')
 @patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
@@ -361,7 +363,7 @@ def test_inj_stops_prelim(monkeypatch, request, send, create_initial_circular,
              'offline': False, 'far': 1.e-10, 'gpstime': 1234,
              'extra_attributes':
              {'CoincInspiral': {'ifos': 'H1,L1,V1'}}}
-    monkeypatch.setattr('gwcelery.tasks.gracedb.get_labels.run',
+    monkeypatch.setattr('gwcelery.tasks.gracedb.get_labels._orig_run',
                         request.param)
     supereventid = 'S12345'
     orchestrator.preliminary_alert(event, supereventid)
