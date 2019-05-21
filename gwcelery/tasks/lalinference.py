@@ -173,7 +173,18 @@ def prepare_ini(frametype_dict, event, superevent_id=None):
         'q': min([sngl['mass2'] / sngl['mass1']
                   for sngl in singleinspiraltable]),
     }
-    return ini_template.render(ini_settings)
+    ini_rota = ini_template.render(ini_settings)
+    ini_settings.update({'use_of_ini': 'online'})
+    ini_online = ini_template.render(ini_settings)
+    # upload ini file to GraceDB
+    if superevent_id is not None:
+        gracedb.upload.delay(
+            ini_rota, filename=ini_name, graceid=superevent_id,
+            message='Automatically generated LALInference configuration file'
+                    ' for this event.',
+            tags='pe')
+
+    return ini_online
 
 
 def pre_pe_tasks(event, superevent_id):
@@ -221,7 +232,7 @@ def dag_prepare(
     else:
         psd_arg = []
 
-    # write down .ini file in the run directory
+    # write down .ini file in the run directory.
     path_to_ini = rundir + '/' + ini_name
     with open(path_to_ini, 'w') as f:
         f.write(ini_contents)
@@ -246,6 +257,10 @@ def dag_prepare(
         )
         shutil.rmtree(rundir)
         raise
+    finally:
+        # Remove the ini file so that people do not accidentally use this ini
+        # file and hence online-PE-only nodes.
+        os.remove(path_to_ini)
 
     return rundir + '/multidag.dag.condor.sub'
 

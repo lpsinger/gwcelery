@@ -495,7 +495,7 @@ def parameter_estimation(far_event, superevent_id):
 
     This consists of the following steps:
 
-    1.   Upload an ini file which is suitable for the target event.
+    1.   Prepare and upload an ini file which is suitable for the target event.
     2.   Start Parameter Estimation if FAR is smaller than the PE threshold.
     """
     far, event = far_event
@@ -504,29 +504,18 @@ def parameter_estimation(far_event, superevent_id):
     # events.
     if event['group'] == 'CBC' and event['search'] != 'MDC':
         canvas = lalinference.pre_pe_tasks(event, superevent_id)
-        next_task = gracedb.upload.s(
-                        filename=lalinference.ini_name,
-                        graceid=superevent_id,
-                        message='Automatically generated LALInference ' +
-                                'configuration file for this event.',
-                        tags='pe'
-                    )
         if far <= app.conf['pe_threshold']:
-            next_task = group(
-                next_task,
-
-                lalinference.start_pe.s(preferred_event_id, superevent_id)
-            )
+            canvas |= lalinference.start_pe.s(preferred_event_id,
+                                              superevent_id)
         else:
-            next_task |= gracedb.upload.si(
-                             filecontents=None, filename=None,
-                             graceid=superevent_id,
-                             message='FAR is larger than the PE threshold, '
-                                     '{}  Hz. Parameter Estimation will not '
-                                     'start.'.format(app.conf['pe_threshold']),
-                             tags='pe'
-                         )
-        canvas |= next_task
+            canvas |= gracedb.upload.si(
+                          filecontents=None, filename=None,
+                          graceid=superevent_id,
+                          message='FAR is larger than the PE threshold, '
+                                  '{}  Hz. Parameter Estimation will not '
+                                  'start.'.format(app.conf['pe_threshold']),
+                          tags='pe'
+                      )
 
         canvas.apply_async()
 

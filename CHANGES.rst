@@ -22,6 +22,8 @@ Changelog
     eligibility of an event for a public alert is determined only on the basis
     of its false alarm rate.
 
+-   Use online-PE-only nodes for parameter estimation.
+
 0.6.1 (2019-05-24)
 ------------------
 
