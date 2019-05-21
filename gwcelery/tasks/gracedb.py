@@ -96,7 +96,13 @@ def create_tag(filename, tag, graceid):
     log = get_log(graceid)
     entry, = (e for e in log if e['filename'] == filename)
     log_number = entry['N']
-    client.addTag(graceid, log_number, tag).json()
+    try:
+        client.addTag(graceid, log_number, tag).json()
+    except rest.HTTPError as e:
+        # If we got a 400 error because no change was made, then ignore
+        # the exception and return successfully to preserve idempotency.
+        if e.message != b'"Tag is already applied to this log message"':
+            raise
 
 
 @task(shared=False)
