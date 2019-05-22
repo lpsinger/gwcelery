@@ -25,6 +25,9 @@ Changelog
 -   Use the space-time coincidence FAR as the default for RAVEN, use the
     temporal coincidence FAR when sky maps are not available.
 
+-   Check if GRB is sub-threshold, set search to be 'SubGRB'. Pass search
+    through external triggers pipeline and RAVEN.
+
 0.7.1 (2019-07-12)
 ------------------
 

@@ -85,6 +85,12 @@ def handle_grb_gcn(payload):
     if reliability is not None and int(reliability.attrib['value']) <= 4:
         return
 
+    ivorn = root.attrib['ivorn']
+    if 'subthresh' in ivorn.lower():
+        search = 'SubGRB'
+    else:
+        search = 'GRB'
+
     query = 'group: External pipeline: {} grbevent.trigger_id = "{}"'.format(
         event_observatory, trig_id)
     events = gracedb.get_events(query=query)
@@ -97,7 +103,7 @@ def handle_grb_gcn(payload):
 
     else:
         graceid = gracedb.create_event(filecontents=payload,
-                                       search='GRB',
+                                       search=search,
                                        group='External',
                                        pipeline=event_observatory)
         event = gracedb.get_event(graceid)

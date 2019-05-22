@@ -36,23 +36,27 @@ def calculate_coincidence_far(gracedb_id, group):
 
     canvas = chain()
     for exttrig_id in em_events:
+        search = gracedb.get_event(exttrig_id)['search']
         if gracedb.download('glg_healpix_all_bn_v00.fit', exttrig_id) and \
                 preferred_skymap:
             canvas |= (
-                calc_signif.si(gracedb_id, exttrig_id, tl, th, incl_sky=True,
+                calc_signif.si(gracedb_id, exttrig_id, tl, th,
+                               search,
+                               incl_sky=True,
                                se_fitsfile=preferred_skymap))
         else:
             canvas |= (
-                calc_signif.si(gracedb_id, exttrig_id, tl, th, incl_sky=False))
+                calc_signif.si(gracedb_id, exttrig_id, tl, th, search,
+                               incl_sky=False))
     return canvas
 
 
 @app.task(shared=False)
-def calc_signif(se_id, exttrig_id, tl, th, incl_sky, se_fitsfile=None):
+def calc_signif(se_id, exttrig_id, tl, th, search, incl_sky, se_fitsfile=None):
     """Calculate FAR of GRB exttrig-GW coincidence"""
     return ligo.raven.search.calc_signif_gracedb(
-        se_id, exttrig_id, tl, th, se_fitsfile=se_fitsfile, incl_sky=incl_sky,
-        gracedb=gracedb.client)
+        se_id, exttrig_id, tl, th, grb_search=search, se_fitsfile=se_fitsfile,
+        incl_sky=incl_sky, gracedb=gracedb.client)
 
 
 def coincidence_search(gracedb_id, alert_object, group=None, pipelines=[]):

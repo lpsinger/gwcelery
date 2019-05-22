@@ -122,19 +122,21 @@ def test_calculate_spacetime_coincidence_far(
 def test_calc_signif(
         mock_raven_calc_signif):
     tl, th = -1, 5
-    raven.calc_signif('S1234', 'E1234', tl, th, incl_sky=False)
+    raven.calc_signif('S1234', 'E1234', tl, th, search='GRB', incl_sky=False)
 
     mock_raven_calc_signif.assert_called_once_with(
-        'S1234', 'E1234', tl, th, se_fitsfile=None, incl_sky=False,
+        'S1234', 'E1234', tl, th, grb_search='GRB',
+        se_fitsfile=None, incl_sky=False,
         gracedb=gracedb.client)
 
 
 @patch('ligo.raven.search.calc_signif_gracedb')
 def test_calc_signif_skymaps(mock_raven_calc_signif):
     tl, th = -1, 5
-    raven.calc_signif('S1234', 'E1234', tl, th, incl_sky=True,
+    raven.calc_signif('S1234', 'E1234', tl, th, search='GRB', incl_sky=True,
                       se_fitsfile='bayestar.fits.gz')
 
     mock_raven_calc_signif.assert_called_once_with(
-        'S1234', 'E1234', tl, th, se_fitsfile='bayestar.fits.gz',
+        'S1234', 'E1234', tl, th, grb_search='GRB',
+        se_fitsfile='bayestar.fits.gz',
         incl_sky=True, gracedb=gracedb.client)
