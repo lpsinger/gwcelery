@@ -26,13 +26,14 @@ app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_host=1, x_prefix=1)
 app.wsgi_app = RemoteUserMiddleware(app.wsgi_app)
 
-# Default secret key: secure and random. However, sessions are not preserved
-# across different Python processes.
-app.config['SECRET_KEY'] = os.urandom(24)
-
-# When running Flask in development mode, reload the application upon changes
-# to the templates.
-app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config.update(
+    # Default secret key: secure and random. However, sessions are not
+    # preserved across different Python processes.
+    SECRET_KEY=os.urandom(24),
+    # When running Flask in development mode, reload the application upon
+    # changes to the templates.
+    TEMPLATES_AUTO_RELOAD=True
+)
 
 # Set up a server-side cache to store autocomplete responses in order to reduce
 # traffic to GraceDB. The cache's backend is the same Redis database that
