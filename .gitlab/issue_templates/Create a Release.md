@@ -9,7 +9,7 @@
 
 ## Playground deployment
 
-3.  [ ] The playground deployment run for at least 10 minutes.
+3.  [ ] The playground deployment has run for at least 10 minutes.
 4.  [ ] The [Flower monitor](https://emfollow.ligo.caltech.edu/playground/flower) is reachable and shows no unexpected task failures.
 5.  [ ] The [Flask dashboard](https://emfollow.ligo.caltech.edu/playground/gwcelery) is reachable.
 6.  [ ] The playground deployment is connected to LVAlert.
