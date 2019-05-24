@@ -11,7 +11,7 @@ Changelog
     ..  _`getsentry/sentry-python#370`: https://github.com/getsentry/sentry-python/issues/370
 
 -   Change the name of BAYESTAR localization files to
-    ``bayestar.multiorder.fits`` to distinguish from them flat-resolution
+    ``bayestar.multiorder.fits`` to distinguish them from flat-resolution
     HEALPix files, which are still named ``bayestar.fits.gz``.
 
 -   Reimplement LVAlert listener as a Celery bootstep to avoid needing to track
