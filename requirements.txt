@@ -9,7 +9,7 @@ gwdatafind
 gwpy
 healpy
 jinja2
-lalsuite >= 6.54
+lalsuite == 6.54
 ligo-followup-advocate >= 0.0.28
 ligo-gracedb >= 2.2.0
 ligo-raven >= 1.11
