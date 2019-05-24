@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.6.1 (unreleased)
+0.6.1 (2019-05-24)
 ------------------
 
 -   Work around a bug in the Sentry Python SDK that caused excessive reporting
