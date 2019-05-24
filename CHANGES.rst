@@ -28,8 +28,8 @@ Changelog
 -   Update to the latest version of GWPy and un-pin Matplotlib because GWPy
     now supports Matplotlib 3.1.
 
--   Pin the version of lalsuite because the updated lalinference is not
-    compatible with python3.
+-   Pin LALSuite to version 6.54 because LALInference in LALSuite 6.55 is not
+    compatible with Python 3.
 
 0.6.0 (2019-05-20)
 ------------------
