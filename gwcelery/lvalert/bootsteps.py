@@ -49,7 +49,7 @@ class Receiver(LVAlertBootStep):
 
     def stop(self, consumer):
         super().stop(consumer)
-        self._client.abort()
+        self._client.disconnect()
 
     def info(self, consumer):
         return {'lvalert-nodes': self._client.get_subscriptions()}
