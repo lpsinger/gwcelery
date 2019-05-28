@@ -145,9 +145,9 @@ llhoft_channels = {
 """Low-latency h(t) state vector configuration. This is a dictionary consisting
 of a channel and its bitmask, as defined in :mod:`gwcelery.tasks.detchar`."""
 
-idq_channels = ['H1:IDQ-PGLITCH_OVL_16_4096',
-                'L1:IDQ-PGLITCH_OVL_16_4096']
-"""Low-latency iDQ p(glitch) channel names"""
+idq_channels = ['H1:IDQ-PGLITCH_OVL_32_2048',
+                'L1:IDQ-PGLITCH_OVL_32_2048']
+"""Low-latency iDQ p(glitch) channel names from O2 replay."""
 
 idq_pglitch_thresh = 0.95
 """If P(Glitch) is above this threshold, and
