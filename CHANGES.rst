@@ -4,7 +4,10 @@ Changelog
 0.7.0 (unreleased)
 ------------------
 
--   No changes yet.
+-   Add a dependency on dnspython to silence the following warning message from
+    SleekXMPP::
+
+        DNS: dnspython not found. Can not use SRV lookup.
 
 0.6.1 (2019-05-24)
 ------------------

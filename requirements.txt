@@ -2,6 +2,7 @@ astropy
 celery[redis] >= 4.3.0
 comet
 corner
+dnspython  # silence "DNS: dnspython not found. Can not use SRV lookup." warning from SleekXMPP
 flask
 flask-caching
 flower
