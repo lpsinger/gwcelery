@@ -500,10 +500,10 @@
         },
         "ligotimegps": {
             "hashes": [
-                "sha256:7cc2b6e4915b545d2b86d671a76bbeedfeced70d99d5ff8663d1971a4b5eedbe",
-                "sha256:a98275b5aa4490eadc2669f9a2de108f4634ae3724e878fee562b84ccf529e83"
+                "sha256:88626c02ad9a464d1242a1147b40074792f424bafa2ab013eee629c7d1b6469c",
+                "sha256:da8c1289ba1310337ef5177e7936e25ce47d4e8e6a269cbdd5e9abfc5b5db490"
             ],
-            "version": "==2.0.0"
+            "version": "==2.0.1"
         },
         "lscsoft-glue": {
             "hashes": [
