@@ -2,8 +2,6 @@ from lxml import etree
 from urllib.parse import urlparse
 from celery.utils.log import get_logger
 
-from celery import chain
-
 from . import circulars
 from . import detchar
 from . import gcn
@@ -191,31 +189,31 @@ def handle_snews_lvalert(alert):
 @lvalert.handler('superevent',
                  shared=False)
 def handle_emcoinc_lvalert(alert):
-    """Parse an LVAlert message related to EM_COINC label application and
-    upload circular. We need a separate handler to prevent doubles from
-    occurring by adding the task to both the handle_snews_lvalert and
+    """Parse an LVAlert message related to 'coincidence_far.json' file upload
+    and then upload circular. We need a separate handler to prevent doubles
+    from occurring by adding the task to both the handle_snews_lvalert and
     handle_grb_lvalert handlers.
 
     Notes
     -----
 
-    This LVAlert message handler is triggered by applying the
-    ``EM_COINC`` label to any superevent:
+    This LVAlert message handler is triggered by uploading
+    ``'coincidence_far.json'`` file to any superevent:
 
-    * Any EM_COINC label application triggers
+    * Any 'coincidence_far.json' file upload triggers
       :meth:`gwcelery.tasks.circulars.create_emcoinc_circular`.
     """
     # Determine GraceDB ID
     graceid = alert['uid']
-    if alert['alert_type'] == 'label_added':
-        if alert['data']['name'] == 'EM_COINC':
-            canvas = chain()
-            canvas |= (circulars.create_emcoinc_circular.si(graceid)
-                       |
-                       gracedb.upload.s(
-                           'emcoinc-circular.txt',
-                           graceid,
-                           'Template for the em_coinc GCN Circular',
-                           tags=['em_follow', 'ext_coinc']
-                       ))
-            canvas.apply_async()
+    if alert['alert_type'] == 'log' and alert['data']['filename'] == \
+       'coincidence_far.json':
+        (
+            circulars.create_emcoinc_circular.si(graceid)
+            |
+            gracedb.upload.s(
+                'emcoinc-circular.txt',
+                graceid,
+                'Template for the em_coinc GCN Circular',
+                tags=['em_follow', 'ext_coinc']
+            )
+        ).delay()

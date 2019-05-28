@@ -206,7 +206,11 @@ def test_handle_superevent_emcoinc_label2(mock_create_emcoinc_circular,
                                           mock_gracedb_upload):
     """Test dispatch of an LVAlert message for a superevent EM_COINC label
     application."""
-    alert = resource_json(__name__, 'data/lvalert_superevent_label.json')
+    alert = {
+            "uid": "S180616h",
+            "alert_type": "log",
+            "data": {"filename": "coincidence_far.json"}
+            }
 
     external_triggers.handle_emcoinc_lvalert(alert)
     mock_create_emcoinc_circular.assert_called_once_with('S180616h')

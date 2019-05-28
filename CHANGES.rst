@@ -24,6 +24,9 @@ Changelog
 
 -   Use online-PE-only nodes for parameter estimation.
 
+-   Change so that emcoinc circular is created when RAVEN coinc far is uploaded
+    to prevent a race condition.
+
 0.6.1 (2019-05-24)
 ------------------
 
