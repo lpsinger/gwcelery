@@ -54,6 +54,10 @@ def test_handle_create_subthreshold_grb_event(mock_check_vectors,
                                               mock_create_event,
                                               mock_get_event,
                                               mock_get_events):
+    text = resource_string(__name__,
+                           'data/fermi_subthresh_grb_lowconfidence.xml')
+    external_triggers.handle_grb_gcn(payload=text)
+    mock_create_event.assert_not_called()
     text = resource_string(__name__, 'data/fermi_subthresh_grb_gcn.xml')
     external_triggers.handle_grb_gcn(payload=text)
     mock_get_events.assert_called_once_with(query=(

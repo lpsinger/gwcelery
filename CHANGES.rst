@@ -12,6 +12,9 @@ Changelog
 -   Pin some recently updated dependencies of Celery that caused unit test
     failures: amqp <= 2.4.2, kombu <= 4.5.0, vine <= 1.3.0.
 
+-   Prevent subthreshold GRBs with low reliability from being processed as
+    external events. 
+
 0.6.1 (2019-05-24)
 ------------------
 

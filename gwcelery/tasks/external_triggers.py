@@ -80,9 +80,13 @@ def handle_grb_gcn(payload):
         trig_id = root.find("./What/Param[@name='Trans_Num']").attrib['value']
 
     stream_obsv_dict = {'/SWIFT': 'Swift',
-                        '/Fermi': 'Fermi',
-                        '/UntargetedSubGRB': 'Fermi'}
+                        '/Fermi': 'Fermi'}
     event_observatory = stream_obsv_dict[stream_path]
+
+    reliability = root.find("./What/Param[@name='Reliability']")
+    if reliability is not None and int(reliability.attrib['value']) <= 4:
+        return
+
     query = 'group: External pipeline: {} grbevent.trigger_id = "{}"'.format(
         event_observatory, trig_id)
     events = gracedb.get_events(query=query)
