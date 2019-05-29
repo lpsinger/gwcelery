@@ -110,12 +110,12 @@ associate commits in Sentry:
     - tags@emfollow/gwcelery
   before_script:  # FIXME: remove once git.ligo.org Sentry integration is enabled
     - echo '[remote "origin"]' > .git/config
-    - echo 'url = git@git.ligo.org:leo-singer/gwcelery.git' >> .git/config
+    - echo 'url = https://github.com/lpsinger/gwcelery' >> .git/config
     - echo 'fetch = +refs/heads/*:refs/remotes/origin/*' >> .git/config
   script:
     - SENTRY_VERSION=$(echo *.tar.* | sed 's/\.tar\..*//')
-    - docker run --rm -v $(pwd):/work -e SENTRY_AUTH_TOKEN -e SENTRY_ORG -e SENTRY_PROJECT getsentry/sentry-cli --log-level INFO releases new ${SENTRY_VERSION}
-    - docker run --rm -v $(pwd):/work -e SENTRY_AUTH_TOKEN -e SENTRY_ORG -e SENTRY_PROJECT getsentry/sentry-cli --log-level INFO releases set-commits --auto ${SENTRY_VERSION}
+    - docker run --rm -v $(pwd):/work -e SENTRY_AUTH_TOKEN -e SENTRY_ORG -e SENTRY_PROJECT getsentry/sentry-cli --log-level DEBUG releases new ${SENTRY_VERSION}
+    - docker run --rm -v $(pwd):/work -e SENTRY_AUTH_TOKEN -e SENTRY_ORG -e SENTRY_PROJECT getsentry/sentry-cli --log-level DEBUG releases set-commits --auto ${SENTRY_VERSION}
 
 # Build docker container for application itself
 .docker: &docker
