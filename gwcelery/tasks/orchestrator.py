@@ -79,8 +79,9 @@ def handle_superevent(alert):
 
         if 'DQV' in gracedb.get_labels(superevent_id):
             (
-                detchar.check_vectors.s(new_event_id, superevent_id,
-                                        start, end)
+                gracedb.get_event.s(new_event_id)
+                |
+                detchar.check_vectors.s(superevent_id, start, end)
                 |
                 _update_if_dqok.si(superevent_id, new_event_id)
             ).apply_async()
