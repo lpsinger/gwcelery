@@ -100,7 +100,6 @@ lint:
     - sdist
 
 associate commits in Sentry:
-  allow_failure: true
   stage: test
   dependencies:
     - sdist
@@ -132,8 +131,8 @@ associate commits in Sentry:
         merge = refs/heads/master
       EOF
     - SENTRY_VERSION=$(echo *.tar.* | sed 's/\.tar\..*//')
-    - sentry-cli --log-level DEBUG releases new ${SENTRY_VERSION}
-    - sentry-cli --log-level DEBUG releases set-commits --auto ${SENTRY_VERSION}
+    - sentry-cli releases new ${SENTRY_VERSION}
+    - sentry-cli releases set-commits --auto ${SENTRY_VERSION}
 
 # Build docker container for application itself
 .docker: &docker
