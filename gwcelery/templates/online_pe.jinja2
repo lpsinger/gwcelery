@@ -26,6 +26,12 @@ explanation on jinja is here http://jinja.pocoo.org . #}
 
 {% if 'playground' in service_url %}
     {% set accounting_group = 'ligo.dev.o3.cbc.pe.lalinference' %}
+    {% set engine = 'lalinferencemcmc' %}
+    {% set nparallel = '2' %}
+    {% set roq = 'False' %}
+    {% set neff = '200' %}
+    {% set disable_spin = 'disable-spin=' %}
+    {% set zeroLogLike = 'zeroLogLike=' %}
 {% else %}
     {% set accounting_group = 'ligo.prod.o3.cbc.pe.lalinference' %}
 {% endif %}
@@ -132,6 +138,8 @@ H1-spcal-envelope = {{ h1_calibration }}
 L1-spcal-envelope = {{ l1_calibration }}
 V1-spcal-envelope = {{ v1_calibration }}
 {{ margphi }}
+{{ disable_spin }}
+{{ zeroLogLike }}
 # You can use your own PSDs by specifying their paths.
 # H1-psd=
 # L1-psd=
