@@ -112,9 +112,9 @@ associate commits in Sentry:
   script:
     - SENTRY_VERSION=$(echo *.tar.* | sed 's/\.tar\..*//')
     - ls -a
-    - docker run --rm -v $(pwd):/work -e SENTRY_AUTH_TOKEN -e SENTRY_ORG -e SENTRY_PROJECT getsentry/sentry-cli --log-level DEBUG releases new ${SENTRY_VERSION}
-    - docker run --rm -v $(pwd):/work -e SENTRY_AUTH_TOKEN -e SENTRY_ORG -e SENTRY_PROJECT --entrypoint /bin/sh getsentry/sentry-cli -c ls -a
-    - docker run --rm -v $(pwd):/work -e SENTRY_AUTH_TOKEN -e SENTRY_ORG -e SENTRY_PROJECT getsentry/sentry-cli --log-level DEBUG releases set-commits --auto ${SENTRY_VERSION}
+    - docker run --rm -v ${CI_PROJECT_DIR}:/work -e SENTRY_AUTH_TOKEN -e SENTRY_ORG -e SENTRY_PROJECT getsentry/sentry-cli --log-level DEBUG releases new ${SENTRY_VERSION}
+    - docker run --rm -v ${CI_PROJECT_DIR}:/work -e SENTRY_AUTH_TOKEN -e SENTRY_ORG -e SENTRY_PROJECT --entrypoint /bin/sh getsentry/sentry-cli -c ls -a
+    - docker run --rm -v ${CI_PROJECT_DIR}:/work -e SENTRY_AUTH_TOKEN -e SENTRY_ORG -e SENTRY_PROJECT getsentry/sentry-cli --log-level DEBUG releases set-commits --auto ${SENTRY_VERSION}
 
 # Build docker container for application itself
 .docker: &docker
