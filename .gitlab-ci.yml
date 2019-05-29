@@ -108,10 +108,25 @@ associate commits in Sentry:
   only:
     - master@emfollow/gwcelery
     - tags@emfollow/gwcelery
-  before_script:  # FIXME: remove once git.ligo.org Sentry integration is enabled
-    - echo '[remote "origin"]' > .git/config
-    - echo 'url = https://github.com/lpsinger/gwcelery' >> .git/config
-    - echo 'fetch = +refs/heads/*:refs/remotes/origin/*' >> .git/config
+  before_script:
+    # FIXME: Override git remote settings.
+    # Remove this once git.ligo.org has Sentry initegraton turned on.
+    - |
+      cat <<EOF > .git/config
+      [core]
+        repositoryformatversion = 0
+        filemode = true
+        bare = false
+        logallrefupdates = true
+        ignorecase = true
+        precomposeunicode = true
+      [remote "origin"]
+        url = https://github.com/lpsinger/gwcelery
+        fetch = +refs/heads/*:refs/remotes/origin/*
+      [branch "master"]
+        remote = origin
+        merge = refs/heads/master
+      EOF
   script:
     - SENTRY_VERSION=$(echo *.tar.* | sed 's/\.tar\..*//')
     - docker run --rm -v $(pwd):/work -e SENTRY_AUTH_TOKEN -e SENTRY_ORG -e SENTRY_PROJECT getsentry/sentry-cli --log-level DEBUG releases new ${SENTRY_VERSION}
