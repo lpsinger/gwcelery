@@ -32,7 +32,7 @@ def handle_superevent(alert):
 
     After waiting for a time specified by the
     :obj:`~gwcelery.conf.orchestrator_timeout` configuration variable
-    for the choice of preferred event to settle down, this task peforms data
+    for the choice of preferred event to settle down, this task performs data
     quality checks with :meth:`gwcelery.tasks.detchar.check_vectors` and
     calls :meth:`~gwcelery.tasks.orchestrator.preliminary_alert` to send a
     preliminary GCN notice.
