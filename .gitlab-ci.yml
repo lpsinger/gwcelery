@@ -114,8 +114,8 @@ associate commits in Sentry:
     - echo 'fetch = +refs/heads/*:refs/remotes/origin/*' >> .git/config
   script:
     - SENTRY_VERSION=$(echo *.tar.* | sed 's/\.tar\..*//')
-    - docker run --rm -v $(pwd):/work -e SENTRY_AUTH_TOKEN -e SENTRY_ORG -e SENTRY_PROJECT getsentry/sentry-cli releases new ${SENTRY_VERSION}
-    - docker run --rm -v $(pwd):/work -e SENTRY_AUTH_TOKEN -e SENTRY_ORG -e SENTRY_PROJECT getsentry/sentry-cli releases set-commits --auto ${SENTRY_VERSION}
+    - docker run --rm -v $(pwd):/work -e SENTRY_AUTH_TOKEN -e SENTRY_ORG -e SENTRY_PROJECT getsentry/sentry-cli --log-level INFO releases new ${SENTRY_VERSION}
+    - docker run --rm -v $(pwd):/work -e SENTRY_AUTH_TOKEN -e SENTRY_ORG -e SENTRY_PROJECT getsentry/sentry-cli --log-level INFO releases set-commits --auto ${SENTRY_VERSION}
 
 # Build docker container for application itself
 .docker: &docker
