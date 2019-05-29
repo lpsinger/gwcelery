@@ -108,9 +108,12 @@ associate commits in Sentry:
   only:
     - master@emfollow/gwcelery
     - tags@emfollow/gwcelery
+  before_script:  # FIXME: remove once git.ligo.org Sentry integration is enabled
+    - echo '[remote "origin"]' > .git/config
+    - echo 'url = git@git.ligo.org:leo-singer/gwcelery.git' >> .git/config
+    - echo 'fetch = +refs/heads/*:refs/remotes/origin/*' >> .git/config
   script:
     - SENTRY_VERSION=$(echo *.tar.* | sed 's/\.tar\..*//')
-    - git remote set-url origin https://github.com/lpsinger/gwcelery.git  # FIXME: remove once git.ligo.org Sentry integration is enabled
     - docker run --rm -v $(pwd):/work -e SENTRY_AUTH_TOKEN -e SENTRY_ORG -e SENTRY_PROJECT getsentry/sentry-cli releases new ${SENTRY_VERSION}
     - docker run --rm -v $(pwd):/work -e SENTRY_AUTH_TOKEN -e SENTRY_ORG -e SENTRY_PROJECT getsentry/sentry-cli releases set-commits --auto ${SENTRY_VERSION}
 
