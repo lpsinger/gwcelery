@@ -111,6 +111,7 @@ associate commits in Sentry:
   before_script:
     # FIXME: Override git remote settings.
     # Remove this once git.ligo.org has Sentry initegraton turned on.
+    - cat .git/config
     - |
       cat <<EOF > .git/config
       [core]
