@@ -113,6 +113,24 @@ associate commits in Sentry:
     name: getsentry/sentry-cli
     entrypoint: [""]
   script:
+    # FIXME: Override git remote settings.
+    # Remove this once git.ligo.org has Sentry initegraton turned on.
+    - |
+      cat <<EOF > .git/config
+      [core]
+        repositoryformatversion = 0
+        filemode = true
+        bare = false
+        logallrefupdates = true
+        ignorecase = true
+        precomposeunicode = true
+      [remote "origin"]
+        url = https://github.com/lpsinger/gwcelery
+        fetch = +refs/heads/*:refs/remotes/origin/*
+      [branch "master"]
+        remote = origin
+        merge = refs/heads/master
+      EOF
     - SENTRY_VERSION=$(echo *.tar.* | sed 's/\.tar\..*//')
     - sentry-cli --log-level DEBUG releases new ${SENTRY_VERSION}
     - sentry-cli --log-level DEBUG releases set-commits --auto ${SENTRY_VERSION}
