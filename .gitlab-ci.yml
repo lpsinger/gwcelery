@@ -249,8 +249,7 @@ associate commits in Sentry:
     - master@emfollow/gwcelery
     - tags@emfollow/gwcelery
   script:
-    - SENTRY_VERSION="*.tar.*"
-    - SENTRY_VERSION=${SENTRY_VERSION%%.tar.*}
+    - SENTRY_VERSION=$(echo *.tar.* | sed 's/\.tar\..*//')
     - echo ${SENTRY_VERSION}
     - docker run --rm -v $(pwd):/work -e SENTRY_AUTH_TOKEN -e SENTRY_ORG -e SENTRY_PROJECT getsentry/sentry-cli releases list
 
