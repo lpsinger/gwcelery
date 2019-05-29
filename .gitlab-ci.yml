@@ -239,6 +239,21 @@ pypi:
   only:
     - tags@emfollow/gwcelery
 
+associate commits in Sentry:
+  stage: deploy
+  dependencies:
+    - sdist
+  variables:
+    GIT_STRATEGY: fetch
+  only:
+    - master@emfollow/gwcelery
+    - tags@emfollow/gwcelery
+  script:
+    - SENTRY_VERSION="*.tar.*"
+    - SENTRY_VERSION=${SENTRY_VERSION%%.tar.*}
+    - echo ${SENTRY_VERSION}
+    - docker run --rm -v $(pwd):/work -e SENTRY_AUTH_TOKEN -e SENTRY_ORG -e SENTRY_PROJECT getsentry/sentry-cli releases list
+
 .deploy-common: &deploy-common
   stage: deploy
   image:
