@@ -225,6 +225,14 @@ open SCCB issue for release:
       - [$(if [ "$MAJOR_MINOR_VERSION" = "$LAST_MAJOR_MINOR_VERSION" ]; then echo 'X'; else echo ' '; fi)] this is a backwards-compatible update
       - [$(if [ "$MAJOR_MINOR_VERSION" = "$LAST_MAJOR_MINOR_VERSION" ]; then echo ' '; else echo 'X'; fi)] this is a backwards-incompatible update [API/ABI changes]
 
+      #### Reviewers
+
+      Project review committee will here indicate their approval:
+
+      - [ ] Anderson
+      - [ ] DePietri
+      - [ ] Greco
+
       #### SCCB Voting
 
       <!-- DO NOT EDIT THIS SECTION -->
