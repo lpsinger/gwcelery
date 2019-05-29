@@ -3,6 +3,7 @@ vetting and annotation workflow to produce preliminary, initial, and update
 alerts for gravitational-wave event candidates."""
 import json
 import re
+from socket import gaierror
 from urllib.error import URLError
 
 from celery import chain, group
@@ -202,7 +203,7 @@ def handle_cbc_event(alert):
         ).delay()
 
 
-@app.task(autoretry_for=(HTTPError, URLError, TimeoutError),
+@app.task(autoretry_for=(gaierror, HTTPError, URLError, TimeoutError),
           default_retry_delay=20.0, retry_backoff=True,
           retry_kwargs=dict(max_retries=500), shared=False)
 def _download(*args, **kwargs):

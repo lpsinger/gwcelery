@@ -1,5 +1,6 @@
 """Communication with GraceDB."""
 import functools
+from socket import gaierror
 
 from ligo.gracedb import rest
 from celery.utils.log import get_task_logger
@@ -39,7 +40,7 @@ def catch_retryable_http_errors(f):
 
 def task(*args, **kwargs):
     return app.task(*args, **kwargs,
-                    autoretry_for=(RetryableHTTPError, TimeoutError),
+                    autoretry_for=(gaierror, RetryableHTTPError, TimeoutError),
                     default_retry_delay=20.0, retry_backoff=True,
                     retry_kwargs=dict(max_retries=10))
 
