@@ -18,6 +18,10 @@ Changelog
 -   Add a task in orchestrator.py to generate FITS files and sky map images
     automatically whenever an HDF5 posterior samples file is uploaded.
 
+-   Remove special-case handling of single-instrument events. Now, the
+    eligibility of an event for a public alert is determined only on the basis
+    of its false alarm rate.
+
 0.6.1 (2019-05-24)
 ------------------
 

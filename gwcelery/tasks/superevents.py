@@ -227,8 +227,6 @@ def should_publish(event):
     All of the following conditions must be true for a public alert:
 
     *   The event's ``offline`` flag is not set.
-    *   The event's significance was estimated using data from 2 or more
-        gravitational-wave detectors.
     *   The event's false alarm rate, weighted by the group-specific trials
         factor as specified by the
         :obj:`~gwcelery.conf.preliminary_alert_trials_factor` configuration
@@ -251,9 +249,7 @@ def should_publish(event):
     trials_factor = app.conf['preliminary_alert_trials_factor'][group]
     far_threshold = app.conf['preliminary_alert_far_threshold'][group]
     far = trials_factor * event['far']
-    ifos = get_instruments(event)
-    num_ifos = len(ifos)
-    return not event['offline'] and num_ifos > 1 and far <= far_threshold
+    return not event['offline'] and far <= far_threshold
 
 
 def keyfunc(event):

@@ -236,7 +236,7 @@ def test_upload_same_event():
 
 @pytest.mark.parametrize(
     'group,pipeline,offline,far,instruments,expected_result',
-    [['CBC', 'gstlal', False, 1.e-10, 'H1', False],
+    [['CBC', 'gstlal', False, 1.e-10, 'H1', True],
      ['CBC', 'gstlal', False, 1.e-6, 'H1,L1', False],
      ['Burst', 'cwb', False, 1e-15, 'H1,L1', True],
      ['Burst', 'cwb', True, 1e-30, 'H1,L1,V1', False]])
@@ -472,120 +472,6 @@ def test_parse_trigger_burst_4(mock_db):
     with patch.object(gracedb.client, 'createSuperevent') as p:
         superevents.handle(payload)
         p.assert_called_once()
-
-
-def test_single_ifo_1(mock_db):
-    """New single IFO trigger G000009 same event attributes as
-    G000000 (except single IFO). Will be added to superevent"""
-    payload = dict(lvalert_content,
-                   object={'graceid': 'G000009',
-                           'gpstime': 1163905224.4332,
-                           'group': 'CBC',
-                           'pipeline': 'gstlal',
-                           'offline': False,
-                           'far': 3.02e-09,
-                           'instruments': 'H1',
-                           'extra_attributes': {
-                               'CoincInspiral': {
-                                   'snr': 10.0}}},
-                   alert_type='new',
-                   uid='G000009')
-    # New trigger G000009 time falls in S0039 window
-    # addEventToSuperevent should be called
-    # updateSuperevent should not be updated
-    with patch.object(gracedb.client, 'addEventToSuperevent') as p1, \
-            patch.object(gracedb.client, 'updateSuperevent') as p2:
-        superevents.handle(payload)
-        p1.assert_called_once()
-        p2.assert_not_called()
-
-
-def test_single_ifo_2(mock_db):
-    """New single IFO trigger G000010 same event attributed as G000003
-    (except single IFO). More significant than existing superevent, but
-    preferred event not changed
-    """
-    # New trigger G000010 falls in S0039 window
-    payload = dict(lvalert_content,
-                   object={'graceid': 'G000010',
-                           'gpstime': 1163905224.4332,
-                           'group': 'CBC',
-                           'pipeline': 'gstlal',
-                           'offline': False,
-                           'far': 3.02e-31,
-                           'instruments': 'H1',
-                           'extra_attributes': {
-                               'CoincInspiral': {
-                                   'snr': 30.0}}},
-                   alert_type='new',
-                   uid='G000010')
-    # addEventToSuperevent should be called
-    # preferred event should not be updated
-    with patch.object(gracedb.client, 'addEventToSuperevent') as p1, \
-            patch.object(gracedb.client, 'updateSuperevent') as p2:
-        superevents.handle(payload)
-        p1.assert_called_once()
-        p2.assert_not_called()
-
-
-def test_single_ifo_3(mock_db):
-    """New multi-IFO trigger CBC trigger G000011. Existing
-    preferred event is a single IFO. Preferred event
-    updated with G000000.
-    """
-    # New trigger G000000 falls in S0039 window
-    payload = dict(lvalert_content,
-                   object={'graceid': 'G000011',
-                           'gpstime': 1163905214.44,
-                           'group': 'CBC',
-                           'pipeline': 'gstlal',
-                           'offline': False,
-                           'far': 3.02e-09,
-                           'instruments': 'H1,L1',
-                           'extra_attributes': {
-                               'CoincInspiral': {
-                                   'snr': 10.0}}},
-                   alert_type='new',
-                   uid='G000011')
-    setattr(gracedb.client, 'event', SingleT0212HTTPResponse)
-    # addEventToSuperevent should be called
-    # preferred event should be updated
-    with patch.object(gracedb.client, 'addEventToSuperevent') as p1, \
-            patch.object(gracedb.client, 'updateSuperevent') as p2:
-        superevents.handle(payload)
-        p1.assert_called_once()
-        p2.assert_called_once_with(
-            'S0039', preferred_event='G000011',
-            t_0=1163905214.44,
-            t_end=pytest.approx(1163905239.44, abs=1e-3),
-            t_start=pytest.approx(1163905213.44, abs=1e-3))
-
-
-def test_single_ifo_4(mock_db):
-    """Preferred event in superevent is a Multi-IFO Burst,
-    new trigger is a CBC single. Preferred event is not updated
-    """
-    # New single IFO trigger G000013 falls in S0040 window
-    payload = dict(lvalert_content,
-                   object={'graceid': 'G000013',
-                           'gpstime': 1078515565.0,
-                           'group': 'CBC',
-                           'pipeline': 'gstlal',
-                           'offline': False,
-                           'far': 3.02e-31,
-                           'instruments': 'H1',
-                           'extra_attributes': {
-                               'CoincInspiral': {
-                                   'snr': 30.0}}},
-                   alert_type='new',
-                   uid='G000013')
-    # addEventToSuperevent should be called
-    # preferred event should not be updated
-    with patch.object(gracedb.client, 'addEventToSuperevent') as p1, \
-            patch.object(gracedb.client, 'updateSuperevent') as p2:
-        superevents.handle(payload)
-        p1.assert_called_once()
-        p2.assert_not_called()
 
 
 def test_S190421ar_spiir_scenario(mock_db):    # noqa: N802
