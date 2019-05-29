@@ -99,6 +99,21 @@ lint:
   dependencies:
     - sdist
 
+associate commits in Sentry:
+  stage: test
+  dependencies:
+    - sdist
+  variables:
+    GIT_STRATEGY: fetch
+  only:
+    - master@emfollow/gwcelery
+    - tags@emfollow/gwcelery
+  script:
+    - SENTRY_VERSION=$(echo *.tar.* | sed 's/\.tar\..*//')
+    - echo ${SENTRY_VERSION}
+    - docker run --rm -v $(pwd):/work -e SENTRY_AUTH_TOKEN -e SENTRY_ORG -e SENTRY_PROJECT getsentry/sentry-cli releases new ${SENTRY_VERSION}
+    - docker run --rm -v $(pwd):/work -e SENTRY_AUTH_TOKEN -e SENTRY_ORG -e SENTRY_PROJECT getsentry/sentry-cli releases set-commits --auto ${SENTRY_VERSION}
+
 # Build docker container for application itself
 .docker: &docker
   stage: deploy
@@ -238,20 +253,6 @@ pypi:
     - bdist
   only:
     - tags@emfollow/gwcelery
-
-associate commits in Sentry:
-  stage: deploy
-  dependencies:
-    - sdist
-  variables:
-    GIT_STRATEGY: fetch
-  only:
-    - master@emfollow/gwcelery
-    - tags@emfollow/gwcelery
-  script:
-    - SENTRY_VERSION=$(echo *.tar.* | sed 's/\.tar\..*//')
-    - echo ${SENTRY_VERSION}
-    - docker run --rm -v $(pwd):/work -e SENTRY_AUTH_TOKEN -e SENTRY_ORG -e SENTRY_PROJECT getsentry/sentry-cli releases list
 
 .deploy-common: &deploy-common
   stage: deploy
