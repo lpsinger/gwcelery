@@ -100,6 +100,7 @@ lint:
     - sdist
 
 associate commits in Sentry:
+  allow_failure: true
   stage: test
   dependencies:
     - sdist
@@ -109,24 +110,6 @@ associate commits in Sentry:
     - master@emfollow/gwcelery
     - tags@emfollow/gwcelery
   script:
-    # FIXME: Override git remote settings.
-    # Remove this once git.ligo.org has Sentry initegraton turned on.
-    - |
-      cat <<EOF > .git/config
-      [core]
-        repositoryformatversion = 0
-        filemode = true
-        bare = false
-        logallrefupdates = true
-        ignorecase = true
-        precomposeunicode = true
-      [remote "origin"]
-        url = https://github.com/lpsinger/gwcelery
-        fetch = +refs/heads/*:refs/remotes/origin/*
-      [branch "master"]
-        remote = origin
-        merge = refs/heads/master
-      EOF
     - SENTRY_VERSION=$(echo *.tar.* | sed 's/\.tar\..*//')
     - docker run --rm -v $(pwd):/work -e SENTRY_AUTH_TOKEN -e SENTRY_ORG -e SENTRY_PROJECT getsentry/sentry-cli --log-level DEBUG releases new ${SENTRY_VERSION}
     - docker run --rm -v $(pwd):/work -e SENTRY_AUTH_TOKEN -e SENTRY_ORG -e SENTRY_PROJECT getsentry/sentry-cli --log-level DEBUG releases set-commits --auto ${SENTRY_VERSION}
