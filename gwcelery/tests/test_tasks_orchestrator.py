@@ -164,7 +164,9 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
 
 @patch('gwcelery.tasks.gracedb.get_labels', return_value={'DQV', 'ADVREQ'})
 @patch('gwcelery.tasks.gracedb.get_event.run', return_value='event data')
-def test_handle_superevent_event_added(mock_get_event, mock_get_labels):
+@patch('gwcelery.tasks.detchar.check_vectors.run')
+def test_handle_superevent_event_added(mock_check_vectors, mock_get_event,
+                                       mock_get_labels):
     alert = {
         'alert_type': 'event_added',
         'uid': 'TS123456a',
@@ -179,9 +181,9 @@ def test_handle_superevent_event_added(mock_get_event, mock_get_labels):
                    't_0': 2.,
                    't_end': 3.}
     }
-    with patch('gwcelery.tasks.detchar.check_vectors.run') as p:
-        orchestrator.handle_superevent(alert)
-        p.assert_called_once_with('event data', 'TS123456a', 1., 3.)
+    orchestrator.handle_superevent(alert)
+    mock_check_vectors.assert_called_once_with(
+        'event data', 'TS123456a', 1., 3.)
 
 
 def superevent_initial_alert_download(filename, graceid):
