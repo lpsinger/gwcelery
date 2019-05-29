@@ -104,7 +104,7 @@ associate commits in Sentry:
   dependencies:
     - sdist
   variables:
-    GIT_STRATEGY: fetch
+    GIT_STRATEGY: clone
   only:
     - master@emfollow/gwcelery
     - tags@emfollow/gwcelery
