@@ -198,6 +198,18 @@
             </form>
         </div>
     </div>
+    <div class="card mb-3">
+        <div class=card-header>
+            Installed Packages
+        </div>
+        <div class=card-body>
+            <ul>
+                {% for package in packages %}
+                <li><a href="https://pypi.org/project/{{package.project_name}}/">{{package.project_name}}</a> {{package.version}}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>

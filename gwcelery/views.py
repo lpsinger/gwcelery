@@ -5,6 +5,7 @@ import re
 from astropy.time import Time
 from flask import flash, jsonify, redirect, render_template, request, url_for
 from ligo.gracedb.rest import HTTPError as GraceDbHTTPError
+import pkg_resources
 
 from . import app as celery_app
 from ._version import get_versions
@@ -15,7 +16,10 @@ from .tasks import first2years, gracedb, orchestrator
 @app.route('/')
 def index():
     return render_template(
-        'index.jinja2', conf=celery_app.conf, versions=get_versions())
+        'index.jinja2',
+        conf=celery_app.conf,
+        packages=pkg_resources.working_set,
+        versions=get_versions())
 
 
 def take_n(n, iterable):
