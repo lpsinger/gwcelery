@@ -99,3 +99,10 @@ def test_plot_volume(mock_plot_volume):
     mock_plot_volume.assert_called_once()
     cmdline, = mock_plot_volume.call_args[0]
     assert cmdline[-2].endswith('.png')
+
+
+def test_skymap_from_samples():
+    output = skymaps.skymap_from_samples(
+        pkg_resources.resource_string(__name__, 'data/samples.hdf5')
+    )
+    assert skymaps.is_3d_fits_file(output)
