@@ -15,22 +15,34 @@ from . import resource_json
 
 
 @pytest.mark.parametrize(  # noqa: F811
-    'group,pipeline,offline,far,instruments',
-    [['CBC', 'gstlal', False, 1.e-9, ['H1']],
-     ['CBC', 'gstlal', False, 1.e-9, ['H1', 'L1']],
-     ['CBC', 'gstlal', False, 1.e-9, ['H1', 'L1', 'V1']],
+    'group,pipeline,offline,far,instruments,labels',
+    [['CBC', 'gstlal', False, 1.e-9, ['H1'], []],
+     ['CBC', 'gstlal', False, 1.e-9, ['H1', 'L1'], []],
+     ['CBC', 'gstlal', False, 1.e-9, ['H1', 'L1', 'V1'], []],
      ['CBC', 'gstlal', False, 0.5*app.conf[
-      'preliminary_alert_far_threshold']['cbc'], ['H1', 'L1', 'V1']],
-     ['Burst', 'CWB', False, 1.e-9, ['H1', 'L1', 'V1']],
+      'preliminary_alert_far_threshold']['cbc'], ['H1', 'L1', 'V1'], []],
+     ['Burst', 'CWB', False, 1.e-9, ['H1', 'L1', 'V1'], []],
      ['Burst', 'CWB', False, 0.8*app.conf[
-      'preliminary_alert_far_threshold']['cbc'], ['H1', 'L1', 'V1']],
-     ['Burst', 'oLIB', False, 1.e-9, ['H1', 'L1', 'V1']],
-     ['CBC', 'gstlal', True, 1.e-10, ['H1', 'L1', 'V1']],
-     ['Burst', 'CWB', True, 1.e-10, ['H1', 'L1', 'V1']],
+      'preliminary_alert_far_threshold']['cbc'], ['H1', 'L1', 'V1'], []],
+     ['Burst', 'oLIB', False, 1.e-9, ['H1', 'L1', 'V1'], []],
+     ['CBC', 'gstlal', True, 1.e-10, ['H1', 'L1', 'V1'], []],
+     pytest.param(
+         'CBC', 'gstlal', False, 1.e-10, ['H1', 'L1', 'V1'], ['DQV'],
+          marks=pytest.mark.xfail(
+              reason='https://git.ligo.org/emfollow/gwcelery/issues/178')),
+     pytest.param(
+         'CBC', 'gstlal', False, 1.e-10, ['H1', 'L1', 'V1'], ['INJ'],
+          marks=pytest.mark.xfail(
+              reason='https://git.ligo.org/emfollow/gwcelery/issues/178')),
+     pytest.param(
+         'CBC', 'gstlal', False, 1.e-10, ['H1', 'L1', 'V1'], ['DQV', 'INJ'],
+          marks=pytest.mark.xfail(
+              reason='https://git.ligo.org/emfollow/gwcelery/issues/178')),
+     ['Burst', 'CWB', True, 1.e-10, ['H1', 'L1', 'V1'], []],
      ['CBC', 'gstlal', False, 2.0*app.conf['pe_threshold'],
-      ['H1', 'L1', 'V1']]])
+      ['H1', 'L1', 'V1'], []]])
 def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
-                           group, pipeline, offline, far, instruments):
+                           group, pipeline, offline, far, instruments, labels):
     """Test a superevent is dispatched to the correct annotation task based on
     its preferred event's search group."""
     alert = {
@@ -56,6 +68,7 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
             'search': 'AllSky',
             'graceid': 'G1234',
             'offline': offline,
+            'labels': labels,
             'far': far,
             'gpstime': 1234,
             'extra_attributes': {}
@@ -133,7 +146,8 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
     plot_volume.assert_called_once()
 
     _event_info = get_event('G1234')    # this gets the preferred event info
-    if not superevents.should_publish(_event_info):
+    if not (superevents.should_publish(_event_info)
+            and {'DQV', 'INJ'}.isdisjoint(labels)):
         expose.assert_not_called()
         create_tag.assert_not_called()
         send.assert_not_called()
@@ -400,23 +414,3 @@ def test_handle_cbc_event_ignored(mock_gracedb, mock_localize,
     orchestrator.handle_cbc_event(alert)
     mock_localize.assert_not_called()
     mock_classifier.assert_not_called()
-
-
-@patch('gwcelery.tasks.orchestrator._create_voevent')
-@patch('gwcelery.tasks.circulars.create_initial_circular')
-@patch('gwcelery.tasks.gcn.send')
-@pytest.fixture(params=[{'INJ'}, {'DQV'}])
-def test_inj_stops_prelim(monkeypatch, request, send, create_initial_circular,
-                          create_voevent):
-    event = {'group': 'burst', 'pipeline': 'pipeline', 'search': 'AllSky',
-             'instruments': 'H1,L1,V1', 'graceid': 'G1234',
-             'offline': False, 'far': 1.e-10, 'gpstime': 1234,
-             'extra_attributes':
-             {'CoincInspiral': {'ifos': 'H1,L1,V1'}}}
-    monkeypatch.setattr('gwcelery.tasks.gracedb.get_labels._orig_run',
-                        request.param)
-    supereventid = 'S12345'
-    orchestrator.preliminary_alert(event, supereventid)
-    send.assert_not_called()
-    create_initial_circular.assert_not_called()
-    create_voevent.assert_not_called()
