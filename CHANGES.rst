@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.7.0 (unreleased)
+0.6.2 (unreleased)
 ------------------
 
 -   Add a dependency on dnspython to silence the following warning message from
