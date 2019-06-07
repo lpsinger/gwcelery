@@ -22,13 +22,12 @@ Changelog
     eligibility of an event for a public alert is determined only on the basis
     of its false alarm rate.
 
--   Use online-PE-only nodes for parameter estimation.
+-   Run parameter estimation on nodes dedicted to online-PE.
 
--   Change so that emcoinc circular is created when RAVEN coinc far is uploaded
-    to prevent a race condition.
+-   Emcoinc circular is triggered when RAVEN uploads a coincident FAR.
 
--   Pin scipy version since scipy>=1.3.0 is not compatible with lalinference
-    postprocess.
+-   Pin scipy since scipy>=1.3.0 removes an interpolation function which
+    lalinference postprocessing requires.
 
 0.6.1 (2019-05-24)
 ------------------
