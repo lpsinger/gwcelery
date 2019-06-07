@@ -12,6 +12,8 @@ Changelog
     timeout ended* did not meet the public alert criterion, but a preferred
     event that was selected some tens of seconds later did.
 
+-   Decrease preliminary alert timeout to one minute.
+
 0.6.3 (2019-06-14)
 ------------------
 
