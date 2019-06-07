@@ -27,6 +27,9 @@ Changelog
 -   Change so that emcoinc circular is created when RAVEN coinc far is uploaded
     to prevent a race condition.
 
+-   Pin scipy version since scipy>=1.3.0 is not compatible with lalinference
+    postprocess.
+
 0.6.1 (2019-05-24)
 ------------------
 

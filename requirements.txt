@@ -29,6 +29,7 @@ pygcn >= 0.1.19
 pytest >= 3.0
 python-ligo-lw
 safe-netrc
+scipy <= 1.2.2  # This is because lalinference postprocess is not compatible with scipy >= 1.3.0. See https://git.ligo.org/lscsoft/lalsuite/issues/170.
 sentry-sdk[flask]
 service_identity  # We don't actually use this package, but it silences some annoying warnings from twistd.
 sleek-lvalert >= 0.0.4
