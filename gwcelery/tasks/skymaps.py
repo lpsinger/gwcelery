@@ -123,9 +123,6 @@ def skymap_from_samples(samplefilecontents):
     """Generate multi-resolution fits file from samples"""
     with NamedTemporaryFile(content=samplefilecontents) as samplefile, \
             tempfile.TemporaryDirectory() as tmpdir:
-        outfilename = os.path.join(tmpdir, 'temp.fits')
-        ligo_skymap_from_samples.main(
-            ['--fitsoutname', outfilename, samplefile.name]
-        )
-        with open(outfilename, 'rb') as f:
+        ligo_skymap_from_samples.main(['-o', tmpdir, samplefile.name])
+        with open(os.path.join(tmpdir, 'skymap.fits'), 'rb') as f:
             return f.read()
