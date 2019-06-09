@@ -6,6 +6,9 @@ Changelog
 
 -   Fix a celery bug in the lalinference task.
 
+-   Fix a copy-paste error that caused DQV and INJ labels to be ignored when
+    determining whether to send a preliminary alert.
+
 0.6.2 (2019-06-07)
 ------------------
 

@@ -26,18 +26,9 @@ from . import resource_json
       'preliminary_alert_far_threshold']['cbc'], ['H1', 'L1', 'V1'], []],
      ['Burst', 'oLIB', False, 1.e-9, ['H1', 'L1', 'V1'], []],
      ['CBC', 'gstlal', True, 1.e-10, ['H1', 'L1', 'V1'], []],
-     pytest.param(
-         'CBC', 'gstlal', False, 1.e-10, ['H1', 'L1', 'V1'], ['DQV'],
-          marks=pytest.mark.xfail(
-              reason='https://git.ligo.org/emfollow/gwcelery/issues/178')),
-     pytest.param(
-         'CBC', 'gstlal', False, 1.e-10, ['H1', 'L1', 'V1'], ['INJ'],
-          marks=pytest.mark.xfail(
-              reason='https://git.ligo.org/emfollow/gwcelery/issues/178')),
-     pytest.param(
-         'CBC', 'gstlal', False, 1.e-10, ['H1', 'L1', 'V1'], ['DQV', 'INJ'],
-          marks=pytest.mark.xfail(
-              reason='https://git.ligo.org/emfollow/gwcelery/issues/178')),
+     ['CBC', 'gstlal', False, 1.e-10, ['H1', 'L1', 'V1'], ['DQV']],
+     ['CBC', 'gstlal', False, 1.e-10, ['H1', 'L1', 'V1'], ['INJ']],
+     ['CBC', 'gstlal', False, 1.e-10, ['H1', 'L1', 'V1'], ['DQV', 'INJ']],
      ['Burst', 'CWB', True, 1.e-10, ['H1', 'L1', 'V1'], []],
      ['CBC', 'gstlal', False, 2.0*app.conf['pe_threshold'],
       ['H1', 'L1', 'V1'], []]])

@@ -366,7 +366,8 @@ def preliminary_alert(event, superevent_id):
         skymap_filename += '.gz'
 
     # Determine if the event should be made public.
-    is_publishable = superevents.should_publish(event)
+    is_publishable = (superevents.should_publish(event)
+                      and {'DQV', 'INJ'}.isdisjoint(event['labels']))
 
     canvas = chain()
 
