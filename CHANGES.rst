@@ -4,7 +4,7 @@ Changelog
 0.7.0 (unreleased)
 ------------------
 
--   No changes yet.
+-   Fix a celery bug in the lalinference task.
 
 0.6.2 (2019-06-07)
 ------------------

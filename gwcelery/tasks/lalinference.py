@@ -386,6 +386,7 @@ def clean_up(rundir):
     shutil.rmtree(rundir)
 
 
+@app.task(ignore_result=True, shared=False)
 def dag_finished(rundir, preferred_event_id, superevent_id):
     """Upload PE results and clean up run directory
 
@@ -409,8 +410,8 @@ def dag_finished(rundir, preferred_event_id, superevent_id):
 
     # FIXME: _upload_url.si has to be out of group for gracedb.create_label.si
     # to run
-    return \
-        _upload_url.si(pe_results_path, superevent_id) | \
+    (
+        _upload_url.si(pe_results_path, superevent_id) |
         group(
             _upload_result(
                 rundir, 'posterior*.hdf5', superevent_id,
@@ -427,8 +428,9 @@ def dag_finished(rundir, preferred_event_id, superevent_id):
                 'Corner plot for source frame parameters', 'pe',
                 'LALInference.intrinsic.png'
             )
-        ) | gracedb.create_label.si('PE_READY', superevent_id) | \
+        ) | gracedb.create_label.si('PE_READY', superevent_id) |
         clean_up.si(rundir)
+    ).delay()
 
 
 @gracedb.task(shared=False)
@@ -483,5 +485,5 @@ def start_pe(ini_contents, preferred_event_id, superevent_id):
             job_error_notification.s(superevent_id, rundir)
         )
         |
-        dag_finished(rundir, preferred_event_id, superevent_id)
+        dag_finished.si(rundir, preferred_event_id, superevent_id)
     ).delay()
