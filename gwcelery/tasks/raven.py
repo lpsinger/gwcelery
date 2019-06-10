@@ -8,10 +8,6 @@ from . import gracedb
 from . import ligo_fermi_skymaps
 
 
-tl_cbc, th_cbc = -5, 1
-tl_burst, th_burst = -600, 60
-
-
 def calculate_spacetime_coincidence_far(gracedb_id, group):
     """Compute spatio-temporal coincidence FAR for GRB external trigger and
     superevent coincidence by calling ligo.raven.search.calc_signif_gracedb.
@@ -28,6 +24,9 @@ def calculate_spacetime_coincidence_far(gracedb_id, group):
     """
     preferred_skymap = ligo_fermi_skymaps.get_preferred_skymap(gracedb_id)
     em_events = gracedb.get_superevent(gracedb_id)['em_events']
+
+    tl_cbc, th_cbc = app.conf['raven_coincidence_windows']['GRB_CBC']
+    tl_burst, th_burst = app.conf['raven_coincidence_windows']['GRB_Burst']
 
     if group == 'CBC':
         tl, th = tl_cbc, th_cbc
@@ -57,6 +56,9 @@ def calculate_coincidence_far(gracedb_id, group):
         gracedb_id superevent
     """
     em_events = gracedb.get_superevent(gracedb_id)['em_events']
+
+    tl_cbc, th_cbc = app.conf['raven_coincidence_windows']['GRB_CBC']
+    tl_burst, th_burst = app.conf['raven_coincidence_windows']['GRB_Burst']
 
     if group == 'CBC':
         tl, th = tl_cbc, th_cbc
@@ -95,8 +97,13 @@ def coincidence_search(gracedb_id, alert_object, group=None, pipelines=[]):
     pipelines: list
         list of external trigger pipeline names
     """
+
+    tl_cbc, th_cbc = app.conf['raven_coincidence_windows']['GRB_CBC']
+    tl_burst, th_burst = app.conf['raven_coincidence_windows']['GRB_Burst']
+    tl_snews, th_snews = app.conf['raven_coincidence_windows']['SNEWS']
+
     if 'SNEWS' in pipelines:
-        tl, th = -10, 10
+        tl, th = tl_snews, th_snews
     elif group == 'CBC' and gracedb_id.startswith('E'):
         tl, th = tl_cbc, th_cbc
     elif group == 'CBC' and gracedb_id.startswith('S'):

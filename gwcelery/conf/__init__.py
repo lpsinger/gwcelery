@@ -240,3 +240,10 @@ pe_results_url = ('https://ldas-jobs.ligo.caltech.edu/~{}/'
                   'online_pe/').format(getpass.getuser())
 """URL of page where all the results of Parameter Estimation are outputted
 (see :mod:`gwcelery.tasks.lalinference`)"""
+
+raven_coincidence_windows = {'GRB_CBC': [-5, 1],
+                             'GRB_Burst': [-600, 60],
+                             'SNEWS': [-10, 10]}
+"""Time coincidence windows passed to ligo-raven. External events and
+superevents of the appropriate type are considered to be coincident if
+within time window of each other."""

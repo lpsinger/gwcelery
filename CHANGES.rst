@@ -9,6 +9,9 @@ Changelog
 -   Fix a copy-paste error that caused DQV and INJ labels to be ignored when
     determining whether to send a preliminary alert.
 
+-   Move RAVEN time coincidence windows to config file to be easily reviewed
+    or changed later.
+
 0.6.2 (2019-06-07)
 ------------------
 
