@@ -179,8 +179,6 @@ doc:
 # SCCB request
 sccb:
   stage: deploy
-  only:
-    - tags@emfollow/gwcelery
 
 # Publish coverage
 pages:
