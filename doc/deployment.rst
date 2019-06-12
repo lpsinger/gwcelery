@@ -72,10 +72,28 @@ change log.
 
     Commit and push any corrections to CHANGES.rst to ``master``.
 
+3.  **Complete the acceptance tests.** Our acceptance tests
+    consist of a manual checklist for verifying that the pipeline satisfies
+    certain requirements on the playground environment. The checklist is
+    maintained as a GitLab `issue template`_ and is under version control in
+    the special directory `.gitlab/issue_templates`_.
+
+    Create a `new issue`_ in GitLab. Set the title to :samp:`Release version
+    {MAJOR.MINOR.PATCH}`. In the ``Choose a template`` dropdown menu, select
+    ``Create a Release``. The description field will be automatically populated
+    with the checklist. Submit the issue.
+
+    Complete the items in the checklist and check them off one by one on the
+    release issue before proceeding to the next step.
+
+    .. image:: _static/acceptance-tests-checklist.png
+       :alt: Screen shot of a release issue
+
 3.  **Tag the release.** Change the title of the first section of
     CHANGES.rst to :samp:`{MAJOR.MINOR.PATCH} ({YYYY-MM-DD})` where
     :samp:`{YYYY-MM-DD}` is today's date. Commit with the message :samp:`Update
-    changelog for version {MAJOR.MINOR.PATCH}`.
+    changelog for version {MAJOR.MINOR.PATCH}; closes #{N}`, where :samp:`{N}`
+    is the release issue's number.
 
     Create a git tag to mark the release by running the following command:
 
@@ -106,3 +124,6 @@ change log.
 .. _`GitLab pipeline status`: https://git.ligo.org/emfollow/gwcelery/pipelines
 .. _`CHANGES.rst`: https://git.ligo.org/emfollow/gwcelery/blob/master/CHANGES.rst
 .. _`SemVer`: https://semver.org
+.. _`issue template`: https://docs.gitlab.com/ee/user/project/description_templates.html
+.. _`.gitlab/issue_templates`: https://git.ligo.org/emfollow/gwcelery/tree/master/.gitlab/issue_templates
+.. _`new issue`: https://git.ligo.org/emfollow/gwcelery/issues/new

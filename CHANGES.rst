@@ -12,6 +12,9 @@ Changelog
 -   Move RAVEN time coincidence windows to config file to be easily reviewed
     or changed later.
 
+-   Document the acceptence tests checklist in the instructions for preparing a
+    release.
+
 0.6.2 (2019-06-07)
 ------------------
 
