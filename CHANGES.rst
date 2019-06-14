@@ -1,11 +1,11 @@
 Changelog
 =========
 
-0.7.0 (unreleased)
+0.6.3 (2019-06-14)
 ------------------
 
--   Work around a Celery canvas bug that affected LALInference parameter
-    estimation.
+-   Work around a Celery canvas bug that prevented LALInference post-processing
+    to complete.
 
 -   Fix a copy-paste error that caused ``DQV`` and ``INJ`` labels to be ignored
     when determining whether to send a preliminary alert.
