@@ -98,10 +98,13 @@ lint:
   stage: test
   script:
     - tar --strip-components 1 -xf *.tar.*
-    - pip install flake8 'pep8-naming!=0.8.0'
-    - flake8 --show-source .
+    - pip install flake8 flake8-codeclimate 'pep8-naming!=0.8.0'
+    - flake8 --format=codeclimate . > codequality.json
   dependencies:
     - sdist
+  artifacts:
+    reports:
+      codequality: codequality.json
 
 associate commits in Sentry:
   stage: test
