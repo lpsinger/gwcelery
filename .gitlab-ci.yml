@@ -99,7 +99,7 @@ lint:
   script:
     - tar --strip-components 1 -xf *.tar.*
     - pip install flake8 flake8-codeclimate 'pep8-naming!=0.8.0'
-    - flake8 --format=codeclimate . > codequality.json
+    - flake8 --format=codeclimate .  | python -c 'from sys import stdin; print("[" + ",".join(stdin) + "]")' > codequality.json
   dependencies:
     - sdist
   artifacts:
