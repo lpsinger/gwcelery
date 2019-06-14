@@ -1,11 +1,12 @@
-**Git ref:** <!-- insert git reference -->
+**Git ref**: *insert git reference here*
 
 # Checklist
 
 ## Basics
 
-1.  [ ] The CI pipeline succeeded, including all unit tests and code quality checks.
+1.  [ ] The CI pipeline succeeded, including all unit tests and code quality checks. *place link to pipeline here*
 2.  [ ] [CHANGES.rst](CHANGES.rst) lists all significant changes since the last release. It is free from spelling and grammatical errors.
+3.  [ ] The [latest Readthedocs documentation build](https://readthedocs.org/projects/gwcelery/builds/) passed and the [latest docs](https://gwcelery.readthedocs.io/en/latest/) are correctly rendered. Autodoc-generated API docs for tasks are shown.
 
 ## Playground deployment
 
