@@ -89,7 +89,7 @@ change log.
     .. image:: _static/acceptance-tests-checklist.png
        :alt: Screen shot of a release issue
 
-3.  **Tag the release.** Change the title of the first section of
+4.  **Tag the release.** Change the title of the first section of
     CHANGES.rst to :samp:`{MAJOR.MINOR.PATCH} ({YYYY-MM-DD})` where
     :samp:`{YYYY-MM-DD}` is today's date. Commit with the message :samp:`Update
     changelog for version {MAJOR.MINOR.PATCH}; closes #{N}`, where :samp:`{N}`
@@ -99,22 +99,22 @@ change log.
 
         :samp:`$ git tag v{MAJOR.MINOR.PATCH} -m "Version {MAJOR.MINOR.PATCH}"`
 
-4.  **Create a change log section for the next release.** Add a new section to
+5.  **Create a change log section for the next release.** Add a new section to
     CHANGES.rst with the title :samp:`{NEXT_MAJOR.NEXT_MINOR.NEXT_PATCH}
     (unreleased)`, where :samp:`{NEXT_MAJOR.NEXT_MINOR.NEXT_PATCH}` is a
     provisional version number for the next release. Add a single list item
     with the text ``No changes yet.`` Commit with the message ``Back to
     development.``
 
-5.  **Push the new tag and updated change log.** Push the new tag and updated
+6.  **Push the new tag and updated change log.** Push the new tag and updated
     change log:
 
         ``git push && git push --tags``
 
-6.  Wait a couple minutes, and then verify that the new release has been
+7.  Wait a couple minutes, and then verify that the new release has been
     published on our PyPI project page, https://pypi.org/project/gwcelery/.
 
-7.  If desired, navigate to the GitLab project's `Environments`_ page and
+8.  If desired, navigate to the GitLab project's `Environments`_ page and
     trigger a deployment to production.
 
 .. _`Environments`: https://git.ligo.org/emfollow/gwcelery/environments
