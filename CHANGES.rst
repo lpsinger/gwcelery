@@ -4,16 +4,18 @@ Changelog
 0.7.0 (unreleased)
 ------------------
 
--   Fix a celery bug in the lalinference task.
+-   Work around a Celery canvas bug that affected LALInference parameter
+    estimation.
 
--   Fix a copy-paste error that caused DQV and INJ labels to be ignored when
-    determining whether to send a preliminary alert.
+-   Fix a copy-paste error that caused ``DQV`` and ``INJ`` labels to be ignored
+    when determining whether to send a preliminary alert.
 
--   Move RAVEN time coincidence windows to config file to be easily reviewed
-    or changed later.
+-   Move RAVEN time coincidence windows to the application configuration.
 
 -   Document the acceptence tests checklist in the instructions for preparing a
     release.
+
+-   Update ligo-raven to version 1.14.
 
 0.6.2 (2019-06-07)
 ------------------
