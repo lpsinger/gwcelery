@@ -50,7 +50,7 @@ bdist:
 # Capture pipenv locked dependencies in requirements.txt format
 requirements:
   image: python:3.6-slim
-  stage: test
+  stage: dist
   script:
     - pip install pipenv
     - pipenv lock --requirements > pipenv-requirements.txt
