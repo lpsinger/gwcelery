@@ -47,6 +47,17 @@ bdist:
     paths:
       - '*.whl'
 
+# Capture pipenv locked dependencies in requirements.txt format
+requirements:
+  image: python:3.6-slim
+  stage: test
+  script:
+    - pip install pipenv
+    - pipenv lock --requirements > pipenv-requirements.txt
+  artifacts:
+    paths:
+      - pipenv-requirements.txt
+
 # Build Docker container for dependencies
 .dependencies: &dependencies
   stage: dist
@@ -107,10 +118,13 @@ lint:
     reports:
       codequality: codequality.json
 
+# Dependency vulnerability scanning
 dependency_scanning:
   before_script:
-    - pip install pipenv
-    - pip lock --requirements > requirements.txt
+    - tar --strip-components 1 -xf *.tar.*
+  dependencies:
+    - requirements
+    - sdist
 
 associate commits in Sentry:
   stage: test
