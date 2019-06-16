@@ -51,6 +51,8 @@ bdist:
 requirements:
   image: python:3.6-slim
   stage: dist
+  variables:
+    GIT_STRATEGY: fetch
   script:
     - pip install pipenv
     - pipenv lock --requirements > pipenv-requirements.txt
