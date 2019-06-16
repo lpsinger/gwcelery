@@ -1,6 +1,7 @@
 include:
   - project: emfollow/gitlab-ci-templates
     file: sccb.yml
+  - template: Dependency-Scanning.gitlab-ci.yml
 
 variables:
   # Allow Celery to run as root, because everything runs as root under Docker.
@@ -105,6 +106,11 @@ lint:
   artifacts:
     reports:
       codequality: codequality.json
+
+dependency_scanning:
+  before_script:
+    - pip install pipenv
+    - pip lock --requirements > requirements.txt
 
 associate commits in Sentry:
   stage: test
