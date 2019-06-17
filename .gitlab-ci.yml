@@ -1,5 +1,7 @@
 include:
   - project: emfollow/gitlab-ci-templates
+    file: lint.yml
+  - project: emfollow/gitlab-ci-templates
     file: sccb.yml
   - template: Dependency-Scanning.gitlab-ci.yml
 
@@ -110,15 +112,10 @@ test/python3.7:
 lint:
   image: $CI_REGISTRY_IMAGE/dependencies/python3.6:$CI_COMMIT_REF_NAME
   stage: test
-  script:
+  before_script:
     - tar --strip-components 1 -xf *.tar.*
-    - pip install flake8 flake8-codeclimate 'pep8-naming!=0.8.0'
-    - flake8 --format=codeclimate .  | python -c 'from sys import stdin; print("[" + ",".join(stdin) + "]")' > codequality.json
   dependencies:
     - sdist
-  artifacts:
-    reports:
-      codequality: codequality.json
 
 # Dependency vulnerability scanning
 dependency_scanning:
