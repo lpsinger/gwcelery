@@ -247,7 +247,7 @@ release:
         curl --silent --show-error --fail \
         --request POST --header "Private-Token: $GITLAB_ACCESS_TOKEN" \
         --header "Content-Type: application/json" \
-        --data '{"name": ''}' \
+        --data "@json" \
         "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases"
       fi
 
