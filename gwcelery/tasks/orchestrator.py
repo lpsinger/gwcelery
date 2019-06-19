@@ -24,6 +24,21 @@ from . import skymaps
 from . import superevents
 
 
+@lvalert.handler('cbc_gstlal',
+                 'cbc_spiir',
+                 'cbc_pycbc',
+                 'cbc_mbtaonline',
+                 'burst_olib',
+                 'burst_cwb',
+                 shared=False)
+def handle_selected_as_preferred(alert):
+    # FIXME DQV & INJ labels not incorporated into labeling ADVREQ,
+    # Remove after !495 is merged
+    if alert['alert_type'] == 'selected_as_preferred' \
+            and superevents.should_publish(alert['object']):
+        gracedb.create_label.delay('ADVREQ', alert['object']['superevent'])
+
+
 @lvalert.handler('superevent',
                  'mdc_superevent',
                  shared=False)
@@ -37,27 +52,9 @@ def handle_superevent(alert):
     calls :meth:`~gwcelery.tasks.orchestrator.preliminary_alert` to send a
     preliminary GCN notice.
     """
-
     superevent_id = alert['uid']
-
+    # launch PE and detchar based on new type superevents
     if alert['alert_type'] == 'new':
-        start = alert['object']['t_start']
-        end = alert['object']['t_end']
-
-        (
-            _get_preferred_event.si(superevent_id).set(
-                countdown=app.conf['orchestrator_timeout']
-            )
-            |
-            gracedb.get_event.s()
-            |
-            detchar.check_vectors.s(superevent_id, start, end)
-            |
-            preliminary_alert.s(superevent_id)
-        ).apply_async()
-
-        # Wait for longer time before parameter estimation in case the
-        # preferred event is updated with high latency.
         (
             _get_preferred_event.si(superevent_id).set(
                 countdown=app.conf['pe_timeout']
@@ -70,6 +67,31 @@ def handle_superevent(alert):
             |
             parameter_estimation.s(superevent_id)
         ).apply_async()
+
+    elif alert['alert_type'] == 'label_added':
+        label_name = alert['data']['name']
+        # launch preliminary alert on ADVREQ
+        if label_name == 'ADVREQ':
+            (
+                _get_preferred_event.si(superevent_id).set(
+                    countdown=app.conf['orchestrator_timeout']
+                )
+                |
+                gracedb.get_event.s()
+                |
+                detchar.check_vectors.s(
+                    superevent_id,
+                    alert['object']['t_start'],
+                    alert['object']['t_end']
+                )
+                |
+                preliminary_alert.s(superevent_id)
+            ).apply_async()
+        # launch initial/retraction alert on ADVOK/ADVNO
+        elif label_name == 'ADVOK':
+            initial_alert(superevent_id)
+        elif label_name == 'ADVNO':
+            retraction_alert(superevent_id)
 
     # check DQV label on superevent, run check_vectors if required
     elif alert['alert_type'] == 'event_added':
@@ -85,13 +107,6 @@ def handle_superevent(alert):
                 |
                 _update_if_dqok.si(superevent_id, new_event_id)
             ).apply_async()
-
-    elif alert['alert_type'] == 'label_added':
-        label_name = alert['data']['name']
-        if label_name == 'ADVOK':
-            initial_alert(superevent_id)
-        elif label_name == 'ADVNO':
-            retraction_alert(superevent_id)
 
 
 @lvalert.handler('cbc_gstlal',
@@ -372,11 +387,7 @@ def preliminary_alert(event, superevent_id):
     canvas = chain()
 
     if is_publishable:
-        canvas |= (
-            gracedb.create_label.si('ADVREQ', superevent_id)
-            |
-            gracedb.expose.si(superevent_id)
-        )
+        canvas |= gracedb.expose.si(superevent_id)
 
     # If there is a sky map, then copy it to the superevent and create plots.
     if skymap_filename is not None:

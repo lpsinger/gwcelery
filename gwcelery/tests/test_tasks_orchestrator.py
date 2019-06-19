@@ -1,6 +1,6 @@
 import os
 import json
-from unittest.mock import Mock, patch, call
+from unittest.mock import Mock, patch
 
 from ligo.gracedb import rest
 import pkg_resources
@@ -15,36 +15,28 @@ from . import resource_json
 
 
 @pytest.mark.parametrize(  # noqa: F811
-    'group,pipeline,offline,far,instruments,labels',
-    [['CBC', 'gstlal', False, 1.e-9, ['H1'], []],
-     ['CBC', 'gstlal', False, 1.e-9, ['H1', 'L1'], []],
-     ['CBC', 'gstlal', False, 1.e-9, ['H1', 'L1', 'V1'], []],
-     ['CBC', 'gstlal', False, 0.5*app.conf[
-      'preliminary_alert_far_threshold']['cbc'], ['H1', 'L1', 'V1'], []],
-     ['Burst', 'CWB', False, 1.e-9, ['H1', 'L1', 'V1'], []],
-     ['Burst', 'CWB', False, 0.8*app.conf[
-      'preliminary_alert_far_threshold']['cbc'], ['H1', 'L1', 'V1'], []],
-     ['Burst', 'oLIB', False, 1.e-9, ['H1', 'L1', 'V1'], []],
-     ['CBC', 'gstlal', True, 1.e-10, ['H1', 'L1', 'V1'], []],
-     ['CBC', 'gstlal', False, 1.e-10, ['H1', 'L1', 'V1'], ['DQV']],
-     ['CBC', 'gstlal', False, 1.e-10, ['H1', 'L1', 'V1'], ['INJ']],
-     ['CBC', 'gstlal', False, 1.e-10, ['H1', 'L1', 'V1'], ['DQV', 'INJ']],
-     ['Burst', 'CWB', True, 1.e-10, ['H1', 'L1', 'V1'], []],
-     ['CBC', 'gstlal', False, 2.0*app.conf['pe_threshold'],
-      ['H1', 'L1', 'V1'], []]])
+    'alert_type,group,pipeline,offline,far,instruments',
+    [['label_added', 'CBC', 'gstlal', False, 1.e-9, ['H1']],
+     ['label_added', 'CBC', 'gstlal', False, 1.e-9, ['H1', 'L1']],
+     ['label_added', 'CBC', 'gstlal', False, 1.e-9, ['H1', 'L1', 'V1']],
+     ['label_added', 'Burst', 'CWB', False, 1.e-9, ['H1', 'L1', 'V1']],
+     ['label_added', 'Burst', 'oLIB', False, 1.e-9, ['H1', 'L1', 'V1']],
+     ['new', 'CBC', 'gstlal', False, 1.e-9, ['H1', 'L1']]])
 def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
-                           group, pipeline, offline, far, instruments, labels):
+                           alert_type, group, pipeline, offline,
+                           far, instruments):
     """Test a superevent is dispatched to the correct annotation task based on
     its preferred event's search group."""
     alert = {
-        'alert_type': 'new',
+        'alert_type': alert_type,
         'uid': 'S1234',
         'object': {
             'superevent_id': 'S1234',
             't_start': 1214714160,
             't_end': 1214714164,
             'preferred_event': 'G1234'
-        }
+        },
+        'data': {'name': 'ADVREQ'}
     }
 
     def get_superevent(superevent_id):
@@ -59,10 +51,10 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
             'search': 'AllSky',
             'graceid': 'G1234',
             'offline': offline,
-            'labels': labels,
             'far': far,
             'gpstime': 1234,
-            'extra_attributes': {}
+            'extra_attributes': {},
+            'labels': ['ADVREQ']
         }
         if pipeline == 'gstlal':
             # Simulate subthreshold triggers for gstlal. Subthreshold triggers
@@ -133,18 +125,12 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
     # Run function under test
     orchestrator.handle_superevent(alert)
 
-    plot_allsky.assert_called_once()
-    plot_volume.assert_called_once()
+    if alert_type == 'label_added':
+        plot_allsky.assert_called_once()
+        plot_volume.assert_called_once()
 
-    _event_info = get_event('G1234')    # this gets the preferred event info
-    if not (superevents.should_publish(_event_info)
-            and {'DQV', 'INJ'}.isdisjoint(labels)):
-        expose.assert_not_called()
-        create_tag.assert_not_called()
-        send.assert_not_called()
-        create_initial_circular.assert_not_called()
-        assert call('ADVREQ', 'S1234') not in create_label.call_args_list
-    else:
+        _event_info = get_event('G1234')  # this gets the preferred event info
+        assert superevents.should_publish(_event_info)
         expose.assert_called_once_with('S1234')
         create_tag.assert_called_once_with(
             'S1234-1-Preliminary.xml', 'public', 'S1234')
@@ -156,9 +142,8 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
                 skymap_filename='bayestar.fits.gz', skymap_type='bayestar')
         send.assert_called_once()
         create_initial_circular.assert_called_once()
-        create_label.assert_has_calls([call('ADVREQ', 'S1234')])
 
-    if group == 'CBC' and not offline:
+    if alert_type == 'new' and group == 'CBC':
         query_data.assert_called_once()
         prepare_ini.assert_called_once()
         if far <= app.conf['pe_threshold']:
