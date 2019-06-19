@@ -3,7 +3,6 @@ include:
     file: lint.yml
   - project: emfollow/gitlab-ci-templates
     file: sccb.yml
-  - template: Dependency-Scanning.gitlab-ci.yml
 
 variables:
   # Allow Celery to run as root, because everything runs as root under Docker.
@@ -48,19 +47,6 @@ bdist:
   artifacts:
     paths:
       - '*.whl'
-
-# Capture pipenv locked dependencies in requirements.txt format
-requirements:
-  image: python:3.6-slim
-  stage: dist
-  variables:
-    GIT_STRATEGY: fetch
-  script:
-    - pip install pipenv
-    - pipenv lock --requirements > pipenv-requirements.txt
-  artifacts:
-    paths:
-      - pipenv-requirements.txt
 
 # Build Docker container for dependencies
 .dependencies: &dependencies
@@ -115,14 +101,6 @@ lint:
   before_script:
     - tar --strip-components 1 -xf *.tar.*
   dependencies:
-    - sdist
-
-# Dependency vulnerability scanning
-dependency_scanning:
-  before_script:
-    - tar --strip-components 1 -xf *.tar.*
-  dependencies:
-    - requirements
     - sdist
 
 associate commits in Sentry:
