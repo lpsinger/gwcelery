@@ -4,7 +4,13 @@ Changelog
 0.7.0 (unreleased)
 ------------------
 
--   No changes yet.
+-   Trigger a preliminary alert for a superevent upon the first time that the
+    preferred event is set to an event that meets the public alert criterion.
+
+    This fixes a longstanding issue that has prevented automated preliminary
+    alerts from being sent so far. The preferred event *at the instant that the
+    timeout ended* did not meet the public alert criterion, but a preferred
+    event that was selected some tens of seconds later did.
 
 0.6.3 (2019-06-14)
 ------------------
@@ -21,14 +27,6 @@ Changelog
     release.
 
 -   Update ligo-raven to version 1.14.
-
--   Trigger a preliminary alert for a superevent upon the first time that the
-    preferred event is set to an event that meets the public alert criterion.
-
-    This fixes a longstanding issue that has prevented automated preliminary
-    alerts from being sent so far. The preferred event *at the instant that the
-    timeout ended* did not meet the public alert criterion, but a preferred
-    event that was selected some tens of seconds later did.
 
 0.6.2 (2019-06-07)
 ------------------
