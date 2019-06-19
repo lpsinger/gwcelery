@@ -249,6 +249,7 @@ release:
         --header "Content-Type: application/json" \
         --data '{"name": ''}' \
         "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases"
+      fi
 
 .deploy-common: &deploy-common
   stage: deploy
