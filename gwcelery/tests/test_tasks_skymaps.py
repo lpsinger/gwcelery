@@ -109,7 +109,7 @@ def mock_skymap_from_samples(args):
     parser.add_argument('--fitsoutname', default='skymap.fits')
     parser.add_argument('samples')
     args = parser.parse_args(args)
-    with os.path.join(args.outdir, args.fitsoutname, 'wb') as f:
+    with open(os.path.join(args.outdir, args.fitsoutname), 'wb') as f:
         f.write(toy_3d_fits_filecontents())
 
 
