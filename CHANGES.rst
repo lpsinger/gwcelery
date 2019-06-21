@@ -14,6 +14,9 @@ Changelog
 
 -   Decrease preliminary alert timeout to one minute.
 
+-   The combined effect of these changes should be to decrease the latency for
+    producing preliminary alerts from 7 minutes to 2 minutes.
+
 0.6.3 (2019-06-14)
 ------------------
 
