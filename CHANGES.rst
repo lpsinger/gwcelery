@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.7.0 (unreleased)
+0.7.0 (2019-06-21)
 ------------------
 
 -   Trigger a preliminary alert for a superevent upon the first time that the
