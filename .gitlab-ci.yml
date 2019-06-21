@@ -179,7 +179,7 @@ doc:
   <<: *in-tmpdir
   script:
     - apt-get update -qq && apt-get install -y -qq graphviz
-    - tar --strip-components 1 -xf ${CI_BUILD_DIR}/*.tar.*
+    - tar --strip-components 1 -xf ${CI_PROJECT_DIR}/*.tar.*
     - python setup.py build_sphinx
   dependencies:
     - sdist
