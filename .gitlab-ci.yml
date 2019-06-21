@@ -12,6 +12,14 @@ variables:
   # at all.
   GIT_STRATEGY: none
 
+.in-tmpdir: &in-tmpdir
+  before_script:
+    - WORKING_DIRECTORY="$(mktemp -d)"
+    - cd "${WORKING_DIRECTORY}"
+  after_script:
+    - cd "${CI_PROJECT_DIR}"
+    - rm -rf "${WORKING_DIRECTORY}"
+
 stages:
   - dist
   - test
@@ -38,10 +46,10 @@ sdist:
 bdist:
   image: python:3.6-slim
   stage: test
+  <<: *in-tmpdir
   script:
-    - tar --strip-components 1 -xf *.tar.*
-    - python setup.py bdist_wheel
-    - mv dist/* .
+    - tar --strip-components 1 -xf ${CI_PROJECT_DIR}/*.tar.*
+    - python setup.py bdist_wheel --dist-dir ${CI_PROJECT_DIR}
   dependencies:
     - sdist
   artifacts:
@@ -75,12 +83,12 @@ dependencies/python3.7:
 .test: &test
   stage: test
   coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
-  before_script:
-    - apt-get update -qq && apt-get install -y -qq redis-server
+  <<: *in-tmpdir
   script:
-    - tar --strip-components 1 -xf *.tar.*
+    - apt-get update -qq && apt-get install -y -qq redis-server
+    - tar --strip-components 1 -xf ${CI_PROJECT_DIR}/*.tar.*
     - pip install pytest-cov -r test-requirements.txt
-    - python setup.py test --addopts='-vv --cov --cov-report=html --cov-report=term --junit-xml=junit.xml'
+    - python setup.py test --addopts="-vv --cov --cov-report=html:${CI_PROJECT_DIR}/htmlcov --cov-report=term --junit-xml=${CI_PROJECT_DIR}/junit.xml"
   dependencies:
     - sdist
   artifacts:
@@ -98,8 +106,8 @@ test/python3.7:
 lint:
   image: $CI_REGISTRY_IMAGE/dependencies/python3.6:$CI_COMMIT_REF_NAME
   stage: test
-  before_script:
-    - tar --strip-components 1 -xf *.tar.*
+  variables:
+    GIT_STRATEGY: fetch
   dependencies:
     - sdist
 
@@ -168,10 +176,10 @@ docker/python3.7:
 doc:
   image: python:3.6-slim
   stage: test
-  before_script:
-    - apt-get update -qq && apt-get install -y -qq graphviz
+  <<: *in-tmpdir
   script:
-    - tar --strip-components 1 -xf *.tar.*
+    - apt-get update -qq && apt-get install -y -qq graphviz
+    - tar --strip-components 1 -xf ${CI_BUILD_DIR}/*.tar.*
     - python setup.py build_sphinx
   dependencies:
     - sdist
