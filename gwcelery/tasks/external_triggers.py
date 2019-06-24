@@ -143,11 +143,11 @@ def handle_grb_lvalert(alert):
             raven.coincidence_search(graceid, alert['object'],
                                      group=group,
                                      pipelines=['Fermi', 'Swift'])
-        elif alert['alert_type'] == 'label_added':
-            if alert['data']['name'] == 'EM_COINC':
-                ligo_fermi_skymaps.create_combined_skymap(graceid).delay()
-                raven.calculate_spacetime_coincidence_far(graceid,
-                                                          group).delay()
+        elif alert['alert_type'] == 'log' and alert['data']['filename'] == \
+                'coincidence_far.json':
+            ligo_fermi_skymaps.create_combined_skymap(graceid).delay()
+            raven.calculate_spacetime_coincidence_far(graceid,
+                                                      group).delay()
 
 
 @lvalert.handler('superevent',

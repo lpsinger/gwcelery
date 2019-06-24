@@ -4,7 +4,8 @@ Changelog
 0.7.1 (unreleased)
 ------------------
 
--   No changes yet.
+-   Enable Fermi combined sky maps and space-time coincidence FAR to be
+    uploaded.
 
 0.7.0 (2019-06-21)
 ------------------

@@ -192,7 +192,11 @@ def test_handle_superevent_emcoinc_label1(mock_create_combined_skymap,
                                           mock_se_cls, mock_exttrig_cls):
     """Test dispatch of an LVAlert message for a superevent EM_COINC label
     application."""
-    alert = resource_json(__name__, 'data/lvalert_superevent_label.json')
+    alert = {
+            "uid": "S180616h",
+            "alert_type": "log",
+            "data": {"filename": "coincidence_far.json"}
+            }
 
     external_triggers.handle_grb_lvalert(alert)
     mock_create_combined_skymap.assert_called_once_with('S180616h')
