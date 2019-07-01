@@ -566,7 +566,7 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None,
                 continue
             if skymap_needed \
                     and {'sky_loc', 'public'}.issubset(t) \
-                    and (f.endswith('.fits') or f.endswith('.fits.gz')):
+                    and f.endswith('.fits.gz'):
                 skymap_filename = f
             if em_bright_needed \
                     and 'em_bright' in t \
