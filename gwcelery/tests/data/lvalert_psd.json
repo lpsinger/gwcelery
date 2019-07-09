@@ -7,16 +7,23 @@
     },
     "object": {
         "pipeline": "gstlal",
-	"graceid": "T250822",
-	"far": 1e-8,
-	"extra_attributes": {
-	    "CoincInspiral": {
-		"ifos": "H1,L1,V1",
-		"snr": 9.31793628458239
-	    },
-	    "SingleInspiral": [
-	        {"mass1": 2.6, "mass2": 1.6}, {"mass1": 2.6, "mass2": 1.6}
-	     ]
+        "graceid": "T250822",
+        "far": 1.0e-08,
+        "extra_attributes": {
+            "CoincInspiral": {
+                "ifos": "H1,L1,V1",
+                "snr": 9.31793628458239
+            },
+            "SingleInspiral": [
+                {
+                    "mass1": 2.6,
+                    "mass2": 1.6
+                },
+                {
+                    "mass1": 2.6,
+                    "mass2": 1.6
+                }
+            ]
         }
     },
     "uid": "T250822",
