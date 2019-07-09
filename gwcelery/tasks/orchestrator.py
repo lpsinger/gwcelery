@@ -152,14 +152,14 @@ def handle_cbc_event(alert):
         em_bright_task = em_bright.classifier_other
 
         (
-                em_bright_task.si((mass1, mass2, chi1, chi2, snr), graceid)
-                |
-                gracedb.upload.s(
-                    'em_bright.json', graceid,
-                    'em bright complete', ['em_bright', 'public']
-                )
-                |
-                gracedb.create_label.si('EMBRIGHT_READY', graceid)
+            em_bright_task.si((mass1, mass2, chi1, chi2, snr), graceid)
+            |
+            gracedb.upload.s(
+                'em_bright.json', graceid,
+                'em bright complete', ['em_bright', 'public']
+            )
+            |
+            gracedb.create_label.si('EMBRIGHT_READY', graceid)
         ).delay()
 
         # p_astro calculation for other pipelines
