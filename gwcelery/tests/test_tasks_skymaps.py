@@ -60,8 +60,8 @@ def mock_download(filename, graceid):
 @patch('ligo.skymap.tool.ligo_skymap_plot_volume.main')
 def test_annotate_fits(mock_plot_volume, mock_plot, mock_gracedb,
                        toy_3d_fits_filecontents):
-    skymaps.annotate_fits('test.fits,0', 'T12345', ['tag1']).delay(
-        toy_3d_fits_filecontents).get()
+    skymaps.annotate_fits(
+        toy_3d_fits_filecontents, 'test.fits,0', 'T12345', ['tag1'])
 
 
 def test_fits_header(toy_fits_filecontents):

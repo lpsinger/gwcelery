@@ -20,6 +20,10 @@ Changelog
 -   Increase the Redis server's log verbosity in order to help diagnose Redis
     client connection dropouts.
 
+-   Run sky map plotting and annotation tasks asynchronously so that they do
+    not block sending preliminary alerts. Their outputs are only for human
+    consumption; they are not needed in order to prepare GCN Notices.
+
 0.7.0 (2019-06-21)
 ------------------
 

@@ -240,7 +240,7 @@ def handle_posterior_samples(alert):
         skymaps.skymap_from_samples.s()
         |
         group(
-            skymaps.annotate_fits(
+            skymaps.annotate_fits.s(
                 '{}.fits.gz'.format(prefix),
                 superevent_id, ['pe', 'sky_loc']
             ),
@@ -419,7 +419,7 @@ def preliminary_alert(event, superevent_id):
                 |
                 gracedb.create_label.si('SKYMAP_READY', superevent_id),
 
-                skymaps.annotate_fits(
+                skymaps.annotate_fits.s(
                     skymap_filename,
                     superevent_id,
                     ['sky_loc', 'public']
