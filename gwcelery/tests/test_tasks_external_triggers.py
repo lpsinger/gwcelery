@@ -194,8 +194,8 @@ def test_handle_superevent_emcoinc_label1(mock_create_combined_skymap,
     application."""
     alert = {
             "uid": "S180616h",
-            "alert_type": "log",
-            "data": {"filename": "coincidence_far.json"}
+            "alert_type": "label_added",
+            "data": {"name": "EM_COINC"}
             }
 
     external_triggers.handle_grb_lvalert(alert)

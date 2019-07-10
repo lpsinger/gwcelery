@@ -4,9 +4,6 @@ Changelog
 0.7.1 (unreleased)
 ------------------
 
--   Enable Fermi combined sky maps and space-time coincidence FAR to be
-    uploaded.
-
 -   The initial alert workflow will now consider only ``*.fits.gz`` sky maps
     and not ``*.fits`` sky maps for GCN Notices. It was an oversight that we
     did not exclude ``*.fits`` files from the list of extensions to consider
