@@ -17,6 +17,9 @@ Changelog
 -   Fix file extensions for LALInference sky map PNG files: they should be
     named ``LALInference.png``, not ``LALInference.multiorder.png``.
 
+-   Increase the Redis server's log verbosity in order to help diagnose Redis
+    client connection dropouts.
+
 0.7.0 (2019-06-21)
 ------------------
 
