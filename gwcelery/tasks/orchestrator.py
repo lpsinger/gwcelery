@@ -241,7 +241,7 @@ def handle_posterior_samples(alert):
         |
         group(
             skymaps.annotate_fits(
-                '{}.multiorder.fits'.format(prefix),
+                '{}.fits.gz'.format(prefix),
                 superevent_id, ['pe', 'sky_loc']
             ),
 

@@ -14,6 +14,9 @@ Changelog
 -   Enable Sentry integration for Tornado in order to capture errors from the
     Flower console.
 
+-   Fix file extensions for LALInference sky map PNG files: they should be
+    named ``LALInference.png``, not ``LALInference.multiorder.png``.
+
 0.7.0 (2019-06-21)
 ------------------
 
