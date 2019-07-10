@@ -19,6 +19,9 @@ Changelog
 -   Ensure gracedb calls to create and update superevents are retried in
     the event of runtime server side errors.
 
+-   Update ligo-raven version to 1.15. Apply EM_COINC label in raven.py to
+    give more control and prevent race conditions.
+
 0.7.1 (2019-07-12)
 ------------------
 

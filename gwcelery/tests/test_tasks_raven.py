@@ -10,12 +10,16 @@ from ..tasks import gracedb, raven
     'group,gracedb_id,pipelines,tl,th',
     [['CBC', 'S1', ['Fermi', 'Swift'], -1, 5],
      ['Burst', 'S2', ['Fermi', 'Swift'], -60, 600],
-     ['Burst', 'S3', ['SNEWS'], -10, 10]])
+     ['Burst', 'S3', ['SNEWS'], -10, 10],
+     ['CBC', 'E1', ['Fermi'], -5, 1]])
+@patch('gwcelery.tasks.gracedb.create_label.run')
 @patch('gwcelery.tasks.raven.add_exttrig_to_superevent.run')
-@patch('gwcelery.tasks.raven.search.run')
+@patch('gwcelery.tasks.raven.search.run', return_value=[{'superevent_id': 'S5',
+                                                        'graceid': 'E2'}])
 @patch('gwcelery.tasks.raven.calculate_coincidence_far')
 def test_coincidence_search(mock_calculate_coincidence_far,
                             mock_search, mock_add_exttrig_to_superevent,
+                            mock_create_label,
                             group, gracedb_id, pipelines, tl, th):
     """Test that correct time windows are used for each RAVEN search."""
     alert_object = {'superevent_id': gracedb_id}
@@ -26,6 +30,7 @@ def test_coincidence_search(mock_calculate_coincidence_far,
     mock_search.assert_called_once_with(
         gracedb_id, alert_object, tl, th, group, pipelines)
     mock_add_exttrig_to_superevent.assert_called_once()
+    mock_create_label.assert_called()
     mock_calculate_coincidence_far.assert_called()
 
 
