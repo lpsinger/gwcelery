@@ -14,6 +14,9 @@ Changelog
 
 -   Catch and retry HTTP 429 ("Too Many Requests") errors from GraceDB.
 
+-   Enable Sentry integration for Tornado in order to capture errors from the
+    Flower console.
+
 0.7.0 (2019-06-21)
 ------------------
 
