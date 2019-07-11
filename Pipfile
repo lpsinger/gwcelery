@@ -8,6 +8,8 @@ verify_ssl = true
 gwcelery = {editable = true,path = "."}
 # Include IPython for a nicer ``gwcelery shell`` experience.
 ipython = "*"
+# Include IPython kernel for Jupyter Lab support.
+ipykernel = "*"
 # Pull in flower from GitHub branch to pull in extra features.
 flower = {git = "https://github.com/lpsinger/flower",ref = "custom-stats"}
 
