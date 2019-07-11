@@ -9,6 +9,10 @@ from ..tasks import detchar
 from . import resource_json
 
 
+@pytest.mark.parametrize('pipeline, path',
+                         [['Fermi', 'data/fermi_grb_gcn.xml'],
+                          ['INTEGRAL', 'data/integral_grb_gcn.xml'],
+                          ['AGILE', 'data/agile_grb_gcn.xml']])
 @patch('gwcelery.tasks.external_skymaps.create_upload_external_skymap')
 @patch('gwcelery.tasks.external_skymaps.get_upload_external_skymap.run')
 @patch('gwcelery.tasks.detchar.dqr_json', return_value='dqrjson')
@@ -22,12 +26,13 @@ from . import resource_json
 def test_handle_create_grb_event(mock_create_event, mock_get_event,
                                  mock_upload, mock_json,
                                  mock_get_upload_external_skymap,
-                                 mock_create_upload_external_skymap):
-    text = resource_string(__name__, 'data/fermi_grb_gcn.xml')
+                                 mock_create_upload_external_skymap,
+                                 pipeline, path):
+    text = resource_string(__name__, path)
     external_triggers.handle_grb_gcn(payload=text)
     mock_create_event.assert_called_once_with(filecontents=text,
                                               search='GRB',
-                                              pipeline='Fermi',
+                                              pipeline=pipeline,
                                               group='External',
                                               labels=None)
     calls = [
@@ -51,6 +56,10 @@ def test_handle_create_grb_event(mock_create_event, mock_get_event,
             ['data_quality'])
     ]
     mock_upload.assert_has_calls(calls, any_order=True)
+    gcn_type_dict = {'Fermi': 115, 'INTEGRAL': 53, 'AGILE': 105}
+    time_dict = {'Fermi': '2018-05-24T18:35:45',
+                 'INTEGRAL': '2017-02-03T19:00:05',
+                 'AGILE': '2019-03-19T19:40:49'}
     mock_create_upload_external_skymap.assert_called_once_with(
         {'graceid': 'E1',
          'gpstime': 1,
@@ -69,7 +78,7 @@ def test_handle_create_grb_event(mock_create_event, mock_get_event,
              'self': 'https://gracedb.ligo.org/events/E356793/'
                   }
          },
-        115, '2018-05-24T18:35:45')
+        gcn_type_dict[pipeline], time_dict[pipeline])
 
 
 @patch('gwcelery.tasks.gracedb.get_events', return_value=[])

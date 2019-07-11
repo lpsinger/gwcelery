@@ -1,0 +1,62 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<voe:VOEvent
+      ivorn="ivo://nasa.gsfc.gcn/AGILE#A_Alert_2019-03-05T13:05:19.33_000000-053"
+      role="observation" version="2.0"
+      xmlns:voe="http://www.ivoa.net/xml/VOEvent/v2.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.ivoa.net/xml/VOEvent/v2.0  http://www.ivoa.net/xml/VOEvent/VOEvent-v2.0.xsd" >
+  <Who>
+    <AuthorIVORN>ivo://nasa.gsfc.tan/gcn</AuthorIVORN>
+    <Author>
+      <shortName>AGILE (via VO-GCN)</shortName>
+      <contactName>Marco Feroci</contactName>
+      <contactPhone>+39-06-4993-4099</contactPhone>
+      <contactEmail>feroci@ias.rm.cnr.it</contactEmail>
+    </Author>
+    <Date>2019-03-19T19:40:49</Date>
+    <Description>This VOEvent message was created with GCN VOE version: 1.33 05mar19</Description>
+  </Who>
+  <What>
+    <Param name="Packet_Type"  value="105" />
+    <Param name="Pkt_Ser_Num"  value="1" />
+    <Param name="TrigID"       value="0" ucd="meta.id" />
+    <Param name="Burst_TJD"    value="18561" unit="days" ucd="time" />
+    <Param name="Burst_SOD"    value="70833.67" unit="sec" ucd="time" />
+  </What>
+  <WhereWhen>
+    <ObsDataLocation>
+      <ObservatoryLocation id="GEOLUN" />
+      <ObservationLocation>
+        <AstroCoordSystem id="UTC-FK5-GEO" />
+        <AstroCoords coord_system_id="UTC-FK5-GEO">
+          <Time unit="s">
+            <TimeInstant>
+              <ISOTime>2019-03-05T19:40:33.67</ISOTime>
+            </TimeInstant>
+          </Time>
+          <Position2D unit="deg">
+            <Name1>RA</Name1>
+            <Name2>Dec</Name2>
+            <Value2>
+              <C1>0.0000</C1>
+              <C2>4.3526</C2>
+            </Value2>
+            <Error2Radius>0.0000</Error2Radius>
+          </Position2D>
+        </AstroCoords>
+      </ObservationLocation>
+    </ObsDataLocation>
+  <Description>The RA,Dec coordinates are of the type: source_object.</Description>
+  </WhereWhen>
+  <How>
+    <Description>AGILE Satellite, SuperAGILE Instrument</Description>
+    <Reference uri="http://gcn.gsfc.nasa.gov/agile.html" type="url" />
+  </How>
+  <Why>
+    <Inference probability="0.9">
+      <Concept>process.variation.burst;em.gamma</Concept>
+    </Inference>
+  </Why>
+  <Description>
+  </Description>
+</voe:VOEvent>

@@ -80,6 +80,10 @@ def handle_snews_gcn(payload):
              gcn.NoticeType.FERMI_GBM_FIN_POS,
              gcn.NoticeType.SWIFT_BAT_GRB_POS_ACK,
              gcn.NoticeType.FERMI_GBM_SUBTHRESH,
+             gcn.NoticeType.INTEGRAL_WAKEUP,
+             gcn.NoticeType.INTEGRAL_REFINED,
+             gcn.NoticeType.INTEGRAL_OFFLINE,
+             gcn.NoticeType.AGILE_MCAL_ALERT,
              queue='exttrig',
              shared=False)
 def handle_grb_gcn(payload):
@@ -98,7 +102,9 @@ def handle_grb_gcn(payload):
         trig_id = root.find("./What/Param[@name='Trans_Num']").attrib['value']
 
     stream_obsv_dict = {'/SWIFT': 'Swift',
-                        '/Fermi': 'Fermi'}
+                        '/Fermi': 'Fermi',
+                        '/INTEGRAL': 'INTEGRAL',
+                        '/AGILE': 'AGILE'}
     event_observatory = stream_obsv_dict[stream_path]
 
     reliability = root.find("./What/Param[@name='Reliability']")
@@ -170,6 +176,8 @@ def handle_grb_gcn(payload):
                  'mdc_superevent',
                  'external_fermi',
                  'external_swift',
+                 'external_integral',
+                 'external_agile',
                  shared=False)
 def handle_grb_lvalert(alert):
     """Parse an LVAlert message related to superevents/GRB external triggers

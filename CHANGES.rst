@@ -32,6 +32,8 @@ Changelog
     VOEvents, because that argument was removed from the GraceDB server and
     client over a year ago.
 
+-   Add INTEGRAL and AGILE MCAL to GRB pipelines.
+
 0.10.0 (2020-02-07)
 -------------------
 

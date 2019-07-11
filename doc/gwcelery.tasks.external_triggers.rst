@@ -1,8 +1,8 @@
 gwcelery.tasks.external_triggers module
 ---------------------------------------
 
-This module listens to the `GCNs` from SNEWS and the Fermi and Swift
-missions. It is also responsible for carrying out tasks related to
+This module listens to the `GCNs` from SNEWS and the Fermi, Swift, INTEGRAL,
+and AGILE missions. It is also responsible for carrying out tasks related to
 external trigger-gravitational wave coincidences, including looking for
 temporal coincidences, creating combined GRB-GW sky localization probability
 maps, and computing their joint temporal and spatio-temporal false alarm
@@ -15,8 +15,8 @@ There are two GCN and two LVAlert message handlers in the
   each SNEWS GCN.
 
 * :meth:`~gwcelery.tasks.external_triggers.handle_grb_gcn` is called for
-  each Fermi and Swift GCN.
-
+  each GRB GCN such as Fermi, Swift, INTEGRAL, and AGILE MCAL.
+    
 * :meth:`~gwcelery.tasks.external_triggers.handle_sn_lvalert` is called
   for each SNEWS external trigger and superevent LVAlert.
 
@@ -50,9 +50,9 @@ Flow Chart
         label="SNEWS GCN recieved"
     ]
 
-    Fermi_Swift_GCN [
+    GRB_GCN [
         style="rounded"
-        label="Fermi or Swift\nGCN recieved"
+        label="GRB\nGCN recieved"
     ]
 
     subgraph cluster_gcn_handle {
@@ -77,7 +77,7 @@ Flow Chart
         lhead = cluster_gcn_handle
     ]
 
-    Fermi_Swift_GCN -> Event_exists_in_Gracedb [
+    GRB_GCN -> Event_exists_in_Gracedb [
         lhead = cluster_gcn_handle
     ]
 

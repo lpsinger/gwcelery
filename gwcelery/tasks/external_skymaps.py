@@ -277,8 +277,12 @@ def write_to_fits(skymap, event, notice_type, notice_date):
 
     """
     notice_type_dict = {
+        '53': 'INTEGRAL_WAKEUP',
+        '54': 'INTEGRAL_REFINED',
+        '55': 'INTEGRAL_OFFLINE',
         '60': 'SWIFT_BAT_GRB_ALERT',
         '61': 'SWIFT_BAT_GRB_POSITION',
+        '105': 'AGILE_MCAL_ALERT',
         '110': 'FERMI_GBM_ALERT',
         '111': 'FERMI_GBM_FLT_POS',
         '112': 'FERMI_GBM_GND_POS',
