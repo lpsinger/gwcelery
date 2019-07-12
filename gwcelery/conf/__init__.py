@@ -18,12 +18,17 @@ import getpass
 import os
 
 # Celery application settings.
-# Use pickle serializer, because it supports byte values.
 
+# Use pickle serializer, because it supports byte values.
 accept_content = ['json', 'pickle']
 event_serializer = 'json'
 result_serializer = 'pickle'
 task_serializer = 'pickle'
+
+# Task priority settings.
+task_default_priority = 0
+task_queue_max_priority = 1
+priority_steps = list(range(task_queue_max_priority + 1))
 
 # GWCelery-specific settings.
 

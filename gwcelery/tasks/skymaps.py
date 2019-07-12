@@ -92,7 +92,7 @@ def plot_allsky(filecontents):
         return pngfile.read()
 
 
-@app.task(queue='openmp', shared=False)
+@app.task(priority=1, queue='openmp', shared=False)
 def plot_volume(filecontents):
     """Plot a 3D volume rendering of a sky map using the command-line tool
     :doc:`ligo-skymap-plot-volume <ligo/skymap/tool/ligo_skymap_plot_volume>`.
