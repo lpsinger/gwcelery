@@ -10,6 +10,8 @@ Changelog
     notices because only the latter are required for GCNs but both kinds of
     tasks compete for slots in the resource-intensive OpenMP queue.
 
+-   Update lalsuite to 6.59.
+
 0.7.1 (2019-07-12)
 ------------------
 
