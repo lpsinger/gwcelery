@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.7.1 (unreleased)
+0.7.1 (2019-07-12)
 ------------------
 
 -   The initial alert workflow will now consider only ``*.fits.gz`` sky maps
