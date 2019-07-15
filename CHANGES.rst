@@ -4,11 +4,12 @@ Changelog
 0.7.2 (unreleased)
 ------------------
 
--   Assign ``gwcelery.tasks.skymaps.plot_volume`` tasks a reduced Celery as
-    compared to ``gwcelery.tasks.bayestar.localize`` so that the latter are
-    given preference. This ought to speed up the preparation of preliminary GCN
-    notices because only the latter are required for GCNs but both kinds of
-    tasks compete for slots in the resource-intensive OpenMP queue.
+-   Assign ``gwcelery.tasks.skymaps.plot_volume`` tasks a reduced Celery
+    priority as compared to ``gwcelery.tasks.bayestar.localize`` so that the
+    latter are given preference. This ought to speed up the preparation of
+    preliminary GCN notices because only the latter are required for GCNs but
+    both kinds of tasks compete for slots in the resource-intensive OpenMP
+    queue.
 
 -   Update lalsuite to 6.59.
 
