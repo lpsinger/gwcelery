@@ -162,7 +162,7 @@ def handle_cbc_event(alert):
             )
             |
             gracedb.create_label.si('EMBRIGHT_READY', graceid)
-        ).delay(priority=priority)
+        ).apply_async(priority=priority)
 
         # p_astro calculation for other pipelines
         if pipeline != 'gstlal' or alert['object']['search'] == 'MDC':
@@ -180,7 +180,7 @@ def handle_cbc_event(alert):
                 )
                 |
                 gracedb.create_label.si('PASTRO_READY', graceid)
-            ).delay(priority=priority)
+            ).apply_async(priority=priority)
 
     if alert['alert_type'] != 'log':
         return
@@ -202,7 +202,7 @@ def handle_cbc_event(alert):
             )
             |
             gracedb.create_label.si('SKYMAP_READY', graceid)
-        ).delay(priority=priority)
+        ).apply_async(priority=priority)
     elif filename == 'ranking_data.xml.gz':
         (
             ordered_group(
@@ -218,7 +218,7 @@ def handle_cbc_event(alert):
             )
             |
             gracedb.create_label.si('PASTRO_READY', graceid)
-        ).delay(priority=priority)
+        ).apply_async(priority=priority)
 
 
 @lvalert.handler('superevent',
