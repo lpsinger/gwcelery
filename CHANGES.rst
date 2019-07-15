@@ -14,7 +14,7 @@ Changelog
 -   Assign CBC annotation tasks a reduced priority for events that do not pass
     the public alert threshold.
 
--   Update lalsuite to 6.59.
+-   Update lalsuite to 6.60.
 
 0.7.1 (2019-07-12)
 ------------------
