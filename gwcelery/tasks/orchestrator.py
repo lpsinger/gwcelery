@@ -136,6 +136,7 @@ def handle_cbc_event(alert):
 
     graceid = alert['uid']
     priority = 0 if superevents.should_publish(alert['object']) else 1
+
     # em_bright and p_astro calculation
     if alert['alert_type'] == 'new':
         pipeline = alert['object']['pipeline'].lower()
