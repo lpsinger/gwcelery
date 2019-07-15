@@ -135,6 +135,7 @@ def handle_cbc_event(alert):
     """  # noqa: E501
 
     graceid = alert['uid']
+    priority = 0 if superevents.should_publish(alert['object']) else 1
     # em_bright and p_astro calculation
     if alert['alert_type'] == 'new':
         pipeline = alert['object']['pipeline'].lower()
@@ -160,7 +161,7 @@ def handle_cbc_event(alert):
             )
             |
             gracedb.create_label.si('EMBRIGHT_READY', graceid)
-        ).delay()
+        ).delay(priority=priority)
 
         # p_astro calculation for other pipelines
         if pipeline != 'gstlal' or alert['object']['search'] == 'MDC':
@@ -178,7 +179,7 @@ def handle_cbc_event(alert):
                 )
                 |
                 gracedb.create_label.si('PASTRO_READY', graceid)
-            ).delay()
+            ).delay(priority=priority)
 
     if alert['alert_type'] != 'log':
         return
@@ -200,7 +201,7 @@ def handle_cbc_event(alert):
             )
             |
             gracedb.create_label.si('SKYMAP_READY', graceid)
-        ).delay()
+        ).delay(priority=priority)
     elif filename == 'ranking_data.xml.gz':
         (
             ordered_group(
@@ -216,7 +217,7 @@ def handle_cbc_event(alert):
             )
             |
             gracedb.create_label.si('PASTRO_READY', graceid)
-        ).delay()
+        ).delay(priority=priority)
 
 
 @lvalert.handler('superevent',
