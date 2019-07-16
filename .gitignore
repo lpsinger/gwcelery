@@ -13,6 +13,7 @@ dist
 htmlcov
 
 # Files created by running gwcelery inside the source directory
+appendonly.aof
 celerybeat-schedule
 *.pid
 *.log
