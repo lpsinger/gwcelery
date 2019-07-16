@@ -184,10 +184,10 @@ def test_handle_superevent_creation(mock_raven_coincidence_search,
 @patch('gwcelery.tasks.gracedb.get_superevent',
        return_value={'preferred_event': 'M4634'})
 @patch('gwcelery.tasks.gracedb.get_event', return_value={'group': 'CBC'})
-@patch('gwcelery.tasks.raven.calculate_spacetime_coincidence_far')
+@patch('gwcelery.tasks.raven.calculate_coincidence_far')
 @patch('gwcelery.tasks.ligo_fermi_skymaps.create_combined_skymap')
 def test_handle_superevent_emcoinc_label1(mock_create_combined_skymap,
-                                          mock_calc_spacetime_coinc_far,
+                                          mock_calc_coinc_far,
                                           mock_get_event, mock_get_superevent,
                                           mock_se_cls, mock_exttrig_cls):
     """Test dispatch of an LVAlert message for a superevent EM_COINC label
@@ -200,8 +200,8 @@ def test_handle_superevent_emcoinc_label1(mock_create_combined_skymap,
 
     external_triggers.handle_grb_lvalert(alert)
     mock_create_combined_skymap.assert_called_once_with('S180616h')
-    mock_calc_spacetime_coinc_far.assert_called_once_with('S180616h',
-                                                          'CBC')
+    mock_calc_coinc_far.assert_called_once_with('S180616h',
+                                                'CBC')
 
 
 @patch('gwcelery.tasks.gracedb.upload.run')

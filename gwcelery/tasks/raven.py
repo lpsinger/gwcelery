@@ -8,41 +8,6 @@ from . import gracedb
 from . import ligo_fermi_skymaps
 
 
-def calculate_spacetime_coincidence_far(gracedb_id, group):
-    """Compute spatio-temporal coincidence FAR for GRB external trigger and
-    superevent coincidence by calling ligo.raven.search.calc_signif_gracedb.
-    Note: this will only run if skymaps from both triggers are available to
-    download.
-
-    Parameters
-    ----------
-    gracedb_id: str
-        ID of the superevent trigger used by GraceDB
-    group: str
-        CBC or Burst; group of the preferred_event associated with the
-        gracedb_id superevent
-    """
-    preferred_skymap = ligo_fermi_skymaps.get_preferred_skymap(gracedb_id)
-    em_events = gracedb.get_superevent(gracedb_id)['em_events']
-
-    tl_cbc, th_cbc = app.conf['raven_coincidence_windows']['GRB_CBC']
-    tl_burst, th_burst = app.conf['raven_coincidence_windows']['GRB_Burst']
-
-    if group == 'CBC':
-        tl, th = tl_cbc, th_cbc
-    elif group == 'Burst':
-        tl, th = tl_burst, th_burst
-
-    canvas = chain()
-    for exttrig_id in em_events:
-        if gracedb.download('glg_healpix_all_bn_v00.fit', exttrig_id):
-            canvas |= (
-                calc_signif.si(gracedb_id, exttrig_id, tl, th, incl_sky=True,
-                               se_fitsfile=preferred_skymap))
-
-    return canvas
-
-
 def calculate_coincidence_far(gracedb_id, group):
     """Compute temporal coincidence FAR for external trigger and superevent
     coincidence by calling ligo.raven.search.calc_signif_gracedb.
@@ -55,8 +20,12 @@ def calculate_coincidence_far(gracedb_id, group):
         CBC or Burst; group of the preferred_event associated with the
         gracedb_id superevent
     """
-    em_events = gracedb.get_superevent(gracedb_id)['em_events']
+    try:
+        preferred_skymap = ligo_fermi_skymaps.get_preferred_skymap(gracedb_id)
+    except ValueError:
+        preferred_skymap = None
 
+    em_events = gracedb.get_superevent(gracedb_id)['em_events']
     tl_cbc, th_cbc = app.conf['raven_coincidence_windows']['GRB_CBC']
     tl_burst, th_burst = app.conf['raven_coincidence_windows']['GRB_Burst']
 
@@ -67,10 +36,14 @@ def calculate_coincidence_far(gracedb_id, group):
 
     canvas = chain()
     for exttrig_id in em_events:
-        if gracedb.get_event(exttrig_id)['search'] == 'GRB':
+        if gracedb.download('glg_healpix_all_bn_v00.fit', exttrig_id) and \
+                preferred_skymap:
+            canvas |= (
+                calc_signif.si(gracedb_id, exttrig_id, tl, th, incl_sky=True,
+                               se_fitsfile=preferred_skymap))
+        else:
             canvas |= (
                 calc_signif.si(gracedb_id, exttrig_id, tl, th, incl_sky=False))
-
     return canvas
 
 

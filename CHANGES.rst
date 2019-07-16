@@ -22,6 +22,9 @@ Changelog
 -   Update ligo-raven version to 1.15. Apply EM_COINC label in raven.py to
     give more control and prevent race conditions.
 
+-   Use the space-time coincidence FAR as the default for RAVEN, use the
+    temporal coincidence FAR when sky maps are not available.
+
 0.7.1 (2019-07-12)
 ------------------
 
