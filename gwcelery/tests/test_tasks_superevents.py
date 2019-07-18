@@ -1,5 +1,8 @@
+from celery import exceptions
 import pytest
 from unittest.mock import patch
+
+from ligo.gracedb import rest
 
 from ..tasks import gracedb, superevents
 from . import resource_json
@@ -258,6 +261,31 @@ def test_parse_trigger_raising():
         superevents.handle(garbage_payload)
 
 
+@patch('gwcelery.tasks.gracedb.create_superevent',
+       side_effect=rest.HTTPError(502, "Bad Gateway", "Bad Gateway"))
+def test_raising_http_error(failing_create_superevent):
+    payload = {
+        "uid": "G000003",
+        "alert_type": "new",
+        "description": "",
+        "object": {
+            "graceid": "G000003",
+            "gpstime": 100.0,
+            "pipeline": "gstlal",
+            "group": "CBC",
+            "far": 1.e-31,
+            "instruments": "H1,L1",
+            "extra_attributes": {
+                "CoincInspiral": {"snr": 20}
+            },
+            "offline": False
+        }
+    }
+    with pytest.raises(gracedb.RetryableHTTPError):
+        with pytest.raises(exceptions.Retry):
+            superevents.handle.delay(payload)
+
+
 def test_parse_trigger_cbc_1(mock_db):
     """New trigger G000000, less significant than already
     existing superevent. Superevent window much larger than event
@@ -349,11 +377,9 @@ def test_parse_trigger_cbc_4(mock_db):
                    uid='G000002')
     superevents.handle(payload)
     # neither method is called due to low far
-    with patch.object(gracedb.client, 'addEventToSuperevent') as p1, \
-            patch.object(gracedb.client, 'createSuperevent') as p2:
+    with patch.object(superevents, 'process') as mock_process:
         superevents.handle(payload)
-        p1.assert_not_called()
-        p2.assert_not_called()
+        mock_process.assert_not_called()
 
 
 def test_parse_trigger_burst_1(mock_db):

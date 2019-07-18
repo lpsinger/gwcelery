@@ -16,6 +16,9 @@ Changelog
 
 -   Update lalsuite to 6.60.
 
+-   Ensure gracedb calls to create and update superevents are retried in
+    the event of runtime server side errors.
+
 0.7.1 (2019-07-12)
 ------------------
 
