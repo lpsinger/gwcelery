@@ -188,7 +188,7 @@ def superevent_initial_alert_download(filename, graceid):
         raise ValueError
 
 
-@patch('gwcelery.tasks.gracedb.get_log',
+@patch('gwcelery.tasks.gracedb.get_log.run',
        return_value=[{'tag_names': ['sky_loc', 'public'],
                       'filename': 'foobar.fits.gz'},
                      {'tag_names': ['em_bright'],

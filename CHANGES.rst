@@ -4,7 +4,9 @@ Changelog
 0.8.2 (unreleased)
 ------------------
 
--   No changes yet.
+-   Ensure that public tag is applied/apply the tag to data products before
+    sending out a GCN notice. This will prevent human errors related to not
+    exposing links before sending a GCN notice.
 
 0.8.1 (2019-07-29)
 ------------------
