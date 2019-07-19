@@ -11,8 +11,8 @@ Changelog
     both kinds of tasks compete for slots in the resource-intensive OpenMP
     queue.
 
--   Assign CBC annotation tasks a reduced priority for events that do not pass
-    the public alert threshold.
+-   Reduce priority for CBC annotation tasks for events that do not pass the
+    public alert threshold.
 
 -   Update lalsuite to 6.60.
 
