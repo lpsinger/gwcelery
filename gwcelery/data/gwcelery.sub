@@ -18,47 +18,47 @@ queue
 arguments = "gwcelery beat"
 description = gwcelery-beat
 error = gwcelery-beat.log
-output =
+output = gwcelery-beat.log
 queue
 
 arguments = "gwcelery worker -l info -n gwcelery-worker -Q celery --lvalert"
 description = gwcelery-worker
 error = gwcelery-worker.log
-output =
+output = gwcelery-worker.log
 queue
 
 arguments = "gwcelery worker -l info -n gwcelery-openmp-worker -Q openmp -c 1"
 description = gwcelery-openmp-worker
 error = gwcelery-openmp-worker.log
-output =
+output = gwcelery-openmp-worker.log
 queue
 
 arguments = "gwcelery worker -l info -n gwcelery-exttrig-worker -Q exttrig -c 1"
 description = gwcelery-exttrig-worker
 error = gwcelery-exttrig-worker.log
-output =
+output = gwcelery-exttrig-worker.log
 queue
 
 arguments = "gwcelery worker -l info -n gwcelery-superevent-worker -Q superevent -c 1"
 description = gwcelery-superevent-worker
 error = gwcelery-superevent-worker.log
-output =
+output = gwcelery-superevent-worker.log
 queue
 
 arguments = "gwcelery worker -l info -n gwcelery-voevent-worker -Q voevent -P solo"
 description = gwcelery-voevent-worker
 error = gwcelery-voevent-worker.log
-output =
+output = gwcelery-voevent-worker.log
 queue
 
 arguments = "gwcelery flask run --with-threads --host 127.0.0.1"
 description = gwcelery-flask
 error = gwcelery-flask.log
-output =
+output = gwcelery-flask.log
 queue
 
 arguments = "gwcelery flower --address=127.0.0.1"
 description = gwcelery-flower
 error = gwcelery-flower.log
-output =
+output = gwcelery-flower.log
 queue
