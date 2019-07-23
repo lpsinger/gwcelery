@@ -184,26 +184,19 @@ Currently all False, pending iDQ review (should be done before O3).
 
 p_astro_livetime = 14394240
 """livetime (units: sec) corresponding to mean values of Poisson counts.
-   (Used by :mod:`gwcelery.tasks.p_astro_other`)
+   (Used by :mod:`gwcelery.tasks.p_astro`)
 """
 
 p_astro_url = \
     'http://emfollow.ldas.cit/data/H1L1V1-mean_counts-1126051217-61603201.json'
 """URL for mean values of Poisson counts using which p_astro
-is computed. (Used by :mod:`gwcelery.tasks.p_astro_gstlal` and
-:mod:`gwcelery.tasks.p_astro_other`)
-"""
-
-p_astro_weights_url = 'http://emfollow.ldas.cit/data/' \
-    'H1L1V1-weights-bins_686-1126051217-61603201.h5'
-"""URL for template weights using which p_astro
-is computed. (Used by :mod:`gwcelery.tasks.p_astro_gstlal`)
+is computed. (Used by :mod:`gwcelery.tasks.p_astro`)
 """
 
 p_astro_thresh_url = 'http://emfollow.ldas.cit/data/' \
     'H1L1V1-pipeline-far_snr-thresholds.json'
 """URL for pipeline thresholds on FAR and SNR.
-(Used by :mod:`gwcelery.tasks.p_astro_other`)
+(Used by :mod:`gwcelery.tasks.p_astro`)
 """
 
 em_bright_url = 'http://emfollow.ldas.cit/data/em_bright_classifier.pickle'

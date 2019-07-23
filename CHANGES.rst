@@ -37,6 +37,11 @@ Changelog
     The downside is that task details will remain browsable in Flower for a
     much shorter period.
 
+-   Remove p_astro_gstlal.py module, corresponding test modules and
+    documentation since p_astro will be reported as a pipeline product
+    from gstlal pipeline. The computation for all other pipelines is
+    unaffected.
+
 0.7.1 (2019-07-12)
 ------------------
 
