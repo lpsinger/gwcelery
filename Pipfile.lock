@@ -518,18 +518,18 @@
         },
         "lalsuite": {
             "hashes": [
-                "sha256:147645b1bb950e11149c789ec3d14f9bb69d87e6bb2d2b2ffb14ce325d147840",
-                "sha256:453ac87ea8c562e87996aa3d577e198524ad819cc04397d03f584f1ad6555f2b",
-                "sha256:6c3bee82c0e80e7a5fca2b2ae73cd8126e3f264796671eb61742790b98c9008e",
-                "sha256:77d944e04209a3dd751394ccdf2bbea46d3edf47f02d28784c44ffe213997479",
-                "sha256:84fab5a921d756bdcd04996affa030aacae6cc390e7b890d701886f4da2b8093",
-                "sha256:993d986837c44b84d7cd23f4b8bc4b505d165f0baa5affcde7da6f39efb70a6b",
-                "sha256:be831f448c73fd20a146f2086dfc4ecff8cbeb7d88b137b4decad6852f8a0047",
-                "sha256:d3832fda8e9217091f48068ab73f817af86b4f3336dc77c94fac3212bbb6ffb5",
-                "sha256:df33006b264cc9eea6cf611d65551985a5cf7a9427abd4f8fcd85a0b5b03a87f",
-                "sha256:e85ff8423458900b88732836ded457603c59ffd14f9e39fe91313c2cc696cfca"
+                "sha256:04e1d920cd8df53df20ee204f3e91b928341112cda8cfc3ebb37b4ea57df339f",
+                "sha256:1dddb5543c8f84afda8713fbe637c2f6e5c9ca9e45ba965a87869357c1b126aa",
+                "sha256:67361bffd637b02e608c0ad9786532c32b6e5773f89fa09ba4f2a23aded44faf",
+                "sha256:6ec677d6be0a40916d2030b6bdbefedcb039688ec3a0eed9cef596e0e7983414",
+                "sha256:6f25490d96299f9cd2de258ee01a0d95825cc0a35bdbaafa1effb607bbad7a90",
+                "sha256:6f4e9d8840d2e6788fd8da8a4d2ec53b5a8d0ae473ea05dd37a3820b6c86c79a",
+                "sha256:8cf510c40825d46b2e96694a2890a5851f800fe7b8f19a7d9fd3987f273734d7",
+                "sha256:92cb638e33a682bc72c82fd43f2f2c44f3f603ff68f5d734f361935c28589083",
+                "sha256:9490303f0eb1652a56f111f496a88656b850b25b2910fe4803666e2b57c04038",
+                "sha256:f18633c0970d9281c8bed45b49579415a83b9648a607ac8794e48d34fe6b87e5"
             ],
-            "version": "==6.59"
+            "version": "==6.60"
         },
         "ligo-followup-advocate": {
             "hashes": [
