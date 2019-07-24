@@ -28,9 +28,6 @@ Changelog
 -   Check if GRB is sub-threshold, set search to be 'SubGRB'. Pass search
     through external triggers pipeline and RAVEN.
 
--   Disable Sentry integration for Tornado to see if it fixes issues with
-    killing GWCelery with ``condor_rm``.
-
 0.7.1 (2019-07-12)
 ------------------
 
