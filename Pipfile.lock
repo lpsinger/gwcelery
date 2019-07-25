@@ -559,13 +559,13 @@
         },
         "ligo.skymap": {
             "hashes": [
-                "sha256:2c221bc84210d918d21bea83b8921c1f39f2adbd3f73260f6b939a48a53195ab",
-                "sha256:a2493213a906c1de020657553c070c74844a62532449f3f200a8ff8a114e7f12",
-                "sha256:a3609a8df1014ed7742df6e80662ea56fc6d543ec4124fe2682713bc6cd012f9",
-                "sha256:d8c331a0526c17d323f1f100aafbe4f22f8e1c9d8ccdf9850b16dcd04462c6f1",
-                "sha256:e8617b36dd4dac0e2fac007d92e43a7fc17978e15df2575dfdde1582e5c63406"
+                "sha256:33f26241a20a3e4681b5d1e17ba2b3c505bf6b3ee22d0fd8f85b9e53ceb0a3bf",
+                "sha256:92511d54f7611fa4068ee6a4a9bef1ee6c03f3e76d6fc1ae48b29a87169373fc",
+                "sha256:af1bc2654362339df7a1084f6de653d064379ed3714e3604fcaa914e3f4cbf6f",
+                "sha256:f9665e6b0e76a89c3967c06d20fa309138a6d7a2529a8582d9bb5c9c678ecf6f",
+                "sha256:fb313297ff17cdabc5f149591029c1a29a0b594b858c22924afd0d4f7bb7f526"
             ],
-            "version": "==0.1.7"
+            "version": "==0.1.8"
         },
         "ligotimegps": {
             "hashes": [
