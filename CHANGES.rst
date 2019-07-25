@@ -44,6 +44,8 @@ Changelog
 
 -   Fix EM_COINC bug where it is being over-applied to superevents.
 
+-   Fix bug where wrong key was called for querying external events.
+
 0.7.1 (2019-07-12)
 ------------------
 

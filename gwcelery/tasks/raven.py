@@ -100,9 +100,9 @@ def coincidence_search(gracedb_id, alert_object, group=None, pipelines=[]):
     if gracedb_id.startswith('E') and raven_search_results:
         for search_result in raven_search_results:
             calculate_coincidence_far(
-                search_result['superevent_id'], group).delay()
+                search_result['superevent'], group).delay()
             gracedb.create_label('EM_COINC',
-                                 search_result['superevent_id']).delay()
+                                 search_result['superevent']).delay()
         gracedb.create_label('EM_COINC', gracedb_id).delay()
 
     elif raven_search_results:
@@ -137,7 +137,7 @@ def search(gracedb_id, alert_object, tl=-5, th=5, group=None,
     -------
         list with the dictionaries of related gracedb events
     """
-    if alert_object.get('superevent_id'):
+    if alert_object.get('superevent'):
         event = gracedb_events.SE(gracedb_id, gracedb=gracedb.client)
         group = None
     else:
@@ -162,7 +162,7 @@ def add_exttrig_to_superevent(raven_search_results, gracedb_id):
     # First determine whether the gracedb_id is for a superevent or exttrig
     if gracedb_id.startswith('E'):
         for superevent in raven_search_results:
-            superevent_id = superevent['superevent_id']
+            superevent_id = superevent['superevent']
             gracedb.add_event_to_superevent(superevent_id, gracedb_id)
     else:
         for exttrig in raven_search_results:
