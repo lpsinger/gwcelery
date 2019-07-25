@@ -28,6 +28,12 @@ Changelog
 -   Check if GRB is sub-threshold, set search to be 'SubGRB'. Pass search
     through external triggers pipeline and RAVEN.
 
+-   Tune Celery's ``result_expires`` setting from its default value of one day
+    to five minutes. Since we pass large byte strings as task arguments and
+    return values, one day is too long to keep task tombstones in the database.
+    This adjustment should reduce the memory footprint of the Redis server
+    during periods with very high rates of GraceDB uploads.
+
 0.7.1 (2019-07-12)
 ------------------
 
