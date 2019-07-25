@@ -115,7 +115,7 @@ def handle_superevent(alert):
                  'cbc_mbtaonline',
                  shared=False)
 def handle_cbc_event(alert):
-    """Peform annotations for CBC events that depend on pipeline-specific
+    """Perform annotations for CBC events that depend on pipeline-specific
     matched-filter parameter estimates.
 
     Notes
