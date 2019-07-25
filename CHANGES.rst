@@ -34,6 +34,9 @@ Changelog
     This adjustment should reduce the memory footprint of the Redis server
     during periods with very high rates of GraceDB uploads.
 
+    The downside is that task details will remain browsable in Flower for a
+    much shorter period.
+
 0.7.1 (2019-07-12)
 ------------------
 
