@@ -116,7 +116,7 @@ The flow chart below illustrates the operation of these two tasks.
     orchestrator_timeout
     -> get_preferred_event
     -> check_vectors
-    -> offline_event 
+    -> offline_event
 
     offline_event -> far_threshold [label = No, lhead = prelim_gcn_checks]
     far_threshold -> dqv [label = Yes, lhead = prelim_gcn_checks]

@@ -16,7 +16,7 @@ There are two GCN and two LVAlert message handlers in the
 
 * :meth:`~gwcelery.tasks.external_triggers.handle_grb_gcn` is called for
   each Fermi and Swift GCN.
-    
+
 * :meth:`~gwcelery.tasks.external_triggers.handle_sn_lvalert` is called
   for each SNEWS external trigger and superevent LVAlert.
 

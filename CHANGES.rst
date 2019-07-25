@@ -95,7 +95,7 @@ Changelog
     failures: amqp <= 2.4.2, kombu <= 4.5.0, vine <= 1.3.0.
 
 -   Prevent subthreshold GRBs with low reliability from being processed as
-    external events. 
+    external events.
 
 -   Add a task in orchestrator.py to generate FITS files and sky map images
     automatically whenever an HDF5 posterior samples file is uploaded.
@@ -201,7 +201,7 @@ Changelog
     ``gwcelery.tasks.detchar.check_vectors`` adds one of the ``DQOK`` or
     ``DQV`` labels, it will now first remove the other label.
 
--   Change exception in VOEevent parsing of Fermi subtreshold alerts to 
+-   Change exception in VOEevent parsing of Fermi subtreshold alerts to
     match real incoming alerts.
 
 -   Update Celery to 4.3.0.
@@ -696,7 +696,7 @@ Changelog
 
 -   Preliminary GCN is not sent for superevents created from offline gw events.
 
--   Add ``dqr_json`` function to ``gwcelery.tasks.detchar``, which uploads a 
+-   Add ``dqr_json`` function to ``gwcelery.tasks.detchar``, which uploads a
     DQR-compatible json to GraceDB with the results of the detchar checks.
 
 -   Depend on ligo.skymap >= 0.0.17.

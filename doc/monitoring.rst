@@ -36,7 +36,7 @@ Flask
 
 GWCelery includes a Flask_ web application that provides forms to manually
 initiate certain tasks.
-    
+
 To start Flask for monitoring during local development, run the following
 command and then navigate to http://localhost:5000/ in your browser::
 

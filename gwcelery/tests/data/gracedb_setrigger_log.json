@@ -1,7 +1,7 @@
 [
   {
     "self": "https://gracedb-dev1.ligo.org/api/superevents/S170717/logs/8/",
-    "N": 8, 
+    "N": 8,
     "comment": "BAYESTAR localization copied from T12345",
     "created": "2018-07-10 14:54:06 UTC",
     "issuer": "min-a.cho@LIGO.ORG",
