@@ -45,25 +45,25 @@
         },
         "astropy": {
             "hashes": [
-                "sha256:0572baf6ff436daceb0a9b796a8f83904afc8acd0bb5490e67cde059d440e432",
-                "sha256:0c77f59f578794c9984875e2a4413ca771432dc1e64d7c4ec0a49ded33f68a60",
-                "sha256:10eac60bea96f5fe7bfa785ef7fcbbedc040d9304242a04f4884218f5dfb0293",
-                "sha256:2204726f369d51834ab46cdb016b2a1f9bd12e115e6bf21333120a3b0fab8d25",
-                "sha256:4a78a8ec9666d0a51a37f03494aaa5012e241ba37053e6c913c039cddee89ede",
-                "sha256:50e27c37a1168fd4b729607ecdd9a29ba8d89f901d4b3c53a63fa88ab9818cbd",
-                "sha256:5a1bf7f52c4c6ee72190bfb1f205c993a4bbcbcae86c79e618b1a08de356d395",
-                "sha256:79f5456d28f9c10893840bf9b8018c96f46a8c165416269e3a80242b82ecc8ab",
-                "sha256:814495f20e1320955a27564acfb64ba17f9a10f3578365c3be4b9bf8c3c49934",
-                "sha256:a803f4b5a8193d51b7e0109019576a0c1f15b79d6b54a9d784664c2b4c97fb0d",
-                "sha256:b27d55543edb2032fddc3f77fef86d202ca6bd2134413746d2c0c29d359bf89b",
-                "sha256:b5d84d2644399c2342c941fc4f188bdb4ab2070a84edf59d54a266386458c74b",
-                "sha256:bfd143d680324c63c12a687a3defba736fd80ea9cb643729ff751e62c3a6246d",
-                "sha256:c814efb88181c707b836e559c931ce800d176d8f66b16271dbf959cabff9cc79",
-                "sha256:cc776d57c8a64e7c2eae99e6a6cc20990e1791dbb2aa6a4bde665e9a6eba3963",
-                "sha256:efa11e5852c2f0f6e15efbf53151a141e4417b956ff94bb0f1db708acb5f085c"
+                "sha256:02bdd19313110601d29d65f1a5cbcd735050f491bdeed516c062209302dcc9c3",
+                "sha256:069526e684f8297e97befdd352a51d09ca1274880fb39495c2afb52bb51aac45",
+                "sha256:11e169b4a4077e77821595d16927df0fa47b7c5b9ed9065e394374962b4bc58a",
+                "sha256:1fbb54f45c1ef44fc632e76b299af0f2932c87fd501b7161d684311892bddd14",
+                "sha256:25c001f8f5047d820be2cc4aa86750c6010a0f67871680d35d838ecde3e85288",
+                "sha256:6f1efd2e9ba505d9faa05becddef410d9551a50af09f6fed05dababa28ab2ad5",
+                "sha256:706c0457789c78285e5464a5a336f5f0b058d646d60f4e5f5ba1f7d5bf424b28",
+                "sha256:724bbacce4b72d4a4158d24ad3cafc7ac15f844a65128d03f674f93e36adf47c",
+                "sha256:7308e28c7c1f5e60d564bc6edeee56a8070fef0736dc5419e0fe17261af80e49",
+                "sha256:839bef4f44541c469f70206b7e089fb93247d799d20f0ba0868d62375011d692",
+                "sha256:95788303b6ba5403a0de9f4eef713a75d62d21a9831e1bb939f912f11b7d3604",
+                "sha256:a77771092664bdea0755af9fb77cac7523b01138983751249cc7673489822d25",
+                "sha256:a9e8073857895fba94590e763d5c9b4e7e19a24dec8c11708c5a6986a87d0d1a",
+                "sha256:b5ca066e2831cdf376dc93d56be57f915ee2b290e9f66254d89b990ddc75f604",
+                "sha256:e642f0957ea0d48d7da7c7d0ff38d271eb71edfe5238033a5e5f16fafe06a5e2",
+                "sha256:ede59589859b5926d405a5e71c5454388f7b071ac6e9a1abad252e47c29ea1cf"
             ],
             "markers": "python_version >= '3.5'",
-            "version": "==3.1.2"
+            "version": "==3.2.1"
         },
         "astropy-healpix": {
             "hashes": [
