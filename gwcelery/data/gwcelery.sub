@@ -11,7 +11,7 @@ JobBatchName = gwcelery
 
 arguments = "redis-server --loglevel verbose --port 0 --unixsocket redis.sock --unixsocketperm 700 --appendonly yes --client-output-buffer-limit normal 0 0 0 --client-output-buffer-limit slave 256mb 64mb 60 --client-output-buffer-limit pubsub 256mb 64mb 60"
 description = redis-server
-error =
+error = gwcelery-redis.log
 output = gwcelery-redis.log
 queue
 
