@@ -45,7 +45,7 @@ def test_raven_search(mock_raven_search, mock_se_cls, mock_exttrig_cls,
     """Test that correct input parameters are used for raven."""
     alert_object = {}
     if event_type == 'SE':
-        alert_object['superevent'] = event_id
+        alert_object['superevent_id'] = event_id
 
     # call raven search
     raven.search(event_id, alert_object)

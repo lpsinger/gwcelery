@@ -137,7 +137,7 @@ def search(gracedb_id, alert_object, tl=-5, th=5, group=None,
     -------
         list with the dictionaries of related gracedb events
     """
-    if alert_object.get('superevent'):
+    if alert_object.get('superevent_id'):
         event = gracedb_events.SE(gracedb_id, gracedb=gracedb.client)
         group = None
     else:
