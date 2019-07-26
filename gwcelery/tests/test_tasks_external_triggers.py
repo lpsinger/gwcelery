@@ -124,7 +124,7 @@ def test_handle_replace_snews_event(mock_get_events, mock_replace_event):
     mock_replace_event.assert_called_once_with('E1', text)
 
 
-@patch('gwcelery.tasks.raven.coincidence_search')
+@patch('gwcelery.tasks.raven.coincidence_search.run')
 def test_handle_grb_exttrig_creation(mock_raven_coincidence_search):
     """Test dispatch of an LVAlert message for an exttrig creation."""
     # Test LVAlert payload.
@@ -142,7 +142,7 @@ def test_handle_grb_exttrig_creation(mock_raven_coincidence_search):
 @pytest.mark.parametrize('calls, path',
                          [[False, 'data/lvalert_snews_test_creation.json'],
                           [True, 'data/lvalert_snews_creation.json']])
-@patch('gwcelery.tasks.raven.coincidence_search')
+@patch('gwcelery.tasks.raven.coincidence_search.run')
 def test_handle_sntrig_creation(mock_raven_coincidence_search, calls, path):
     """Test dispatch of an LVAlert message for SNEWS alerts."""
     # Test LVAlert payload.
@@ -162,7 +162,7 @@ def test_handle_sntrig_creation(mock_raven_coincidence_search, calls, path):
 @patch('gwcelery.tasks.gracedb.get_superevent',
        return_value={'preferred_event': 'M4634'})
 @patch('gwcelery.tasks.gracedb.get_event', return_value={'group': 'CBC'})
-@patch('gwcelery.tasks.raven.coincidence_search')
+@patch('gwcelery.tasks.raven.coincidence_search.run')
 def test_handle_superevent_creation(mock_raven_coincidence_search,
                                     mock_get_event,
                                     mock_get_superevent):
