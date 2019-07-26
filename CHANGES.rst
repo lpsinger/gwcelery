@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.8.0 (unreleased)
+0.8.0 (2019-07-26)
 ------------------
 
 -   Assign ``gwcelery.tasks.skymaps.plot_volume`` tasks a reduced Celery
