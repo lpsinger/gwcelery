@@ -15,6 +15,10 @@ export PATH="$(python -m site --user-base)/bin${PATH+:${PATH}}"
 # `pip install` should always behave as if it was called with `--user`.
 export PIP_USER=1
 
+# Disable OpenMP threading by default.
+# In this environmnet, it will be enabled selectively by processes that use it.
+export OMP_NUM_THREADS=1
+
 # Unless the user has set `GSSAPIDelegateCredentials no` in their ~/.ssh/config
 # file, their Globus certificate will be copied in when they log in, shadowing
 # the robot certificate. Set these environment variables to override.
