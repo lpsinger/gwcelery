@@ -31,7 +31,7 @@ pytest >= 3.0
 python-ligo-lw
 safe-netrc
 scipy <= 1.2.2  # This is because lalinference postprocess is not compatible with scipy >= 1.3.0. See https://git.ligo.org/lscsoft/lalsuite/issues/170.
-sentry-sdk[flask] <= 0.10.1  # sentry-sdk 0.10.2 causes Celery workers to ignore SIGTERM signals. See https://git.ligo.org/emfollow/gwcelery/issues/191.
+sentry-sdk[flask]
 service_identity  # We don't actually use this package, but it silences some annoying warnings from twistd.
 sleek-lvalert >= 0.0.4
 tornado < 6  # Tornado 6.0.0 breaks Flower because it removed tornado.web.asynchronous
