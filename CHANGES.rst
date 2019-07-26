@@ -17,7 +17,7 @@ Changelog
 -   Update lalsuite to 6.60.
 
 -   Ensure gracedb calls to create and update superevents are retried in
-    the event of runtime server side errors.
+    the event of transient GraceDB API errors.
 
 -   Update ligo-raven version to 1.15. Apply EM_COINC label in raven.py to
     give more control and prevent race conditions.
@@ -37,10 +37,9 @@ Changelog
     The downside is that task details will remain browsable in Flower for a
     much shorter period.
 
--   Remove p_astro_gstlal.py module, corresponding test modules and
-    documentation since p_astro will be reported as a pipeline product
-    from gstlal pipeline. The computation for all other pipelines is
-    unaffected.
+-   Remove p_astro_gstlal.py module, corresponding test modules, and
+    documentation; p_astro will be reported as a pipeline product from gstlal.
+    The computation of p_astro for all other pipelines is unaffected.
 
 -   Fix EM_COINC bug where it is being over-applied to superevents.
 
