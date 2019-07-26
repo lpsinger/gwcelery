@@ -46,6 +46,10 @@ Changelog
 
 -   Fix bug where wrong key was called for querying external events.
 
+-   Downgrade sentry-sdk to 0.10.1. Version 0.10.2 caused our Celery workers to
+    ignore ``SIGTERM`` signals, which made it impossible to stop the workers
+    gracefully using ``gwcelery condor rm``.
+
 0.7.1 (2019-07-12)
 ------------------
 
