@@ -15,7 +15,6 @@ from ..tasks import gracedb, raven
 @patch('gwcelery.tasks.gracedb.create_label.run')
 @patch('gwcelery.tasks.raven.add_exttrig_to_superevent.run')
 @patch('gwcelery.tasks.raven.search.run', return_value=[{'superevent_id': 'S5',
-                                                         'superevent': 'S6',
                                                          'graceid': 'E2'}])
 @patch('gwcelery.tasks.raven.calculate_coincidence_far')
 def test_coincidence_search(mock_calculate_coincidence_far,
@@ -64,7 +63,7 @@ def test_raven_search(mock_raven_search, mock_se_cls, mock_exttrig_cls,
 @pytest.mark.parametrize(
     'graceid,raven_search_results',
     [['S1234', [{'graceid': 'E1'}, {'graceid': 'E2'}, {'graceid': 'E3'}]],
-     ['E1234', [{'superevent': 'S1'}]]])
+     ['E1234', [{'superevent_id': 'S1'}]]])
 @patch('gwcelery.tasks.gracedb.add_event_to_superevent')
 def test_add_exttrig_to_superevent(mock_add_event_to_superevent,
                                    graceid, raven_search_results):
@@ -74,7 +73,7 @@ def test_add_exttrig_to_superevent(mock_add_event_to_superevent,
     raven.add_exttrig_to_superevent(raven_search_results, graceid)
     if graceid.startswith('E'):
         for superevent in raven_search_results:
-            superevent_id = superevent['superevent']
+            superevent_id = superevent['superevent_id']
             mock_add_event_to_superevent.assert_called_with(
                 superevent_id, graceid)
     if graceid.startswith('S'):

@@ -6,6 +6,9 @@ Changelog
 
 -   Downgrade lalsuite to 6.59.
 
+-   Revert change that tried to fix incorrect key for querying external
+    events. The keys were correct before.
+
 0.8.0 (2019-07-26)
 ------------------
 
