@@ -97,19 +97,19 @@ def coincidence_search(gracedb_id, alert_object, group=None, pipelines=[]):
                                   tl, th, group, pipelines)
     add_exttrig_to_superevent(raven_search_results, gracedb_id)
 
-    if gracedb_id.startswith('E'):
+    if gracedb_id.startswith('E') and raven_search_results:
         for search_result in raven_search_results:
             calculate_coincidence_far(
                 search_result['superevent_id'], group).delay()
             gracedb.create_label('EM_COINC',
                                  search_result['superevent_id']).delay()
+        gracedb.create_label('EM_COINC', gracedb_id).delay()
 
-    else:
+    elif raven_search_results:
         calculate_coincidence_far(gracedb_id, group).delay()
         for search_result in raven_search_results:
             gracedb.create_label('EM_COINC', search_result['graceid']).delay()
-
-    gracedb.create_label('EM_COINC', gracedb_id).delay()
+        gracedb.create_label('EM_COINC', gracedb_id).delay()
 
 
 @app.task(shared=False)

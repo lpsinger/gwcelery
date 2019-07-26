@@ -42,6 +42,8 @@ Changelog
     from gstlal pipeline. The computation for all other pipelines is
     unaffected.
 
+-   Fix EM_COINC bug where it is being over-applied to superevents.
+
 0.7.1 (2019-07-12)
 ------------------
 
