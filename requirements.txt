@@ -4,7 +4,7 @@ kombu <= 4.5.0
 vine <= 1.3.0
 
 aiocontextvars; python_version <= "3.6"  # see https://docs.sentry.io/platforms/python/tornado/
-astropy
+astropy <= 3.1.2
 celery[redis] == 4.3.0
 comet
 corner
