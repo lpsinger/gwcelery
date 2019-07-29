@@ -4,7 +4,7 @@ Changelog
 0.8.1 (unreleased)
 ------------------
 
--   No changes yet.
+-   Downgrade lalsuite to 6.59.
 
 0.8.0 (2019-07-26)
 ------------------
