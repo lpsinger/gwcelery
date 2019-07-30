@@ -8,6 +8,10 @@ Changelog
     sending out a GCN notice. This will prevent human errors related to not
     exposing links before sending a GCN notice.
 
+-   Don't read the entire HTTP response from GraceDB POST requests. We only
+    need the HTTP status code. This change might speed up GraceDB API calls a
+    little bit.
+
 0.8.1 (2019-07-29)
 ------------------
 
