@@ -281,7 +281,7 @@ release:
     # Figure out which user to log in as (emfollow or emfollow-playground)
     - mkdir -p ~/.ssh
     - |
-      cat > ~/.ssh/.config <<EOF
+      cat > ~/.ssh/config <<EOF
       Host emfollow-playground.*
       User emfollow-playground
       Host emfollow.*
@@ -301,7 +301,6 @@ release:
     - |
       gsissh -T $REMOTE_HOST bash <<EOF
       set -e
-      whoami
       if [ ! -d .git ]; then git init; fi
       git fetch ${CI_REPOSITORY_URL}
       git fetch --tags ${CI_REPOSITORY_URL}
