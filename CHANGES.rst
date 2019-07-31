@@ -17,6 +17,9 @@ Changelog
 -   Make ``gracedb.create_superevent`` idempotent by catching ``HTTPError``
     from GraceDb when the transaction is retried on ``RetryableHTPError``.
 
+-   Fix bug where neither the space-time or temporal coincidence far is
+    calculated if external sky map is unavilable. 
+
 0.8.1 (2019-07-29)
 ------------------
 
