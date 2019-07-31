@@ -289,6 +289,7 @@ release:
       EOF
     - REMOTE_HOST=${CI_ENVIRONMENT_URL##*//}
     - REMOTE_HOST=${REMOTE_HOST%%/*}
+    - echo $REMOTE_HOST
 
 # Continuous deployment.
 # Note that all deployments except playground/CIT are manual.
