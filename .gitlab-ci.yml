@@ -300,7 +300,7 @@ release:
     # Update the repository.
     - |
       gsissh -T $REMOTE_HOST bash <<EOF
-      set -ex
+      set -e
       if [ ! -d .git ]; then git init; fi
       git fetch --tags ${CI_REPOSITORY_URL}
       git checkout -f $CI_COMMIT_SHA
@@ -309,7 +309,7 @@ release:
     - |
       gsissh -T $REMOTE_HOST bash <<EOF
       . .bashrc
-      set -ex
+      set -e
       pip install --upgrade pipenv pip setuptools
       pipenv install --system --deploy
       gwcelery condor resubmit
@@ -320,7 +320,7 @@ release:
   script: |
     gsissh -T $REMOTE_HOST bash <<EOF
     . .bashrc
-    set -ex
+    set -e
     gwcelery condor rm
     EOF
 
