@@ -143,6 +143,13 @@
             ],
             "version": "==4.3.0"
         },
+        "celery-prometheus-exporter": {
+            "hashes": [
+                "sha256:8fc2d5909921c44f01c8c1b7d956d92e6966f2e14eec196bf60735e39a0e0991",
+                "sha256:a3ba0d3340b546ae82b36fef7645ccbc54c2b696fc3df05bb9ee28a402e710e1"
+            ],
+            "version": "==1.7.0"
+        },
         "certifi": {
             "hashes": [
                 "sha256:046832c04d4e752f37383b628bc601a7ea7211496b4638f6514d0e5b9acc4939",
@@ -780,6 +787,12 @@
                 "sha256:b9817417e95936bf75d85d3f8767f7df6cdde751fc40aed3bb3074cbcb77757c"
             ],
             "version": "==0.12.0"
+        },
+        "prometheus-client": {
+            "hashes": [
+                "sha256:71cd24a2b3eb335cb800c7159f423df1bd4dcd5171b234be15e3f31ec9f622da"
+            ],
+            "version": "==0.7.1"
         },
         "prompt-toolkit": {
             "hashes": [
