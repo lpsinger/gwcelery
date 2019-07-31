@@ -69,10 +69,3 @@ description = gwcelery-flower
 error = gwcelery-flower.log
 output = gwcelery-flower.log
 queue
-
-arguments = "celery-prometheus-exporter --addr=127.0.0.1:9540"
-environment = "CELERY_BROKER_URL=redis+socket://$ENV(PWD)/redis.sock"
-description = gwcelery-prometheus-exporter
-error = gwcelery-prometheus-exporter.log
-output = gwcelery-prometheus-exporter.log
-queue
