@@ -57,14 +57,14 @@ output = gwcelery-voevent-worker.log
 queue
 
 arguments = "gwcelery flask run --with-threads --host 127.0.0.1"
-environment = "CELERY_BROKER_URL=redis+socket://$ENV(PWD)/redis.sock"
+environment = "CELERY_BROKER_URL=redis+socket://$ENV(PWD)/redis.sock FLASK_PORT=5556 FLASK_URL_PREFIX=/gwcelery"
 description = gwcelery-flask
 error = gwcelery-flask.log
 output = gwcelery-flask.log
 queue
 
 arguments = "gwcelery flower --address=127.0.0.1"
-environment = "CELERY_BROKER_URL=redis+socket://$ENV(PWD)/redis.sock"
+environment = "CELERY_BROKER_URL=redis+socket://$ENV(PWD)/redis.sock FLOWER_PORT=5555 FLOWER_URL_PREFIX=/flower"
 description = gwcelery-flower
 error = gwcelery-flower.log
 output = gwcelery-flower.log

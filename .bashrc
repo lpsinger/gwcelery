@@ -35,16 +35,8 @@ export CELERY_BROKER_URL="redis+socket://${HOME}/redis.sock"
 case "${USER}" in
 emfollow)
     export CELERY_CONFIG_MODULE="gwcelery.conf.production"
-    export FLOWER_PORT="5555"
-    export FLASK_PORT="5556"
-    export FLOWER_URL_PREFIX="/flower"
-    export FLASK_URL_PREFIX="/gwcelery"
     ;;
 emfollow-playground)
     export CELERY_CONFIG_MODULE="gwcelery.conf.playground"
-    export FLOWER_PORT="5557"
-    export FLASK_PORT="5558"
-    export FLOWER_URL_PREFIX="/playground/flower"
-    export FLASK_URL_PREFIX="/playground/gwcelery"
     ;;
 esac

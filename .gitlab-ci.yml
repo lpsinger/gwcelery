@@ -281,16 +281,14 @@ release:
     # Figure out which user to log in as (emfollow or emfollow-playground)
     - mkdir -p ~/.ssh
     - |
-      echo Host emfollow > ~/.ssh/config
-      case $CI_ENVIRONMENT_NAME in
-        */CIT) echo HostName emfollow.ligo.caltech.edu >> ~/.ssh/config;;
-        */LHO) echo HostName emfollow.ligo-wa.caltech.edu >> ~/.ssh/config;;
-        */LLO) echo HostName emfollow.ligo-la.caltech.edu >> ~/.ssh/config;;
-      esac
-      case $CI_ENVIRONMENT_NAME in
-        production/*) echo User emfollow >> ~/.ssh/config;;
-        playground/*) echo User emfollow-playground >> ~/.ssh/config;;
-      esac
+      cat > ~/.ssh/.config <<EOF
+      Host emfollow-playground.*
+      User emfollow-playground
+      Host emfollow.*
+      User emfollow
+      EOF
+    - REMOTE_HOST=${CI_ENVIRONMENT_URL##*//}
+    - REMOTE_HOST=${REMOTE_HOST%%/*}
 
 # Continuous deployment.
 # Note that all deployments except playground/CIT are manual.
@@ -300,7 +298,7 @@ release:
   script:
     # Update the repository.
     - |
-      gsissh -T emfollow bash <<EOF
+      gsissh -T $REMOTE_HOST bash <<EOF
       set -e
       if [ ! -d .git ]; then git init; fi
       git fetch --tags ${CI_REPOSITORY_URL}
@@ -308,7 +306,7 @@ release:
       EOF
     # Reinstall and start (new session to reload bashrc).
     - |
-      gsissh -T emfollow bash <<EOF
+      gsissh -T $REMOTE_HOST bash <<EOF
       . .bashrc
       set -e
       pip install --upgrade pipenv pip setuptools
@@ -319,7 +317,7 @@ release:
 .deploy-stop: &deploy-stop
   <<: *deploy-common
   script: |
-    gsissh -T emfollow bash <<EOF
+    gsissh -T $REMOTE_HOST bash <<EOF
     . .bashrc
     set -e
     gwcelery condor rm
@@ -346,7 +344,7 @@ deploy to playground at CIT:
   environment:
     name: playground/CIT
     on_stop: stop deployment on playground at CIT
-    url: https://emfollow.ligo.caltech.edu/playground/flower
+    url: https://emfollow-playground.ligo.caltech.edu/flower
 
 deploy to playground at LHO:
   <<: *deploy-start
@@ -354,7 +352,7 @@ deploy to playground at LHO:
   environment:
     name: playground/LHO
     on_stop: stop deployment on playground at LHO
-    url: https://emfollow.ligo-wa.caltech.edu/playground/flower
+    url: https://emfollow-playground.ligo-wa.caltech.edu/flower
 
 stop deployment on production at CIT:
   <<: *deploy-stop
