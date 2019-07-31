@@ -9,6 +9,12 @@ Changelog
 -   Downgrade lalsuite to 6.54 since lalinference_pipe in 6.59 has a minor
     bug, which breaks automatic parameter estimation.
 
+-   Include the number of participating detectors in the preferred event
+    selection criterion for compact binaries: 3-detector events should be
+    preferred over 2-detector events, and 2-detector events over 1-detector
+    events, on the basis of more accurate localization. Ties are still broken
+    by SNR.
+
 0.8.2 (2019-08-02)
 ------------------
 

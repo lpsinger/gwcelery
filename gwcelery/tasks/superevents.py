@@ -202,7 +202,27 @@ def get_snr(event):
 
 
 def get_instruments(event):
-    """Get the participating instruments from the LVAlert packet.
+    """Get the instruments that contributed data to an event.
+
+    Parameters
+    ----------
+    event : dict
+        Event dictionary (e.g., the return value from
+        :meth:`gwcelery.tasks.gracedb.get_event`).
+
+    Returns
+    -------
+    set
+        The set of instruments that contributed to the event.
+
+    """
+    attribs = event['extra_attributes']['SingleInspiral']
+    ifos = {single['ifo'] for single in attribs}
+    return ifos
+
+
+def get_instruments_in_ranking_statistic(event):
+    """Get the instruments that contribute to the false alarm rate.
 
     Parameters
     ----------
@@ -294,8 +314,15 @@ def keyfunc(event):
         group_rank = ['cbc', 'burst'].index(group)
     except ValueError:
         group_rank = float('inf')
-    tie_breaker = -get_snr(event) if group == 'cbc' else event['far']
-    return not should_publish(event), group_rank, tie_breaker
+
+    if group == 'cbc':
+        ifo_rank = -len(get_instruments(event))
+        tie_breaker = -get_snr(event)
+    else:
+        ifo_rank = 0
+        tie_breaker = event['far']
+
+    return not should_publish(event), group_rank, ifo_rank, tie_breaker
 
 
 def _update_superevent(superevent_id, preferred_event, new_event_dict,

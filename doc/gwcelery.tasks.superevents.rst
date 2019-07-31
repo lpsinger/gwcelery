@@ -35,7 +35,10 @@ factors in order to resolve any ties:
 2.   **Search group**: Is it a CBC event or a burst event? CBC events takes
      precedence.
 
-3.   **Significance**: For CBC events, which has the highest SNR? For burst
+3.   **Number of detectors**: How many detectors contributed data to the event?
+     For CBC events, events with triggers from more detectors take precedence.
+
+4.   **Significance**: For CBC events, which has the highest SNR? For burst
      events, which has the lowest FAR?
 
 The selection of the preferred event from a pair of events is illustrated by
@@ -83,6 +86,10 @@ the decision tree below.
         shape = diamond
     ]
 
+    how_many_detectors [
+        label = "Select the events\nwith the greatest\nnumber of detectors"
+    ]
+
     cbc_significance [
         label = "Select event\nwith the\nhighest SNR"
     ]
@@ -95,7 +102,8 @@ the decision tree below.
     should_publish_differs -> group_differs [label = No]
     group_differs -> group_decides [label = Yes]
     group_differs -> which_group [label = No]
-    which_group -> cbc_significance [label = CBC]
+    which_group -> how_many_detectors [label = CBC]
+    how_many_detectors -> cbc_significance
     which_group -> burst_significance [label = Burst]
 
 Tasks
