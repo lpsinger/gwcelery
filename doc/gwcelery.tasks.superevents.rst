@@ -33,7 +33,7 @@ factors in order to resolve any ties:
      an automated public alert?
 
 2.   **Search group**: Is it a CBC event or a burst event? CBC events takes
-     precendence.
+     precedence.
 
 3.   **Significance**: For CBC events, which has the highest SNR? For burst
      events, which has the lowest FAR?
