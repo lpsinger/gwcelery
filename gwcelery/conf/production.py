@@ -22,12 +22,6 @@ voevent_broadcaster_whitelist = ['capella2.gsfc.nasa.gov']
 """List of hosts from which the broker will accept connections.
 If empty, then completely disable the broker's broadcast capability."""
 
-voevent_receiver_address = '68.169.57.253:8099'
-"""The VOEvent listener will connect to this address to receive GCNs. For
-options, see `GCN's list of available VOEvent servers
-<https://gcn.gsfc.nasa.gov/voevent.html#tc2>`_. If this is an empty string,
-then completely disable the GCN listener."""
-
 llhoft_glob = '/dev/shm/kafka/{detector}/*.gwf'
 """File glob for low-latency h(t) frames."""
 
