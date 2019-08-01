@@ -246,7 +246,8 @@ def update_superevent(superevent_id, t_start=None,
     except rest.HTTPError as e:
         # If we got a 400 error because no change was made, then ignore
         # the exception and return successfully to preserve idempotency.
-        if e.message != b'"Request would not modify the superevent"':
+        error_msg = b'"Request would not modify the superevent"'
+        if not (e.status == 400 and e.message == error_msg):
             raise
 
 
@@ -268,14 +269,27 @@ def create_superevent(graceid, t0, t_start, t_end, category):
     category : str
         superevent category
     """
-    with client.createSuperevent(t_start, t0, t_end, preferred_event=graceid,
-                                 category=category):
-        pass  # Close without reading response; we only needed the status
+    try:
+        with client.createSuperevent(t_start, t0, t_end,
+                                     preferred_event=graceid,
+                                     category=category):
+            pass  # Close without reading response; we only needed the status
+    except rest.HTTPError as e:
+        error_msg = \
+            b'"Event %s is already assigned to a Superevent"' % (graceid)
+        if not (e.status == 400 and e.message == error_msg):
+            raise
 
 
 @task(ignore_result=True, shared=False)
 @catch_retryable_http_errors
 def add_event_to_superevent(superevent_id, graceid):
     """Add an event to a superevent in GraceDB."""
-    with client.addEventToSuperevent(superevent_id, graceid):
-        pass  # Close without reading response; we only needed the status
+    try:
+        with client.addEventToSuperevent(superevent_id, graceid):
+            pass  # Close without reading response; we only needed the status
+    except rest.HTTPError as e:
+        error_msg = \
+            b'"Event %s is already assigned to a Superevent"' % (graceid)
+        if not (e.status == 400 and e.message == error_msg):
+            raise

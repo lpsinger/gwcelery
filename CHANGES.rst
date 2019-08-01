@@ -14,6 +14,9 @@ Changelog
 
 -   Increase preliminary alert timeout back to 5 minutes.
 
+-   Make ``gracedb.create_superevent`` idempotent by catching ``HTTPError``
+    from GraceDb when the transaction is retried on ``RetryableHTPError``.
+
 0.8.1 (2019-07-29)
 ------------------
 
