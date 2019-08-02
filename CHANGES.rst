@@ -20,6 +20,13 @@ Changelog
 -   Fix bug where neither the space-time or temporal coincidence far is
     calculated if external sky map is unavailable.
 
+-   Update ligo.skymap to 0.1.9. This version changes the data type of the
+    multi-resolution HEALPix formats' ``UNIQ`` column from an unsigned integer
+    to a signed integer.
+
+    Starting with this version, the Linux builds of ligo.skymap are compiled
+    and optimized using the Intel C Compiler.
+
 0.8.1 (2019-07-29)
 ------------------
 
