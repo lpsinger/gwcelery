@@ -4,9 +4,9 @@ Changelog
 0.8.2 (unreleased)
 ------------------
 
--   Ensure that public tag is applied/apply the tag to data products before
-    sending out a GCN notice. This will prevent human errors related to not
-    exposing links before sending a GCN notice.
+-   Apply the ``public`` tag to data products before sending out an update GCN
+    notice. This will prevent human errors related to not exposing LALInference
+    files before sending a GCN notice.
 
 -   Don't read the entire HTTP response from GraceDB POST requests. We only
     need the HTTP status code. This change might speed up GraceDB API calls a
@@ -14,8 +14,8 @@ Changelog
 
 -   Increase preliminary alert timeout back to 5 minutes.
 
--   Make ``gracedb.create_superevent`` idempotent by catching ``HTTPError``
-    from GraceDb when the transaction is retried on ``RetryableHTPError``.
+-   Make ``gracedb.create_superevent`` idempotent by catching the ``HTTPError``
+    from GraceDB that occurs if the superevent has already been created.
 
 -   Fix bug where neither the space-time or temporal coincidence far is
     calculated if external sky map is unavailable.
