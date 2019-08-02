@@ -28,7 +28,7 @@ def mock_bayestar(event, *args, **kwargs):
     # DetectorDisabledError may be raised
     event.singles
 
-    return table.Table({'UNIQ': np.arange(4, 16, dtype=np.uint64),
+    return table.Table({'UNIQ': np.arange(4, 16, dtype=np.int64),
                         'PROBDENSITY': np.ones(12),
                         'DISTMU': np.ones(12),
                         'DISTSIGMA': np.ones(12),
