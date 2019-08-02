@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.8.2 (unreleased)
+0.8.2 (2019-08-02)
 ------------------
 
 -   Apply the ``public`` tag to data products before sending out an update GCN
@@ -14,7 +14,8 @@ Changelog
 
 -   Increase preliminary alert timeout back to 5 minutes.
 
--   Make ``gracedb.create_superevent`` idempotent by catching the ``HTTPError``
+-   Make ``gracedb.create_superevent``, ``gracedb.update_superevent`` and
+    ``gracedb.add_event_to_superevent`` idempotent by catching the ``HTTPError``
     from GraceDB that occurs if the superevent has already been created.
 
 -   Fix bug where neither the space-time or temporal coincidence far is
