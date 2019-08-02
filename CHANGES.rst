@@ -12,6 +12,8 @@ Changelog
     need the HTTP status code. This change might speed up GraceDB API calls a
     little bit.
 
+-   Increase preliminary alert timeout back to 5 minutes.
+
 0.8.1 (2019-07-29)
 ------------------
 
