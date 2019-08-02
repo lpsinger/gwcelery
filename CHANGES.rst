@@ -27,6 +27,10 @@ Changelog
     Starting with this version, the Linux builds of ligo.skymap are compiled
     and optimized using the Intel C Compiler.
 
+-   Change the trails factor for CBC searches to 4, since SPIIR is performing
+    a single search, and that for burst to 3, since oLIB is not currently in
+    operation.
+
 0.8.1 (2019-07-29)
 ------------------
 

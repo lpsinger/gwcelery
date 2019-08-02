@@ -98,11 +98,10 @@ preliminary_alert_far_threshold = {'cbc': 1 / (60 * 86400),
 """Group specific maximum false alarm rate to consider
 sending preliminary alerts."""
 
-preliminary_alert_trials_factor = dict(cbc=5.0, burst=4.0)
+preliminary_alert_trials_factor = dict(cbc=4.0, burst=3.0)
 """Trials factor corresponding to trigger categories. For CBC and Burst, trials
-factor is the number of pipelines. CBC pipelines are gstlal, pycbc, mbtaonline,
-spiir-highmass, spiir-lowmass. Burst searches are cwb.allsky, cwb.bbh, cwb.imbh
-and olib.allsky."""
+factor is the number of pipelines. CBC pipelines are gstlal, pycbc, mbtaonline
+and spiir. Burst searches are cwb.allsky, cwb.bbh and cwb.imbh."""
 
 orchestrator_timeout = 300.0
 """The orchestrator will wait this many seconds from the time of the
