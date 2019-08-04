@@ -106,15 +106,15 @@ def coincidence_search(gracedb_id, alert_object, group=None, pipelines=[]):
         for search_result in raven_search_results:
             calculate_coincidence_far(
                 search_result['superevent_id'], group).delay()
-            gracedb.create_label('EM_COINC',
-                                 search_result['superevent_id']).delay()
-        gracedb.create_label('EM_COINC', gracedb_id).delay()
+            gracedb.create_label.delay('EM_COINC',
+                                       search_result['superevent_id'])
+        gracedb.create_label.delay('EM_COINC', gracedb_id)
 
     elif raven_search_results:
         calculate_coincidence_far(gracedb_id, group).delay()
         for search_result in raven_search_results:
-            gracedb.create_label('EM_COINC', search_result['graceid']).delay()
-        gracedb.create_label('EM_COINC', gracedb_id).delay()
+            gracedb.create_label.delay('EM_COINC', search_result['graceid'])
+        gracedb.create_label.delay('EM_COINC', gracedb_id)
 
 
 @app.task(shared=False)
