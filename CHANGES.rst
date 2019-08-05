@@ -6,6 +6,9 @@ Changelog
 
 -   Enable Redis integration for Sentry error reporting.
 
+-   Downgrade lalsuite to 6.54 since lalinference_pipe in 6.59 has a minor
+    bug, which breaks automatic parameter estimation.
+
 0.8.2 (2019-08-02)
 ------------------
 
