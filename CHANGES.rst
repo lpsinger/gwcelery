@@ -4,7 +4,7 @@ Changelog
 0.8.3 (unreleased)
 ------------------
 
--   No changes yet.
+-   Enable Redis integration for Sentry error reporting.
 
 0.8.2 (2019-08-02)
 ------------------

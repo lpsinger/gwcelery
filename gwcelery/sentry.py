@@ -6,7 +6,7 @@ from urllib.parse import urlparse, urlunparse
 from celery.utils.log import get_logger
 from safe_netrc import netrc, NetrcParseError
 import sentry_sdk
-from sentry_sdk.integrations import celery, flask, tornado
+from sentry_sdk.integrations import celery, flask, redis, tornado
 
 from . import _version
 from .util import SPHINX
@@ -55,4 +55,5 @@ def configure():
     sentry_sdk.init(dsn, environment=environment, release=version,
                     integrations=[celery.CeleryIntegration(),
                                   flask.FlaskIntegration(),
+                                  redis.RedisIntegration(),
                                   tornado.TornadoIntegration()])
