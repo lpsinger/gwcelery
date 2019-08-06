@@ -23,17 +23,17 @@ Changelog
     ``gracedb.add_event_to_superevent`` idempotent by catching the ``HTTPError``
     from GraceDB that occurs if the superevent has already been created.
 
--   Fix bug where neither the space-time or temporal coincidence far is
+-   Fix bug where neither the space-time nor temporal coincidence far is
     calculated if external sky map is unavailable.
 
 -   Update ligo.skymap to 0.1.9. This version changes the data type of the
-    multi-resolution HEALPix formats' ``UNIQ`` column from an unsigned integer
+    multi-resolution HEALPix format's ``UNIQ`` column from an unsigned integer
     to a signed integer.
 
     Starting with this version, the Linux builds of ligo.skymap are compiled
     and optimized using the Intel C Compiler.
 
--   Change the trails factor for CBC searches to 4, since SPIIR is performing
+-   Change the trials factor for CBC searches to 4, since SPIIR is performing
     a single search, and that for burst to 3, since oLIB is not currently in
     operation.
 
