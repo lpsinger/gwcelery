@@ -14,6 +14,7 @@ from matplotlib import pyplot as plt
 from . import gracedb
 from ..import app
 from ..jinja import env
+from ..util.cmdline import handling_system_exit
 from ..util.tempfile import NamedTemporaryFile
 
 
@@ -86,7 +87,8 @@ def plot_allsky(filecontents):
     # https://github.com/astropy/astropy/issues/8004.
     with NamedTemporaryFile(mode='rb', suffix='.png') as pngfile, \
             NamedTemporaryFile(content=filecontents) as fitsfile, \
-            plt.style.context({'text.usetex': False}, after_reset=True):
+            plt.style.context({'text.usetex': False}, after_reset=True), \
+            handling_system_exit():
         ligo_skymap_plot.main([fitsfile.name, '-o', pngfile.name,
                                '--annotate', '--contour', '50', '90'])
         return pngfile.read()
@@ -101,7 +103,8 @@ def plot_volume(filecontents):
     # https://github.com/astropy/astropy/issues/8004.
     with NamedTemporaryFile(mode='rb', suffix='.png') as pngfile, \
             NamedTemporaryFile(content=filecontents) as fitsfile, \
-            plt.style.context({'text.usetex': False}, after_reset=True):
+            plt.style.context({'text.usetex': False}, after_reset=True), \
+            handling_system_exit():
         ligo_skymap_plot_volume.main([fitsfile.name, '-o',
                                       pngfile.name, '--annotate'])
         return pngfile.read()
@@ -113,7 +116,8 @@ def flatten(filecontents, filename):
     more common IMPLICIT indexing using the command-line tool
     :doc:`ligo-skymap-flatten <ligo/skymap/tool/ligo_skymap_flatten>`."""
     with NamedTemporaryFile(content=filecontents) as infile, \
-            tempfile.TemporaryDirectory() as tmpdir:
+            tempfile.TemporaryDirectory() as tmpdir, \
+            handling_system_exit():
         outfilename = os.path.join(tmpdir, filename)
         ligo_skymap_flatten.main([infile.name, outfilename])
         return open(outfilename, 'rb').read()
@@ -123,7 +127,8 @@ def flatten(filecontents, filename):
 def skymap_from_samples(samplefilecontents):
     """Generate multi-resolution fits file from samples"""
     with NamedTemporaryFile(content=samplefilecontents) as samplefile, \
-            tempfile.TemporaryDirectory() as tmpdir:
+            tempfile.TemporaryDirectory() as tmpdir, \
+            handling_system_exit():
         ligo_skymap_from_samples.main(['-o', tmpdir, samplefile.name])
         with open(os.path.join(tmpdir, 'skymap.fits'), 'rb') as f:
             return f.read()

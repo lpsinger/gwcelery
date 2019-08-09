@@ -9,6 +9,7 @@ import lxml.etree
 
 from . import gracedb
 from ..import app
+from ..util.cmdline import handling_system_exit
 from ..util.tempfile import NamedTemporaryFile
 
 
@@ -58,7 +59,8 @@ def combine_skymaps(skymap1filebytes, skymap2filebytes):
     output file. It then returns the contents of the file as a byte array."""
     with NamedTemporaryFile(mode='rb', suffix='.fits.gz') as combinedskymap, \
             NamedTemporaryFile(content=skymap1filebytes) as skymap1file, \
-            NamedTemporaryFile(content=skymap2filebytes) as skymap2file:
+            NamedTemporaryFile(content=skymap2filebytes) as skymap2file, \
+            handling_system_exit():
         ligo_skymap_combine.main([skymap1file.name,
                                   skymap2file.name, combinedskymap.name])
         return combinedskymap.read()

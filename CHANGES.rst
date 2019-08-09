@@ -15,6 +15,10 @@ Changelog
     events, on the basis of more accurate localization. Ties are still broken
     by SNR.
 
+-   Catch ``SystemExit`` exceptions from Python command line tools called in
+    Celery tasks and reraise them as ``RuntimeError`` exceptions so that they
+    do not cause the workers to exit.
+
 0.8.2 (2019-08-02)
 ------------------
 
