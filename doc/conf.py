@@ -40,6 +40,7 @@ extensions = [
     'matplotlib.sphinxext.plot_directive',
     'sphinx.ext.autodoc',
     'sphinx.ext.autosectionlabel',
+    'sphinx.ext.extlinks',
     'sphinx.ext.graphviz',
     'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
@@ -283,3 +284,11 @@ graphviz_output_format = 'svg'
 # -- Options for autosectionlabel extension -------------------------------
 
 autosectionlabel_prefix_document = True
+
+
+# -- Options for extlinks extension ------------------------------------------
+
+extlinks = {
+    'arxiv': ('https://arxiv.org/abs/%s', 'arXiv:'),
+    'doi': ('https://doi.org/%s', 'doi:')
+}
