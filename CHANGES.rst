@@ -6,7 +6,7 @@ Changelog
 
 -   Enable Redis integration for Sentry error reporting.
 
--   Downgrade lalsuite to 6.54 since lalinference_pipe in 6.59 has a minor
+-   Downgrade lalsuite to 6.54 since ``lalinference_pipe`` in 6.59 has a minor
     bug, which breaks automatic parameter estimation.
 
 -   Include the number of participating detectors in the preferred event
@@ -16,7 +16,7 @@ Changelog
     by SNR.
 
 -   Catch ``SystemExit`` exceptions from Python command line tools called in
-    Celery tasks and reraise them as ``RuntimeError`` exceptions so that they
+    Celery tasks and re-raise them as ``RuntimeError`` exceptions so that they
     do not cause the workers to exit.
 
 0.8.2 (2019-08-02)
