@@ -8,6 +8,12 @@ Changelog
     logs exist for the same filename. The tag is applied to the lastest log
     message.
 
+-   Retry GraceDB API calls that fail due to receiving incomplete or malformed
+    HTTP responses, as indicated by ``http.client.HTTPException`` exceptions.
+    This should work around the increased incidence of ``RemoteDisconnected``
+    exceptions that we have seen recently, and that caused a delay in sending
+    out the preliminary alert for S190814bv.
+
 0.8.3 (2019-08-09)
 ------------------
 
