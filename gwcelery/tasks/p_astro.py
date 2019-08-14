@@ -4,10 +4,10 @@ See Kapadia et al (2019), arXiv:1903.06881, for details.
 """
 import io
 import json
-from urllib import error, request
 
 from matplotlib import pyplot as plt
 import numpy as np
+import pkg_resources
 
 from celery.utils.log import get_task_logger
 from ligo import p_astro_computation as pastrocomp
@@ -16,31 +16,6 @@ from . import gracedb, lvalert
 from .. import app
 
 log = get_task_logger(__name__)
-
-
-def read_mean_values():
-    """
-    Reads the mean values in the file pointed to by a url.
-
-    Returns
-    -------
-    mean_values_dict : dictionary
-        mean values read from url file
-    """
-
-    try:
-        url_key = "p_astro_url"
-        response = request.urlopen(app.conf[url_key])
-        mean_values_dict = json.load(response)
-        response.close()
-    except (ValueError, error.URLError):
-        # Fix mean values (1 per source category) from O1-O2
-        mean_values_dict = {"counts_BNS": 2.11050326523,
-                            "counts_NSBH": 1.56679410666,
-                            "counts_BBH": 9.26042350393,
-                            "counts_MassGap": 2.40800240248,
-                            "counts_Terrestrial": 3923}
-    return mean_values_dict
 
 
 @app.task(shared=False)
@@ -74,13 +49,19 @@ def compute_p_astro(snr, far, mass1, mass2, pipeline, instruments):
     """
 
     # Read mean values from file
-    mean_values_dict = read_mean_values()
-    url_key = "p_astro_thresh_url"
+    with open(pkg_resources.resource_filename(
+            'ligo.data', 'H1L1V1-mean_counts-1126051217-61603201.json')) as f:
+        mean_values_dict = json.load(f)
 
     # Read thresholds on FAR and SNR from file
-    response = request.urlopen(app.conf[url_key])
-    thresholds_dict = json.load(response)
-    response.close()
+    with open(pkg_resources.resource_filename(
+            'ligo.data', 'H1L1V1-pipeline-far_snr-thresholds.json')) as f:
+        thresholds_dict = json.load(f)
+
+    # Read livetime corresponding to mean values from file
+    with open(pkg_resources.resource_filename(
+            'ligo.data', 'p_astro_livetime.json')) as f:
+        p_astro_livetime = json.load(f)['p_astro_livetime']
 
     # Ensure SNR does not increase indefinitely beyond limiting FAR
     # for MBTA and PyCBC events
@@ -101,7 +82,7 @@ def compute_p_astro(snr, far, mass1, mass2, pipeline, instruments):
     astro_bayesfac = fground / bground
 
     # Update terrestrial count based on far threshold
-    lam_0 = far_star * app.conf["p_astro_livetime"]
+    lam_0 = far_star * p_astro_livetime
     mean_values_dict["counts_Terrestrial"] = lam_0
 
     # Compute categorical p_astro values

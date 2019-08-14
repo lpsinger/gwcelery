@@ -181,28 +181,6 @@ idq_veto = {'gstlal': False,
 Currently all False, pending iDQ review (should be done before O3).
 """
 
-p_astro_livetime = 14394240
-"""livetime (units: sec) corresponding to mean values of Poisson counts.
-   (Used by :mod:`gwcelery.tasks.p_astro`)
-"""
-
-p_astro_url = \
-    'http://emfollow.ldas.cit/data/H1L1V1-mean_counts-1126051217-61603201.json'
-"""URL for mean values of Poisson counts using which p_astro
-is computed. (Used by :mod:`gwcelery.tasks.p_astro`)
-"""
-
-p_astro_thresh_url = 'http://emfollow.ldas.cit/data/' \
-    'H1L1V1-pipeline-far_snr-thresholds.json'
-"""URL for pipeline thresholds on FAR and SNR.
-(Used by :mod:`gwcelery.tasks.p_astro`)
-"""
-
-em_bright_url = 'http://emfollow.ldas.cit/data/em_bright_classifier.pickle'
-"""URL for trained RandomForestClassifier based on which em_bright
-classification is conducted. (Used by :mod:`gwcelery.tasks.em_bright`)
-"""
-
 low_latency_frame_types = {'H1': 'H1_O2_llhoft',
                            'L1': 'L1_O2_llhoft',
                            'V1': 'V1_O2_llhoft'}
