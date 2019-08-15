@@ -315,8 +315,8 @@ release:
       pipenv install --system --deploy
       # FIXME: remove pip uninstall temporary directories left behind due to
       # bug with pip on NFS. See https://github.com/pypa/pip/issues/6327
-      chmod -R ug+rwx .local/lib/python3.6/site-packages/~*
-      rm -rf .local/lib/python3.6/site-packages/~*
+      chmod -R ug+rwx .local/lib/python3.6/site-packages/~* || true
+      rm -rf .local/lib/python3.6/site-packages/~* || true
       gwcelery condor resubmit
       EOF
 
