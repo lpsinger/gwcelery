@@ -98,7 +98,7 @@ def create_signoff(status, comment, signoff_type, graceid):
 def create_tag(filename, tag, graceid):
     """Create a tag in GraceDB."""
     log = get_log(graceid)
-    entry, = (e for e in log if e['filename'] == filename)
+    *_, entry = (e for e in log if e['filename'] == filename)
     log_number = entry['N']
     try:
         with client.addTag(graceid, log_number, tag):

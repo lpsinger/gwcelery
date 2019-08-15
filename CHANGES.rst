@@ -4,7 +4,9 @@ Changelog
 0.8.4 (unreleased)
 ------------------
 
--   No changes yet.
+-   Fixed a bug in ``gracedb.create_tag`` to handle the scenario when multiple
+    logs exist for the same filename. The tag is applied to the lastest log
+    message.
 
 0.8.3 (2019-08-09)
 ------------------

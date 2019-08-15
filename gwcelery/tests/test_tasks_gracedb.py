@@ -61,7 +61,7 @@ def test_create_signoff(mock_gracedb):
 @patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
 @patch('gwcelery.tasks.gracedb.get_log',
        return_value=[{'filename': filename, 'N': i} for i, filename in
-                     enumerate(['foo', 'bar', 'bat', 'baz'])])
+                     enumerate(['foo', 'bat', 'bat', 'baz'])])
 def test_create_tag(mock_get_log, mock_gracedb):
     gracedb.create_tag('bat', 'tag', 'graceid')
     mock_get_log.assert_called_once_with('graceid')
