@@ -347,9 +347,7 @@ def test_handle_posterior_samples(monkeypatch, alert_type, filename):
         flatten.assert_called_once()
 
 
-# FIXME calling em-bright point estimates for all pipelines until review
-# is complete
-@patch('gwcelery.tasks.em_bright.classifier_other.run')
+@patch('gwcelery.tasks.em_bright.classifier_gstlal.run')
 def test_handle_cbc_event_new_event(mock_classifier):
     payload = {
         "uid": "G000003",

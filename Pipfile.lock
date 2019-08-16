@@ -692,9 +692,9 @@
         },
         "p-astro": {
             "hashes": [
-                "sha256:fbf8643319607958b6d5209b3e8c2bda2969a46242e074729fcb1438d2b22b59"
+                "sha256:5331f3a9f8cc77eb9c87b3769c859844f19e532081e553b3a32bae8e6f471aa6"
             ],
-            "version": "==0.8.0"
+            "version": "==0.8.1"
         },
         "packaging": {
             "hashes": [

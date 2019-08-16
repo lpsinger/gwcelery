@@ -48,6 +48,9 @@ Changelog
     how long it has taken recent events to settle. This does not affect the
     configuration of the production environment.
 
+-   Changed ``handle_cbc_event`` handler to call gstlal trained ML based
+    inference for source property computation for gstlal triggers.
+
 0.8.5 (2019-08-23)
 ------------------
 
