@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.8.4 (unreleased)
+0.8.4 (2019-08-16)
 ------------------
 
 -   Fixed a bug in ``gracedb.create_tag`` to handle the scenario when multiple
