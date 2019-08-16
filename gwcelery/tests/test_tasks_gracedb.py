@@ -151,6 +151,12 @@ def test_get_event(mock_gracedb):
 
 
 @patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
+def test_get_search(mock_gracedb):
+    gracedb.get_search('G123456')
+    mock_gracedb.event.assert_called_once_with('G123456')
+
+
+@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
 def test_get_events(mock_gracedb):
     gracedb.get_events(query='Some query', orderby=None,
                        count=None, columns=None)

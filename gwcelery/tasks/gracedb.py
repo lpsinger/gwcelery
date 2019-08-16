@@ -164,6 +164,13 @@ def get_event(graceid):
 
 @task(shared=False)
 @catch_retryable_http_errors
+def get_search(graceid):
+    """Retrieve the search field of an event from GraceDB."""
+    return client.event(graceid).json()['search']
+
+
+@task(shared=False)
+@catch_retryable_http_errors
 def get_labels(graceid):
     """Get all labels for an event in GraceDB."""
     return {row['name'] for row in client.labels(graceid).json()['labels']}

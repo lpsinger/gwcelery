@@ -200,8 +200,6 @@ def test_handle_superevent_emcoinc_label1(mock_create_combined_skymap,
 
     external_triggers.handle_grb_lvalert(alert)
     mock_create_combined_skymap.assert_called_once_with('S180616h')
-    mock_calc_coinc_far.assert_called_once_with('S180616h',
-                                                'CBC')
 
 
 @patch('gwcelery.tasks.gracedb.upload.run')
