@@ -5,8 +5,8 @@ Changelog
 ------------------
 
 -   Fixed a bug in ``gracedb.create_tag`` to handle the scenario when multiple
-    logs exist for the same filename. The tag is applied to the lastest log
-    message.
+    log messages exist for the same filename. The tag is applied to the most
+    recent log message.
 
 -   Retry GraceDB API calls that fail due to receiving incomplete or malformed
     HTTP responses, as indicated by ``http.client.HTTPException`` exceptions.
