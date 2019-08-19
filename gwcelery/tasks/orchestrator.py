@@ -523,65 +523,6 @@ def parameter_estimation(far_event, superevent_id):
         canvas.apply_async()
 
 
-@app.task(shared=False)
-def _apply_public_tag(log_messages, skymap_filename, em_bright_filename,
-                      p_astro_filename, superevent_id):
-    """Apply `public` tag to filenames if not already applied.
-    Find latest filenames and return them if not filename not supplied.
-    """
-    skymap_needed = (skymap_filename is None)
-    em_bright_needed = (em_bright_filename is None)
-    p_astro_needed = (p_astro_filename is None)
-    public_tags_needed = []
-
-    for message in log_messages:
-        t = message['tag_names']
-        f = message['filename']
-        if not f:
-            continue
-        if f in (skymap_filename, em_bright_filename, p_astro_filename) \
-                and 'public' not in t:
-            public_tags_needed.append(
-                gracedb.create_tag.si(
-                    f,
-                    'public',
-                    superevent_id
-                )
-            )
-        if skymap_needed \
-                and {'sky_loc', 'public'}.issubset(t) \
-                and f.endswith('.fits.gz'):
-            skymap_filename = f
-        if em_bright_needed \
-                and 'em_bright' in t \
-                and f.endswith('.json'):
-            em_bright_filename = f
-        if p_astro_needed \
-                and 'p_astro' in t \
-                and f.endswith('.json'):
-            p_astro_filename = f
-    # FIXME: chain -> group when
-    # https://github.com/celery/celery/issues/5512
-    # is resolved
-    chain(*public_tags_needed)()
-    return skymap_filename, em_bright_filename, p_astro_filename
-
-
-@app.task(shared=False)
-def _unpack_download_create_voevent(files, superevent_id, alert_type):
-    skymap_filename, em_bright_filename, p_astro_filename = files
-    return _create_voevent(
-        (gracedb.download(em_bright_filename, superevent_id),
-         gracedb.download(p_astro_filename, superevent_id)),
-        superevent_id,
-        alert_type,
-        skymap_filename=skymap_filename,
-        internal=False,
-        open_alert=True,
-        vetted=True
-    )
-
-
 @app.task(ignore_result=True, shared=False)
 def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None,
                             em_bright_filename=None,
@@ -605,19 +546,41 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None,
         The p_astro file to use.
         If None, then most recent one is used.
     """
+    skymap_needed = (skymap_filename is None)
+    em_bright_needed = (em_bright_filename is None)
+    p_astro_needed = (p_astro_filename is None)
+    if skymap_needed or em_bright_needed or p_astro_needed:
+        for message in gracedb.get_log(superevent_id):
+            t = message['tag_names']
+            f = message['filename']
+            if not f:
+                continue
+            if skymap_needed \
+                    and {'sky_loc', 'public'}.issubset(t) \
+                    and f.endswith('.fits.gz'):
+                skymap_filename = f
+            if em_bright_needed \
+                    and 'em_bright' in t \
+                    and f.endswith('.json'):
+                em_bright_filename = f
+            if p_astro_needed \
+                    and 'p_astro' in t \
+                    and f.endswith('.json'):
+                p_astro_filename = f
+
     (
-        gracedb.get_log.si(superevent_id)
-        |
-        _apply_public_tag.s(
-            skymap_filename,
-            em_bright_filename,
-            p_astro_filename,
-            superevent_id
+        group(
+            gracedb.download.si(em_bright_filename, superevent_id),
+            gracedb.download.si(p_astro_filename, superevent_id)
         )
         |
-        _unpack_download_create_voevent.s(
+        _create_voevent.s(
             superevent_id,
-            alert_type
+            alert_type,
+            skymap_filename=skymap_filename,
+            internal=False,
+            open_alert=True,
+            vetted=True
         )
         |
         group(
