@@ -4,7 +4,7 @@ Changelog
 0.8.5 (unreleased)
 ------------------
 
--   No changes yet.
+-   Make raven.py tests more robust and have increased coverage.
 
 0.8.4 (2019-08-16)
 ------------------

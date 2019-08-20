@@ -29,7 +29,9 @@ def test_coincidence_search(mock_calculate_coincidence_far,
 
     mock_search.assert_called_once_with(
         gracedb_id, alert_object, tl, th, group, pipelines)
-    mock_raven_pipeline.assert_called_once()
+    mock_raven_pipeline.assert_called_once_with(
+        [{'superevent_id': 'S5', 'graceid': 'E2'}],
+        gracedb_id, alert_object, group)
 
 
 @pytest.mark.parametrize(
@@ -58,41 +60,42 @@ def test_raven_search(mock_raven_search, mock_se_cls, mock_exttrig_cls,
         raise ValueError
 
 
-def mock_get_event(exttrig_id):
-    if exttrig_id == 'E1':
-        return {'search': 'GRB'}
-    elif exttrig_id == 'E2':
-        return {'search': 'SNEWS'}
-    elif exttrig_id == 'E3':
-        return {'search': 'GRB'}
-    else:
-        raise RuntimeError('Asked for search of unexpected exttrig')
-
-
 @pytest.mark.parametrize('group', ['CBC', 'Burst'])
-@patch('gwcelery.tasks.gracedb.get_event', mock_get_event)
-@patch('gwcelery.tasks.gracedb.get_superevent',
-       return_value={'em_events': ['E1', 'E2', 'E3']})
-@patch('gwcelery.tasks.raven.calc_signif')
+@patch('gwcelery.tasks.gracedb.get_search.run', return_value='GRB')
+@patch('gwcelery.tasks.raven.calc_signif.run')
 def test_calculate_coincidence_far(
-        mock_calc_signif, mock_get_superevent, group):
+        mock_calc_signif, mock_get_search, group):
     raven.calculate_coincidence_far('S1234', 'E4321',
                                     'G222', group)
+    mock_get_search.assert_called_once_with('E4321')
+    if group == 'CBC':
+        tl, th = -5, 1
+    else:
+        tl, th = -600, 60
+    mock_calc_signif.assert_called_once_with('GRB', 'S1234',
+                                             'E4321', tl, th,
+                                             incl_sky=False)
 
 
 @pytest.mark.parametrize('group', ['CBC', 'Burst'])  # noqa: F811
-@patch('gwcelery.tasks.gracedb.download')
-@patch('gwcelery.tasks.gracedb.get_superevent',
-       return_value={'em_events': ['E1', 'E2', 'E3']})
 @patch('gwcelery.tasks.ligo_fermi_skymaps.get_preferred_skymap',
        return_value='bayestar.fits.gz')
-@patch('gwcelery.tasks.raven.calc_signif')
+@patch('gwcelery.tasks.gracedb.get_search.run', return_value='GRB')
+@patch('gwcelery.tasks.raven.calc_signif.run')
 def test_calculate_spacetime_coincidence_far(
-        mock_calc_signif, mock_get_preferred_skymap, mock_get_superevent,
-        mock_download, group, toy_fits_filecontents):  # noqa: F811
-    mock_download.return_value = toy_fits_filecontents
+        mock_calc_signif, mock_get_search, mock_get_preferred_skymap,
+        group):
     raven.calculate_coincidence_far(
         'S1234', 'E4321', 'G222', group)
+    mock_get_search.assert_called_once_with('E4321')
+    if group == 'CBC':
+        tl, th = -5, 1
+    else:
+        tl, th = -600, 60
+    mock_calc_signif.assert_called_once_with('GRB', 'S1234',
+                                             'E4321', tl, th,
+                                             incl_sky=True,
+                                             se_fitsfile='bayestar.fits.gz')
 
 
 @patch('ligo.raven.search.calc_signif_gracedb')
@@ -127,7 +130,7 @@ def test_calc_signif_skymaps(mock_raven_calc_signif):
         'E2', 'Burst'],
      [[{'graceid': 'E3'}, {'graceid': 'E4'}], 'S2', 'Burst'],
      [[{'superevent_id': 'S11', 'far': 1, 'preferred_event': 'G2'},
-       {'superevent_id': 'S12', 'far': 1, 'preferred_event': 'G3'}],
+       {'superevent_id': 'S12', 'far': .001, 'preferred_event': 'G3'}],
         'E5', 'CBC'],
      [[], 'S15', 'Group']])
 @patch('gwcelery.tasks.raven.calculate_coincidence_far.run')
@@ -161,3 +164,25 @@ def test_raven_pipeline(mock_create_label,
     mock_calculate_coincidence_far.assert_has_calls(coinc_calls,
                                                     any_order=True)
     mock_create_label.assert_has_calls(label_calls, any_order=True)
+
+
+@pytest.mark.parametrize(
+    'raven_search_results, testnum',
+    [[[{'superevent_id': 'S10', 'far': 1, 'preferred_event': 'G1'}], 1],
+     [[{'superevent_id': 'S11', 'far': 1, 'preferred_event': 'G2'},
+       {'superevent_id': 'S12', 'far': .001, 'preferred_event': 'G3'}], 2],
+     [[{'superevent_id': 'S13', 'far': 1, 'preferred_event': 'G4'},
+       {'superevent_id': 'S14', 'far': .0001, 'preferred_event': 'G5'},
+       {'superevent_id': 'S15', 'far': .001, 'preferred_event': 'G6'}], 3]])
+def test_preferred_superevent(raven_search_results, testnum):
+
+    preferred_superevent = raven.preferred_superevent(raven_search_results)
+    if testnum == 1:
+        assert preferred_superevent == [{'superevent_id': 'S10', 'far': 1,
+                                         'preferred_event': 'G1'}]
+    if testnum == 2:
+        assert preferred_superevent == [{'superevent_id': 'S12', 'far': .001,
+                                         'preferred_event': 'G3'}]
+    if testnum == 3:
+        assert preferred_superevent == [{'superevent_id': 'S14', 'far': .0001,
+                                         'preferred_event': 'G5'}]
