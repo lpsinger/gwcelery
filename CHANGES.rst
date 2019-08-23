@@ -4,12 +4,12 @@ Changelog
 0.8.5 (unreleased)
 ------------------
 
--   Make raven.py tests more robust and have increased coverage.
+-   Made raven.py tests more robust and have increased coverage.
 
 -   Removed the feature of p-astro and em_bright reading mean counts,
     livetimes or ML classifiers from emfollow/data; moved them to
     lscsoft/p_astro as package data. Added back the ``test_tasks_p_astro.py``
-    that was accidentally taken out in ``v0.8.0``. Pinned ``p_astro == 0.8``.
+    that was accidentally taken out in ``v0.8.0``. Pinned ``p_astro == 0.8.0``.
 
 0.8.4 (2019-08-16)
 ------------------
