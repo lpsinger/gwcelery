@@ -21,7 +21,6 @@ celerybeat-schedule
 *.sock
 
 # Files created if the source directory is also the home directory
-data
 public_html
 .astropy
 .bash_history
