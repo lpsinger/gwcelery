@@ -6,6 +6,11 @@ Changelog
 
 -   Make raven.py tests more robust and have increased coverage.
 
+-   Removed the feature of p-astro and em_bright reading mean counts,
+    livetimes or ML classifiers from emfollow/data; moved them to
+    lscsoft/p_astro as package data. Added back the ``test_tasks_p_astro.py``
+    that was accidentally taken out in ``v0.8.0``. Pinned ``p_astro == 0.8``.
+
 0.8.4 (2019-08-16)
 ------------------
 
@@ -18,11 +23,6 @@ Changelog
     This should work around the increased incidence of ``RemoteDisconnected``
     exceptions that we have seen recently, and that caused a delay in sending
     out the preliminary alert for S190814bv.
-
--   Removed the feature of p-astro and em_bright reading mean counts,
-    livetimes or ML classifiers from emfollow/data; moved them to
-    lscsoft/p_astro as package data. Added back the ``test_tasks_p_astro.py``
-    that was accidentally taken out in ``v0.8.0``. Pinned ``p_astro == 0.8``.
 
 0.8.3 (2019-08-09)
 ------------------
