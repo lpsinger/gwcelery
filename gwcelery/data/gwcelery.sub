@@ -22,7 +22,7 @@ error = gwcelery-beat.log
 output = gwcelery-beat.log
 queue
 
-arguments = "gwcelery worker -l debug -n gwcelery-worker -Q celery --lvalert"
+arguments = "gwcelery worker -l info -n gwcelery-worker -Q celery --lvalert"
 environment = "CELERY_BROKER_URL=redis+socket://$ENV(PWD)/redis.sock"
 description = gwcelery-worker
 error = gwcelery-worker.log
