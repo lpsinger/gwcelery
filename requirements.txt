@@ -1,6 +1,4 @@
-# FIXME: updates of these packages started breaking unit tests on 2019-05-30
-amqp <= 2.4.2
-kombu <= 4.5.0
+kombu <= 4.5.0  # FIXME: https://github.com/celery/celery/issues/5261
 
 aiocontextvars; python_version <= "3.6"  # see https://docs.sentry.io/platforms/python/tornado/
 astropy
