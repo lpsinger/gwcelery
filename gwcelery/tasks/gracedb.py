@@ -284,9 +284,8 @@ def create_superevent(graceid, t0, t_start, t_end, category):
                                      category=category):
             pass  # Close without reading response; we only needed the status
     except rest.HTTPError as e:
-        error_msg = \
-            b'"Event %s is already assigned to a Superevent"' % (graceid)
-        if not (e.status == 400 and e.message == error_msg):
+        error_msg = b'is already assigned to a Superevent'
+        if not (e.status == 400 and error_msg in e.message):
             raise
 
 
@@ -298,7 +297,6 @@ def add_event_to_superevent(superevent_id, graceid):
         with client.addEventToSuperevent(superevent_id, graceid):
             pass  # Close without reading response; we only needed the status
     except rest.HTTPError as e:
-        error_msg = \
-            b'"Event %s is already assigned to a Superevent"' % (graceid)
+        error_msg = b'"is already assigned to a Superevent"'
         if not (e.status == 400 and e.message == error_msg):
             raise

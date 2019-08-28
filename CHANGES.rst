@@ -6,6 +6,9 @@ Changelog
 
 -   Update ligo-raven version to 1.16.
 
+-   Fix a bug that prevented retrying of failed GraceDB API calls in the
+    superevent manager.
+
 0.8.5 (2019-08-23)
 ------------------
 
