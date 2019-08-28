@@ -18,7 +18,7 @@ ligo-followup-advocate >= 0.0.28
 ligo-gracedb >= 2.2.0
 ligo-raven >= 1.16
 ligo-segments
-ligo.skymap >= 0.1.8
+ligo.skymap == 0.1.9
 lscsoft-glue
 lxml
 numpy
