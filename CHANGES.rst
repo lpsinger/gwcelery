@@ -4,7 +4,7 @@ Changelog
 0.8.6 (unreleased)
 ------------------
 
--   No changes yet.
+-   Update ligo-raven version to 1.16.
 
 0.8.5 (2019-08-23)
 ------------------
