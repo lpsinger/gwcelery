@@ -188,6 +188,7 @@ def superevent_initial_alert_download(filename, graceid):
         raise ValueError
 
 
+@patch('gwcelery.tasks.gracedb.expose._orig_run', return_value=None)
 @patch('gwcelery.tasks.gracedb.get_log',
        return_value=[{'tag_names': ['sky_loc', 'public'],
                       'filename': 'foobar.fits.gz'},
@@ -205,7 +206,8 @@ def superevent_initial_alert_download(filename, graceid):
 def test_handle_superevent_initial_alert(mock_create_initial_circular,
                                          mock_send,
                                          mock_create_voevent,
-                                         mock_create_tag, mock_get_log):
+                                         mock_create_tag, mock_get_log,
+                                         mock_expose):
     """Test that the ``ADVOK`` label triggers an initial alert."""
     alert = {
         'alert_type': 'label_added',
@@ -228,6 +230,7 @@ def test_handle_superevent_initial_alert(mock_create_initial_circular,
          call('p_astro.json', 'public', 'S1234'),
          call('S1234-Initial-1.xml', 'public', 'S1234')],
         any_order=True)
+    mock_expose.assert_called_once_with('S1234')
 
 
 def superevent_retraction_alert_download(filename, graceid):
@@ -237,6 +240,7 @@ def superevent_retraction_alert_download(filename, graceid):
         raise ValueError
 
 
+@patch('gwcelery.tasks.gracedb.expose._orig_run', return_value=None)
 @patch('gwcelery.tasks.gracedb.create_tag._orig_run')
 @patch('gwcelery.tasks.gracedb.create_voevent._orig_run',
        return_value='S1234-Retraction-2.xml')
@@ -247,7 +251,7 @@ def superevent_retraction_alert_download(filename, graceid):
 def test_handle_superevent_retraction_alert(mock_create_retraction_circular,
                                             mock_send,
                                             mock_create_voevent,
-                                            mock_create_tag):
+                                            mock_create_tag, mock_expose):
     """Test that the ``ADVNO`` label triggers a retraction alert."""
     alert = {
         'alert_type': 'label_added',
@@ -264,6 +268,7 @@ def test_handle_superevent_retraction_alert(mock_create_retraction_circular,
     mock_create_retraction_circular.assert_called_once_with('S1234')
     mock_create_tag.assert_called_once_with(
         'S1234-Retraction-2.xml', 'public', 'S1234')
+    mock_expose.assert_called_once_with('S1234')
 
 
 def mock_download(filename, graceid, *args, **kwargs):

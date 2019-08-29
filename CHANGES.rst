@@ -16,6 +16,13 @@ Changelog
     rapid succession with random jitter in order to simulate multiple pipeline
     uploads.
 
+-   Expose events to the public prior to sending any kind of alert:
+    preliminary, initial, update, or retraction. Previously this behavior only
+    occurred for preliminary alerts, which created the unusual and undesirable
+    possibility of a public GCN for an event that is not public. As before,
+    events are only exposed to the public in the production environment, and
+    not in the playground environment.
+
 0.8.5 (2019-08-23)
 ------------------
 
