@@ -137,8 +137,8 @@ def _search_by_tag_and_filename(superevent_id, filename, extension, tag):
     try:
         records = gracedb.client.logs(superevent_id).json()['log']
         return [
-            record['filename'] for record in records
-            if tag in record['tag_names']
+            '{},{}'.format(record['filename'], record['file_version'])
+            for record in records if tag in record['tag_names']
             and record['filename'].startswith(filename)
             and record['filename'].endswith(extension)]
     except GraceDbHTTPError as e:
