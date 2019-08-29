@@ -528,20 +528,22 @@ def preliminary_initial_update_alert(filenames, superevent_id, alert_type):
         for message in gracedb.get_log(superevent_id):
             t = message['tag_names']
             f = message['filename']
+            v = message['file_version']
+            fv = '{},{}'.format(f, v)
             if not f:
                 continue
             if skymap_needed \
                     and {'sky_loc', 'public'}.issubset(t) \
                     and f.endswith('.fits.gz'):
-                skymap_filename = f
+                skymap_filename = fv
             if em_bright_needed \
                     and 'em_bright' in t \
                     and f.endswith('.json'):
-                em_bright_filename = f
+                em_bright_filename = fv
             if p_astro_needed \
                     and 'p_astro' in t \
                     and f.endswith('.json'):
-                p_astro_filename = f
+                p_astro_filename = fv
 
     send_canvas = (
         gracedb.download.s(superevent_id)

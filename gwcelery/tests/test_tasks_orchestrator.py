@@ -180,9 +180,9 @@ def test_handle_superevent_event_added(mock_check_vectors, mock_get_event,
 def superevent_initial_alert_download(filename, graceid):
     if filename == 'S1234-Initial-1.xml':
         return 'contents of S1234-Initial-1.xml'
-    elif filename == 'em_bright.json':
+    elif filename == 'em_bright.json,0':
         return json.dumps({'HasNS': 0.0, 'HasRemnant': 0.0})
-    elif filename == 'p_astro.json':
+    elif filename == 'p_astro.json,0':
         return json.dumps(
             dict(BNS=0.94, NSBH=0.03, BBH=0.02, Terrestrial=0.01))
     else:
@@ -192,11 +192,14 @@ def superevent_initial_alert_download(filename, graceid):
 @patch('gwcelery.tasks.gracedb.expose._orig_run', return_value=None)
 @patch('gwcelery.tasks.gracedb.get_log',
        return_value=[{'tag_names': ['sky_loc', 'public'],
-                      'filename': 'foobar.fits.gz'},
+                      'filename': 'foobar.fits.gz',
+                      'file_version': 0},
                      {'tag_names': ['em_bright'],
-                      'filename': 'em_bright.json'},
+                      'filename': 'em_bright.json',
+                      'file_version': 0},
                      {'tag_names': ['p_astro'],
-                      'filename': 'p_astro.json'}])
+                      'filename': 'p_astro.json',
+                      'file_version': 0}])
 @patch('gwcelery.tasks.gracedb.create_tag._orig_run', return_value=None)
 @patch('gwcelery.tasks.gracedb.create_voevent._orig_run',
        return_value='S1234-Initial-1.xml')
@@ -222,13 +225,13 @@ def test_handle_superevent_initial_alert(mock_create_initial_circular,
     mock_create_voevent.assert_called_once_with(
         'S1234', 'initial', BBH=0.02, BNS=0.94, NSBH=0.03, ProbHasNS=0.0,
         ProbHasRemnant=0.0, Terrestrial=0.01, internal=False, open_alert=True,
-        skymap_filename='foobar.fits.gz', skymap_type='foobar', vetted=True)
+        skymap_filename='foobar.fits.gz,0', skymap_type='foobar', vetted=True)
     mock_send.assert_called_once_with('contents of S1234-Initial-1.xml')
     mock_create_initial_circular.assert_called_once_with('S1234')
     mock_create_tag.assert_has_calls(
-        [call('foobar.fits.gz', 'public', 'S1234'),
-         call('em_bright.json', 'public', 'S1234'),
-         call('p_astro.json', 'public', 'S1234'),
+        [call('foobar.fits.gz,0', 'public', 'S1234'),
+         call('em_bright.json,0', 'public', 'S1234'),
+         call('p_astro.json,0', 'public', 'S1234'),
          call('S1234-Initial-1.xml', 'public', 'S1234')],
         any_order=True)
     mock_expose.assert_called_once_with('S1234')
