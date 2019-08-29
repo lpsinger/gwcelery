@@ -9,6 +9,9 @@ Changelog
 -   Fix a bug that prevented retrying of failed GraceDB API calls in the
     superevent manager.
 
+-   Add a retry for one more potential GraceDB API failure in the initial and
+    update alert workflows.
+
 0.8.5 (2019-08-23)
 ------------------
 

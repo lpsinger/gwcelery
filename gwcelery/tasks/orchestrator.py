@@ -524,7 +524,7 @@ def parameter_estimation(far_event, superevent_id):
         canvas.apply_async()
 
 
-@app.task(ignore_result=True, shared=False)
+@gracedb.task(ignore_result=True, shared=False)
 def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None,
                             em_bright_filename=None,
                             p_astro_filename=None):
@@ -546,6 +546,13 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None,
     p_astro_filename : str, optional
         The p_astro file to use.
         If None, then most recent one is used.
+
+    Notes
+    -----
+    This function is decorated with :obj:`gwcelery.tasks.gracedb.task` rather
+    than :obj:`gwcelery.app.task` so that a synchronous call to
+    :func:`gwcelery.tasks.gracedb.get_log` is retried in the event of GraceDB
+    API failures.
     """
     skymap_needed = (skymap_filename is None)
     em_bright_needed = (em_bright_filename is None)
@@ -611,7 +618,7 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None,
     ).apply_async()
 
 
-@app.task(ignore_result=True, shared=False)
+@gracedb.task(ignore_result=True, shared=False)
 def initial_alert(superevent_id, skymap_filename=None,
                   em_bright_filename=None, p_astro_filename=None):
     """Produce an initial alert.
@@ -633,12 +640,19 @@ def initial_alert(superevent_id, skymap_filename=None,
     p_astro_filename : str, optional
         The p_astro file to use.
         If None, then most recent one is used.
+
+    Notes
+    -----
+    This function is decorated with :obj:`gwcelery.tasks.gracedb.task` rather
+    than :obj:`gwcelery.app.task` so that a synchronous call to
+    :func:`gwcelery.tasks.gracedb.get_log` is retried in the event of GraceDB
+    API failures.
     """
     initial_or_update_alert(superevent_id, 'initial', skymap_filename,
                             em_bright_filename, p_astro_filename)
 
 
-@app.task(ignore_result=True, shared=False)
+@gracedb.task(ignore_result=True, shared=False)
 def update_alert(superevent_id, skymap_filename=None,
                  em_bright_filename=None, p_astro_filename=None):
     """Produce an update alert.
@@ -660,6 +674,13 @@ def update_alert(superevent_id, skymap_filename=None,
     p_astro_filename : str, optional
         The p_astro file to use.
         If None, then most recent one is used.
+
+    Notes
+    -----
+    This function is decorated with :obj:`gwcelery.tasks.gracedb.task` rather
+    than :obj:`gwcelery.app.task` so that a synchronous call to
+    :func:`gwcelery.tasks.gracedb.get_log` is retried in the event of GraceDB
+    API failures.
     """
     initial_or_update_alert(superevent_id, 'update', skymap_filename,
                             em_bright_filename, p_astro_filename)
