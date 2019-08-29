@@ -217,95 +217,93 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js" integrity="sha256-RWiU4omUU7tQ2M3wmRQNW9UL50MB4CucbRPCbsQv+X0=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.0/anchor.min.js" integrity="sha256-m1eTvwEHwmsw4+XKF7BshClVJEPwTVycveNl0CS0Mkk=" crossorigin="anonymous"></script>
 <script>
-    (function() {
-        /* Add hover anchor links for individual forms. */
-        anchors.add('.card-header');
+    /* Add hover anchor links for individual forms. */
+    anchors.add('.card-header');
 
-        /* Show a spinner whenever a typeahead completion is loading. */
-        $('.typeahead')
-            .wrap('<div class=text-nowrap></div>')
-            .after('<div style="position: relative; left: -32px" class="invisible position-relative spinner-border spinner-border-sm text-primary" role="status"></div>')
-            .on('typeahead:asyncrequest', ev => {
-                $(ev.target).parent().next('.spinner-border').removeClass('invisible');
-            }).on('typeahead:asynccancel typeahead:asyncreceive', ev => {
-                $(ev.target).parent().next('.spinner-border').addClass('invisible');
-            });
+    /* Show a spinner whenever a typeahead completion is loading. */
+    $('.typeahead')
+        .wrap('<div class=text-nowrap></div>')
+        .after('<div style="position: relative; left: -32px" class="invisible position-relative spinner-border spinner-border-sm text-primary" role="status"></div>')
+        .on('typeahead:asyncrequest', ev => {
+            $(ev.target).parent().next('.spinner-border').removeClass('invisible');
+        }).on('typeahead:asynccancel typeahead:asyncreceive', ev => {
+            $(ev.target).parent().next('.spinner-border').addClass('invisible');
+        });
 
-        /* Enable typeahead completion for superevent ID fields. */
-        $("[name='superevent_id']").typeahead({
+    /* Enable typeahead completion for superevent ID fields. */
+    $("[name='superevent_id']").typeahead({
+        highlight: true,
+        minLength: 0
+    }, {
+        source: new Bloodhound({
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            datumTokenizer: Bloodhound.tokenizers.whitespace,
+            remote: {
+                url: '{{ url_for('typeahead_superevent_id', superevent_id='TERM') }}',
+                wildcard: 'TERM'
+            }
+        })
+    });
+
+    /* Enable typeahead completion for event ID fields. */
+    $("[name='event_id']").typeahead({
+        highlight: true,
+        minLength: 0
+    }, {
+        source: new Bloodhound({
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            datumTokenizer: Bloodhound.tokenizers.whitespace,
+            remote: {
+                url: '{{ url_for('typeahead_event_id', event_id='TERM') }}',
+                wildcard: 'TERM'
+            }
+        })
+    });
+
+    /* Enable typeahead completion for fields whose options depend on the
+     * superevent ID. */
+    $('.typeahead.superevent-dependent').each(function() {
+        const url = $(this).data('typeahead-url-template');
+
+        const bloodhound = new Bloodhound({
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            datumTokenizer: Bloodhound.tokenizers.whitespace,
+            prefetch: url.replace('TERM', ''),
+            remote: {
+                url: url,
+                wildcard: 'TERM'
+            }
+        });
+
+        const stringify = bloodhound.identify;
+
+        $(this).typeahead({
             highlight: true,
             minLength: 0
         }, {
-            source: new Bloodhound({
-                queryTokenizer: Bloodhound.tokenizers.whitespace,
-                datumTokenizer: Bloodhound.tokenizers.whitespace,
-                remote: {
-                    url: '{{ url_for('typeahead_superevent_id', superevent_id='TERM') }}',
-                    wildcard: 'TERM'
-                }
-            })
+            source: bloodhound
         });
 
-        /* Enable typeahead completion for event ID fields. */
-        $("[name='event_id']").typeahead({
-            highlight: true,
-            minLength: 0
-        }, {
-            source: new Bloodhound({
-                queryTokenizer: Bloodhound.tokenizers.whitespace,
-                datumTokenizer: Bloodhound.tokenizers.whitespace,
-                remote: {
-                    url: '{{ url_for('typeahead_event_id', event_id='TERM') }}',
-                    wildcard: 'TERM'
-                }
-            })
+        $(this).closest('form').find("input[name='superevent_id']").on('typeahead:change typeahead:select', ev => {
+            const superevent_id = $(ev.target).val();
+            bloodhound.prefetch.url = url.replace('SUPEREVENT_ID', superevent_id);
+            bloodhound.remote.url = url.replace('SUPEREVENT_ID', superevent_id);
+            bloodhound.identify = (datum => stringify({superevent_id: superevent_id, datum: datum}));
+            bloodhound.initialize();
         });
+    });
 
-        /* Enable typeahead completion for fields whose options depend on the
-         * superevent ID. */
-        $('.typeahead.superevent-dependent').each(function() {
-            const url = $(this).data('typeahead-url-template');
+    /* For forms that contain a <div class=modal> element to provide a
+     * confirmation dialog box, capture any form submission event and
+     * display the dialog box instead.*/
+    $('form:has(.modal)').on('submit', function(event) {
+        $(this).find('.modal').modal();
+        return false;
+    });
 
-            const bloodhound = new Bloodhound({
-                queryTokenizer: Bloodhound.tokenizers.whitespace,
-                datumTokenizer: Bloodhound.tokenizers.whitespace,
-                prefetch: url.replace('TERM', ''),
-                remote: {
-                    url: url,
-                    wildcard: 'TERM'
-                }
-            });
-
-            const stringify = bloodhound.identify;
-
-            $(this).typeahead({
-                highlight: true,
-                minLength: 0
-            }, {
-                source: bloodhound
-            });
-
-            $(this).closest('form').find("input[name='superevent_id']").on('typeahead:change typeahead:select', ev => {
-                const superevent_id = $(ev.target).val();
-                bloodhound.prefetch.url = url.replace('SUPEREVENT_ID', superevent_id);
-                bloodhound.remote.url = url.replace('SUPEREVENT_ID', superevent_id);
-                bloodhound.identify = (datum => stringify({superevent_id: superevent_id, datum: datum}));
-                bloodhound.initialize();
-            });
-        });
-
-        /* For forms that contain a <div class=modal> element to provide a
-         * confirmation dialog box, capture any form submission event and
-         * display the dialog box instead.*/
-        $('form:has(.modal)').on('submit', function(event) {
-            $(this).find('.modal').modal();
-            return false;
-        });
-
-        /* Capture clicks of the submit button inside the dialog box and
-         * REALLY submit the form this time. */
-        $("form .modal button[type='submit']").on('click', function(event) {
-            $(this).closest('form')[0].submit();
-        });
-    })();
+    /* Capture clicks of the submit button inside the dialog box and
+     * REALLY submit the form this time. */
+    $("form .modal button[type='submit']").on('click', function(event) {
+        $(this).closest('form')[0].submit();
+    });
 </script>
