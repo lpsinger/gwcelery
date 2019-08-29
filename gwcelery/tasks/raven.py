@@ -1,6 +1,6 @@
 """Search for GRB-GW coincidences with ligo-raven."""
 import ligo.raven.search
-from celery import chain
+from celery import chain, group
 from ligo.gracedb.exceptions import HTTPError
 from ligo.raven import gracedb_events
 
@@ -141,7 +141,7 @@ def search(gracedb_id, alert_object, tl=-5, th=5, group=None,
 
 
 @app.task(shared=False)
-def raven_pipeline(raven_search_results, gracedb_id, alert_object, group):
+def raven_pipeline(raven_search_results, gracedb_id, alert_object, gw_group):
     """Executes much of the full raven pipeline, including adding
     the external trigger to the superevent, calculating the
     coincidence false alarm rate, and applying 'EM_COINC' to the
@@ -176,11 +176,10 @@ def raven_pipeline(raven_search_results, gracedb_id, alert_object, group):
             gracedb.add_event_to_superevent.si(superevent_id, exttrig_id)
             |
             calculate_coincidence_far.si(superevent_id, exttrig_id,
-                                         preferred_gwevent_id, group)
+                                         preferred_gwevent_id, gw_group)
             |
-            gracedb.create_label.si('EM_COINC', superevent_id)
-            |
-            gracedb.create_label.si('EM_COINC', exttrig_id)
+            group(gracedb.create_label.si('EM_COINC', superevent_id),
+                  gracedb.create_label.si('EM_COINC', exttrig_id))
         ).delay()
 
 

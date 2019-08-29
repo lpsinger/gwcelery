@@ -51,6 +51,8 @@ Changelog
 -   Changed ``handle_cbc_event`` handler to call gstlal trained ML based
     inference for source property computation for gstlal triggers.
 
+-   Apply EM_COINC to superevent and external event in parallel.
+
 0.8.5 (2019-08-23)
 ------------------
 
