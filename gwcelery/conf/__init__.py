@@ -228,3 +228,7 @@ raven_coincidence_windows = {'GRB_CBC': [-5, 1],
 """Time coincidence windows passed to ligo-raven. External events and
 superevents of the appropriate type are considered to be coincident if
 within time window of each other."""
+
+mock_events_simulate_multiple_uploads = False
+"""If True, then upload each mock event several times in rapid succession with
+random jitter in order to simulate multiple pipeline uploads."""

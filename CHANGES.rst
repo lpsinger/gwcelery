@@ -12,6 +12,10 @@ Changelog
 -   Add a retry for one more potential GraceDB API failure in the initial and
     update alert workflows.
 
+-   In the playground environment only, upload each mock event several times in
+    rapid succession with random jitter in order to simulate multiple pipeline
+    uploads.
+
 0.8.5 (2019-08-23)
 ------------------
 

@@ -122,6 +122,13 @@ def _vet_event(superevents):
         ).apply_async()
 
 
+@gracedb.task(ignore_result=True, shared=False)
+def _upload_psd(graceid):
+    psd = pkg_resources.resource_string(
+        __name__, '../data/first2years/2016/psd.xml.gz')
+    gracedb.upload(psd, 'psd.xml.gz', graceid, 'Noise PSD', ['psd'])
+
+
 @app.task(base=PeriodicTask, shared=False, run_every=3600)
 def upload_event():
     """Upload a random event from the "First Two Years" paper.
@@ -130,12 +137,23 @@ def upload_event():
     retraction or initial notice respectively.
     """
     coinc = pick_coinc()
-    psd = pkg_resources.resource_string(
-        __name__, '../data/first2years/2016/psd.xml.gz')
+
     graceid = gracedb.create_event(coinc, 'MDC', 'gstlal', 'CBC')
     log.info('uploaded as %s', graceid)
+
+    if app.conf['mock_events_simulate_multiple_uploads']:
+        num = 10
+        for _ in range(num):
+            (
+                gracedb.create_event.s(
+                    coinc, 'MDC', 'gstlal', 'CBC'
+                ).set(countdown=random.uniform(0, num))
+                |
+                _upload_psd.s()
+            ).apply_async()
+
     (
-        gracedb.upload.si(psd, 'psd.xml.gz', graceid, 'Noise PSD', ['psd'])
+        _upload_psd.si(graceid)
         |
         gracedb.get_superevents.si(
             'MDC event: {}'.format(graceid)
