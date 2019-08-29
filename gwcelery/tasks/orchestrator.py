@@ -341,7 +341,7 @@ def _create_voevent(classification, *args, **kwargs):
 
 
 @gracedb.task(shared=False)
-def _create_label_and_return_filename(filename, tag, graceid):
+def _create_tag_and_return_filename(filename, tag, graceid):
     gracedb.create_tag(filename, tag, graceid)
     return filename
 
@@ -397,7 +397,7 @@ def preliminary_alert(event, superevent_id):
                     tags=['sky_loc', 'public']
                 )
                 |
-                _create_label_and_return_filename.s(
+                _create_tag_and_return_filename.s(
                     'SKYMAP_READY', superevent_id
                 ),
 
@@ -428,7 +428,7 @@ def preliminary_alert(event, superevent_id):
                 tags=['em_bright', 'public']
             )
             |
-            _create_label_and_return_filename.s(
+            _create_tag_and_return_filename.s(
                 'EMBRIGHT_READY', superevent_id
             )
         ) if event['group'] == 'CBC' else identity.s(None),
@@ -444,7 +444,7 @@ def preliminary_alert(event, superevent_id):
                 tags=['p_astro', 'public']
             )
             |
-            _create_label_and_return_filename.s(
+            _create_tag_and_return_filename.s(
                 'PASTRO_READY', superevent_id
             )
         ) if event['group'] == 'CBC' else identity.s(None)
