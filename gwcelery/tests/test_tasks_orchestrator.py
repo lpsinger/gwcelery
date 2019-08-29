@@ -1,6 +1,6 @@
 import os
 import json
-from unittest.mock import Mock, patch
+from unittest.mock import call, Mock, patch
 
 from ligo.gracedb import rest
 import pkg_resources
@@ -195,7 +195,7 @@ def superevent_initial_alert_download(filename, graceid):
                       'filename': 'em_bright.json'},
                      {'tag_names': ['p_astro'],
                       'filename': 'p_astro.json'}])
-@patch('gwcelery.tasks.gracedb.create_tag._orig_run')
+@patch('gwcelery.tasks.gracedb.create_tag._orig_run', return_value=None)
 @patch('gwcelery.tasks.gracedb.create_voevent._orig_run',
        return_value='S1234-Initial-1.xml')
 @patch('gwcelery.tasks.gracedb.download._orig_run',
@@ -222,8 +222,12 @@ def test_handle_superevent_initial_alert(mock_create_initial_circular,
         skymap_filename='foobar.fits.gz', skymap_type='foobar', vetted=True)
     mock_send.assert_called_once_with('contents of S1234-Initial-1.xml')
     mock_create_initial_circular.assert_called_once_with('S1234')
-    mock_create_tag.assert_called_once_with(
-        'S1234-Initial-1.xml', 'public', 'S1234')
+    mock_create_tag.assert_has_calls(
+        [call('foobar.fits.gz', 'public', 'S1234'),
+         call('em_bright.json', 'public', 'S1234'),
+         call('p_astro.json', 'public', 'S1234'),
+         call('S1234-Initial-1.xml', 'public', 'S1234')],
+        any_order=True)
 
 
 def superevent_retraction_alert_download(filename, graceid):

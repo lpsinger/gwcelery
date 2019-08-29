@@ -315,7 +315,8 @@ def _create_voevent(classification, *args, **kwargs):
     if classification is not None:
         # Merge source classification and source properties into kwargs.
         for text in classification:
-            kwargs.update(json.loads(text))
+            if text is not None:
+                kwargs.update(json.loads(text))
 
     # FIXME: These keys have differ between em_bright.json
     # and the GraceDB REST API.
@@ -570,8 +571,16 @@ def initial_or_update_alert(superevent_id, alert_type, skymap_filename=None,
 
     (
         group(
+            gracedb.create_tag.s(filename, 'public', superevent_id)
+            for filename in [
+                skymap_filename, em_bright_filename, p_astro_filename
+            ]
+            if filename is not None
+        )
+        |
+        group(
             gracedb.download.si(em_bright_filename, superevent_id),
-            gracedb.download.si(p_astro_filename, superevent_id)
+            gracedb.download.si(p_astro_filename, superevent_id),
         )
         |
         _create_voevent.s(
