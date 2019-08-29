@@ -171,11 +171,21 @@ def test_typeahead_em_bright_and_p_astro(
     """Test typeahead filtering for em_bright and p_astro files."""
     mock_logs = Mock()
     mock_logs.configure_mock(**{'return_value.json.return_value': {'log': [
-        {'filename': 'foobar.txt', 'tag_names': [tag]},
-        {'filename': 'bar.json', 'tag_names': [tag]},
-        {'filename': 'foobar.json', 'tag_names': [tag]},
-        {'filename': 'foobat.json', 'tag_names': [tag]},
-        {'filename': 'foobaz.json', 'tag_names': ['wrong_tag']}]}})
+        {'file_version': 0,
+         'filename': 'foobar.txt',
+         'tag_names': [tag]},
+        {'file_version': 0,
+         'filename': 'bar.json',
+         'tag_names': [tag]},
+        {'file_version': 0,
+         'filename': 'foobar.json',
+         'tag_names': [tag]},
+        {'file_version': 0,
+         'filename': 'foobat.json',
+         'tag_names': [tag]},
+        {'file_version': 0,
+         'filename': 'foobaz.json',
+         'tag_names': ['wrong_tag']}]}})
     monkeypatch.setattr('gwcelery.tasks.gracedb.client.logs', mock_logs)
 
     response = client.get(
@@ -183,4 +193,4 @@ def test_typeahead_em_bright_and_p_astro(
 
     assert HTTP_STATUS_CODES[response.status_code] == 'OK'
     mock_logs.assert_called_once_with('MS190208a')
-    assert response.json == ['foobar.json', 'foobat.json']
+    assert response.json == ['foobar.json,0', 'foobat.json,0']
