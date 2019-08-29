@@ -22,6 +22,7 @@ from . import resource_json
      ['label_added', 'Burst', 'CWB', False, 1.e-9, ['H1', 'L1', 'V1']],
      ['label_added', 'Burst', 'oLIB', False, 1.e-9, ['H1', 'L1', 'V1']],
      ['new', 'CBC', 'gstlal', False, 1.e-9, ['H1', 'L1']]])
+@pytest.mark.xfail(reason='https://github.com/celery/celery/issues/4405')
 def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
                            alert_type, group, pipeline, offline,
                            far, instruments):

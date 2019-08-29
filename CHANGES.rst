@@ -23,6 +23,9 @@ Changelog
     events are only exposed to the public in the production environment, and
     not in the playground environment.
 
+-   Propagate sky map file extensions (as in ``bayestar.fits.gz,1``) to the
+    URLs that are presented in GCN notices.
+
 0.8.5 (2019-08-23)
 ------------------
 

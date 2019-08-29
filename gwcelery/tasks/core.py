@@ -25,12 +25,32 @@ def _unpack(results):
     return tuple(map(itemgetter(1), sorted(results, key=itemgetter(0))))
 
 
+@app.task(shared=False)
+def _first(results):
+    return min(results, key=itemgetter(0))[1]
+
+
+@app.task(shared=False)
+def _last(results):
+    return max(results, key=itemgetter(0))[1]
+
+
 def ordered_group(*args):
     """Like :meth:`celery.group`, but preserve order.
 
     This is a temporary workaround for
     https://github.com/celery/celery/pull/4858."""
     return group(arg | _pack.s(i) for i, arg in enumerate(args)) | _unpack.s()
+
+
+def ordered_group_first(*args):
+    """Like :meth:`celery.group`, but only return the first result."""
+    return group(arg | _pack.s(i) for i, arg in enumerate(args)) | _first.s()
+
+
+def ordered_group_last(*args):
+    """Like :meth:`celery.group`, but only return the last result."""
+    return group(arg | _pack.s(i) for i, arg in enumerate(args)) | _last.s()
 
 
 class DispatchHandler(dict):
