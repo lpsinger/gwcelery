@@ -89,7 +89,7 @@ def handle_superevent(alert):
             ).apply_async()
         # launch initial/retraction alert on ADVOK/ADVNO
         elif label_name == 'ADVOK':
-            initial_alert(None, None, None, superevent_id)
+            initial_alert((None, None, None), superevent_id)
         elif label_name == 'ADVNO':
             retraction_alert(superevent_id)
 
@@ -500,23 +500,14 @@ def parameter_estimation(far_event, superevent_id):
 
 
 @gracedb.task(ignore_result=True, shared=False)
-def preliminary_initial_update_alert(skymap_filename, em_bright_filename,
-                                     p_astro_filename, superevent_id,
-                                     alert_type):
+def preliminary_initial_update_alert(filenames, superevent_id, alert_type):
     """
     Create and send a preliminary, initial, or update GCN notice.
 
     Parameters
     ----------
-    skymap_filename : str, optional
-        The sky map to send.
-        If None, then most recent public sky map is used.
-    em_bright_filename : str, optional
-        The source classification file to use.
-        If None, then most recent one is used.
-    p_astro_filename : str, optional
-        The p_astro file to use.
-        If None, then most recent one is used.
+    filenames : tuple
+        A list of the sky map, em_bright, and p_astro filenames.
     superevent_id : str
         The superevent ID.
     alert_type : {'preliminary', 'initial', 'update'}
@@ -529,6 +520,7 @@ def preliminary_initial_update_alert(skymap_filename, em_bright_filename,
     :func:`gwcelery.tasks.gracedb.get_log` is retried in the event of GraceDB
     API failures.
     """
+    skymap_filename, em_bright_filename, p_astro_filename = filenames
     skymap_needed = (skymap_filename is None)
     em_bright_needed = (em_bright_filename is None)
     p_astro_needed = (p_astro_filename is None)
@@ -605,8 +597,7 @@ def preliminary_initial_update_alert(skymap_filename, em_bright_filename,
 
 
 @gracedb.task(ignore_result=True, shared=False)
-def initial_alert(skymap_filename, em_bright_filename, p_astro_filename,
-                  superevent_id):
+def initial_alert(filenames, superevent_id):
     """Produce an initial alert.
 
     This does nothing more than call
@@ -615,15 +606,8 @@ def initial_alert(skymap_filename, em_bright_filename, p_astro_filename,
 
     Parameters
     ----------
-    skymap_filename : str
-        The sky map to send.
-        If None, then most recent public sky map is used.
-    em_bright_filename : str
-        The source classification file to use.
-        If None, then most recent one is used.
-    p_astro_filename : str
-        The p_astro file to use.
-        If None, then most recent one is used.
+    filenames : tuple
+        A list of the sky map, em_bright, and p_astro filenames.
     superevent_id : str
         The superevent ID.
 
@@ -634,14 +618,11 @@ def initial_alert(skymap_filename, em_bright_filename, p_astro_filename,
     :func:`gwcelery.tasks.gracedb.get_log` is retried in the event of GraceDB
     API failures.
     """
-    preliminary_initial_update_alert(skymap_filename, em_bright_filename,
-                                     p_astro_filename, superevent_id,
-                                     'initial')
+    preliminary_initial_update_alert(filenames, superevent_id, 'initial')
 
 
 @gracedb.task(ignore_result=True, shared=False)
-def update_alert(skymap_filename, em_bright_filename, p_astro_filename,
-                 superevent_id):
+def update_alert(filenames, superevent_id):
     """Produce an update alert.
 
     This does nothing more than call
@@ -650,15 +631,8 @@ def update_alert(skymap_filename, em_bright_filename, p_astro_filename,
 
     Parameters
     ----------
-    skymap_filename : str
-        The sky map to send.
-        If None, then most recent public sky map is used.
-    em_bright_filename : str
-        The source classification file to use.
-        If None, then most recent one is used.
-    p_astro_filename : str
-        The p_astro file to use.
-        If None, then most recent one is used.
+    filenames : tuple
+        A list of the sky map, em_bright, and p_astro filenames.
     superevent_id : str
         The superevent ID.
 
@@ -669,9 +643,7 @@ def update_alert(skymap_filename, em_bright_filename, p_astro_filename,
     :func:`gwcelery.tasks.gracedb.get_log` is retried in the event of GraceDB
     API failures.
     """
-    preliminary_initial_update_alert(skymap_filename, em_bright_filename,
-                                     p_astro_filename, superevent_id,
-                                     'update')
+    preliminary_initial_update_alert(filenames, superevent_id, 'update')
 
 
 @app.task(ignore_result=True, shared=False)
