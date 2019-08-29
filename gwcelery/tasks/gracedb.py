@@ -198,12 +198,13 @@ def replace_event(graceid, payload):
         pass  # Close without reading response; we only needed the status
 
 
-@task(ignore_result=True, shared=False)
+@task(shared=False)
 @catch_retryable_http_errors
 def upload(filecontents, filename, graceid, message, tags=()):
     """Upload a file to GraceDB."""
-    with client.writeLog(graceid, message, filename, filecontents, tags):
-        pass  # Close without reading response; we only needed the status
+    result = client.writeLog(
+        graceid, message, filename, filecontents, tags).json()
+    return '{},{}'.format(result['filename'], result['file_version'])
 
 
 @app.task(shared=False)
