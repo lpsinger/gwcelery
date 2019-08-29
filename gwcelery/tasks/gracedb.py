@@ -68,7 +68,7 @@ def create_label(label, graceid):
         # If we got a 400 error because no change was made, then ignore
         # the exception and return successfully to preserve idempotency.
         if e.message != \
-                b'"The fields superevent, label must make a unique set."':
+                '"The fields superevent, label must make a unique set."':
             raise
 
 
@@ -108,7 +108,7 @@ def create_tag(filename, tag, graceid):
     except rest.HTTPError as e:
         # If we got a 400 error because no change was made, then ignore
         # the exception and return successfully to preserve idempotency.
-        if e.message != b'"Tag is already applied to this log message"':
+        if e.message != '"Tag is already applied to this log message"':
             raise
 
 
@@ -255,7 +255,7 @@ def update_superevent(superevent_id, t_start=None,
     except rest.HTTPError as e:
         # If we got a 400 error because no change was made, then ignore
         # the exception and return successfully to preserve idempotency.
-        error_msg = b'"Request would not modify the superevent"'
+        error_msg = '"Request would not modify the superevent"'
         if not (e.status == 400 and e.message == error_msg):
             raise
 
@@ -284,7 +284,7 @@ def create_superevent(graceid, t0, t_start, t_end, category):
                                      category=category):
             pass  # Close without reading response; we only needed the status
     except rest.HTTPError as e:
-        error_msg = b'is already assigned to a Superevent'
+        error_msg = 'is already assigned to a Superevent'
         if not (e.status == 400 and error_msg in e.message):
             raise
 
@@ -297,6 +297,6 @@ def add_event_to_superevent(superevent_id, graceid):
         with client.addEventToSuperevent(superevent_id, graceid):
             pass  # Close without reading response; we only needed the status
     except rest.HTTPError as e:
-        error_msg = b'"is already assigned to a Superevent"'
+        error_msg = '"is already assigned to a Superevent"'
         if not (e.status == 400 and e.message == error_msg):
             raise
