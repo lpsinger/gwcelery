@@ -2,6 +2,7 @@
 from http.client import HTTPException
 import functools
 from socket import gaierror
+import re
 
 from ligo.gracedb import rest
 from celery.utils.log import get_task_logger
@@ -45,6 +46,19 @@ def task(*args, **kwargs):
                                    TimeoutError, HTTPException),
                     default_retry_delay=20.0, retry_backoff=True,
                     retry_kwargs=dict(max_retries=10))
+
+
+versioned_filename_regex = re.compile(
+    r'^(?P<filename>.*?)(?:,(?P<file_version>\d+))?$')
+
+
+def _parse_versioned_filename(versioned_filename):
+    match = versioned_filename_regex.fullmatch(versioned_filename)
+    filename = match['filename']
+    file_version = match['file_version']
+    if file_version is not None:
+        file_version = int(file_version)
+    return filename, file_version
 
 
 @task(shared=False)
@@ -99,8 +113,13 @@ def create_signoff(status, comment, signoff_type, graceid):
 @catch_retryable_http_errors
 def create_tag(filename, tag, graceid):
     """Create a tag in GraceDB."""
+    filename, file_version = _parse_versioned_filename(filename)
     log = get_log(graceid)
-    *_, entry = (e for e in log if e['filename'] == filename)
+    if file_version is None:
+        *_, entry = (e for e in log if e['filename'] == filename)
+    else:
+        *_, entry = (e for e in log if e['filename'] == filename
+                     and e['file_version'] == file_version)
     log_number = entry['N']
     try:
         with client.addTag(graceid, log_number, tag):
