@@ -162,10 +162,7 @@ def plot(contents):
     return outfile.getvalue()
 
 
-@lvalert.handler('cbc_spiir',
-                 'cbc_pycbc',
-                 'cbc_mbtaonline',
-                 'superevent',
+@lvalert.handler('superevent',
                  'mdc_superevent',
                  shared=False)
 def handle(alert):
