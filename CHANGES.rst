@@ -43,10 +43,10 @@ Changelog
     task and running it for all events belonging to a superevent was a
     bottleneck.
 
--   Decrease the timeout for stabilization of the preferred event from 5
-    minutes to 2 minutes, which is comparable to the time it took S190828j to
-    settle. (FIXME: revert this before releasing 0.8.6, and target this as a
-    permanent change for 0.8.7 onward.)
+-   For the playground environment only, decrease the timeout for stabilization
+    of the preferred event from 5 minutes to 2 minutes, which is comparable to
+    how long it has taken recent events to settle. This does not affect the
+    configuration of the production environment.
 
 0.8.5 (2019-08-23)
 ------------------
