@@ -367,7 +367,7 @@ def preliminary_alert(event, superevent_id):
 
     canvas = chain()
 
-    if skymap_filename == 'bayestar.multiorder.fits':
+    if event['group'] == 'CBC':
         canvas |= (
             ordered_group(
                 gracedb.download.si('coinc.xml', preferred_event_id),
