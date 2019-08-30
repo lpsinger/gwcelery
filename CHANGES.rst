@@ -38,6 +38,10 @@ Changelog
     superevents comes as a request from the Fermi and Swift sub-threshold
     searches.
 
+-   Generate source classification PNGs for all p_astro.json uploads, for both
+    events and superevents. This will provide better visibility of the
+    classifications of different events belonging to a superevent.
+
 0.8.5 (2019-08-23)
 ------------------
 
