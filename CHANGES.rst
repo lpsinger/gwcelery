@@ -26,6 +26,18 @@ Changelog
 -   Propagate sky map file extensions (as in ``bayestar.fits.gz,1``) to the
     URLs that are presented in GCN notices.
 
+-   Generate flattened FITS files and sky map visualizations for all
+    superevents, even those that do not rise to the public alert threshold.
+    Note that as a side effect all superevents will have the ``EM_Selected``
+    label applied, since it is used as a semaphore to trigger the annotations.
+    The ``ADVREQ`` label used to serve double duty as the semaphore and also as
+    the wake-up call for follow-up advocates, but now it only serves the latter
+    purpose.
+
+    The feature of generating flattened FITS files and sky map plots for all
+    superevents comes as a request from the Fermi and Swift sub-threshold
+    searches.
+
 0.8.5 (2019-08-23)
 ------------------
 

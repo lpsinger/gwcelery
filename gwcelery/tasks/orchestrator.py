@@ -34,9 +34,13 @@ from . import superevents
 def handle_selected_as_preferred(alert):
     # FIXME DQV & INJ labels not incorporated into labeling ADVREQ,
     # Remove after !495 is merged
-    if alert['alert_type'] == 'selected_as_preferred' \
-            and superevents.should_publish(alert['object']):
-        gracedb.create_label.delay('ADVREQ', alert['object']['superevent'])
+
+    if alert['alert_type'] == 'selected_as_preferred':
+        superevent_id = alert['object']['superevent']
+        gracedb.create_label.delay('EM_Selected', superevent_id)
+
+        if superevents.should_publish(alert['object']):
+            gracedb.create_label.delay('ADVREQ', superevent_id)
 
 
 @lvalert.handler('superevent',
@@ -70,8 +74,8 @@ def handle_superevent(alert):
 
     elif alert['alert_type'] == 'label_added':
         label_name = alert['data']['name']
-        # launch preliminary alert on ADVREQ
-        if label_name == 'ADVREQ':
+        # launch preliminary alert on EM_Selected
+        if label_name == 'EM_Selected':
             (
                 _get_preferred_event.si(superevent_id).set(
                     countdown=app.conf['orchestrator_timeout']
