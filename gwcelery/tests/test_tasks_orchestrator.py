@@ -292,14 +292,12 @@ def mock_download(filename, graceid, *args, **kwargs):
                       {'CoincInspiral': {'snr': 10.},
                        'SingleInspiral': [{'mass1': 10., 'mass2': 5.}]}})
 @patch('gwcelery.tasks.gracedb.download._orig_run', mock_download)
-@patch('gwcelery.tasks.bayestar.localize.run')
 @patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
-def test_handle_cbc_event(mock_gracedb, mock_localize, mock_get_event):
+def test_handle_cbc_event(mock_gracedb, mock_get_event):
     """Test that an LVAlert message for a newly uploaded PSD file triggers
     BAYESTAR."""
     alert = resource_json(__name__, 'data/lvalert_psd.json')
     orchestrator.handle_cbc_event(alert)
-    mock_localize.assert_called_once()
 
 
 @pytest.mark.parametrize(

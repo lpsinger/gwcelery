@@ -38,6 +38,11 @@ Changelog
     superevents comes as a request from the Fermi and Swift sub-threshold
     searches.
 
+-   Delay running BAYESTAR until the superevent's preferred event has
+    stabilized. BAYESTAR is the most computationally intensive postprocessing
+    task and running it for all events belonging to a superevent was a
+    bottleneck.
+
 0.8.5 (2019-08-23)
 ------------------
 
