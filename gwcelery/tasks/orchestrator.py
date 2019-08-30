@@ -366,7 +366,7 @@ def preliminary_alert(event, superevent_id):
     5.   Apply the GCN_PRELIM_SENT label to the superevent.
     6.   Create and upload a GCN Circular draft.
     """
-    priority = 0 if superevents.should_publish(alert['object']) else 1
+    priority = 0 if superevents.should_publish(event) else 1
     preferred_event_id = event['graceid']
 
     if event['group'] == 'CBC':
