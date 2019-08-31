@@ -209,7 +209,8 @@ def send_preliminary_gcn():
 def send_update_gcn():
     keys = ('superevent_id', 'skymap_filename',
             'em_bright_filename', 'p_astro_filename')
-    superevent_id, *_ = args = tuple(request.form.get(key) for key in keys)
+    superevent_id, *filenames = args = tuple(
+        request.form.get(key) for key in keys)
     if all(args):
         (
             gracedb.upload.s(
@@ -218,7 +219,7 @@ def send_update_gcn():
                 .format(request.remote_user or '(unknown)'),
                 tags=['em_follow'])
             |
-            orchestrator.update_alert.si(*args)
+            orchestrator.update_alert.si(filenames, superevent_id)
         ).delay()
         flash('Queued update alert for {}.'.format(superevent_id), 'success')
     else:
