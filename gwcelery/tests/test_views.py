@@ -98,7 +98,7 @@ def test_send_update_gcn_post(client, monkeypatch):
     assert get_flashed_messages() == [
         'Queued update alert for MS190208a.']
     mock_update_alert.assert_called_once_with(
-        ('bayestar.fits.gz', 'em_bright.json', 'p_astro.json'), 'MS190208a')
+        ['bayestar.fits.gz', 'em_bright.json', 'p_astro.json'], 'MS190208a')
 
 
 def test_typeahead_superevent_id(client, monkeypatch):
