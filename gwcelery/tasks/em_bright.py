@@ -46,7 +46,8 @@ def classifier_other(args, graceid):
     >>> em_bright.classifier_other((2.0, 1.0, 0.0, 0.0, 10.), 'S123456')
     '{"HasNS": 1.0, "HasRemnant": 1.0}'
     """
-    p_ns, p_em = _em_bright(*args)
+    mass1, mass2, chi1, chi2, snr = args
+    p_ns, p_em = _em_bright(mass1, mass2, chi1, chi2)
 
     data = json.dumps({
         'HasNS': p_ns,
