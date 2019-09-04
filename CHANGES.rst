@@ -4,10 +4,10 @@ Changelog
 0.8.7 (unreleased)
 ------------------
 
--   Fix a lethal bug in ``em_bright.py`` introduced in c4edceec. The bug would
-    incorrectly use the snr as the maximum mass of the NS and therefore the
-    source property estimation for pipelines apart from gstlal would be grossly
-    incorrect.
+-   Fix a lethal bug in ``em_bright.py`` introduced in version 0.8.5. The bug
+    would incorrectly use the snr as the maximum mass of the NS and therefore
+    the source property estimation for pipelines apart from gstlal would be
+    grossly incorrect.
 
 0.8.6 (2019-09-01)
 ------------------
