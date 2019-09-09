@@ -16,7 +16,7 @@ jinja2
 lalsuite == 6.54
 ligo-followup-advocate >= 0.0.28
 ligo-gracedb >= 2.3.0
-ligo-raven >= 1.16
+ligo-raven >= 1.17
 ligo-segments
 ligo.skymap == 0.1.9
 lscsoft-glue
