@@ -549,9 +549,9 @@
         },
         "ligo-raven": {
             "hashes": [
-                "sha256:543ec1f3ef5a9eed341aca5bd726b3acc779e790d7f85e726fd36b0accd1a1d1"
+                "sha256:a4249009c141bf521781ff6df3d2428ce316792a3783b8227c13d5edbda0aec0"
             ],
-            "version": "==1.16"
+            "version": "==1.17"
         },
         "ligo-segments": {
             "hashes": [
