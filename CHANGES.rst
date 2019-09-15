@@ -9,12 +9,18 @@ Changelog
 0.8.7 (2019-09-14)
 ------------------
 
+-   Update ligo-raven version to 1.17.
+
+0.8.5.1 (2019-09-04)
+--------------------
+
+This is a non-sequential bugfix release based on version 0.8.5.1 to fix the
+following issue:
+
 -   Fix a lethal bug in ``em_bright.py`` introduced in version 0.8.5. The bug
     would incorrectly use the snr as the maximum mass of the NS and therefore
     the source property estimation for pipelines apart from gstlal would be
     grossly incorrect.
-
--   Update ligo-raven version to 1.17.
 
 0.8.6 (2019-09-01)
 ------------------
