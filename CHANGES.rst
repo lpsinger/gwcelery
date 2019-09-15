@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.8.7 (unreleased)
+0.8.7 (2019-09-14)
 ------------------
 
 -   Fix a lethal bug in ``em_bright.py`` introduced in version 0.8.5. The bug
