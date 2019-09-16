@@ -20,7 +20,7 @@ def test_create_emcoinc_circular(monkeypatch):
     correct input parameters."""
     superevent_id = 'S1234'
     mock_compose_emcoinc_circular = Mock()
-    monkeypatch.setattr('ligo.followup_advocate.compose_RAVEN',
+    monkeypatch.setattr('ligo.followup_advocate.compose_raven',
                         mock_compose_emcoinc_circular)
 
     # call create_emcoinc_circular

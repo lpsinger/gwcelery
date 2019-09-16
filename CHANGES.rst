@@ -4,7 +4,7 @@ Changelog
 0.8.8 (unreleased)
 ------------------
 
--   No changes yet.
+-   Update ligo-followup-advocate version to 1.1.1.
 
 0.8.7 (2019-09-14)
 ------------------

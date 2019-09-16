@@ -13,7 +13,7 @@ def create_initial_circular(graceid):
 @gracedb.task(shared=False)
 def create_emcoinc_circular(graceid):
     """Create and return the em_coinc circular txt."""
-    return ligo.followup_advocate.compose_RAVEN(graceid,
+    return ligo.followup_advocate.compose_raven(graceid,
                                                 client=gracedb.client)
 
 
