@@ -198,6 +198,7 @@ def handle_posterior_samples(alert):
         return
     superevent_id = alert['uid']
     filename = alert['data']['filename']
+    info = '{} {}'.format(alert['data']['comment'], filename)
     prefix, _ = filename.rsplit('.posterior_samples.')
     # FIXME: It is assumed that posterior samples always come from
     # lalinference. After bilby or rift is integrated, this has to be fixed.
@@ -214,7 +215,7 @@ def handle_posterior_samples(alert):
 
             gracedb.upload.s(
                 '{}.multiorder.fits'.format(prefix), superevent_id,
-                'Multiresolution fits file generated from {}'.format(filename),
+                'Multiresolution fits file generated from "{}"'.format(info),
                 ['pe', 'sky_loc']
             ),
 
@@ -222,7 +223,7 @@ def handle_posterior_samples(alert):
             |
             gracedb.upload.s(
                 '{}.fits.gz'.format(prefix), superevent_id,
-                'Flat-resolution fits file created from {}'.format(filename),
+                'Flat-resolution fits file created from "{}"'.format(info),
                 ['pe', 'sky_loc']
             )
         )

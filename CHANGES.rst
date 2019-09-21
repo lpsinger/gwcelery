@@ -6,6 +6,9 @@ Changelog
 
 -   Update ligo-followup-advocate version to 1.1.1.
 
+-   Copy a comment attached to posterior samples into the comment attached to
+    the corresponding skymap.
+
 0.8.7 (2019-09-14)
 ------------------
 

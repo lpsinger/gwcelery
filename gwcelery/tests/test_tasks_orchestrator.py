@@ -308,7 +308,7 @@ def test_handle_posterior_samples(monkeypatch, alert_type, filename):
     alert = {
         'alert_type': alert_type,
         'uid': 'S1234',
-        'data': {'filename': filename}
+        'data': {'comment': 'samples', 'filename': filename}
     }
 
     download = Mock()
