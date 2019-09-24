@@ -11,6 +11,8 @@ Changelog
 
 -   Add bilby online parameter inference workflow.
 
+-   Fix approximant name used for automatic parameter estimation.
+
 0.8.7 (2019-09-14)
 ------------------
 
