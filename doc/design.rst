@@ -128,9 +128,9 @@ documentation.
                     label = "BAYESTAR"
                 ]
 
-                lalinference [
-                    href = "../gwcelery.tasks.lalinference.html"
-                    label = "LALInference"
+                inference [
+                    href = "../gwcelery.tasks.inference.html"
+                    label = "Parameter Estimation"
                 ]
             }
 
@@ -194,15 +194,15 @@ documentation.
     lvalert_listener -> raven
 
     superevent_manager -> gracedb_client
-    lalinference -> gracedb_client [ltail=cluster_orchestrator]
+    inference -> gracedb_client [ltail=cluster_orchestrator]
     raven -> gracedb_client
 
     detchar -> bayestar [style=invis]
-    bayestar -> lalinference [style=invis]
+    bayestar -> inference [style=invis]
 
     detchar -> skymaps [style=invis]
     bayestar -> classification [style=invis]
-    lalinference -> circulars [style=invis]
+    inference -> circulars [style=invis]
 
     skymaps -> classification [style=invis]
     classification -> circulars [style=invis]
@@ -213,7 +213,7 @@ documentation.
     superevent_manager -> raven [style=invis]
     raven -> detchar [style=invis]
     raven -> bayestar [style=invis]
-    raven -> lalinference [style=invis]
+    raven -> inference [style=invis]
 
     gcn_listener -> gcn [dir=back]
     gcn_broker -> gcn

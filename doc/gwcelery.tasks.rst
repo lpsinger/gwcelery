@@ -16,7 +16,7 @@ gwcelery.tasks module
     gwcelery.tasks.ligo_fermi_skymaps
     gwcelery.tasks.gcn
     gwcelery.tasks.gracedb
-    gwcelery.tasks.lalinference
+    gwcelery.tasks.inference
     gwcelery.tasks.lvalert
     gwcelery.tasks.orchestrator
     gwcelery.tasks.p_astro

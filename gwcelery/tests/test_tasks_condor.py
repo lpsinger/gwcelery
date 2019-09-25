@@ -88,6 +88,7 @@ def test_check_output_error_on_submit(monkeypatch):
     accounting_group = 'foo.bar'
     cmd = ('sleep', '1')
     msg = 'no such accounting group'  # fake accounting group error
+    pe_pipeline = 'pipeline'
 
     def mock_check_call(args):
         raise subprocess.CalledProcessError(1, args, msg)
@@ -95,23 +96,30 @@ def test_check_output_error_on_submit(monkeypatch):
     monkeypatch.setattr('subprocess.check_call', mock_check_call)
 
     with pytest.raises(subprocess.CalledProcessError) as exc_info:
-        condor.check_output.delay(cmd, accounting_group=accounting_group)
+        condor.check_output.delay(
+            cmd,
+            accounting_group=accounting_group,
+            pe_pipeline=pe_pipeline
+        )
     assert 'accounting_group=' + accounting_group in exc_info.value.cmd
     assert exc_info.value.output == msg
 
 
 def test_check_output_aborted(mock_condor_submit_aborted):
     """Test a job that is aborted."""
-
+    pe_pipeline = 'pipeline'
     with pytest.raises(condor.JobAborted):
-        condor.check_output.delay(['sleep', '1'])
+        condor.check_output.delay(['sleep', '1'], pe_pipeline=pe_pipeline)
 
 
 def test_check_output_fails(mock_condor_submit):
     """Test a job that immediately fails."""
-
+    pe_pipeline = 'pipeline'
     with pytest.raises(condor.JobFailed) as exc_info:
-        condor.check_output.delay(['sleep', '--foo="bar bat"', '1'])
+        condor.check_output.delay(
+            ['sleep', '--foo="bar bat"', '1'],
+            pe_pipeline=pe_pipeline
+        )
     assert exc_info.value.returncode == 1
 
 

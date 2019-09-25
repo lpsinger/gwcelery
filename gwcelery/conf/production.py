@@ -28,16 +28,16 @@ llhoft_glob = '/dev/shm/kafka/{detector}/*.gwf'
 low_latency_frame_types = {'H1': 'H1_llhoft',
                            'L1': 'L1_llhoft',
                            'V1': 'V1_llhoft'}
-"""Types of frames used in Parameter Estimation with LALInference (see
-:mod:`gwcelery.tasks.lalinference`) and in cache creation for detchar
+"""Types of frames used in Parameter Estimation (see
+:mod:`gwcelery.tasks.inference`) and in cache creation for detchar
 checks (see :mod:`gwcelery.tasks.detchar`).
 """
 
 high_latency_frame_types = {'H1': 'H1_HOFT_C00',
                             'L1': 'L1_HOFT_C00',
                             'V1': 'V1Online'}
-"""Types of high latency frames used in Parameter Estimation with LALInference
-(see :mod:`gwcelery.tasks.lalinference`) and in cache creation for detchar
+"""Types of high latency frames used in Parameter Estimation
+(see :mod:`gwcelery.tasks.inference`) and in cache creation for detchar
 checks (see :mod:`gwcelery.tasks.detchar`).
 """
 
@@ -48,8 +48,8 @@ idq_channels = ['H1:IDQ-PGLITCH_OVL_16_4096',
 strain_channel_names = {'H1': 'H1:GDS-CALIB_STRAIN_CLEAN',
                         'L1': 'L1:GDS-CALIB_STRAIN_CLEAN',
                         'V1': 'V1:Hrec_hoft_16384Hz'}
-"""Names of h(t) channels used in Parameter Estimation with LALInference (see
-:mod:`gwcelery.tasks.lalinference`)"""
+"""Names of h(t) channels used in Parameter Estimation (see
+:mod:`gwcelery.tasks.inference`)"""
 
 sentry_environment = 'production'
 """Record this `environment tag

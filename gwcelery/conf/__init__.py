@@ -184,30 +184,30 @@ Currently all False, pending iDQ review (should be done before O3).
 low_latency_frame_types = {'H1': 'H1_O2_llhoft',
                            'L1': 'L1_O2_llhoft',
                            'V1': 'V1_O2_llhoft'}
-"""Types of low latency frames used in Parameter Estimation with LALInference
-(see :mod:`gwcelery.tasks.lalinference`) and in cache creation for detchar
+"""Types of low latency frames used in Parameter Estimation (see
+:mod:`gwcelery.tasks.inference`) and in cache creation for detchar
 checks (see :mod:`gwcelery.tasks.detchar`).
 """
 
 high_latency_frame_types = {'H1': None,
                             'L1': None,
                             'V1': None}
-"""Types of high latency frames used in Parameter Estimation with LALInference
-and in cache creation for detchar checks. They do not exist for O2Replay data.
-(see :mod:`gwcelery.tasks.lalinference` and :mod:`gwcelery.tasks.detchar`)
+"""Types of high latency frames used in Parameter Estimation and in cache
+creation for detchar checks. They do not exist for O2Replay data. (see
+:mod:`gwcelery.tasks.inference` and :mod:`gwcelery.tasks.detchar`)
 """
 
 strain_channel_names = {'H1': 'H1:GDS-CALIB_STRAIN_O2Replay',
                         'L1': 'L1:GDS-CALIB_STRAIN_O2Replay',
                         'V1': 'V1:Hrec_hoft_16384Hz_O2Replay'}
-"""Names of h(t) channels used in Parameter Estimation with LALInference (see
-:mod:`gwcelery.tasks.lalinference`)"""
+"""Names of h(t) channels used in Parameter Estimation (see
+:mod:`gwcelery.tasks.inference`)"""
 
 state_vector_channel_names = {'H1': 'H1:GDS-CALIB_STATE_VECTOR',
                               'L1': 'L1:GDS-CALIB_STATE_VECTOR',
                               'V1': 'V1:DQ_ANALYSIS_STATE_VECTOR'}
-"""Names of state vector channels used in Parameter Estimation with
-LALInference (see :mod:`gwcelery.tasks.lalinference`)"""
+"""Names of state vector channels used in Parameter Estimation (see
+:mod:`gwcelery.tasks.inference`)"""
 
 pe_threshold = 1.0 / (28 * 86400)
 """FAR threshold in Hz for Parameter Estimation. PE group now applies
@@ -215,12 +215,12 @@ pe_threshold = 1.0 / (28 * 86400)
 
 pe_results_path = os.path.join(os.getenv('HOME'), 'public_html/online_pe')
 """Path to the results of Parameter Estimation (see
-:mod:`gwcelery.tasks.lalinference`)"""
+:mod:`gwcelery.tasks.inference`)"""
 
 pe_results_url = ('https://ldas-jobs.ligo.caltech.edu/~{}/'
                   'online_pe/').format(getpass.getuser())
 """URL of page where all the results of Parameter Estimation are outputted
-(see :mod:`gwcelery.tasks.lalinference`)"""
+(see :mod:`gwcelery.tasks.inference`)"""
 
 raven_coincidence_windows = {'GRB_CBC': [-5, 1],
                              'GRB_Burst': [-600, 60],

@@ -7,7 +7,7 @@ import pkg_resources
 import pytest
 
 from .. import app
-from ..tasks import lalinference
+from ..tasks import inference
 from ..tasks import orchestrator
 from ..tasks import superevents
 from .test_tasks_skymaps import toy_3d_fits_filecontents  # noqa: F401
@@ -82,7 +82,7 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
         elif filename == 'p_astro.json':
             return json.dumps(
                 dict(BNS=0.94, NSBH=0.03, BBH=0.02, Terrestrial=0.01))
-        elif filename == lalinference.ini_name:
+        elif filename == inference.ini_name:
             return 'test'
         else:
             raise ValueError
@@ -114,11 +114,11 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
                         get_superevent)
     monkeypatch.setattr('gwcelery.tasks.circulars.create_initial_circular.run',
                         create_initial_circular)
-    monkeypatch.setattr('gwcelery.tasks.lalinference.query_data.run',
+    monkeypatch.setattr('gwcelery.tasks.inference.query_data.run',
                         query_data)
-    monkeypatch.setattr('gwcelery.tasks.lalinference.prepare_ini.run',
+    monkeypatch.setattr('gwcelery.tasks.inference.prepare_ini.run',
                         prepare_ini)
-    monkeypatch.setattr('gwcelery.tasks.lalinference.start_pe.run',
+    monkeypatch.setattr('gwcelery.tasks.inference.start_pe.run',
                         start_pe)
     monkeypatch.setattr('gwcelery.tasks.gracedb.create_label._orig_run',
                         create_label)

@@ -17,7 +17,7 @@ from . import detchar
 from . import em_bright
 from . import gcn
 from . import gracedb
-from . import lalinference
+from . import inference
 from . import lvalert
 from . import p_astro
 from . import skymaps
@@ -472,22 +472,33 @@ def _get_lowest_far(superevent_id):
 
 @app.task(ignore_result=True, shared=False)
 def parameter_estimation(far_event, superevent_id):
-    """Tasks for Parameter Estimation Followup with LALInference
+    """Tasks for Parameter Estimation Followup with LALInference or Bilby
 
-    This consists of the following steps:
+    For LALInference, this consists of the following steps:
 
     1.   Prepare and upload an ini file which is suitable for the target event.
     2.   Start Parameter Estimation if FAR is smaller than the PE threshold.
+
+    For Bilby, this consists of the following steps:
+
+    1.   Start Parameter Estimation if FAR is smaller than the PE threshold.
+    2.   Upload of ini file during Parameter Estimation
     """
     far, event = far_event
     preferred_event_id = event['graceid']
     # FIXME: it will be better to start parameter estimation for 'burst'
     # events.
     if event['group'] == 'CBC' and event['search'] != 'MDC':
-        canvas = lalinference.pre_pe_tasks(event, superevent_id)
+        canvas = inference.pre_pe_tasks(event, superevent_id)
         if far <= app.conf['pe_threshold']:
-            canvas |= lalinference.start_pe.s(preferred_event_id,
-                                              superevent_id)
+            canvas |= group(
+                inference.start_pe.s(
+                    preferred_event_id, superevent_id, 'lalinference'
+                ),
+                inference.start_pe.s(
+                    preferred_event_id, superevent_id, 'bilby'
+                )
+            )
         else:
             canvas |= gracedb.upload.si(
                           filecontents=None, filename=None,

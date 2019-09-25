@@ -88,7 +88,7 @@ def _read_last_event(log):
     return dict(_parse_classad(tree.find('c[last()]')))
 
 
-def _submit(submit_file=None, **kwargs):
+def _submit(pe_pipeline, submit_file=None, **kwargs):
     args = ['condor_submit']
     for key, value in kwargs.items():
         args += ['-append', '{}={}'.format(key, value)]
@@ -96,7 +96,16 @@ def _submit(submit_file=None, **kwargs):
         args += ['/dev/null', '-queue', '1']
     else:
         args += [submit_file]
-    subprocess.check_call(args)
+
+    # For Bilby PE, conda ligo-py36 conda env is sourced.
+    if pe_pipeline == 'bilby':
+        args = " ".join(args)
+        args = 'source /cvmfs/ligo-containers.opensciencegrid.org' +\
+               '/lscsoft/conda/latest/etc/profile.d/conda.sh && ' +\
+               'conda activate ligo-py36 && {}'.format(args)
+        subprocess.check_call(args, shell=True)
+    else:
+        subprocess.check_call(args)
 
 
 class JobAborted(Exception):
@@ -114,13 +123,16 @@ class JobFailed(subprocess.CalledProcessError):
 @app.task(bind=True, autoretry_for=(JobRunning,), default_retry_delay=1,
           ignore_result=True, max_retries=None, retry_backoff=True,
           shared=False)
-def submit(self, submit_file, log=None):
+def submit(self, submit_file, pe_pipeline=None, log=None):
     """Submit a job using HTCondor.
 
     Parameters
     ----------
     submit_file : str
         Path of the submit file.
+    pe_pipeline : str
+        The parameter estimation pipeline used
+        Either lalinference OR bilby
     log: str
         Used internally to track job state. Caller should not set.
 
@@ -142,11 +154,11 @@ def submit(self, submit_file, log=None):
     if log is None:
         log = _mklog('.log')
         try:
-            _submit(submit_file, log_xml='true', log=log)
+            _submit(pe_pipeline, submit_file, log_xml='true', log=log)
         except subprocess.CalledProcessError:
             _rm_f(log)
             raise
-        self.retry((submit_file,), dict(log=log))
+        self.retry((pe_pipeline, submit_file,), dict(log=log))
     else:
         event = _read_last_event(log)
         if event.get('MyType') == 'JobTerminatedEvent':
