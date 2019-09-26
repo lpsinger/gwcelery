@@ -9,6 +9,8 @@ Changelog
 -   Copy a comment attached to posterior samples into the comment attached to
     the corresponding skymap.
 
+-   Add bilby online parameter inference workflow.
+
 0.8.7 (2019-09-14)
 ------------------
 
