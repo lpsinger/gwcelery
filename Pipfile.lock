@@ -530,10 +530,10 @@
         },
         "ligo-followup-advocate": {
             "hashes": [
-                "sha256:5e906658c62d90cc6579f94dd9b01331416f75532034bda33a71d74bb3f2d48b",
-                "sha256:bf7a305e806e8793028086002dd31d3347bcf86529c47a684665bbcf022eb546"
+                "sha256:29bee31a973432e3c21f0466962490a2441155c6aae845df2002e287b6c5a73b",
+                "sha256:b8a53213a8eb0ce6c56e6bfb18cab541f08245e47e94e5502afd81b3dc616ffe"
             ],
-            "version": "==1.1.1"
+            "version": "==1.1.2"
         },
         "ligo-gracedb": {
             "hashes": [
