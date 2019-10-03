@@ -179,7 +179,8 @@ def raven_pipeline(raven_search_results, gracedb_id, alert_object, gw_group):
                                          preferred_gwevent_id, gw_group)
             |
             group(gracedb.create_label.si('EM_COINC', superevent_id),
-                  gracedb.create_label.si('EM_COINC', exttrig_id))
+                  gracedb.create_label.si('EM_COINC', exttrig_id),
+                  gracedb.create_label.si('EM_COINC', preferred_gwevent_id))
         ).delay()
 
 

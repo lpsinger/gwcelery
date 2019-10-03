@@ -17,6 +17,8 @@ Changelog
 
 -   Add acceptance tests of parameter estimation.
 
+-   Apply EM_COINC to preferred events as well.
+
 0.8.7 (2019-09-14)
 ------------------
 

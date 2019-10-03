@@ -154,12 +154,15 @@ def test_raven_pipeline(mock_create_label,
         coinc_calls.append(call(result['superevent_id'], graceid,
                                 result['preferred_event'], group))
         label_calls.append(call('EM_COINC', graceid))
+        label_calls.append(call('EM_COINC', result['preferred_event']))
     else:
         for result in raven_search_results:
             label_calls.append(call('EM_COINC', result['graceid']))
             coinc_calls.append(call(graceid, result['graceid'],
                                     alert_object['preferred_event'], group))
             label_calls.append(call('EM_COINC', graceid))
+            label_calls.append(call('EM_COINC',
+                                    alert_object['preferred_event']))
 
     mock_calculate_coincidence_far.assert_has_calls(coinc_calls,
                                                     any_order=True)
