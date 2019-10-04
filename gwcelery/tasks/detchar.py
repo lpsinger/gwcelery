@@ -35,64 +35,6 @@ __author__ = 'Geoffrey Mo <geoffrey.mo@ligo.org>'
 
 log = get_task_logger(__name__)
 
-dmt_dq_vector_bits = Bits(
-    channel='DMT-DQ_VECTOR',
-    bits={
-        1: 'NO_OMC_DCPD_ADC_OVERFLOW',
-        2: 'NO_DMT-ETMY_ESD_DAC_OVERFLOW'
-    },
-    description={
-        'NO_OMC_DCPD_ADC_OVERFLOW': 'OMC DCPC ADC not overflowing',
-        'NO_DMT-ETMY_ESD_DAC_OVERFLOW': 'ETMY ESD DAC not overflowing'
-    }
-)
-"""DMT DQ vector bits (LIGO only)."""
-
-
-ligo_state_vector_bits = Bits(
-    channel='GDS-CALIB_STATE_VECTOR',
-    bits={
-        0: 'HOFT_OK',
-        1: 'OBSERVATION_INTENT',
-        5: 'NO_STOCH_HW_INJ',
-        6: 'NO_CBC_HW_INJ',
-        7: 'NO_BURST_HW_INJ',
-        8: 'NO_DETCHAR_HW_INJ'
-    },
-    description={
-        'HOFT_OK': 'h(t) was successfully computed',
-        'OBSERVATION_INTENT': '"observation intent" button is pushed',
-        'NO_STOCH_HW_INJ': 'No stochastic HW injection',
-        'NO_CBC_HW_INJ': 'No CBC HW injection',
-        'NO_BURST_HW_INJ': 'No burst HW injection',
-        'NO_DETCHAR_HW_INJ': 'No HW injections for detector characterization'
-    }
-)
-"""State vector bitfield definitions for LIGO."""
-
-virgo_state_vector_bits = Bits(
-    channel='DQ_ANALYSIS_STATE_VECTOR',
-    bits={
-        0: 'HOFT_OK',
-        1: 'OBSERVATION_INTENT',
-        5: 'NO_STOCH_HW_INJ',
-        6: 'NO_CBC_HW_INJ',
-        7: 'NO_BURST_HW_INJ',
-        8: 'NO_DETCHAR_HW_INJ',
-        10: 'GOOD_DATA_QUALITY_CAT1'
-    },
-    description={
-        'HOFT_OK': 'h(t) was successfully computed',
-        'OBSERVATION_INTENT': '"observation intent" button is pushed',
-        'NO_STOCH_HW_INJ': 'No stochastic HW injection',
-        'NO_CBC_HW_INJ': 'No CBC HW injection',
-        'NO_BURST_HW_INJ': 'No burst HW injection',
-        'NO_DETCHAR_HW_INJ': 'No HW injections for detector characterization',
-        'GOOD_DATA_QUALITY_CAT1': 'Good data quality (CAT1 type)'
-    }
-)
-"""State vector bitfield definitions for Virgo."""
-
 
 def create_cache(ifo, start, end):
     """Find .gwf files and create cache. Will first look in the llhoft, and
@@ -289,13 +231,15 @@ def check_vector(cache, channel, start, end, bits, logic_type='all'):
     """
     if logic_type not in ('any', 'all'):
         raise ValueError("logic_type must be either 'all' or 'any'.")
+    else:
+        logic_map = {'any': np.any, 'all': np.all}
     bitname = '{}:{}'
     if cache:
         try:
             statevector = StateVector.read(cache, channel,
                                            start=start, end=end, bits=bits)
             return {bitname.format(channel.split(':')[0], key):
-                    bool(getattr(np, logic_type)(getattr(value, 'value')))
+                    bool(logic_map[logic_type](value.value))
                     for key, value in statevector.get_bit_series().items()}
         except IndexError:
             log.exception('Failed to read from low-latency frame files')
@@ -353,17 +297,6 @@ def check_vectors(event, graceid, start, end):
                  event['graceid'])
         return event
 
-    # Check the full template duration
-    pref_event = event.get('preferred_event')
-    if pref_event is not None:  # external events won't have preferred events
-        try:
-            template_dur = pref_event[
-                'extra_attributes']['SingleInspiral'][0]['template_duration']
-            start = start - template_dur
-        except KeyError:
-            # preferred event is a burst or has no template duration
-            pass
-
     # Create caches for all detectors
     instruments = event['instruments'].split(',')
     pipeline = event['pipeline']
@@ -375,6 +308,10 @@ def check_vectors(event, graceid, start, end):
     ifos = {key.split(':')[0] for key, val in
             app.conf['llhoft_channels'].items()}
     caches = {ifo: create_cache(ifo, start, end) for ifo in ifos}
+    bit_defs = {channel_type: Bits(channel=bitdef['channel'],
+                                   bits=bitdef['bits'])
+                for channel_type, bitdef
+                in app.conf['detchar_bit_definitions'].items()}
 
     # Examine injection and DQ states
     # Do not analyze DMT-DQ_VECTOR if pipeline uses gated h(t)
@@ -385,7 +322,7 @@ def check_vectors(event, graceid, start, end):
                              if k[3:] != 'DMT-DQ_VECTOR'}.items()
     for channel, bits in analysis_channels:
         states.update(check_vector(caches[channel.split(':')[0]], channel,
-                                   start, end, globals()[bits]))
+                                   start, end, bit_defs[bits]))
     # Pick out DQ and injection states, then filter for active detectors
     dq_states = {key: value for key, value in states.items()
                  if key.split('_')[-1] != 'INJ'}
