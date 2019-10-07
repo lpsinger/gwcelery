@@ -488,7 +488,7 @@ def parameter_estimation(far_event, superevent_id):
     preferred_event_id = event['graceid']
     # FIXME: it will be better to start parameter estimation for 'burst'
     # events.
-    if event['group'] == 'CBC' and event['search'] != 'MDC':
+    if event['group'] == 'CBC':
         canvas = inference.pre_pe_tasks(event, superevent_id)
         if far <= app.conf['pe_threshold']:
             canvas |= group(

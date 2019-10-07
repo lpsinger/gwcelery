@@ -13,6 +13,10 @@ Changelog
 
 -   Fix approximant name used for automatic parameter estimation.
 
+-   Start parameter estimation on mock events.
+
+-   Add acceptance tests of parameter estimation.
+
 0.8.7 (2019-09-14)
 ------------------
 

@@ -29,10 +29,17 @@
     - [ ] `p_astro.json`
     - [ ] `p_astro.png`
     - [ ] `em_bright.json`
+    - [ ] `LALInference.posterior_samples.hdf5`
+    - [ ] `LALInference.multiorder.fits`
+    - [ ] `LALInference.fits.gz`
+    - [ ] `LALInference.png`
+    - [ ] `LALInference.volume.png`
+    - [ ] `LALInference.html`
 12. [ ] The MDC superevent has the following labels.
     - [ ] `EMBRIGHT_READY`
     - [ ] `GCN_PRELIM_SENT`
     - [ ] `PASTRO_READY`
+    - [ ] `PE_READY`
     - [ ] `SKYMAP_READY`
 13. [ ] The MDC superevent has a preliminary VOEvent.
 14. [ ] The MDC superevent has either an `ADVOK` or an `ADVNO` label.
