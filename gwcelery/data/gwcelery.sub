@@ -8,63 +8,57 @@ log = gwcelery-condor.log
 on_exit_remove = false
 JobBatchName = gwcelery
 
-arguments = "redis-server --loglevel verbose --port 0 --unixsocket redis.sock --unixsocketperm 700 --appendonly yes --client-output-buffer-limit normal 0 0 0 --client-output-buffer-limit slave 256mb 64mb 60 --client-output-buffer-limit pubsub 256mb 64mb 60"
-description = redis-server
-error = gwcelery-redis.log
-output = gwcelery-redis.log
-queue
-
 arguments = "gwcelery beat"
-environment = "CELERY_BROKER_URL=redis+socket://$ENV(PWD)/redis.sock"
+environment = ""
 description = gwcelery-beat
 error = gwcelery-beat.log
 output = gwcelery-beat.log
 queue
 
 arguments = "gwcelery worker -l info -n gwcelery-worker -Q celery --lvalert"
-environment = "CELERY_BROKER_URL=redis+socket://$ENV(PWD)/redis.sock"
+environment = ""
 description = gwcelery-worker
 error = gwcelery-worker.log
 output = gwcelery-worker.log
 queue
 
 arguments = "gwcelery worker -l info -n gwcelery-openmp-worker -Q openmp -c 1"
-environment = "CELERY_BROKER_URL=redis+socket://$ENV(PWD)/redis.sock OMP_NUM_THREADS="
+environment = "OMP_NUM_THREADS="
 description = gwcelery-openmp-worker
 error = gwcelery-openmp-worker.log
 output = gwcelery-openmp-worker.log
 queue
 
 arguments = "gwcelery worker -l info -n gwcelery-exttrig-worker -Q exttrig -c 1"
-environment = "CELERY_BROKER_URL=redis+socket://$ENV(PWD)/redis.sock"
+environment = ""
 description = gwcelery-exttrig-worker
 error = gwcelery-exttrig-worker.log
 output = gwcelery-exttrig-worker.log
 queue
 
 arguments = "gwcelery worker -l info -n gwcelery-superevent-worker -Q superevent -c 1"
-environment = "CELERY_BROKER_URL=redis+socket://$ENV(PWD)/redis.sock"
+environment = ""
 description = gwcelery-superevent-worker
 error = gwcelery-superevent-worker.log
 output = gwcelery-superevent-worker.log
 queue
 
 arguments = "gwcelery worker -l info -n gwcelery-voevent-worker -Q voevent -P solo"
-environment = "CELERY_BROKER_URL=redis+socket://$ENV(PWD)/redis.sock"
+environment = ""
 description = gwcelery-voevent-worker
 error = gwcelery-voevent-worker.log
 output = gwcelery-voevent-worker.log
 queue
 
 arguments = "gwcelery flask run --with-threads --host 127.0.0.1"
-environment = "CELERY_BROKER_URL=redis+socket://$ENV(PWD)/redis.sock FLASK_PORT=5556 FLASK_URL_PREFIX=/gwcelery"
+environment = "FLASK_PORT=5556 FLASK_URL_PREFIX=/gwcelery"
 description = gwcelery-flask
 error = gwcelery-flask.log
 output = gwcelery-flask.log
 queue
 
 arguments = "gwcelery flower --address=127.0.0.1"
-environment = "CELERY_BROKER_URL=redis+socket://$ENV(PWD)/redis.sock FLOWER_PORT=5555 FLOWER_URL_PREFIX=/flower"
+environment = "FLOWER_PORT=5555 FLOWER_URL_PREFIX=/flower"
 description = gwcelery-flower
 error = gwcelery-flower.log
 output = gwcelery-flower.log

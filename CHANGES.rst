@@ -19,6 +19,11 @@ Changelog
 
 -   Apply EM_COINC to preferred events as well.
 
+-   Use the Redis server that is provided by the operating system (e.g. as a
+    systemd unit) rather than starting our own Redis server. This prevents a
+    race condition between the shutdown of Redis and the shutdown of the
+    workers that caused the workers to hang on shutdown.
+
 0.8.7 (2019-09-14)
 ------------------
 
