@@ -25,9 +25,6 @@ export OMP_NUM_THREADS=1
 export X509_USER_CERT="$HOME/.globus/usercert.pem"
 export X509_USER_KEY="$HOME/.globus/userkey.pem"
 
-# GWCelery instance variables.
-export CELERY_BROKER_URL="redis+socket://${HOME}/redis.sock"
-
 # GWCelery configuration-dependent instance variables.
 case "${USER}" in
 emfollow)
