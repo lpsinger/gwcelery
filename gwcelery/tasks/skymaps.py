@@ -123,12 +123,13 @@ def flatten(filecontents, filename):
         return open(outfilename, 'rb').read()
 
 
-@app.task(shared=False)
+@app.task(shared=False, queue='openmp')
 def skymap_from_samples(samplefilecontents):
     """Generate multi-resolution fits file from samples"""
     with NamedTemporaryFile(content=samplefilecontents) as samplefile, \
             tempfile.TemporaryDirectory() as tmpdir, \
             handling_system_exit():
-        ligo_skymap_from_samples.main(['-o', tmpdir, samplefile.name])
+        ligo_skymap_from_samples.main(
+            ['-j', '-o', tmpdir, samplefile.name])
         with open(os.path.join(tmpdir, 'skymap.fits'), 'rb') as f:
             return f.read()

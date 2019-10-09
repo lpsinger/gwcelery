@@ -58,6 +58,8 @@ This is the initial release of GWCelery for O3b.
 
 -   Pass online-pe flag to bilby so that it uses nodes dedicated to online PE.
 
+-   Pass the ``-j`` flag to ``ligo-skymap-from-samples`` to speed up skymap generation.
+
 0.8.7 (2019-09-14)
 ------------------
 
