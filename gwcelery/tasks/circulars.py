@@ -18,6 +18,16 @@ def create_emcoinc_circular(graceid):
 
 
 @gracedb.task(shared=False)
+def create_update_circular(graceid, update_types=['sky_localization',
+                                                  'em_bright',
+                                                  'p_astro']):
+    """Create and return update circular txt."""
+    return ligo.followup_advocate.compose_update(graceid,
+                                                 update_types=update_types,
+                                                 client=gracedb.client)
+
+
+@gracedb.task(shared=False)
 def create_retraction_circular(graceid):
     """Create and return retraction circular txt."""
     return ligo.followup_advocate.compose_retraction(graceid,

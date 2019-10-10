@@ -159,6 +159,47 @@
     </div>
     <div class="card mb-3">
         <div class=card-header>
+            Create Update GCN Circular
+        </div>
+        <div class=card-body>
+            <form method=post action="{{ url_for('create_update_gcn_circular') }}">
+                <div class="form-row">
+                    <div class=form-group>
+                        <div class=form-text>Print out an update GCN circular containing sections updating the chosen fields.</div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class=form-group>
+                        <p class="text-danger">Warning: this will only work properly once an update notice has been issued using the above form.</p>
+                    </div>
+                </div>
+                <div class="form-row align-items-center">
+                    <div class="col-auto my-1">
+                        <label class="sr-only" for=superevent_id>Superevent ID</label>
+                        <input required name=superevent_id class="form-control typeahead" placeholder="Superevent ID">
+                    </div>
+                    <div class="col-auto mb-2">
+                        <input type="checkbox" value=False name=sky_localization>
+                        <label class="form-check-label" for=sky_localization>Sky Localization</label>
+                    </div>
+                    <div class="col-auto mb-2">
+                        <input type="checkbox" value=False name=em_bright>
+                        <label class="form-check-label" for=em_bright>EM_Bright</label>
+                    </div>
+                    <div class="col-auto mb-2">
+                        <input type="checkbox" value=False name=p_astro>
+                        <label class="form-check-label" for=p_astro>P_Astro</label>
+                    </div>
+                    <div class="col-auto my-1">
+                        <label for=submit-button>&nbsp;</label>
+                        <button type=submit id=submit-button name=submit-button class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="card mb-3">
+        <div class=card-header>
             Issue Mock Event
         </div>
         <div class=card-body>

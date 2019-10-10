@@ -24,6 +24,8 @@ Changelog
     race condition between the shutdown of Redis and the shutdown of the
     workers that caused the workers to hang on shutdown.
 
+-   Incorporate update cirular into flask app.
+
 0.8.7 (2019-09-14)
 ------------------
 

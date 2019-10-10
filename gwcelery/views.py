@@ -4,13 +4,14 @@ import re
 
 from astropy.time import Time
 from flask import flash, jsonify, redirect, render_template, request, url_for
+from flask import make_response
 from ligo.gracedb.rest import HTTPError as GraceDbHTTPError
 import pkg_resources
 
 from . import app as celery_app
 from ._version import get_versions
 from .flask import app, cache
-from .tasks import first2years, gracedb, orchestrator
+from .tasks import first2years, gracedb, orchestrator, circulars
 
 
 @app.route('/')
@@ -224,6 +225,23 @@ def send_update_gcn():
         flash('Queued update alert for {}.'.format(superevent_id), 'success')
     else:
         flash('No alert sent. Please fill in all fields.', 'danger')
+    return redirect(url_for('index'))
+
+
+@app.route('/create_update_gcn_circular', methods=['POST'])
+def create_update_gcn_circular():
+    keys = ['sky_localization', 'em_bright', 'p_astro']
+    superevent_id = request.form.get('superevent_id')
+    updates = [key for key in keys if request.form.get(key)]
+    if superevent_id and updates:
+        response = make_response(circulars.create_update_circular(
+                                               superevent_id,
+                                               update_types=updates))
+        response.headers["content-type"] = "text/plain"
+        return response
+    else:
+        flash('No circular created. Please fill in superevent ID and at ' +
+              'least one update type.', 'danger')
     return redirect(url_for('index'))
 
 

@@ -1,5 +1,5 @@
 import datetime
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from flask import get_flashed_messages, url_for
 from ligo.gracedb.rest import HTTPError as GraceDbHTTPError
@@ -99,6 +99,37 @@ def test_send_update_gcn_post(client, monkeypatch):
         'Queued update alert for MS190208a.']
     mock_update_alert.assert_called_once_with(
         ['bayestar.fits.gz', 'em_bright.json', 'p_astro.json'], 'MS190208a')
+
+
+def test_send_update_gcn_circular_post_no_data(client):
+    """Test send_update_gcn_circular endpoint with no form data."""
+    response = client.post(url_for('create_update_gcn_circular'))
+    assert HTTP_STATUS_CODES[response.status_code] == 'Found'
+    assert get_flashed_messages() == [
+        'No circular created. Please fill in superevent ID and at ' +
+        'least one update type.']
+
+
+@pytest.mark.parametrize(
+     'sky_loc,em_bright,p_astro,answer',
+     [["True", None, None, ['sky_localization']],
+      [None, "True", "True", ['em_bright', 'p_astro']],
+      ["True", "True", "True", ['sky_localization', 'em_bright', 'p_astro']]])
+@patch('gwcelery.tasks.circulars.create_update_circular', return_value='')
+def test_send_update_gcn_circular_post(mock_create_circular,
+                                       sky_loc, em_bright, p_astro, answer,
+                                       client):
+    """Test send_update_gcn_circular endpoint with complete form data."""
+
+    response = client.post(url_for('create_update_gcn_circular'), data={
+        'superevent_id': 'MS190208a',
+        'sky_localization': sky_loc,
+        'em_bright': em_bright,
+        'p_astro': p_astro})
+
+    assert HTTP_STATUS_CODES[response.status_code] == 'OK'
+    mock_create_circular.assert_called_once_with(
+        'MS190208a', update_types=answer)
 
 
 def test_typeahead_superevent_id(client, monkeypatch):
