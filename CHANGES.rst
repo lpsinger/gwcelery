@@ -28,6 +28,10 @@ Changelog
 
 -   Update HTCondor accounting group from O2 to O3.
 
+-   Increase throughput for sky localization tasks by offloading processing of
+    the ``openmp`` Celery queue to workers that are launched via HTCondor on
+    specially configured cluster nodes.
+
 0.8.7 (2019-09-14)
 ------------------
 
