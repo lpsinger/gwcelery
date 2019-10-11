@@ -60,6 +60,8 @@ This is the initial release of GWCelery for O3b.
 
 -   Pass the ``-j`` flag to ``ligo-skymap-from-samples`` to speed up skymap generation.
 
+-   Remove skymap generation from PE DAG so that it will not be generated twice.
+
 0.8.7 (2019-09-14)
 ------------------
 
