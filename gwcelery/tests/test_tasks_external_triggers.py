@@ -9,6 +9,8 @@ from ..tasks import detchar
 from . import resource_json
 
 
+@patch('gwcelery.tasks.ligo_fermi_skymaps.get_upload_external_skymap',
+       return_value=None)
 @patch('gwcelery.tasks.detchar.dqr_json', return_value='dqrjson')
 @patch('gwcelery.tasks.gracedb.upload.run')
 @patch('gwcelery.tasks.gracedb.get_event', return_value={
@@ -16,7 +18,8 @@ from . import resource_json
     'extra_attributes': {'GRB': {'trigger_duration': 1}}})
 @patch('gwcelery.tasks.gracedb.create_event')
 def test_handle_create_grb_event(mock_create_event, mock_get_event,
-                                 mock_upload, mock_json):
+                                 mock_upload, mock_json,
+                                 mock_get_upload_external_skymap):
     text = resource_string(__name__, 'data/fermi_grb_gcn.xml')
     external_triggers.handle_grb_gcn(payload=text)
     mock_create_event.assert_called_once_with(filecontents=text,

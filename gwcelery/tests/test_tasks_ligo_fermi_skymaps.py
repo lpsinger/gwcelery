@@ -101,3 +101,10 @@ def test_get_external_skymap(mock_astropy_get_file_contents):
 
     mock_astropy_get_file_contents.assert_called_once_with(
         (true_skymap_link), encoding='binary', cache=False)
+
+
+@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
+def test_get_upload_external_skymap(graceid):
+    """Test that an external sky map is grabbed and uploaded."""
+    graceid = 'E12345'
+    ligo_fermi_skymaps.get_upload_external_skymap(graceid)

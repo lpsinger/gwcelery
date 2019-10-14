@@ -52,6 +52,22 @@ def get_preferred_skymap(graceid):
     raise ValueError('No skymap available for {0} yet.'.format(graceid))
 
 
+@app.task(autoretry_for=(ValueError,), retry_backoff=10,
+          retry_backoff_max=600)
+def get_external_skymap_filename(graceid):
+    """Get the external skymap fits filename.
+    If not available, will try again 10 seconds later, then 20,
+    then 40, etc. until up to 10 minutes after initial attempt."""
+    gracedb_log = gracedb.get_log(graceid)
+    for message in reversed(gracedb_log):
+        filename = message['filename']
+        if (filename.endswith('.fits') or filename.endswith('.fit')):
+            if 'bayestar' not in filename and 'LALinference' not in filename:
+                return filename
+    raise ValueError('No external skymap available for {0} yet.'.format(
+                         graceid))
+
+
 @app.task(shared=False)
 def combine_skymaps(skymap1filebytes, skymap2filebytes):
     """This task combines the two input skymaps, in this case the external
@@ -106,3 +122,40 @@ def get_external_skymap(heasarc_link):
     skymap_link = heasarc_link + skymap_name
     return astropy.utils.data.get_file_contents(
         (skymap_link), encoding='binary', cache=False)
+
+
+@app.task(autoretry_for=(urllib.error.HTTPError,), retry_backoff=10,
+          retry_backoff_max=60)
+def get_upload_external_skymap(graceid):
+    """
+    If a Fermi sky map is not uploaded yet, tries to download one and
+    upload to external event. If sky map is not available, passes so
+    that this can be re-run the next time an update GCN notice is
+    received.
+    """
+
+    try:
+        filename = get_external_skymap_filename(graceid)
+        if 'glg_healpix_all_bn_v00.fit' in filename:
+            return
+    except ValueError:
+        pass
+
+    try:
+        (
+            external_trigger_heasarc.si(graceid)
+            |
+            get_external_skymap.s().set(max_retries=5)
+            |
+            gracedb.upload.s(
+                'glg_healpix_all_bn_v00.fit',
+                graceid,
+                'Sky map from HEASARC.',
+                ['sky_loc'])
+        ).delay()
+
+    except ValueError:
+        #  Pass if heasarc_link not able to be retrieved. If the sky map is not
+        #  available a 404 error will still be raised.
+        #  FIXME: Add automatic generation of external skymap as ini !595
+        pass

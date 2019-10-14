@@ -110,6 +110,7 @@ def handle_grb_gcn(payload):
         start = event['gpstime']
         end = start + event['extra_attributes']['GRB']['trigger_duration']
         detchar.check_vectors(event, event['graceid'], start, end)
+    ligo_fermi_skymaps.get_upload_external_skymap(graceid)
 
 
 @lvalert.handler('superevent',

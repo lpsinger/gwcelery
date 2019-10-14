@@ -6,6 +6,8 @@ Changelog
 
 This is the initial release of GWCelery for O3b.
 
+-   Try to get and upload Fermi sky map every time a GCN notice is received.
+
 -   Update ligo-followup-advocate version to 1.1.3.
 
 -   Copy a comment attached to posterior samples into the comment attached to
