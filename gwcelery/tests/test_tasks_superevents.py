@@ -154,22 +154,46 @@ def mock_db(monkeypatch):
     yield
 
 
-def test_update_preferred_event(mock_db):
-    payload = dict(graceid="T1234",
-                   instruments="I1,J1,K1,L1,M1",
-                   group="CBC",
-                   pipeline="gstlal",
-                   offline=False,
-                   superevent="some_superevent",
-                   far=1e-30,
-                   extra_attributes=dict(
-                       CoincInspiral=dict(snr=30.0),
-                       SingleInspiral=[
-                           {'ifo': ifo} for ifo in "I1,J1,K1,L1,M1".split(',')
-                       ]))
+@pytest.mark.parametrize('labels',
+                         [['EMBRIGHT_READY', 'PASTRO_READY'],
+                          ['EM_Selected', 'ADVREQ', 'DQOK']])
+def test_update_preferred_event(labels, mock_db):
+    payload = dict(
+        graceid="T1234",
+        instruments="I1,J1,K1,L1,M1",
+        group="CBC",
+        pipeline="gstlal",
+        offline=False,
+        superevent="some_superevent",
+        far=1e-30,
+        labels=[],
+        extra_attributes=dict(
+            CoincInspiral=dict(snr=30.0),
+            SingleInspiral=[
+                {'ifo': ifo} for ifo in "I1,J1,K1,L1,M1".split(',')
+            ]
+        )
+    )
+    superevent_s0039 = superevents._SuperEvent(
+        1163905214.44,
+        1163905239.44,
+        1163905224.44,
+        'S0039',
+        preferred_event='T0212',
+        event_dict={
+            "labels": labels, "superevent_id": "S0039",
+            "submitter": "deep.chatterjee@LIGO.ORG",
+            "preferred_event": "T0212",
+            "t_start": 1163905214.44,
+            "em_events": [],
+            "t_0": 1163905224.44,
+            "gw_events": ["T0212", "T0211", "T0210"],
+            "t_end": 1163905239.44,
+            "created": "2018-05-09 07:23:16 UTC"
+        }
+    )
     with patch.object(gracedb.client, 'updateSuperevent') as p:
-        superevents._update_superevent('S0039',
-                                       'T0212',
+        superevents._update_superevent(superevent_s0039,
                                        payload,
                                        None,
                                        None,

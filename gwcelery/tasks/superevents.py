@@ -116,8 +116,7 @@ def process(payload):
             log.info("%s is completely contained in %s",
                      event_segment.gid, superevent.superevent_id)
             new_t_start = new_t_end = None
-        _update_superevent(superevent.superevent_id,
-                           superevent.preferred_event,
+        _update_superevent(superevent,
                            event_info,
                            t_0=t_0,
                            t_start=new_t_start,
@@ -321,11 +320,10 @@ def keyfunc(event):
     else:
         ifo_rank = 0
         tie_breaker = event['far']
-
     return not should_publish(event), group_rank, ifo_rank, tie_breaker
 
 
-def _update_superevent(superevent_id, preferred_event, new_event_dict,
+def _update_superevent(superevent, new_event_dict,
                        t_0, t_start, t_end):
     """
     Update preferred event and/or change time window. Events with multiple
@@ -336,10 +334,8 @@ def _update_superevent(superevent_id, preferred_event, new_event_dict,
 
     Parameters
     ----------
-    superevent_id : str
-        superevent uid
-    preferred_event : str
-        preferred event id of the superevent
+    superevent : object
+        instance of :class:`_SuperEvent`
     new_event_dict : dict
         event info of the new trigger as a dictionary
     t_0 : float
@@ -349,6 +345,8 @@ def _update_superevent(superevent_id, preferred_event, new_event_dict,
     t_end : float
         end time of `superevent_id`, None for no change
     """
+    superevent_id = superevent.superevent_id
+    preferred_event = superevent.preferred_event
     preferred_event_dict = gracedb.get_event(preferred_event)
 
     kwargs = {}
