@@ -314,6 +314,7 @@ def test_handle_posterior_samples(monkeypatch, alert_type, filename):
     }
 
     download = Mock()
+    em_bright_pe = Mock()
     skymap_from_samples = Mock()
     fits_header = Mock()
     plot_allsky = Mock()
@@ -321,6 +322,8 @@ def test_handle_posterior_samples(monkeypatch, alert_type, filename):
     upload = Mock()
     flatten = Mock()
 
+    monkeypatch.setattr('gwcelery.tasks.em_bright.em_bright_posterior_'
+                        'samples.run', em_bright_pe)
     monkeypatch.setattr('gwcelery.tasks.gracedb.download._orig_run', download)
     monkeypatch.setattr('gwcelery.tasks.skymaps.skymap_from_samples.run',
                         skymap_from_samples)
@@ -342,6 +345,7 @@ def test_handle_posterior_samples(monkeypatch, alert_type, filename):
         annotate_fits_volume.assert_not_called()
         flatten.assert_not_called()
     else:
+        em_bright_pe.assert_called_once()
         skymap_from_samples.assert_called_once()
         fits_header.assert_called_once()
         plot_allsky.assert_called_once()

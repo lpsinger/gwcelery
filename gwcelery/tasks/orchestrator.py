@@ -241,6 +241,18 @@ def handle_posterior_samples(alert):
         )
     ).delay()
 
+    # em_bright from LALInference posterior samples
+    (
+        gracedb.download.si(superevent_id, filename)
+        |
+        em_bright.em_bright_posterior_samples.s()
+        |
+        gracedb.upload.s(
+            'LALInference.em_bright.json', superevent_id,
+            'em-bright computed from ' + filename
+        )
+    ).delay()
+
 
 @app.task(autoretry_for=(gaierror, HTTPError, URLError, TimeoutError),
           default_retry_delay=20.0, retry_backoff=True,

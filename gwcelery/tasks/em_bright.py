@@ -5,8 +5,40 @@ from ligo import computeDiskMass, em_bright
 
 from celery.utils.log import get_task_logger
 from ..import app
+from ..util.tempfile import NamedTemporaryFile
 
 log = get_task_logger(__name__)
+
+
+@app.task(shared=False)
+def em_bright_posterior_samples(posterior_file_content):
+    """Returns the probability of having a NS component and remnant
+    using LALInference posterior samples.
+
+    Parameters
+    ----------
+    posterior_file_content : hdf5 posterior file content
+
+    Returns
+    -------
+    str
+        JSON formatted string storing ``HasNS`` and ``HasRemnant``
+        probabilities
+
+    Example
+    ---------
+    >>> em_bright_posterior_samples(GraceDb().files('S190930s',
+    ... 'LALInference.posterior_samples.hdf5').read())
+    {"HasNS": 0.014904901243599122, "HasRemnant": 0.0}
+    """
+    with NamedTemporaryFile(content=posterior_file_content) as samplefile:
+        filename = samplefile.name
+        has_ns, has_remnant = em_bright.source_classification_pe(filename)
+    data = json.dumps({
+        'HasNS': has_ns,
+        'HasRemnant': has_remnant
+    })
+    return data
 
 
 def _em_bright(m1, m2, c1, c2, threshold=3.0):

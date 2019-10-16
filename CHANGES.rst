@@ -51,6 +51,9 @@ This is the initial release of GWCelery for O3b.
 -   Use ``EM_Selected`` to freeze the preferred event of a superevent and launch
     a preliminary alert.
 
+-   Add a task to ``em_bright.py`` to compute and upload source properties
+    upon the upload of ``LALInference.posterior_samples.hdf5``.
+
 0.8.7 (2019-09-14)
 ------------------
 
