@@ -8,6 +8,7 @@
     },
     "object": {
         "pipeline": "gstlal",
+	"labels": [],
         "group": "CBC",
         "offline": false,
         "graceid": "T250822",

@@ -14,6 +14,14 @@ from . import gracedb, lvalert
 
 log = get_task_logger(__name__)
 
+required_labels_by_group = {
+    'cbc': {'PASTRO_READY', 'EMBRIGHT_READY', 'SKYMAP_READY'},
+    'burst': {'SKYMAP_READY'}
+}
+"""These labels should be present on an event to consider it to
+be complete.
+"""
+
 
 @lvalert.handler('cbc_gstlal',
                  'cbc_spiir',
@@ -27,10 +35,11 @@ def handle(payload):
     pipelines and delegate to :meth:`process` for
     superevent management.
     """
-    if payload['alert_type'] != 'new':
+    alert_type = payload['alert_type']
+    if alert_type not in ['new', 'label_added']:
         return
 
-    gid = payload['uid']
+    gid = payload['object']['graceid']
 
     try:
         far = payload['object']['far']
@@ -42,7 +51,15 @@ def handle(payload):
         if far > app.conf['superevent_far_threshold']:
             log.info("Skipping processing of %s because of high FAR", gid)
             return
-    process.delay(payload)
+    group = payload['object']['group'].lower()
+    required_labels = required_labels_by_group[group]
+    if alert_type == 'new' or (alert_type == 'label_added' and
+                               payload['data']['name'] in required_labels):
+        process.delay(payload)
+    elif alert_type == 'label_added' and payload['data']['name'] == 'EM_COINC':
+        log.info('Label %s added to %s' % (payload['data']['name'], gid))
+        # raven preliminary
+        raise NotImplementedError
 
 
 @gracedb.task(queue='superevent', shared=False)
@@ -51,7 +68,6 @@ def process(payload):
     """
     Respond to `payload` and serially processes them
     to create new superevents, add events to existing ones
-    and update superevent parameters.
 
     Parameters
     ----------
@@ -59,7 +75,7 @@ def process(payload):
         LVAlert payload
     """
     event_info = payload['object']
-    gid = payload['uid']
+    gid = event_info['graceid']
 
     if event_info.get('search') == 'MDC':
         category = 'mdc'
@@ -67,6 +83,22 @@ def process(payload):
         category = 'test'
     else:
         category = 'production'
+
+    if event_info.get('superevent'):
+        # superevent already exists; label_added LVAlert
+        s = gracedb.get_superevent(event_info['superevent'])
+        superevent = _SuperEvent(s['t_start'],
+                                 s['t_end'],
+                                 s['t_0'],
+                                 s['superevent_id'],
+                                 s['preferred_event'], s)
+        # no change in superevent times for label_added LVAlert
+        _update_superevent(superevent,
+                           event_info,
+                           t_0=None,
+                           t_start=None,
+                           t_end=None)
+        return
 
     superevents = gracedb.get_superevents('category: {} {} .. {}'.format(
         category,
@@ -254,12 +286,33 @@ def get_instruments_in_ranking_statistic(event):
     return ifos
 
 
+def is_complete(event):
+    """
+    Determine if a G event is complete in the sense of the event
+    has its data products complete i.e. has PASTRO_READY, SKYMAP_READY,
+    EMBRIGHT_READY for CBC events and the SKYMAP_READY label for the
+    Burst events. Test events are not processed by low-latency infrastructure
+    and are always labeled complete.
+
+    Parameters
+    ----------
+    event : dict
+        Event dictionary (e.g., the return value from
+        :meth:`gwcelery.tasks.gracedb.get_event`).
+    """
+    group = event['group'].lower()
+    label_set = set(event['labels'])
+    required_labels = required_labels_by_group[group]
+    return required_labels.issubset(label_set)
+
+
 def should_publish(event):
     """Determine whether an event should be published as a public alert.
 
     All of the following conditions must be true for a public alert:
 
     *   The event's ``offline`` flag is not set.
+    *   The event should be complete based on :meth:`is_complete`.
     *   The event's false alarm rate, weighted by the group-specific trials
         factor as specified by the
         :obj:`~gwcelery.conf.preliminary_alert_trials_factor` configuration
@@ -278,11 +331,18 @@ def should_publish(event):
         :obj:`True` if the event meets the criteria for a public alert or
         :obj:`False` if it does not.
     """
+    return all(_should_publish(event))
+
+
+def _should_publish(event):
+    """Wrapper around :meth:`should_publish`. Returns the boolean returns
+    of the publishability criteria as a tuple for later use.
+    """
     group = event['group'].lower()
     trials_factor = app.conf['preliminary_alert_trials_factor'][group]
     far_threshold = app.conf['preliminary_alert_far_threshold'][group]
     far = trials_factor * event['far']
-    return not event['offline'] and far <= far_threshold
+    return not event['offline'], far <= far_threshold, is_complete(event)
 
 
 def keyfunc(event):
@@ -320,7 +380,10 @@ def keyfunc(event):
     else:
         ifo_rank = 0
         tie_breaker = event['far']
-    return not should_publish(event), group_rank, ifo_rank, tie_breaker
+    # publishability criteria followed by group rank, ifo rank and tie breaker
+    res_keyfunc = list(not ii for ii in _should_publish(event))
+    res_keyfunc.extend((group_rank, ifo_rank, tie_breaker))
+    return tuple(res_keyfunc)
 
 
 def _update_superevent(superevent, new_event_dict,

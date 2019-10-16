@@ -34,6 +34,11 @@ Changelog
 
 -   Use mpich as the MPI runtime for parameter estimation.
 
+-   Add event completeness to publishability criterion. All three ``PASTRO_READY``,
+    ``SKYMAP_READY`` and ``EMBRIGHT_READY`` will be used to evaluate event
+    completeness for CBC events. Only the ``SKYMAP_READY`` will be used to evalute
+    completeness for burst events.
+
 0.8.7 (2019-09-14)
 ------------------
 
