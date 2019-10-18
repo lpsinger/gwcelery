@@ -157,7 +157,7 @@ def upload_event():
         |
         gracedb.get_superevents.si(
             'MDC event: {}'.format(graceid)
-        ).set(countdown=app.conf['orchestrator_timeout'] + 120)
+        ).set(countdown=app.conf['first2years_timeout'])
         |
         _vet_event.s()
     ).apply_async()

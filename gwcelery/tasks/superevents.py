@@ -130,6 +130,9 @@ def process(payload):
                      'creating new superevent', gid)
             gracedb.create_superevent(event_info['graceid'],
                                       t_0, t_start, t_end, category)
+            if should_publish(event_info):
+                gracedb.create_label.delay('ADVREQ', superevent.superevent_id)
+                gracedb.create_label('EM_Selected', superevent.superevent_id)
             return
 
         log.info('Event %s in window of %s. Adding event to superevent',
@@ -153,6 +156,9 @@ def process(payload):
                            t_0=t_0,
                            t_start=new_t_start,
                            t_end=new_t_end)
+        if should_publish(event_info):
+            gracedb.create_label.delay('ADVREQ', superevent.superevent_id)
+            gracedb.create_label('EM_Selected', superevent.superevent_id)
     else:
         log.critical('Superevent %s exists for alert_type new for %s',
                      sid, gid)
@@ -419,7 +425,9 @@ def _update_superevent(superevent, new_event_dict,
         kwargs['t_end'] = t_end
     if keyfunc(new_event_dict) < keyfunc(preferred_event_dict):
         kwargs['t_0'] = t_0
-        kwargs['preferred_event'] = new_event_dict['graceid']
+        if 'EM_Selected' not in superevent.event_dict['labels']:
+            # update preferred event when EM_Selected is not applied
+            kwargs['preferred_event'] = new_event_dict['graceid']
 
     if kwargs:
         gracedb.update_superevent(superevent_id, **kwargs)

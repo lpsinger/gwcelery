@@ -24,25 +24,6 @@ from . import skymaps
 from . import superevents
 
 
-@lvalert.handler('cbc_gstlal',
-                 'cbc_spiir',
-                 'cbc_pycbc',
-                 'cbc_mbtaonline',
-                 'burst_olib',
-                 'burst_cwb',
-                 shared=False)
-def handle_selected_as_preferred(alert):
-    # FIXME DQV & INJ labels not incorporated into labeling ADVREQ,
-    # Remove after !495 is merged
-
-    if alert['alert_type'] == 'selected_as_preferred':
-        superevent_id = alert['object']['superevent']
-        gracedb.create_label.delay('EM_Selected', superevent_id)
-
-        if superevents.should_publish(alert['object']):
-            gracedb.create_label.delay('ADVREQ', superevent_id)
-
-
 @lvalert.handler('superevent',
                  'mdc_superevent',
                  shared=False)
@@ -72,14 +53,22 @@ def handle_superevent(alert):
             parameter_estimation.s(superevent_id)
         ).apply_async()
 
+        (
+            _get_preferred_event.si(superevent_id).set(
+                countdown=app.conf['subthreshold_annotation_timeout']
+            )
+            |
+            gracedb.get_event.s()
+            |
+            _preliminary_alert.s(superevent_id)
+        ).apply_async()
+
     elif alert['alert_type'] == 'label_added':
         label_name = alert['data']['name']
         # launch preliminary alert on EM_Selected
         if label_name == 'EM_Selected':
             (
-                _get_preferred_event.si(superevent_id).set(
-                    countdown=app.conf['orchestrator_timeout']
-                )
+                _get_preferred_event.si(superevent_id)
                 |
                 gracedb.get_event.s()
                 |
@@ -349,6 +338,12 @@ def _create_voevent(classification, *args, **kwargs):
 def _create_label_and_return_filename(filename, label, graceid):
     gracedb.create_label(label, graceid)
     return filename
+
+
+@app.task(ignore_result=True, shared=False)
+def _preliminary_alert(event, superevent_id):
+    if {'ADVREQ', 'ADVOK', 'ADVNO'}.isdisjoint(event['labels']):
+        preliminary_alert(event, superevent_id)
 
 
 @app.task(ignore_result=True, shared=False)

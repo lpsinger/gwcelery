@@ -88,6 +88,9 @@
             }
         },
         {
+            "labels": [
+
+            ],
             "superevent_id": "S190421ar",
             "created": "2019-04-21 21:39:16 UTC",
             "preferred_event": "G330308",

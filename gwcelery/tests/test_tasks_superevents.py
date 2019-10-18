@@ -213,8 +213,12 @@ def test_update_preferred_event(labels, mock_db):
                                        None,
                                        None,
                                        None)
-        p.assert_called_with('S0039', preferred_event='T1234',
-                             t_start=None, t_end=None, t_0=None)
+        if 'EM_Selected' not in labels:
+            p.assert_called_with('S0039', preferred_event='T1234',
+                                 t_start=None, t_end=None, t_0=None)
+        else:
+            p.assert_called_with('S0039', preferred_event=None,
+                                 t_start=None, t_end=None, t_0=None)
 
 
 @pytest.mark.parametrize('labels',
