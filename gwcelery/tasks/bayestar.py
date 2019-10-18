@@ -4,7 +4,6 @@ import logging
 import urllib.parse
 
 from celery.exceptions import Ignore
-from ligo.gracedb.logging import GraceDbLogHandler
 from ligo.skymap import bayestar as _bayestar
 from ligo.skymap.io import events
 from ligo.skymap.io import fits
@@ -49,10 +48,6 @@ def localize(coinc_psd, graceid, filename='bayestar.fits.gz',
     It should execute in a special queue for computationally intensive,
     multithreaded, OpenMP tasks.
     """
-    handler = GraceDbLogHandler(gracedb.client, graceid)
-    handler.setLevel(logging.INFO)
-    log.addHandler(handler)
-
     # Determine the base URL for event pages.
     scheme, netloc, *_ = urllib.parse.urlparse(gracedb.client._service_url)
     base_url = urllib.parse.urlunparse((scheme, netloc, 'events', '', '', ''))
@@ -83,10 +78,3 @@ def localize(coinc_psd, graceid, filename='bayestar.fits.gz',
             return f.getvalue()
     except events.DetectorDisabledError:
         raise Ignore()
-    except:  # noqa
-        # Produce log message for any otherwise uncaught exception
-        log.exception("sky localization failed")
-        raise
-    finally:
-        log.removeHandler(handler)
-        del handler
