@@ -57,6 +57,8 @@ Requirements = (TARGET.Online_EMFollow =?= True)
 request_cpus = TARGET.Cpus
 request_memory = 3700
 universe = vanilla
+# FIXME: workaround for https://www-auth.cs.wisc.edu/lists/htcondor-users/2019-October/msg00051.shtml
+arguments = /bin/env
 
 
 arguments = "OMP_NUM_THREADS= gwcelery-condor-submit-helper gwcelery worker -l info -n gwcelery-openmp-worker -Q openmp -c 1"
