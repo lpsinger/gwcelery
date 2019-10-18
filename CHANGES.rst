@@ -26,6 +26,8 @@ Changelog
 
 -   Incorporate update circular into flask app.
 
+-   Update HTCondor accounting group from O2 to O3.
+
 0.8.7 (2019-09-14)
 ------------------
 
