@@ -61,8 +61,8 @@ universe = vanilla
 executable = /bin/env
 
 
-arguments = "OMP_NUM_THREADS= gwcelery-condor-submit-helper gwcelery worker -l info -n gwcelery-openmp-worker -Q openmp -c 1"
-description = gwcelery-openmp-worker
-error = gwcelery-openmp-worker.log
-output = gwcelery-openmp-worker.log
+arguments = "OMP_NUM_THREADS= gwcelery-condor-submit-helper gwcelery worker -l info -n gwcelery-openmp-worker-$(Process) -Q openmp -c 1"
+description = gwcelery-openmp-worker-$(Process)
+error = gwcelery-openmp-worker-$(Process).log
+output = gwcelery-openmp-worker-$(Process).log
 queue 2
