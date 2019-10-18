@@ -21,7 +21,8 @@ This is the initial release of GWCelery for O3b.
 
 -   Add acceptance tests of parameter estimation.
 
--   Apply EM_COINC to preferred events as well.
+-   Apply EM_COINC to preferred event when coincidence passes RAVEN publishing
+    conditions.
 
 -   Use the Redis server that is provided by the operating system (e.g. as a
     systemd unit) rather than starting our own Redis server. This prevents a

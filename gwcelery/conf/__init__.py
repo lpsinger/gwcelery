@@ -103,6 +103,10 @@ preliminary_alert_trials_factor = dict(cbc=4.0, burst=3.0)
 factor is the number of pipelines. CBC pipelines are gstlal, pycbc, mbtaonline
 and spiir. Burst searches are cwb.allsky, cwb.bbh and cwb.imbh."""
 
+snews_gw_far_threshold = 1 / (3600 * 24)
+"""Maximum false alarm rate for a superevent to send out a coincidence alert
+between an external SNEWS alert and the superevent."""
+
 superevent_clean_up_timeout = 30.
 """The orchestrator will wait this many seconds from the time of the
 application of the GCN_PRELIM_SENT label to revise the preferred

@@ -123,23 +123,47 @@ def test_calc_signif_skymaps(mock_raven_calc_signif):
         incl_sky=True, gracedb=gracedb.client)
 
 
+def mock_get_labels(superevent_id):
+    if superevent_id == 'S14':
+        return {'ADVREQ'}
+    else:
+        return {}
+
+
+def mock_download_json(superevent_id):
+    return {'temporal_coincidence_far': 1e-7}
+
+
 @pytest.mark.parametrize(
     'raven_search_results,graceid,group',
-    [[[{'graceid': 'E1'}], 'S1', 'CBC'],
+    [[[{'graceid': 'E1', 'pipeline': 'GRB'}], 'S1', 'CBC'],
      [[{'superevent_id': 'S10', 'far': 1, 'preferred_event': 'G1'}],
         'E2', 'Burst'],
-     [[{'graceid': 'E3'}, {'graceid': 'E4'}], 'S2', 'Burst'],
+     [[{'graceid': 'E3', 'pipeline': 'GRB'},
+       {'graceid': 'E4', 'pipeline': 'GRB'}], 'S2', 'Burst'],
      [[{'superevent_id': 'S11', 'far': 1, 'preferred_event': 'G2'},
        {'superevent_id': 'S12', 'far': .001, 'preferred_event': 'G3'}],
         'E5', 'CBC'],
-     [[], 'S15', 'Group']])
+     [[], 'S13', 'Group'],
+     [[{'graceid': 'E4', 'pipeline': 'GRB'}], 'S14', 'Group']])
+@patch('gwcelery.tasks.raven.trigger_raven_alert.run')
+@patch('gwcelery.tasks.gracedb.download.run')
+@patch('json.loads', mock_download_json)
+@patch('gwcelery.tasks.gracedb.get_labels', mock_get_labels)
 @patch('gwcelery.tasks.raven.calculate_coincidence_far.run')
 @patch('gwcelery.tasks.gracedb.create_label.run')
 def test_raven_pipeline(mock_create_label,
                         mock_calculate_coincidence_far,
+                        mock_download,
+                        mock_trigger_raven_alert,
                         raven_search_results, graceid, group):
+    """ This function tests that the RAVEN pipeline runs
+    correctly for scenarios where RAVEN finds nothing,
+    a coincidence is found but does not pass threshold, when
+    a coincidence is found but does pass threshold, and when
+    multiple events are found."""
 
-    alert_object = {'preferred_event': 'G1'}
+    alert_object = {'preferred_event': 'G1', 'pipeline': 'GRB'}
     raven.raven_pipeline(raven_search_results, graceid, alert_object, group)
 
     coinc_calls = []
@@ -154,15 +178,23 @@ def test_raven_pipeline(mock_create_label,
         coinc_calls.append(call(result['superevent_id'], graceid,
                                 result['preferred_event'], group))
         label_calls.append(call('EM_COINC', graceid))
-        label_calls.append(call('EM_COINC', result['preferred_event']))
     else:
         for result in raven_search_results:
             label_calls.append(call('EM_COINC', result['graceid']))
             coinc_calls.append(call(graceid, result['graceid'],
                                     alert_object['preferred_event'], group))
             label_calls.append(call('EM_COINC', graceid))
-            label_calls.append(call('EM_COINC',
-                                    alert_object['preferred_event']))
+
+    alert_calls = []
+    if graceid.startswith('E'):
+        alert_calls.append(call(
+            mock_download_json(result['superevent_id']),
+            result, graceid, alert_object, group))
+    else:
+        for result in raven_search_results:
+            alert_calls.append(call(mock_download_json(graceid),
+                                    alert_object, graceid, result, group))
+    mock_trigger_raven_alert.assert_has_calls(alert_calls, any_order=True)
 
     mock_calculate_coincidence_far.assert_has_calls(coinc_calls,
                                                     any_order=True)
@@ -189,3 +221,115 @@ def test_preferred_superevent(raven_search_results, testnum):
     if testnum == 3:
         assert preferred_superevent == [{'superevent_id': 'S14', 'far': .0001,
                                          'preferred_event': 'G5'}]
+
+
+def _mock_get_event(graceid):
+    if graceid == "S1234":
+        return {
+            "superevent_id": "S1234",
+            "preferred_event": "G000001",
+            "far": 1e-5
+            }
+    elif graceid == "S2345":
+        return {
+            "superevent_id": "S2345",
+            "preferred_event": "G000002",
+            "far": 1e-10
+            }
+    elif graceid == "S2468":
+        return {
+            "superevent_id": "S2468",
+            "preferred_event": "G000002",
+            "far": 1e-4
+            }
+    elif graceid == "S5678":
+        return {
+            "superevent_id": "S5678",
+            "preferred_event": "G000003",
+            "far": 1e-5
+            }
+    elif graceid == "S8642":
+        return {
+            "superevent_id": "S8642",
+            "preferred_event": "G000003",
+            "far": 1e-3
+            }
+    elif graceid == 'E1':
+        return {
+            "graceid": "E1",
+            "pipeline": 'Swift',
+            "search": 'GRB'
+            }
+    elif graceid == 'E2':
+        return {
+            "graceid": "E2",
+            "pipeline": 'Fermi',
+            "search": 'SubGRB'
+            }
+    elif graceid == 'E3':
+        return {
+            "graceid": "E3",
+            "pipeline": 'SNEWS',
+            "search": 'Supernova'
+            }
+    else:
+        raise AssertionError
+
+
+def _mock_get_coinc_far(graceid):
+    if graceid == "S1234":
+        return {
+            "temporal_coinc_far": 1e-05,
+            "spatiotemporal_coinc_far": None
+            }
+    elif graceid == "S2468":
+        return {
+            "temporal_coinc_far": 1e-09,
+            "spatiotemporal_coinc_far": None
+            }
+    elif graceid == "S5678":
+        return {
+            "temporal_coinc_far": 1e-15,
+            "spatiotemporal_coinc_far": None
+            }
+    elif graceid == "S8642":
+        return {
+            "temporal_coinc_far": 1e-03,
+            "spatiotemporal_coinc_far": None
+            }
+    else:
+        return {}
+
+
+@pytest.mark.parametrize(
+    'graceid,result_id,group,expected_result',
+    [['S1234', 'E1', 'Burst', False],
+     ['S2468', 'E1', 'CBC', True],
+     ['S2468', 'E2', 'CBC', False],
+     ['S2345', 'E3', 'Burst', True],
+     ['E1', 'S2468', 'CBC', True],
+     ['E2', 'S5678', 'CBC', False],
+     ['E3', 'S8642', 'Burst', False],
+     ['E1', 'S5678', 'CBC', True]])
+@patch('gwcelery.tasks.gracedb.get_labels', return_value={})
+@patch('gwcelery.tasks.gracedb.create_label.run')
+def test_trigger_raven_alert(mock_create_label, mock_get_labels,
+                             graceid, result_id, group, expected_result):
+    if graceid.startswith('E'):
+        superevent_id = result_id
+        ext_id = graceid
+    else:
+        superevent_id = graceid
+        ext_id = result_id
+    superevent = _mock_get_event(superevent_id)
+    coinc_far_json = _mock_get_coinc_far(superevent_id)
+    ext_event = _mock_get_event(ext_id)
+    preferred_id = superevent['preferred_event']
+    raven.trigger_raven_alert(coinc_far_json, superevent,
+                              graceid, ext_event, group)
+
+    if expected_result:
+
+        mock_create_label.assert_called_once_with('EM_COINC', preferred_id)
+    else:
+        mock_create_label.assert_not_called()
