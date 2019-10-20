@@ -174,6 +174,7 @@ def prepare_ini(frametype_dict, event, superevent_id=None):
         ),
         'q': min([sngl['mass2'] / sngl['mass1']
                   for sngl in singleinspiraltable]),
+        'mpirun': find_executable('mpirun')
     }
     ini_rota = ini_template.render(ini_settings)
     ini_settings.update({'use_of_ini': 'online'})

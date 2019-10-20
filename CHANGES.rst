@@ -32,6 +32,8 @@ Changelog
     the ``openmp`` Celery queue to workers that are launched via HTCondor on
     specially configured cluster nodes.
 
+-   Use mpich as the MPI runtime for parameter estimation.
+
 0.8.7 (2019-09-14)
 ------------------
 

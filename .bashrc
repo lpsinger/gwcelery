@@ -16,6 +16,9 @@ export PIP_USER=1
 # In this environmnet, it will be enabled selectively by processes that use it.
 export OMP_NUM_THREADS=1
 
+# Use mpich for parameter estimation.
+module load mpi/mpich-3.0-x86_64
+
 # Unless the user has set `GSSAPIDelegateCredentials no` in their ~/.ssh/config
 # file, their Globus certificate will be copied in when they log in, shadowing
 # the robot certificate. Set these environment variables to override.
