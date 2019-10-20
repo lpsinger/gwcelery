@@ -276,7 +276,7 @@ def dag_prepare(coinc_psd, rundir, superevent_id, preferred_event_id,
             setup_arg = 'source /cvmfs/ligo-containers.opensciencegrid.org' +\
                         '/lscsoft/conda/latest/etc/profile.d/conda.sh ' +\
                         '&& conda activate ligo-py36 && bilby_pipe_gracedb ' +\
-                        '--channel-dict o2replay ' +\
+                        '--channel-dict o2replay --sampler-kwargs FastTest ' +\
                         '--webdir {} '.format(path_to_webdir) +\
                         '--outdir {} --json {}'.format(rundir, path_to_json)
     try:
