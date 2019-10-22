@@ -65,6 +65,8 @@ This is the initial release of GWCelery for O3b.
 -   Pin gwpy to <= 0.15.0 since the updated gwpy fails to read Virgo's state
     vector.
 
+-   Remove generation of em coinc circular when `EM_COINC` label is applied.
+
 0.8.7 (2019-09-14)
 ------------------
 

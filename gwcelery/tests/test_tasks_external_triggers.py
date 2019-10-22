@@ -203,20 +203,3 @@ def test_handle_superevent_emcoinc_label1(mock_create_combined_skymap,
 
     external_triggers.handle_grb_lvalert(alert)
     mock_create_combined_skymap.assert_called_once_with('S180616h')
-
-
-@patch('gwcelery.tasks.gracedb.upload.run')
-@patch('gwcelery.tasks.circulars.create_emcoinc_circular.run')
-def test_handle_superevent_emcoinc_label2(mock_create_emcoinc_circular,
-                                          mock_gracedb_upload):
-    """Test dispatch of an LVAlert message for a superevent EM_COINC label
-    application."""
-    alert = {
-            "uid": "S180616h",
-            "alert_type": "log",
-            "data": {"filename": "coincidence_far.json"}
-            }
-
-    external_triggers.handle_emcoinc_lvalert(alert)
-    mock_create_emcoinc_circular.assert_called_once_with('S180616h')
-    mock_gracedb_upload.assert_called_once()
