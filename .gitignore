@@ -1,4 +1,5 @@
 # Files created by editing, developing, running tests
+.DS_Store
 .*.swp
 *~
 *.egg-info
