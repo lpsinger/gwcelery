@@ -345,7 +345,8 @@ def _find_paths_from_name(directory, name):
 
 
 @app.task(ignore_result=True, shared=False)
-def job_error_notification(request, exc, traceback, superevent_id, rundir):
+def job_error_notification(request, exc, traceback,
+                           superevent_id, rundir, pe_pipeline):
     """Upload notification when condor.submit terminates unexpectedly.
 
     Parameters
@@ -360,16 +361,19 @@ def job_error_notification(request, exc, traceback, superevent_id, rundir):
         The GraceDB ID of a target superevent
     rundir : str
         The run directory for PE
+    pe_pipeline : str
+        The parameter estimation pipeline used
+        Either lalinference OR bilby
     """
     if isinstance(exc, condor.JobAborted):
         gracedb.upload.delay(
-            filecontents=None, filename=None, graceid=superevent_id,
-            message='Job was aborted.', tags='pe'
+            filecontents=None, filename=None, graceid=superevent_id, tags='pe',
+            message='The {} condor job was aborted.'.format(pe_pipeline)
         )
     elif isinstance(exc, condor.JobFailed):
         gracedb.upload.delay(
-            filecontents=None, filename=None, graceid=superevent_id,
-            message='Job failed.', tags='pe'
+            filecontents=None, filename=None, graceid=superevent_id, tags='pe',
+            message='The {} condor job failed.'.format(pe_pipeline)
         )
     # Get paths to .log files, .err files, .out files
     paths_to_log = _find_paths_from_name(rundir, '*.log')
@@ -387,7 +391,7 @@ def job_error_notification(request, exc, traceback, superevent_id, rundir):
                 filecontents=contents,
                 filename=os.path.basename(path) + '.log',
                 graceid=superevent_id,
-                message='Here is a log file for PE.',
+                message='A log file for {} condor job.'.format(pe_pipeline),
                 tags='pe'
             )
 
@@ -602,7 +606,7 @@ def start_pe(ini_contents, preferred_event_id, superevent_id, pe_pipeline):
         )
         |
         condor.submit.s().on_error(
-            job_error_notification.s(superevent_id, rundir)
+            job_error_notification.s(superevent_id, rundir, pe_pipeline)
         )
         |
         dag_finished.si(

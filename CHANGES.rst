@@ -54,6 +54,8 @@ This is the initial release of GWCelery for O3b.
 -   Add a task to ``em_bright.py`` to compute and upload source properties
     upon the upload of ``LALInference.posterior_samples.hdf5``.
 
+-   Notify which pe pipeline failed for the failure of pe condor jobs.
+
 0.8.7 (2019-09-14)
 ------------------
 
