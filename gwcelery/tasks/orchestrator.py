@@ -6,7 +6,7 @@ import re
 from socket import gaierror
 from urllib.error import URLError
 
-from celery import chain, group
+from celery import group
 from ligo.gracedb.rest import HTTPError
 
 from ..import app
@@ -132,6 +132,7 @@ def handle_cbc_event(alert):
     ============================== ================================================
     File                           Task
     ============================== ================================================
+    ``bayestar.multiorder.fits``   :meth:`gwcelery.tasks.bayestar.localize`
     ``em_bright.json``             :meth:`gwcelery.tasks.em_bright.classifier`
     ``p_astro.json.json``          :meth:`gwcelery.tasks.p_astro.compute_p_astro`
     ============================== ================================================
@@ -184,6 +185,28 @@ def handle_cbc_event(alert):
                 |
                 gracedb.create_label.si('PASTRO_READY', graceid)
             ).apply_async(priority=priority)
+
+    if alert['alert_type'] != 'log':
+        return
+
+    filename = alert['data']['filename']
+
+    if filename == 'psd.xml.gz':
+        (
+            ordered_group(
+                gracedb.download.s('coinc.xml', graceid),
+                gracedb.download.s('psd.xml.gz', graceid)
+            )
+            |
+            bayestar.localize.s(graceid)
+            |
+            gracedb.upload.s(
+                'bayestar.multiorder.fits', graceid,
+                'sky localization complete', ['sky_loc', 'public']
+            )
+            |
+            gracedb.create_label.si('SKYMAP_READY', graceid)
+        ).apply_async(priority=priority)
 
 
 @lvalert.handler('superevent',
@@ -365,26 +388,7 @@ def preliminary_alert(event, superevent_id):
     is_publishable = (superevents.should_publish(event)
                       and {'DQV', 'INJ'}.isdisjoint(event['labels']))
 
-    canvas = chain()
-
-    if event['group'] == 'CBC':
-        canvas |= (
-            ordered_group(
-                gracedb.download.si('coinc.xml', preferred_event_id),
-                _download.si('psd.xml.gz', preferred_event_id)
-            )
-            |
-            bayestar.localize.s(preferred_event_id)
-            |
-            gracedb.upload.s(
-                'bayestar.multiorder.fits', preferred_event_id,
-                'sky localization complete', ['sky_loc', 'public']
-            )
-            |
-            gracedb.create_label.si('SKYMAP_READY', preferred_event_id)
-        )
-
-    canvas |= ordered_group(
+    canvas = ordered_group(
         (
             _download.si(original_skymap_filename, preferred_event_id)
             |

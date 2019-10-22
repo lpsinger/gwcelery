@@ -39,6 +39,8 @@ Changelog
     evaluate event completeness for CBC events. Only the ``SKYMAP_READY`` label
     will be used to evaluate completeness for burst events.
 
+-   Revert back to running BAYESTAR for all ``G`` events.
+
 0.8.7 (2019-09-14)
 ------------------
 
