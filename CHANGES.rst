@@ -41,6 +41,8 @@ Changelog
 
 -   Revert back to running BAYESTAR for all ``G`` events.
 
+-   Make skymaps from parameter estimation public automatically.
+
 0.8.7 (2019-09-14)
 ------------------
 

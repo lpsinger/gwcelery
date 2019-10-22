@@ -233,13 +233,13 @@ def handle_posterior_samples(alert):
         group(
             skymaps.annotate_fits.s(
                 '{}.fits.gz'.format(prefix),
-                superevent_id, ['pe', 'sky_loc']
+                superevent_id, ['pe', 'sky_loc', 'public']
             ),
 
             gracedb.upload.s(
                 '{}.multiorder.fits'.format(prefix), superevent_id,
                 'Multiresolution fits file generated from "{}"'.format(info),
-                ['pe', 'sky_loc']
+                ['pe', 'sky_loc', 'public']
             ),
 
             skymaps.flatten.s('{}.fits.gz'.format(prefix))
@@ -247,7 +247,7 @@ def handle_posterior_samples(alert):
             gracedb.upload.s(
                 '{}.fits.gz'.format(prefix), superevent_id,
                 'Flat-resolution fits file created from "{}"'.format(info),
-                ['pe', 'sky_loc']
+                ['pe', 'sky_loc', 'public']
             )
         )
     ).delay()
