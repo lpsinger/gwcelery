@@ -246,7 +246,7 @@ def _get_coinc_far_try_raven_alert(superevent, ext_event, gracedb_id,
 def trigger_raven_alert(coinc_far_json, superevent, gracedb_id,
                         ext_event, gw_group):
     """Determine whether an event should be published as a public alert.
-    If yes, then launches an alert by applying `EM_COINC` to the preferred
+    If yes, then launches an alert by applying `RAVEN_ALERT` to the preferred
     event.
 
     All of the following conditions must be true for a public alert:
@@ -307,10 +307,10 @@ def trigger_raven_alert(coinc_far_json, superevent, gracedb_id,
         coinc_far_f = coinc_far * trials_factor * (trials_factor - 1.)
         pass_far_threshold = coinc_far_f <= far_threshold
 
-    no_previous_alert = {'ADVREQ', 'ADVOK', 'ADVNO'}.isdisjoint(
+    no_previous_alert = {'RAVEN_ALERT'}.isdisjoint(
         gracedb.get_labels(superevent_id))
 
-    #  If publishable, trigger an alert by applying `EM_COINC` label to
+    #  If publishable, trigger an alert by applying `RAVEN_ALERT` label to
     #  preferred event
     messages = []
     if pass_far_threshold and not is_ext_subthreshold:
@@ -319,7 +319,11 @@ def trigger_raven_alert(coinc_far_json, superevent, gracedb_id,
         if no_previous_alert:
             messages.append('Triggering RAVEN alert for %s' % (
                 preferred_gwevent_id))
-            gracedb.create_label.si('EM_COINC', preferred_gwevent_id).delay()
+            (
+                gracedb.create_label.si('RAVEN_ALERT', superevent_id)
+                |
+                gracedb.create_label.si('RAVEN_ALERT', preferred_gwevent_id)
+            ).delay()
     if not pass_far_threshold:
         messages.append(('RAVEN: publishing criteria not met for %s,'
                          ' %s FAR (w/ trials) too large (%s>%s)' % (

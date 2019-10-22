@@ -101,8 +101,61 @@ G330298_RESPONSE = {
 }
 
 
+G000003_RESPONSE = {
+    "graceid": "G000003",
+    "pipeline": "gstlal",
+    "group": "CBC",
+    "search": "AllSky",
+    "far": 1.e-6,
+    "superevent": "S100",
+    "group": "CBC",
+    "instruments": "H1,L1",
+    'extra_attributes': {
+        'SingleInspiral': [
+            {
+                'chisq': 1.07,
+                'snr': 10.95,
+                'ifo': 'L1'
+            },
+            {
+                'chisq': 0.54,
+                'snr': 12.35,
+                'ifo': 'H1'
+            }
+        ],
+        'CoincInspiral': {
+            'snr': 10.17
+        },
+    },
+    "offline": False,
+    "gpstime": 1000000,
+    "labels": ["RAVEN_ALERT", "PASTRO_READY",
+               "EMBRIGHT_READY", "SKYMAP_READY"]
+}
+
+
 def assert_not_called_with(mock, *args, **kwargs):
     assert call(*args, **kwargs) not in mock.call_args_list
+
+
+def s100response(sid):
+    return {
+        "category": "Production",
+        "created": "2018-09-19 18:28:54 UTC",
+        "em_events": ["E0155"],
+        "far": 0.0000342353,
+        "gw_events": [
+            "G000003"
+        ],
+        "gw_id": None,
+        "labels": [],
+        "preferred_event": "G000003",
+        "submitter": "albert.einstein@LIGO.ORG",
+        "superevent_id": "S100",
+        "t_0": 1167264018.0,
+        "t_end": 1167264025.0,
+        "t_start": 1167264014.0
+    }
 
 
 @pytest.fixture(autouse=True)
@@ -114,6 +167,8 @@ def mock_db(monkeypatch):
     def get_event(gid):
         if gid == "T0212":
             return resource_json(__name__, 'data/T0212_S0039_preferred.json')
+        elif gid == "G000003":
+            return G000003_RESPONSE
         elif gid == "G000012":
             return resource_json(__name__, 'data/G000012_S0040_preferred.json')
         elif gid == "G330308":
@@ -265,6 +320,57 @@ def test_update_preferred_event(superevent_labels, new_event_labels,
 
 
 @pytest.mark.parametrize('labels',
+                         [['PASTRO_READY', 'RAVEN_ALERT'],
+                          ['SKYMAP_READY', 'EMBRIGHT_READY',
+                           'PASTRO_READY', 'RAVEN_ALERT']])
+@patch('gwcelery.tasks.gracedb.create_label.run')
+@patch('gwcelery.tasks.gracedb.get_superevent', s100response)
+def test_raven_alert(mock_create_label, labels):
+    payload = {
+        "uid": "G000003",
+        "alert_type": "label_added",
+        "description": "",
+        "object": {
+            "graceid": "G000003",
+            "pipeline": "gstlal",
+            "group": "CBC",
+            "search": "AllSky",
+            "far": 1.e-6,
+            "instruments": "H1,L1",
+            "superevent": "S100",
+            "offline": False,
+            "gpstime": 1000000,
+            "labels": labels,
+            'extra_attributes': {
+                'SingleInspiral': [
+                    {
+                        'chisq': 1.07,
+                        'snr': 10.95,
+                        'ifo': 'L1'
+                    },
+                    {
+                        'chisq': 0.54,
+                        'snr': 12.35,
+                        'ifo': 'H1'
+                    }
+                ],
+                'CoincInspiral': {
+                    'snr': 10.17
+                },
+            },
+        },
+        "data": {
+            "name": "RAVEN_ALERT"
+        }
+    }
+    superevents.handle(payload)
+    calls = [call('ADVREQ', 'S100')]
+    if {'SKYMAP_READY', 'EMBRIGHT_READY', 'PASTRO_READY'}.issubset(labels):
+        calls.append(call('EM_Selected', 'S100'))
+    mock_create_label.assert_has_calls(calls)
+
+
+@pytest.mark.parametrize('labels',
                          [['EMBRIGHT_READY', 'PASTRO_READY'],
                           ['SKYMAP_READY', 'EMBRIGHT_READY', 'PASTRO_READY']])
 def test_is_complete(labels):
@@ -394,7 +500,13 @@ def test_upload_same_event():
      ['CBC', 'gstlal', False, 1.e-6, 'H1,L1', ['EMBRIGHT_READY'], False],
      ['Burst', 'cwb', False, 1e-15, 'H1,L1', ['SKYMAP_READY'], True],
      ['Burst', 'cwb', False, 1e-15, 'H1,L1', [], False],
-     ['Burst', 'cwb', True, 1e-30, 'H1,L1,V1', [], False]])
+     ['Burst', 'cwb', True, 1e-30, 'H1,L1,V1', [], False],
+     ['CBC', 'gstlal', False, 1.e-6, 'H1,L1,V1', ['RAVEN_ALERT'], False],
+     ['CBC', 'gstlal', False, 1.e-6, 'H1,L1,V1', [
+      'PASTRO_READY', 'SKYMAP_READY', 'EMBRIGHT_READY', 'RAVEN_ALERT'], True],
+     ['CBC', 'gstlal', False, 1.e-15, 'H1,L1,V1', [
+      'PASTRO_READY', 'SKYMAP_READY', 'EMBRIGHT_READY', 'RAVEN_ALERT'],
+      True]])
 def test_should_publish(group, pipeline, offline, far, instruments, labels,
                         expected_result):
     event = dict(graceid='G123456',

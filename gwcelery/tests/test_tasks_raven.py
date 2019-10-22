@@ -306,7 +306,8 @@ def test_trigger_raven_alert(mock_create_label, mock_get_labels,
                               graceid, ext_event, group)
 
     if expected_result:
-
-        mock_create_label.assert_called_once_with('EM_COINC', preferred_id)
+        label_calls = [call('RAVEN_ALERT', superevent_id),
+                       call('RAVEN_ALERT', preferred_id)]
+        mock_create_label.assert_has_calls(label_calls)
     else:
         mock_create_label.assert_not_called()

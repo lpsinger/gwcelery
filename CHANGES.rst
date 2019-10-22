@@ -15,6 +15,9 @@ Changelog
 -   Switch from versioneer to setuptools_scm because versioneer is not
     maintained.
 
+-   Enable the RAVEN alert pipeline by having the superevent manager listen
+    to the label RAVEN_ALERT.
+
 0.9.1 (2019-12-15)
 ------------------
 
