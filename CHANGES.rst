@@ -43,6 +43,9 @@ Changelog
 
 -   Make skymaps from parameter estimation public automatically.
 
+-   Use nodes dedicated to online PE also for playground events so that the
+    test runs do not get stuck due to the lack of resources.
+
 0.8.7 (2019-09-14)
 ------------------
 

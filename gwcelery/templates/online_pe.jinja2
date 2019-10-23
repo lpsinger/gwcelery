@@ -33,11 +33,13 @@ explanation on jinja is here http://jinja.pocoo.org . #}
     {% set disable_spin = 'disable-spin=' %}
     {% set zeroLogLike = 'zeroLogLike=' %}
 {% else %}
-    {% if use_of_ini == 'online' %}
-        {% set queue = 'queue = Online_CBC_PE_Daily' %}
-    {% endif %}
     {% set accounting_group = 'ligo.prod.o3.cbc.pe.lalinference' %}
 {% endif %}
+
+{% if use_of_ini == 'online' %}
+    {% set queue = 'queue = Online_CBC_PE_Daily' %}
+{% endif %}
+
 
 [analysis]
 ifos=['H1', 'L1', 'V1']
