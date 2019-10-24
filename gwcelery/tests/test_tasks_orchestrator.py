@@ -15,17 +15,24 @@ from . import resource_json
 
 
 @pytest.mark.parametrize(  # noqa: F811
-    'alert_type,group,pipeline,offline,far,instruments',
-    [['label_added', 'CBC', 'gstlal', False, 1.e-9, ['H1']],
-     ['label_added', 'CBC', 'gstlal', False, 1.e-9, ['H1', 'L1']],
-     ['label_added', 'CBC', 'gstlal', False, 1.e-9, ['H1', 'L1', 'V1']],
-     ['label_added', 'Burst', 'CWB', False, 1.e-9, ['H1', 'L1', 'V1']],
-     ['label_added', 'Burst', 'oLIB', False, 1.e-9, ['H1', 'L1', 'V1']],
-     ['new', 'CBC', 'gstlal', False, 1.e-9, ['H1', 'L1']]])
+    'alert_type,label,group,pipeline,offline,far,instruments',
+    [['label_added', 'ADVREQ', 'CBC', 'gstlal', False, 1.e-9,
+        ['H1']],
+     ['label_added', 'ADVREQ', 'CBC', 'gstlal', False, 1.e-9,
+         ['H1', 'L1']],
+     ['label_added', 'ADVREQ', 'CBC', 'gstlal', False, 1.e-9,
+         ['H1', 'L1', 'V1']],
+     ['label_added', 'ADVREQ', 'Burst', 'CWB', False, 1.e-9,
+         ['H1', 'L1', 'V1']],
+     ['label_added', 'ADVREQ', 'Burst', 'oLIB', False, 1.e-9,
+         ['H1', 'L1', 'V1']],
+     ['label_added', 'GCN_PRELIM_SENT', 'CBC', 'gstlal', False, 1.e-9,
+         ['H1', 'L1', 'V1']],
+     ['new', '', 'CBC', 'gstlal', False, 1.e-9, ['H1', 'L1']]])
 @pytest.mark.xfail(reason='https://github.com/celery/celery/issues/4405')
 def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
-                           alert_type, group, pipeline, offline,
-                           far, instruments):
+                           alert_type, label, group, pipeline,
+                           offline, far, instruments):
     """Test a superevent is dispatched to the correct annotation task based on
     its preferred event's search group."""
     alert = {
@@ -37,7 +44,7 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
             't_end': 1214714164,
             'preferred_event': 'G1234'
         },
-        'data': {'name': 'ADVREQ'}
+        'data': {'name': label}
     }
 
     def get_superevent(superevent_id):
@@ -55,7 +62,8 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
             'far': far,
             'gpstime': 1234,
             'extra_attributes': {},
-            'labels': ['ADVREQ']
+            'labels': ['ADVREQ', 'PASTRO_READY', 'EMBRIGHT_READY',
+                       'SKYMAP_READY']
         }
         if pipeline == 'gstlal':
             # Simulate subthreshold triggers for gstlal. Subthreshold triggers
@@ -98,6 +106,9 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
     create_voevent = Mock(return_value='S1234-1-Preliminary.xml')
     create_label = Mock()
     create_tag = Mock()
+    # FIXME break up preliminary alert pipeline when removing xfail
+    preliminary_alert_pipeline = Mock()
+    select_preferred_event_task = Mock()
 
     monkeypatch.setattr('gwcelery.tasks.gcn.send.run', send)
     monkeypatch.setattr('gwcelery.tasks.skymaps.plot_allsky.run', plot_allsky)
@@ -122,11 +133,22 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
                         start_pe)
     monkeypatch.setattr('gwcelery.tasks.gracedb.create_label._orig_run',
                         create_label)
+    monkeypatch.setattr(
+        'gwcelery.tasks.orchestrator.preliminary_alert.run',
+        preliminary_alert_pipeline
+    )
+    monkeypatch.setattr(
+        'gwcelery.tasks.superevents.select_preferred_event.run',
+        select_preferred_event_task
+    )
 
     # Run function under test
     orchestrator.handle_superevent(alert)
 
-    if alert_type == 'label_added':
+    if label == 'GCN_PRELIM_SENT':
+        select_preferred_event_task.assert_called_once()
+        preliminary_alert_pipeline.assert_called_once()
+    elif alert_type == 'label_added':
         plot_allsky.assert_called_once()
         plot_volume.assert_called_once()
 
@@ -148,7 +170,8 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
         query_data.assert_called_once()
         prepare_ini.assert_called_once()
         if far <= app.conf['pe_threshold']:
-            start_pe.assert_called_once()
+            assert start_pe.call_count == 2
+            # FIXME with proper arguments with lalinference and bilby
         else:
             start_pe.assert_not_called()
 

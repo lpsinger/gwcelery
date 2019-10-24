@@ -169,6 +169,15 @@ def mock_db(monkeypatch):
     yield
 
 
+def test_select_preferred_event():
+    """Provide the list of trigger information of a sample event.
+    Preferred event is G330564.
+    """
+    events = resource_json(__name__, 'data/sample_events.json')
+    r = superevents.select_preferred_event(events)
+    assert r['graceid'] == 'G3'
+
+
 @pytest.mark.parametrize('labels',
                          [['EMBRIGHT_READY', 'PASTRO_READY'],
                           ['EM_Selected', 'ADVREQ', 'DQOK']])

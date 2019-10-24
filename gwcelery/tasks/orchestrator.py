@@ -65,7 +65,7 @@ def handle_superevent(alert):
 
     elif alert['alert_type'] == 'label_added':
         label_name = alert['data']['name']
-        # launch preliminary alert on EM_Selected
+        # launch first preliminary alert on EM_Selected
         if label_name == 'EM_Selected':
             (
                 _get_preferred_event.si(superevent_id)
@@ -77,6 +77,17 @@ def handle_superevent(alert):
                     alert['object']['t_start'],
                     alert['object']['t_end']
                 )
+                |
+                preliminary_alert.s(superevent_id)
+            ).apply_async()
+        # launch second preliminary on GCN_PRELIM_SENT
+        elif label_name == 'GCN_PRELIM_SENT':
+            (
+                gracedb.get_events.si("superevent: %s", superevent_id).set(
+                    app.conf['superevent_clean_up_timeout']
+                )
+                |
+                superevents.select_preferred_event.s()
                 |
                 preliminary_alert.s(superevent_id)
             ).apply_async()
