@@ -288,8 +288,17 @@ def get_instruments_in_ranking_statistic(event):
     candidate. For such pipelines, we infer which pipelines contributed to the
     ranking by counting only the SingleInspiral records for which the chi
     squared field is non-empty.
+
+    For PyCBC Live in the O3 configuration, an empty chi^2 field does not mean
+    that the detector did not contribute to the ranking; in fact, *all*
+    detectors listed in the SingleInspiral table contribute to the significance
+    even if the chi^2 is not computed for some of them. Hence PyCBC Live is
+    handled as a special case.
     """
     try:
+        if event['pipeline'].lower() == 'pycbc':
+            return set(event['instruments'].split(','))
+
         attribs = event['extra_attributes']['SingleInspiral']
         ifos = {single['ifo'] for single in attribs
                 if single.get('chisq') is not None}
