@@ -7,7 +7,7 @@ candidates.
 import json
 import re
 
-from celery import group
+from celery import chain, group
 
 from ..import app
 from . import bayestar
@@ -130,7 +130,8 @@ def handle_superevent(alert):
             ).apply_async()
         # launch initial/retraction alert on ADVOK/ADVNO
         elif label_name == 'ADVOK':
-            initial_alert((None, None, None), superevent_id)
+            initial_alert((None, None, None), superevent_id,
+                          labels=alert['object']['labels'])
         elif label_name == 'ADVNO':
             retraction_alert(superevent_id)
 
@@ -543,7 +544,7 @@ def preliminary_alert(event, superevent_id, annotation_prefix='',
             _proceed_if_no_advocate_action.s(superevent_id)
             |
             preliminary_initial_update_alert.s(
-                superevent_id, 'preliminary')
+                superevent_id, 'preliminary', labels=event['labels'])
         )
 
     canvas.apply_async(priority=priority)
@@ -601,7 +602,8 @@ def parameter_estimation(far_event, superevent_id):
 
 
 @gracedb.task(ignore_result=True, shared=False)
-def preliminary_initial_update_alert(filenames, superevent_id, alert_type):
+def preliminary_initial_update_alert(filenames, superevent_id, alert_type,
+                                     labels=[]):
     """
     Create and send a preliminary, initial, or update GCN notice.
 
@@ -613,13 +615,15 @@ def preliminary_initial_update_alert(filenames, superevent_id, alert_type):
         The superevent ID.
     alert_type : {'preliminary', 'initial', 'update'}
         The alert type.
+    labels : list
+        A list of labels applied to superevent.
 
     Notes
     -----
     This function is decorated with :obj:`gwcelery.tasks.gracedb.task` rather
     than :obj:`gwcelery.app.task` so that a synchronous call to
     :func:`gwcelery.tasks.gracedb.get_log` is retried in the event of GraceDB
-    API failures.
+    API failures. If `EM_COINC` is in labels will create a RAVEN circular.
 
     """
     if filenames is None:
@@ -649,6 +653,29 @@ def preliminary_initial_update_alert(filenames, superevent_id, alert_type):
                     and 'p_astro' in t \
                     and f.endswith('.json'):
                 p_astro_filename = fv
+
+    if alert_type in ['preliminary', 'initial']:
+        if 'EM_COINC' in labels:
+            circular_task = circulars.create_emcoinc_circular.si(superevent_id)
+            circular_filename = '{}-emcoinc-circular.txt'.format(alert_type)
+            tags = ['em_follow', 'ext_coinc']
+
+        else:
+            circular_task = circulars.create_initial_circular.si(superevent_id)
+            circular_filename = '{}-circular.txt'.format(alert_type)
+            tags = ['em_follow']
+
+        circular_canvas = (
+            circular_task
+            |
+            gracedb.upload.s(
+                circular_filename,
+                superevent_id,
+                'Template for {} GCN Circular'.format(alert_type),
+                tags=tags)
+        )
+    else:
+        circular_canvas = chain()
 
     canvas = (
         group(
@@ -681,14 +708,7 @@ def preliminary_initial_update_alert(filenames, superevent_id, alert_type):
             |
             gcn.send.s(),
 
-            circulars.create_initial_circular.si(superevent_id)
-            |
-            gracedb.upload.s(
-                '{}-circular.txt'.format(alert_type),
-                superevent_id,
-                'Template for {} GCN Circular'.format(alert_type),
-                tags=['em_follow']
-            ),
+            circular_canvas,
 
             gracedb.create_tag.s('public', superevent_id)
         )
@@ -701,7 +721,7 @@ def preliminary_initial_update_alert(filenames, superevent_id, alert_type):
 
 
 @gracedb.task(ignore_result=True, shared=False)
-def initial_alert(filenames, superevent_id):
+def initial_alert(filenames, superevent_id, labels=[]):
     """Produce an initial alert.
 
     This does nothing more than call
@@ -714,6 +734,8 @@ def initial_alert(filenames, superevent_id):
         A list of the sky map, em_bright, and p_astro filenames.
     superevent_id : str
         The superevent ID.
+    labels : list
+        A list of labels applied to superevent.
 
     Notes
     -----
@@ -723,7 +745,8 @@ def initial_alert(filenames, superevent_id):
     API failures.
 
     """
-    preliminary_initial_update_alert(filenames, superevent_id, 'initial')
+    preliminary_initial_update_alert(filenames, superevent_id, 'initial',
+                                     labels=labels)
 
 
 @gracedb.task(ignore_result=True, shared=False)

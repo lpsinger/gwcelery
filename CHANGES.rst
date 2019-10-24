@@ -100,6 +100,8 @@ This is the initial release of GWCelery for O3b.
 -   Prevent second preliminary to be sent in the event of any advocate action.
     Previously, this was only being prevented for ADVNO.
 
+-   Create RAVEN circular if EM_COINC label is applied to superevent.
+
 0.8.7 (2019-09-14)
 ------------------
 

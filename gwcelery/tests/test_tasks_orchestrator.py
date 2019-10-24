@@ -222,6 +222,9 @@ def superevent_initial_alert_download(filename, graceid):
         raise ValueError
 
 
+@pytest.mark.parametrize(  # noqa: F811
+    'labels',
+    [[], ['EM_COINC']])
 @patch('gwcelery.tasks.gracedb.expose._orig_run', return_value=None)
 @patch('gwcelery.tasks.gracedb.get_log',
        return_value=[{'tag_names': ['sky_loc', 'public'],
@@ -239,17 +242,20 @@ def superevent_initial_alert_download(filename, graceid):
 @patch('gwcelery.tasks.gracedb.download._orig_run',
        superevent_initial_alert_download)
 @patch('gwcelery.tasks.gcn.send.run')
+@patch('gwcelery.tasks.circulars.create_emcoinc_circular.run')
 @patch('gwcelery.tasks.circulars.create_initial_circular.run')
 def test_handle_superevent_initial_alert(mock_create_initial_circular,
+                                         mock_create_emcoinc_circular,
                                          mock_send,
                                          mock_create_voevent,
                                          mock_create_tag, mock_get_log,
-                                         mock_expose):
+                                         mock_expose, labels):
     """Test that the ``ADVOK`` label triggers an initial alert."""
     alert = {
         'alert_type': 'label_added',
         'uid': 'S1234',
-        'data': {'name': 'ADVOK'}
+        'data': {'name': 'ADVOK'},
+        'object': {'labels': labels}
     }
 
     # Run function under test
@@ -260,7 +266,10 @@ def test_handle_superevent_initial_alert(mock_create_initial_circular,
         ProbHasRemnant=0.0, Terrestrial=0.01, internal=False, open_alert=True,
         skymap_filename='foobar.fits.gz,0', skymap_type='foobar', vetted=True)
     mock_send.assert_called_once_with('contents of S1234-Initial-1.xml')
-    mock_create_initial_circular.assert_called_once_with('S1234')
+    if 'EM_COINC' in labels:
+        mock_create_emcoinc_circular.assert_called_once_with('S1234')
+    else:
+        mock_create_initial_circular.assert_called_once_with('S1234')
     mock_create_tag.assert_has_calls(
         [call('foobar.fits.gz,0', 'public', 'S1234'),
          call('em_bright.json,0', 'public', 'S1234'),
