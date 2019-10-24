@@ -89,21 +89,30 @@ def handle_superevent(alert):
 
         # launch second preliminary on GCN_PRELIM_SENT
         elif label_name == 'GCN_PRELIM_SENT':
-            query = f'superevent: {superevent_id}'
-            if alert['object']['category'] == 'MDC':
-                query += ' MDC'
-            elif alert['object']['category'] == 'Test':
-                query += ' Test'
+            if {'ADVNO', 'DQV'}.isdisjoint(alert['object']['labels']):
+                query = f'superevent: {superevent_id}'
+                if alert['object']['category'] == 'MDC':
+                    query += ' MDC'
+                elif alert['object']['category'] == 'Test':
+                    query += ' Test'
 
-            (
-                gracedb.get_events.si(query).set(
-                    app.conf['superevent_clean_up_timeout']
+                canvas = (
+                    gracedb.get_events.si(query).set(
+                        app.conf['superevent_clean_up_timeout']
+                    )
+                    |
+                    superevents.select_preferred_event.s()
+                    |
+                    _update_superevent_and_return_event_dict.s(superevent_id)
+                    |
+                    preliminary_alert.s(superevent_id)
+                ).apply_async()
+            else:  # don't second second preliminary if vetoed
+                canvas = gracedb.upload.si(
+                    None, None, superevent_id,
+                    "Second preliminary not sent due to ADVNO or DQV"
                 )
-                |
-                superevents.select_preferred_event.s()
-                |
-                preliminary_alert.s(superevent_id)
-            ).apply_async()
+            canvas.apply_async()
         # launch initial/retraction alert on ADVOK/ADVNO
         elif label_name == 'ADVOK':
             initial_alert((None, None, None), superevent_id)
@@ -360,6 +369,16 @@ def _create_voevent(classification, *args, **kwargs):
 def _create_label_and_return_filename(filename, label, graceid):
     gracedb.create_label(label, graceid)
     return filename
+
+
+@gracedb.task(shared=False)
+def _update_superevent_and_return_event_dict(event, superevent_id):
+    """Wrapper around :meth:`gracedb.update_superevent`
+    that returns the event dictionary.
+    """
+    gracedb.update_superevent(superevent_id,
+                              preferred_event=event['graceid'])
+    return event
 
 
 @app.task(ignore_result=True, shared=False)
