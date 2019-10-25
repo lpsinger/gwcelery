@@ -98,6 +98,10 @@ def process(payload):
                            t_0=None,
                            t_start=None,
                            t_end=None)
+        # check for publishability
+        if should_publish(event_info):
+            gracedb.create_label.delay('ADVREQ', event_info['superevent'])
+            gracedb.create_label('EM_Selected', event_info['superevent'])
         return
 
     superevents = gracedb.get_superevents('category: {} {} .. {}'.format(
