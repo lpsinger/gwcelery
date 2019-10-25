@@ -109,10 +109,6 @@ creation of a new superevent to the time that subthreshold superevents
 are annotated. It is expected that the timeout is long enough such
 that there are no more G events being added to the superevent."""
 
-first2years_timeout = 120.
-"""The first2year task will wait this many seconds from the creation
-of an MDC event to vet the event randomly."""
-
 pe_timeout = 345.0
 """The orchestrator will wait this many seconds from the time of the
 creation of a new superevent to the time that parameter estimation begins, in
