@@ -1,8 +1,10 @@
 Changelog
 =========
 
-0.8.8 (unreleased)
+0.9.0 (unreleased)
 ------------------
+
+This is the initial release of GWCelery for O3b.
 
 -   Update ligo-followup-advocate version to 1.1.3.
 
