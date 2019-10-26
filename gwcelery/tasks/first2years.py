@@ -147,7 +147,7 @@ def upload_event():
             (
                 gracedb.create_event.s(
                     coinc, 'MDC', 'gstlal', 'CBC'
-                ).set(countdown=random.uniform(0, num))
+                )
                 |
                 _upload_psd.s()
             ).apply_async()
