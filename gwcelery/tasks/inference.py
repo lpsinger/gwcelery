@@ -601,7 +601,7 @@ def start_pe(ini_contents, preferred_event_id, superevent_id, pe_pipeline):
             pe_pipeline, ini_contents
         )
         |
-        condor.submit.s(pe_pipeline).on_error(
+        condor.submit.s().on_error(
             job_error_notification.s(superevent_id, rundir)
         )
         |
