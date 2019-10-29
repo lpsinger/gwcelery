@@ -56,6 +56,8 @@ This is the initial release of GWCelery for O3b.
 
 -   Notify which pe pipeline failed for the failure of pe condor jobs.
 
+-   Pass online-pe flag to bilby so that it uses nodes dedicated to online PE.
+
 0.8.7 (2019-09-14)
 ------------------
 

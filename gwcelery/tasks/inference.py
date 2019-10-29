@@ -198,7 +198,8 @@ def pre_pe_tasks(event, superevent_id):
 
 
 @app.task(shared=False)
-def _setup_dag_for_lalinference(coinc_psd, ini_contents, rundir, superevent_id):
+def _setup_dag_for_lalinference(coinc_psd, ini_contents,
+                                rundir, superevent_id):
     """Create DAG for a lalinference run and return the path to DAG.
 
     Parameters
@@ -289,11 +290,11 @@ def _setup_dag_for_bilby(event, rundir, preferred_event_id, superevent_id):
         app.conf['pe_results_path'], preferred_event_id, 'bilby'
     )
 
-    setup_arg = \
-        'bilby_pipe_gracedb --webdir {} --outdir {} --json {}'.format(
-            path_to_webdir, rundir, path_to_json)
+    setup_arg = ['bilby_pipe_gracedb', '--webdir', path_to_webdir,
+                 '--outdir', rundir, '--json', path_to_json, '--online-pe']
     if not app.conf['sentry_environment'] == 'production':
-        setup_arg += ' --channel-dict o2replay --sampler-kwargs FastTest'
+        setup_arg += ['--channel-dict', 'o2replay',
+                      '--sampler-kwargs', 'FastTest']
     try:
         subprocess.run(
             setup_arg, stdout=subprocess.PIPE,
@@ -314,7 +315,8 @@ def _setup_dag_for_bilby(event, rundir, preferred_event_id, superevent_id):
                        'Automatically generated Bilby configuration file',
                        'pe', 'online_bilby_pe.ini').delay()
 
-    path_to_dag, = glob.glob(os.path.joins(rundir, 'submit/dag*.submit'))
+    path_to_dag, = glob.glob(os.path.join(rundir, 'submit/dag*.submit'))
+    print(path_to_dag)
     return path_to_dag
 
 
@@ -357,7 +359,7 @@ def dag_prepare_task(rundir, superevent_id, preferred_event_id, pe_pipeline,
         ) | _setup_dag_for_lalinference.s(ini_contents, rundir, superevent_id)
     elif pe_pipeline == 'bilby':
         canvas = gracedb.get_event.si(preferred_event_id) | \
-            _setup_dag_for_bilby(rundir, preferred_event_id, superevent_id)
+            _setup_dag_for_bilby.s(rundir, preferred_event_id, superevent_id)
     else:
         print("A PE pipeline named {} does not exist.".format(pe_pipeline))
         raise
