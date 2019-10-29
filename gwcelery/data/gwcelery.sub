@@ -5,7 +5,7 @@ universe = local
 getenv = true
 executable = /usr/bin/env
 log = gwcelery-condor.log
-# on_exit_remove = false # temporarily disable to diagnose evictions
+on_exit_remove = false
 JobBatchName = gwcelery
 
 arguments = "gwcelery beat"
