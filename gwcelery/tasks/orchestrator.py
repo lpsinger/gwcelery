@@ -260,7 +260,7 @@ def handle_posterior_samples(alert):
         |
         gracedb.upload.s(
             'LALInference.em_bright.json', superevent_id,
-            'em-bright computed from ' + filename
+            'em-bright computed from "{}"'.format(info)
         )
     ).delay()
 
