@@ -282,6 +282,7 @@ release:
     - mkdir -p ~/.ssh
     - |
       cat > ~/.ssh/config <<EOF
+      Port 2222
       Host emfollow-playground.*
       User emfollow-playground
       Host emfollow.*
