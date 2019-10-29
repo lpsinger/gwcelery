@@ -223,8 +223,7 @@ def handle_posterior_samples(alert):
     filename = alert['data']['filename']
     info = '{} {}'.format(alert['data']['comment'], filename)
     prefix, _ = filename.rsplit('.posterior_samples.')
-    # FIXME: It is assumed that posterior samples always come from
-    # lalinference. After bilby or rift is integrated, this has to be fixed.
+
     (
         gracedb.download.si(filename, superevent_id)
         |
