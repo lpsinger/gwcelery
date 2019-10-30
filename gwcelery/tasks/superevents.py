@@ -294,16 +294,12 @@ def get_instruments_in_ranking_statistic(event):
     even if the chi^2 is not computed for some of them. Hence PyCBC Live is
     handled as a special case.
     """
-    try:
-        if event['pipeline'].lower() == 'pycbc':
-            return set(event['instruments'].split(','))
-
+    if event['pipeline'].lower() == 'pycbc':
+        return set(event['instruments'].split(','))
+    else:
         attribs = event['extra_attributes']['SingleInspiral']
-        ifos = {single['ifo'] for single in attribs
+        return {single['ifo'] for single in attribs
                 if single.get('chisq') is not None}
-    except KeyError:
-        ifos = set(event['instruments'].split(','))
-    return ifos
 
 
 @app.task(shared=False)
