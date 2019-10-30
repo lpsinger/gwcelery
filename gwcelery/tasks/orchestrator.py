@@ -253,7 +253,7 @@ def handle_posterior_samples(alert):
 
     # em_bright from LALInference posterior samples
     (
-        gracedb.download.si(superevent_id, filename)
+        gracedb.download.si(filename, superevent_id)
         |
         em_bright.em_bright_posterior_samples.s()
         |
