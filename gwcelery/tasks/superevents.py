@@ -47,10 +47,11 @@ def handle(payload):
         log.info(
             'Skipping %s because LVAlert message does not provide FAR', gid)
         return
-    else:
-        if far > app.conf['superevent_far_threshold']:
-            log.info("Skipping processing of %s because of high FAR", gid)
-            return
+
+    if far > app.conf['superevent_far_threshold']:
+        log.info("Skipping processing of %s because of high FAR", gid)
+        return
+
     group = payload['object']['group'].lower()
     required_labels = required_labels_by_group[group]
     if alert_type == 'new' or (alert_type == 'label_added' and
