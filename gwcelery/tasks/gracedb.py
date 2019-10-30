@@ -281,7 +281,7 @@ def update_superevent(superevent_id, t_start=None,
             raise
 
 
-@task(ignore_result=True, shared=False)
+@task(shared=False)
 @catch_retryable_http_errors
 def create_superevent(graceid, t0, t_start, t_end, category):
     """Create new superevent in GraceDB with `graceid`
@@ -300,10 +300,10 @@ def create_superevent(graceid, t0, t_start, t_end, category):
         superevent category
     """
     try:
-        with client.createSuperevent(t_start, t0, t_end,
-                                     preferred_event=graceid,
-                                     category=category):
-            pass  # Close without reading response; we only needed the status
+        response = client.createSuperevent(t_start, t0, t_end,
+                                           preferred_event=graceid,
+                                           category=category)
+        return response.json()['superevent_id']
     except rest.HTTPError as e:
         error_msg = 'is already assigned to a Superevent'
         if not (e.status == 400 and error_msg in e.message):

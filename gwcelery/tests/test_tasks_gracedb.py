@@ -32,6 +32,31 @@ def test_create_event(monkeypatch):
     assert graceid == 'T12345'
 
 
+def test_create_superevent(monkeypatch):
+
+    class MockResponse(object):
+
+        def json(self):
+            return {'superevent_id': 'S20191031az'}
+
+    class MockGraceDb(object):
+
+        def createSuperevent(self, t_start, t_0, t_end,  # noqa: N802
+                             preferred_event, category='production'):
+            assert t_start == 't_start'
+            assert t_0 == 't_0'
+            assert t_end == 't_end'
+            assert preferred_event == 'graceid'
+            assert category == 'category'
+            return MockResponse()
+
+    monkeypatch.setattr('gwcelery.tasks.gracedb.client', MockGraceDb())
+
+    superevent_id = gracedb.create_superevent(
+        'graceid', 't_0', 't_start', 't_end', 'category')
+    assert superevent_id == 'S20191031az'
+
+
 @patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
 def test_create_label(mock_gracedb):
     # Run function under test.
