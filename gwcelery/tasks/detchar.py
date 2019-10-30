@@ -184,7 +184,7 @@ def check_idq(cache, channel, start, end):
         try:
             idq_prob = TimeSeries.read(
                 cache, channel, start=start, end=end)
-            return (channel, float(idq_prob.max()))
+            return (channel, float(idq_prob.max().value))
         except RuntimeError:
             log.exception('Failed to read from low-latency iDQ frame files')
     # FIXME: figure out how to get access to low-latency frames outside
