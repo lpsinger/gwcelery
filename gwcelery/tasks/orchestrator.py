@@ -258,7 +258,7 @@ def handle_posterior_samples(alert):
         em_bright.em_bright_posterior_samples.s()
         |
         gracedb.upload.s(
-            'LALInference.em_bright.json', superevent_id,
+            '{}.em_bright.json'.format(prefix), superevent_id,
             'em-bright computed from "{}"'.format(info)
         )
     ).delay()
