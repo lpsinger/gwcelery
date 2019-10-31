@@ -170,9 +170,7 @@ def mock_db(monkeypatch):
 
 
 def test_select_preferred_event():
-    """Provide the list of trigger information of a sample event.
-    Preferred event is G330564.
-    """
+    """Provide the list of trigger information of a sample event."""
     events = resource_json(__name__, 'data/sample_events.json')
     r = superevents.select_preferred_event(events)
     assert r['graceid'] == 'G3'
