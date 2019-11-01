@@ -112,6 +112,11 @@ def process(payload):
                 if payload['alert_type'] == 'label_added':
                     log.info('Label %s added to %s',
                              payload['data']['name'], gid)
+                elif payload['alert_type'] == 'new':
+                    log.info('New type LVAlert for %s with '
+                             'existing superevent %s. '
+                             'No action required' % (gid, sid))
+                    return
                 superevent = _SuperEvent(s['t_start'],
                                          s['t_end'],
                                          s['t_0'],
