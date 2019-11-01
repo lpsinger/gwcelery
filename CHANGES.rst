@@ -56,8 +56,6 @@ This is the initial release of GWCelery for O3b.
 
 -   Notify which pe pipeline failed for the failure of pe condor jobs.
 
--   Pass online-pe flag to bilby so that it uses nodes dedicated to online PE.
-
 -   Pass the ``-j`` flag to ``ligo-skymap-from-samples`` to speed up skymap generation.
 
 -   Remove skymap generation from PE DAG so that it will not be generated twice.
