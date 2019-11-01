@@ -243,7 +243,7 @@ def _setup_dag_for_lalinference(coinc_psd, ini_contents,
         subprocess.run(
             ['lalinference_pipe', '--run-path', rundir,
              '--coinc', path_to_coinc, path_to_ini] + psd_arg,
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+            capture_output=True, check=True)
     except subprocess.CalledProcessError as e:
         contents = b'args:\n' + json.dumps(e.args[1]).encode('utf-8') + \
                    b'\n\nstdout:\n' + e.stdout + b'\n\nstderr:\n' + e.stderr
@@ -296,9 +296,7 @@ def _setup_dag_for_bilby(event, rundir, preferred_event_id, superevent_id):
         setup_arg += ['--channel-dict', 'o2replay',
                       '--sampler-kwargs', 'FastTest']
     try:
-        subprocess.run(
-            setup_arg, stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE, check=True)
+        subprocess.run(setup_arg, capture_output=True, check=True)
     except subprocess.CalledProcessError as e:
         contents = b'args:\n' + json.dumps(e.args[1]).encode('utf-8') + \
                    b'\n\nstdout:\n' + e.stdout + b'\n\nstderr:\n' + e.stderr
@@ -323,7 +321,8 @@ def _setup_dag_for_bilby(event, rundir, preferred_event_id, superevent_id):
 @app.task(shared=False)
 def _condor_no_submit(path_to_dag):
     """Run 'condor_submit_dag -no_submit' and return the path to .sub file."""
-    subprocess.run(['condor_submit_dag', '-no_submit', path_to_dag])
+    subprocess.run(['condor_submit_dag', '-no_submit', path_to_dag],
+                   capture_output=True, check=True)
     return '{}.condor.sub'.format(path_to_dag)
 
 
