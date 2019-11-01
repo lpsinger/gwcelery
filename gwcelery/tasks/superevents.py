@@ -85,20 +85,21 @@ def process(payload):
     t_0, t_start, t_end = get_ts(event_info)
 
     if event_info.get('superevent'):
-        # superevent already exists; label_added LVAlert
-        s = gracedb.get_superevent(event_info['superevent'])
+        sid = event_info['superevent']
+        log.info('Event %s already belongs to superevent %s', gid, sid)
+        s = gracedb.get_superevent(sid)
         superevent = _SuperEvent(s['t_start'],
                                  s['t_end'],
                                  s['t_0'],
                                  s['superevent_id'],
                                  s['preferred_event'], s)
-        sid = superevent.superevent_id
         _update_superevent(superevent,
                            event_info,
                            t_0=t_0,
                            t_start=None,
                            t_end=None)
     else:
+        log.info('Event %s does not yet belong to a superevent', gid)
         superevents = gracedb.get_superevents('category: {} {} .. {}'.format(
             category,
             event_info['gpstime'] - app.conf['superevent_query_d_t_start'],
@@ -107,6 +108,10 @@ def process(payload):
         for s in superevents:
             if gid in s['gw_events']:
                 sid = s['superevent_id']
+                log.info('Event %s found assigned to superevent %s', gid, sid)
+                if payload['alert_type'] == 'label_added':
+                    log.info('Label %s added to %s',
+                             payload['data']['name'], gid)
                 superevent = _SuperEvent(s['t_start'],
                                          s['t_end'],
                                          s['t_0'],
