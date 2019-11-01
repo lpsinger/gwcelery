@@ -335,7 +335,7 @@ def select_preferred_event(events):
     events : list
         list of event dictionaries
     """
-    return min(events, key=keyfunc)
+    return max(events, key=keyfunc)
 
 
 def is_complete(event):
@@ -402,7 +402,7 @@ def keyfunc(event):
 
     Return a value suitable for identifying the preferred event. Given events
     ``a`` and ``b``, ``a`` is preferred over ``b`` if
-    ``keyfunc(a) < keyfunc(b)``, else ``b`` is preferred.
+    ``keyfunc(a) > keyfunc(b)``, else ``b`` is preferred.
 
     Parameters
     ----------
@@ -422,20 +422,22 @@ def keyfunc(event):
     """
     group = event['group'].lower()
     try:
-        group_rank = ['cbc', 'burst'].index(group)
+        group_rank = ['burst', 'cbc'].index(group)
     except ValueError:
-        group_rank = float('inf')
+        group_rank = -1
 
     if group == 'cbc':
-        ifo_rank = -len(get_instruments(event))
-        tie_breaker = -get_snr(event)
+        group_rank = 1
+        n_ifos = len(get_instruments(event))
+        significance = get_snr(event)
     else:
-        ifo_rank = 0
-        tie_breaker = event['far']
-    # publishability criteria followed by group rank, ifo rank and tie breaker
-    res_keyfunc = list(not ii for ii in _should_publish(event))
-    res_keyfunc.extend((group_rank, ifo_rank, tie_breaker))
-    return tuple(res_keyfunc)
+        # We don't care about the number of detectors for burst events.
+        n_ifos = -1
+        # Smaller FAR -> higher IFAR -> more significant.
+        # Use -FAR instead of IFAR=1/FAR so that rank for FAR=0 is defined.
+        significance = -event['far']
+
+    return (*_should_publish(event), group_rank, n_ifos, significance)
 
 
 def _update_superevent(superevent, new_event_dict,
@@ -470,7 +472,7 @@ def _update_superevent(superevent, new_event_dict,
         kwargs['t_end'] = t_end
     if FROZEN_LABEL not in superevent.event_dict['labels']:
         preferred_event_dict = gracedb.get_event(preferred_event)
-        if keyfunc(new_event_dict) < keyfunc(preferred_event_dict):
+        if keyfunc(new_event_dict) > keyfunc(preferred_event_dict):
             # update preferred event when EM_Selected is not applied
             kwargs['t_0'] = t_0
             kwargs['preferred_event'] = new_event_dict['graceid']
