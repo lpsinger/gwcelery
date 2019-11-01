@@ -98,7 +98,7 @@ def process(payload):
                            t_0=t_0,
                            t_start=None,
                            t_end=None)
-    else:
+    else:  # not event_info.get('superevent')
         log.info('Event %s does not yet belong to a superevent', gid)
         superevents = gracedb.get_superevents('category: {} {} .. {}'.format(
             category,
@@ -123,7 +123,7 @@ def process(payload):
                                    t_start=None,
                                    t_end=None)
                 break
-        else:
+        else:  # s not in superevents
             event_segment = _Event(t_0, t_start, t_end,
                                    event_info['graceid'],
                                    event_info['group'],
@@ -146,7 +146,7 @@ def process(payload):
                              event_segment.gid, sid)
                     new_t_start, new_t_end = new_superevent
 
-                else:
+                else:  # new_superevent == superevent
                     log.info("%s is completely contained in %s",
                              event_segment.gid, sid)
                     new_t_start = new_t_end = None
@@ -155,7 +155,7 @@ def process(payload):
                                    t_0=t_0,
                                    t_start=new_t_start,
                                    t_end=new_t_end)
-            else:
+            else:  # not superevent
                 log.info('New event %s with no superevent in GraceDB, '
                          'creating new superevent', gid)
                 sid = gracedb.create_superevent(event_info['graceid'],
