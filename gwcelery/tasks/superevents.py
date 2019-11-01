@@ -22,6 +22,10 @@ REQUIRED_LABELS_BY_GROUP = {
 be complete.
 """
 
+FROZEN_LABEL = 'EM_Selected'
+"""This label indicates that the superevent manager should make no further
+changes to the preferred event."""
+
 
 @lvalert.handler('cbc_gstlal',
                  'cbc_spiir',
@@ -102,7 +106,7 @@ def process(payload):
         # check for publishability
         if should_publish(event_info):
             gracedb.create_label.delay('ADVREQ', event_info['superevent'])
-            gracedb.create_label('EM_Selected', event_info['superevent'])
+            gracedb.create_label(FROZEN_LABEL, event_info['superevent'])
         return
 
     superevents = gracedb.get_superevents('category: {} {} .. {}'.format(
@@ -137,7 +141,7 @@ def process(payload):
                 event_info['graceid'], t_0, t_start, t_end, category)
             if should_publish(event_info):
                 gracedb.create_label.delay('ADVREQ', new_superevent_id)
-                gracedb.create_label('EM_Selected', new_superevent_id)
+                gracedb.create_label(FROZEN_LABEL, new_superevent_id)
             return
 
         log.info('Event %s in window of %s. Adding event to superevent',
@@ -163,7 +167,7 @@ def process(payload):
                            t_end=new_t_end)
         if should_publish(event_info):
             gracedb.create_label.delay('ADVREQ', superevent.superevent_id)
-            gracedb.create_label('EM_Selected', superevent.superevent_id)
+            gracedb.create_label(FROZEN_LABEL, superevent.superevent_id)
     else:
         log.critical('Superevent %s exists for alert_type new for %s',
                      sid, gid)
@@ -448,7 +452,7 @@ def _update_superevent(superevent, new_event_dict,
         kwargs['t_end'] = t_end
     if keyfunc(new_event_dict) < keyfunc(preferred_event_dict):
         kwargs['t_0'] = t_0
-        if 'EM_Selected' not in superevent.event_dict['labels']:
+        if FROZEN_LABEL not in superevent.event_dict['labels']:
             # update preferred event when EM_Selected is not applied
             kwargs['preferred_event'] = new_event_dict['graceid']
 

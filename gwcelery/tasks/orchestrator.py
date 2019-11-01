@@ -66,7 +66,7 @@ def handle_superevent(alert):
     elif alert['alert_type'] == 'label_added':
         label_name = alert['data']['name']
         # launch first preliminary alert on EM_Selected
-        if label_name == 'EM_Selected':
+        if label_name == superevents.FROZEN_LABEL:
             (
                 _get_preferred_event.si(superevent_id)
                 |
