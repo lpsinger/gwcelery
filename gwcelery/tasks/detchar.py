@@ -15,14 +15,18 @@ References
 """
 import getpass
 import glob
+import io
 import json
 import socket
 import time
 
+from astropy.io.registry import IORegistryError
+from celery import group
 from celery.utils.log import get_task_logger
 from glue.lal import Cache
 from gwdatafind import find_urls
 from gwpy.timeseries import Bits, StateVector, TimeSeries
+import matplotlib.pyplot as plt
 import numpy as np
 
 from . import gracedb
@@ -85,6 +89,94 @@ def create_cache(ifo, start, end):
                 log.exception(error_msg)
     else:
         return cache
+
+
+@app.task(shared=False)
+def make_omegascan(ifo, t0, durs):
+    """Helper function to create a single omegascan image, with
+    multiple durations.
+
+    Parameters
+    ----------
+    ifo : str
+        'H1', 'L1', or 'V1'
+    t0 : int or float
+        Central time of the omegascan.
+    durs : list of floats/ints
+        List of three durations which will be scanned symmetrically about t0.
+        Example: [0.5, 2, 10]
+
+    Returns
+    -------
+    plt.figure() or None
+        Matplotlib figure of the omegascan, or None if no omegascan created.
+    """
+    # Set up output
+    outfile = io.BytesIO()
+    # Collect data
+    longest = max(durs)
+    long_start, long_end = t0 - longest, t0 + longest
+    cache = create_cache(ifo, long_start, long_end)
+    strain_name = app.conf['strain_channel_names'][ifo]
+    try:
+        ts = TimeSeries.read(cache, strain_name,
+                             start=long_start, end=long_end)
+    except IORegistryError:  # data from cache can't be properly read
+        fig = plt.figure()
+        plt.axis("off")
+        plt.text(0.1, 0.45, f"Failed to create {ifo} omegascan", fontsize=17)
+        fig.savefig(outfile, format='png', dpi=100)
+        png = outfile.getvalue()
+        return png
+
+    # Do q_transforms for the different durations
+    qgrams = [ts.q_transform(
+        frange=(20, 4096), gps=t0, outseg=(t0 - durs[n], t0 + durs[n]),
+        logf=True) for n in range(len(durs))]
+
+    # Plot
+    fig, axs = plt.subplots(1, len(durs),
+                            figsize=(10 * len(durs), 5))
+    fig.suptitle(f'Omegascans of {strain_name} at {t0}', fontweight="bold")
+    for ax, qgram, dur in zip(axs, qgrams, durs):
+        ax.pcolormesh(qgram.xindex, qgram.yindex,
+                      np.transpose(qgram))
+        ax.set_ylabel("Frequency (Hz)")
+        ax.set_yscale("log")
+        ax.set_xlabel("Seconds from $t_0$")
+        ax.set_xticks(np.arange(t0 - dur, t0 + dur + 0.0001, dur / 5))
+        ax.set_xticklabels(np.around(
+            np.arange(-dur, dur + 0.1, dur / 5), decimals=2))
+        ax.colorbar(label='Normalized energy', clim=(0, 30))
+    fig.savefig(outfile, format='png', dpi=300, bbox_inches='tight')
+    png = outfile.getvalue()
+    return png
+
+
+@app.task(shared=False)
+def omegascan(t0, graceid):
+    """Create omegascan for a certain event.
+
+    Parameters
+    ----------
+    t0 : float
+        Central event time.
+    graceid : str
+        GraceDB ID to which to upload the omegascan.
+
+    Returns
+    -------
+    None
+    """
+    durs = app.conf['omegascan_durations']
+
+    group(
+            make_omegascan.s(ifo, t0, durs)
+            |
+            gracedb.upload.s(f"{ifo}_omegascan.png", graceid,
+                             f"{ifo} omegascan", tags=['data_quality'])
+            for ifo in ['H1', 'L1', 'V1']
+        ).delay()
 
 
 def generate_table(title, high_bit_list, low_bit_list, unknown_bit_list):

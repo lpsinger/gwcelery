@@ -50,6 +50,13 @@ def handle_superevent(alert):
             parameter_estimation.s(superevent_id)
         ).apply_async()
 
+        # Create and upload omegascans
+        (
+            gracedb.get_superevent.si(superevent_id)['t_0']
+            |
+            detchar.omegascan.s(superevent_id)
+        ).apply_async(countdown=10)
+
     elif alert['alert_type'] == 'label_added':
         label_name = alert['data']['name']
         if label_name == superevents.FROZEN_LABEL:

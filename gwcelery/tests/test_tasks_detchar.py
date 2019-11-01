@@ -1,7 +1,9 @@
+from io import BytesIO
 import logging
 from unittest.mock import call, patch
 
 from gwpy.timeseries import Bits
+import matplotlib.pyplot as plt
 from pkg_resources import resource_filename
 import pytest
 
@@ -63,6 +65,14 @@ def gatedpipe_prepost():
     app.conf['check_vector_prepost'] = old
 
 
+@pytest.fixture
+def scan_strainname():
+    old = app.conf['strain_channel_names']
+    app.conf['strain_channel_names'] = {'H1': 'H1:GWOSC-16KHZ_R1_STRAIN'}
+    yield
+    app.conf['strain_channel_names'] = old
+
+
 def test_create_cache(llhoft_glob_fail):
     assert len(detchar.create_cache('L1', 1216577976, 1216577979)) == 1
 
@@ -72,6 +82,41 @@ def test_create_cache_old_data(mock_find, llhoft_glob_fail):
     start, end = 1198800018, 1198800028
     detchar.create_cache('L1', start, end)
     mock_find.assert_called()
+
+
+@patch('gwcelery.tasks.detchar.create_cache', return_value=[resource_filename(
+    __name__, 'data/llhoft/omegascan/scanme.gwf')])
+def test_make_omegascan_worked(mock_create_cache, scan_strainname):
+    durs = [1, 1, 1]
+    t0 = 1126259463
+    png = detchar.make_omegascan('H1', t0, durs)
+    pngarray = plt.imread(BytesIO(png))
+    # Test to see that the png is taller than 500 pixels, indicating
+    # presence of omegascan(s)
+    assert plt.imshow(pngarray).get_extent()[2] > 400
+
+
+@patch('gwcelery.tasks.detchar.create_cache', return_value=[])
+def test_make_omegascan_failed(mock_create_cache, scan_strainname):
+    durs = [1, 1, 1]
+    t0 = 1126259463
+    png = detchar.make_omegascan('H1', t0, durs)
+    pngarray = plt.imread(BytesIO(png))
+    # Test to see that the png is shorter than 500 pixels
+    assert plt.imshow(pngarray).get_extent()[2] < 500
+
+
+@patch('gwcelery.tasks.detchar.make_omegascan.run',
+       return_value=BytesIO().getvalue())
+@patch('gwcelery.tasks.gracedb.upload.run')
+def test_omegascan(mock_upload, mock_fig):
+    t0 = 1126259463
+    gid = "S1234"
+    detchar.omegascan(t0, gid)
+    mock_upload.assert_called_with(
+        mock_fig(), "V1_omegascan.png", gid, "V1 omegascan",
+        tags=['data_quality']
+    )
 
 
 def test_check_idq(llhoft_glob_pass):

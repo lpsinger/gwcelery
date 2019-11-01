@@ -220,7 +220,8 @@ strain_channel_names = {'H1': 'H1:GDS-CALIB_STRAIN_O2Replay',
                         'L1': 'L1:GDS-CALIB_STRAIN_O2Replay',
                         'V1': 'V1:Hrec_hoft_16384Hz_O2Replay'}
 """Names of h(t) channels used in Parameter Estimation (see
-:mod:`gwcelery.tasks.inference`)"""
+:mod:`gwcelery.tasks.inference`) and in detchar omegascan creation
+(see :mod:`gwcelery.tasks.detchar`)."""
 
 state_vector_channel_names = {'H1': 'H1:GDS-CALIB_STATE_VECTOR',
                               'L1': 'L1:GDS-CALIB_STATE_VECTOR',
@@ -282,6 +283,9 @@ detchar_bit_definitions = {
         }
 }
 """Bit definitions for detchar checks"""
+
+omegascan_durations = [0.5, 2.0, 10.0]
+"""Durations for omegascans, symmetric about t0"""
 
 pe_threshold = 1.0 / (28 * 86400)
 """FAR threshold in Hz for Parameter Estimation. PE group now applies

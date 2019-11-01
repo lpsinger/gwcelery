@@ -108,6 +108,7 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
     # FIXME break up preliminary alert pipeline when removing xfail
     preliminary_alert_pipeline = Mock()
     select_preferred_event_task = Mock()
+    omegascan = Mock()
 
     monkeypatch.setattr('gwcelery.tasks.gcn.send.run', send)
     monkeypatch.setattr('gwcelery.tasks.skymaps.plot_allsky.run', plot_allsky)
@@ -140,6 +141,7 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
         'gwcelery.tasks.superevents.select_preferred_event.run',
         select_preferred_event_task
     )
+    monkeypatch.setattr('gwcelery.tasks.detchar.omegascan.run', omegascan)
 
     # Run function under test
     orchestrator.handle_superevent(alert)
@@ -173,6 +175,9 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
             # FIXME with proper arguments with lalinference and bilby
         else:
             start_pe.assert_not_called()
+
+    if alert_type == 'new':
+        omegascan.assert_called_once()
 
 
 @patch('gwcelery.tasks.gracedb.get_labels', return_value={'DQV', 'ADVREQ'})

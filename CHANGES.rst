@@ -92,6 +92,8 @@ This is the initial release of GWCelery for O3b.
 -   Make sub-threshold annotations independent of annotations for superevents
     which pass public alert threshold.
 
+-   Create omegascans for all detectors upon creation of new superevent.
+
 0.8.7 (2019-09-14)
 ------------------
 
