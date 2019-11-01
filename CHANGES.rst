@@ -60,6 +60,9 @@ This is the initial release of GWCelery for O3b.
 
 -   Remove skymap generation from PE DAG so that it will not be generated twice.
 
+-   Drop support for Python 3.6 so that we can use the ``check_output`` keyword
+    argument that was added to ``suprocess.run()`` in Python 3.7.
+
 0.8.7 (2019-09-14)
 ------------------
 

@@ -14,4 +14,4 @@ ipykernel = "*"
 flower = {git = "https://github.com/lpsinger/flower",ref = "custom-stats"}
 
 [requires]
-python_version = "3.6"
+python_version = "3.7"

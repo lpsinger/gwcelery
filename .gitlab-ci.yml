@@ -27,7 +27,7 @@ stages:
 
 # Build source distribution
 sdist:
-  image: python:3.6-slim
+  image: python:3.7-slim
   stage: dist
   variables:
     GIT_STRATEGY: fetch
@@ -44,7 +44,7 @@ sdist:
 
 # Build binary distribution
 bdist:
-  image: python:3.6-slim
+  image: python:3.7-slim
   stage: test
   <<: *in-tmpdir
   script:
@@ -77,8 +77,6 @@ bdist:
   only:
     changes:
       - requirements.txt
-dependencies/python3.6:
-  <<: *dependencies
 dependencies/python3.7:
   <<: *dependencies
 
@@ -99,15 +97,12 @@ dependencies/python3.7:
       - htmlcov/
     reports:
       junit: junit.xml
-test/python3.6:
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.6:$CI_COMMIT_REF_NAME
-  <<: *test
 test/python3.7:
   image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
   <<: *test
 
 lint:
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.6:$CI_COMMIT_REF_NAME
+  image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
   stage: test
   variables:
     GIT_STRATEGY: fetch
@@ -170,14 +165,12 @@ associate commits in Sentry:
     - if [ "${CI_COMMIT_TAG:0:1}" = "v" ]; then docker tag $IMAGE_TAG ${IMAGE_TAG%:*}:latest; docker push ${IMAGE_TAG%:*}:latest; fi
   dependencies:
     - bdist
-docker/python3.6:
-  <<: *docker
 docker/python3.7:
   <<: *docker
 
 # Generate documentation
 doc:
-  image: python:3.6-slim
+  image: python:3.7-slim
   stage: test
   <<: *in-tmpdir
   script:
@@ -203,12 +196,12 @@ pages:
   only:
     - master
   dependencies:
-    - test/python3.6
+    - test/python3.7
 
 # Upload package to PyPI
 pypi:
   stage: deploy
-  image: python:3.6-slim
+  image: python:3.7-slim
   script:
     - pip install twine
     - twine upload *.tar.* *.whl
@@ -312,12 +305,12 @@ release:
       gsissh -T $REMOTE_HOST bash <<EOF
       . .bashrc
       set -e
-      pip3.6 install --upgrade pipenv pip setuptools
+      pip3.7 install --upgrade pipenv pip setuptools
       pipenv install --system --deploy
       # FIXME: remove pip uninstall temporary directories left behind due to
       # bug with pip on NFS. See https://github.com/pypa/pip/issues/6327
-      chmod -R ug+rwx .local/lib/python3.6/site-packages/~* || true
-      rm -rf .local/lib/python3.6/site-packages/~* || true
+      chmod -R ug+rwx .local/lib/python3.7/site-packages/~* || true
+      rm -rf .local/lib/python3.7/site-packages/~* || true
       gwcelery condor resubmit
       EOF
 
