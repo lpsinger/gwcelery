@@ -92,10 +92,9 @@ def process(payload):
                                  s['superevent_id'],
                                  s['preferred_event'], s)
         sid = superevent.superevent_id
-        # no change in superevent times for label_added LVAlert
         _update_superevent(superevent,
                            event_info,
-                           t_0=None,
+                           t_0=event_info['gpstime'],
                            t_start=None,
                            t_end=None)
     else:
