@@ -224,8 +224,7 @@ def test_update_preferred_event(labels, mock_db):
             p.assert_called_with('S0039', preferred_event='T1234',
                                  t_start=None, t_end=None, t_0=None)
         else:
-            p.assert_called_with('S0039', preferred_event=None,
-                                 t_start=None, t_end=None, t_0=None)
+            p.assert_not_called()
 
 
 @pytest.mark.parametrize('labels',

@@ -454,9 +454,9 @@ def _update_superevent(superevent, new_event_dict,
     if t_end is not None:
         kwargs['t_end'] = t_end
     if keyfunc(new_event_dict) < keyfunc(preferred_event_dict):
-        kwargs['t_0'] = t_0
         if FROZEN_LABEL not in superevent.event_dict['labels']:
             # update preferred event when EM_Selected is not applied
+            kwargs['t_0'] = t_0
             kwargs['preferred_event'] = new_event_dict['graceid']
 
     if kwargs:
