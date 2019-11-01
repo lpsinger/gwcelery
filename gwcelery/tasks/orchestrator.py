@@ -68,9 +68,7 @@ def handle_superevent(alert):
         # launch first preliminary alert on EM_Selected
         if label_name == superevents.FROZEN_LABEL:
             (
-                _get_preferred_event.si(superevent_id)
-                |
-                gracedb.get_event.s()
+                gracedb.get_event.s(alert['object']['preferred_event'])
                 |
                 detchar.check_vectors.s(
                     superevent_id,
