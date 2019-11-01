@@ -9,7 +9,7 @@ testing on any machine.
 To install
 ----------
 
-GWCelery requires Python >= 3.6.
+GWCelery requires Python >= 3.7.
 
 The easiest way to install it is with ``venv`` and ``pip``::
 
