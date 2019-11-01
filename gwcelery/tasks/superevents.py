@@ -14,7 +14,7 @@ from . import gracedb, lvalert
 
 log = get_task_logger(__name__)
 
-required_labels_by_group = {
+REQUIRED_LABELS_BY_GROUP = {
     'cbc': {'PASTRO_READY', 'EMBRIGHT_READY', 'SKYMAP_READY'},
     'burst': {'SKYMAP_READY'}
 }
@@ -55,7 +55,7 @@ def handle(payload):
             # RAVEN preliminary
             log.info('Label %s added to %s', label, gid)
             raise NotImplementedError
-        elif label not in required_labels_by_group[group]:
+        elif label not in REQUIRED_LABELS_BY_GROUP[group]:
             return
     elif alert_type != 'new':
         return
@@ -331,7 +331,7 @@ def is_complete(event):
     """
     group = event['group'].lower()
     label_set = set(event['labels'])
-    required_labels = required_labels_by_group[group]
+    required_labels = REQUIRED_LABELS_BY_GROUP[group]
     return required_labels.issubset(label_set)
 
 
