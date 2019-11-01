@@ -97,74 +97,68 @@ def process(payload):
                                  s['t_0'],
                                  s['superevent_id'],
                                  s['preferred_event'], s)
+        sid = superevent.superevent_id
         # no change in superevent times for label_added LVAlert
         _update_superevent(superevent,
                            event_info,
                            t_0=None,
                            t_start=None,
                            t_end=None)
-        # check for publishability
-        if should_publish(event_info):
-            gracedb.create_label.delay('ADVREQ', event_info['superevent'])
-            gracedb.create_label(FROZEN_LABEL, event_info['superevent'])
-        return
-
-    superevents = gracedb.get_superevents('category: {} {} .. {}'.format(
-        category,
-        event_info['gpstime'] - app.conf['superevent_query_d_t_start'],
-        event_info['gpstime'] + app.conf['superevent_query_d_t_end']))
-
-    for superevent in superevents:
-        if gid in superevent['gw_events']:
-            log.critical('Superevent exists for alert_type new for %s', gid)
-            return
-
-    t_0, t_start, t_end = get_ts(event_info)
-
-    event_segment = _Event(event_info['gpstime'],
-                           t_start, t_end,
-                           event_info['graceid'],
-                           event_info['group'],
-                           event_info['pipeline'],
-                           event_info.get('search'),
-                           event_dict=event_info)
-
-    superevent = _partially_intersects(superevents, event_segment)
-
-    if not superevent:
-        log.info('New event %s with no superevent in GraceDB, '
-                 'creating new superevent', gid)
-        new_superevent_id = gracedb.create_superevent(
-            event_info['graceid'], t_0, t_start, t_end, category)
-        if should_publish(event_info):
-            gracedb.create_label.delay('ADVREQ', new_superevent_id)
-            gracedb.create_label(FROZEN_LABEL, new_superevent_id)
-        return
-
-    log.info('Event %s in window of %s. Adding event to superevent',
-             gid, superevent.superevent_id)
-    gracedb.add_event_to_superevent(superevent.superevent_id,
-                                    event_segment.gid)
-    # extend the time window of the superevent
-    new_superevent = superevent | event_segment
-    if new_superevent != superevent:
-        log.info("%s not completely contained in %s, "
-                 "extending superevent window",
-                 event_segment.gid, superevent.superevent_id)
-        new_t_start, new_t_end = new_superevent[0], new_superevent[1]
-
     else:
-        log.info("%s is completely contained in %s",
-                 event_segment.gid, superevent.superevent_id)
-        new_t_start = new_t_end = None
-    _update_superevent(superevent,
-                       event_info,
-                       t_0=t_0,
-                       t_start=new_t_start,
-                       t_end=new_t_end)
+        superevents = gracedb.get_superevents('category: {} {} .. {}'.format(
+            category,
+            event_info['gpstime'] - app.conf['superevent_query_d_t_start'],
+            event_info['gpstime'] + app.conf['superevent_query_d_t_end']))
+
+        for superevent in superevents:
+            if gid in superevent['gw_events']:
+                log.critical('Superevent exists for alert_type new for %s',
+                             gid)
+                return
+
+        t_0, t_start, t_end = get_ts(event_info)
+
+        event_segment = _Event(event_info['gpstime'],
+                               t_start, t_end,
+                               event_info['graceid'],
+                               event_info['group'],
+                               event_info['pipeline'],
+                               event_info.get('search'),
+                               event_dict=event_info)
+
+        superevent = _partially_intersects(superevents, event_segment)
+
+        if superevent:
+            sid = superevent.superevent_id
+            log.info('Event %s in window of %s. Adding event to superevent',
+                     gid, sid)
+            gracedb.add_event_to_superevent(sid, event_segment.gid)
+            # extend the time window of the superevent
+            new_superevent = superevent | event_segment
+            if new_superevent != superevent:
+                log.info("%s not completely contained in %s, "
+                         "extending superevent window",
+                         event_segment.gid, sid)
+                new_t_start, new_t_end = new_superevent[0], new_superevent[1]
+
+            else:
+                log.info("%s is completely contained in %s",
+                         event_segment.gid, sid)
+                new_t_start = new_t_end = None
+            _update_superevent(superevent,
+                               event_info,
+                               t_0=t_0,
+                               t_start=new_t_start,
+                               t_end=new_t_end)
+        else:
+            log.info('New event %s with no superevent in GraceDB, '
+                     'creating new superevent', gid)
+            sid = gracedb.create_superevent(event_info['graceid'],
+                                            t_0, t_start, t_end, category)
+
     if should_publish(event_info):
-        gracedb.create_label.delay('ADVREQ', superevent.superevent_id)
-        gracedb.create_label(FROZEN_LABEL, superevent.superevent_id)
+        gracedb.create_label.delay('ADVREQ', sid)
+        gracedb.create_label(FROZEN_LABEL, sid)
 
 
 def get_ts(event):
