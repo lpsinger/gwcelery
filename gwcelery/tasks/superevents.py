@@ -457,15 +457,15 @@ def _update_superevent(superevent, new_event_dict,
     """
     superevent_id = superevent.superevent_id
     preferred_event = superevent.preferred_event
-    preferred_event_dict = gracedb.get_event(preferred_event)
 
     kwargs = {}
     if t_start is not None:
         kwargs['t_start'] = t_start
     if t_end is not None:
         kwargs['t_end'] = t_end
-    if keyfunc(new_event_dict) < keyfunc(preferred_event_dict):
-        if FROZEN_LABEL not in superevent.event_dict['labels']:
+    if FROZEN_LABEL not in superevent.event_dict['labels']:
+        preferred_event_dict = gracedb.get_event(preferred_event)
+        if keyfunc(new_event_dict) < keyfunc(preferred_event_dict):
             # update preferred event when EM_Selected is not applied
             kwargs['t_0'] = t_0
             kwargs['preferred_event'] = new_event_dict['graceid']

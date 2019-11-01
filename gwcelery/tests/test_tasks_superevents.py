@@ -250,7 +250,8 @@ def _mock_superevents(*args, **kwargs):
             "gw_events": [
                 "G000002",
             ],
-            "t_end": 101.0
+            "t_end": 101.0,
+            "labels": []
         }
     ]
 
