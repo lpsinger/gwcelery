@@ -36,31 +36,31 @@ def handle(payload):
     superevent management.
     """
     alert_type = payload['alert_type']
-    if alert_type not in ['new', 'label_added']:
-        return
-
     gid = payload['object']['graceid']
 
     try:
         far = payload['object']['far']
     except KeyError:
-        log.info(
-            'Skipping %s because LVAlert message does not provide FAR', gid)
+        log.info('Skipping %s because it lacks a FAR', gid)
         return
 
     if far > app.conf['superevent_far_threshold']:
         log.info("Skipping processing of %s because of high FAR", gid)
         return
 
-    group = payload['object']['group'].lower()
-    required_labels = required_labels_by_group[group]
-    if alert_type == 'new' or (alert_type == 'label_added' and
-                               payload['data']['name'] in required_labels):
-        process.delay(payload)
-    elif alert_type == 'label_added' and payload['data']['name'] == 'EM_COINC':
-        log.info('Label %s added to %s' % (payload['data']['name'], gid))
-        # raven preliminary
-        raise NotImplementedError
+    if alert_type == 'label_added':
+        label = payload['data']['name']
+        group = payload['object']['group'].lower()
+        if label == 'EM_COINC':
+            # RAVEN preliminary
+            log.info('Label %s added to %s', label, gid)
+            raise NotImplementedError
+        elif label not in required_labels_by_group[group]:
+            return
+    elif alert_type != 'new':
+        return
+
+    process.delay(payload)
 
 
 @gracedb.task(queue='superevent', shared=False)
