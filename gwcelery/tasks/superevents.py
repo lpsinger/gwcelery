@@ -81,13 +81,7 @@ def process(payload):
     """
     event_info = payload['object']
     gid = event_info['graceid']
-
-    if event_info.get('search') == 'MDC':
-        category = 'mdc'
-    elif event_info['group'] == 'Test':
-        category = 'test'
-    else:
-        category = 'production'
+    category = get_category(event_info)
 
     if event_info.get('superevent'):
         # superevent already exists; label_added LVAlert
@@ -159,6 +153,27 @@ def process(payload):
     if should_publish(event_info):
         gracedb.create_label.delay('ADVREQ', sid)
         gracedb.create_label(FROZEN_LABEL, sid)
+
+
+def get_category(event):
+    """Get the superevent category for an event.
+
+    Parameters
+    ----------
+    event : dict
+        Event dictionary (e.g., the return value from
+        :meth:`gwcelery.tasks.gracedb.get_event`).
+
+    Returns
+    -------
+    {'mdc', 'test', 'production'}
+    """
+    if event.get('search') == 'MDC':
+        return 'mdc'
+    elif event['group'] == 'Test':
+        return 'test'
+    else:
+        return 'production'
 
 
 def get_ts(event):
