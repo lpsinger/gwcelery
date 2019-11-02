@@ -10,7 +10,7 @@ flask
 flask-caching
 flower
 gwdatafind
-gwpy
+gwpy <= 0.15.0
 healpy
 jinja2
 lalsuite == 6.54

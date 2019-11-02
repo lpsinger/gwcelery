@@ -60,6 +60,9 @@ This is the initial release of GWCelery for O3b.
 
 -   Remove skymap generation from PE DAG so that it will not be generated twice.
 
+-   Pin gwpy to <= 0.15.0 since the updated gwpy fails to read Virgo's state
+    vector.
+
 0.8.7 (2019-09-14)
 ------------------
 
