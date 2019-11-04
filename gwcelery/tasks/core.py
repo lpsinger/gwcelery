@@ -101,7 +101,7 @@ class DispatchHandler(dict):
         return wrap
 
     def dispatch(self, *args, **kwargs):
-        log.debug('considering dispatch: args=%r, kwargs=%r', args, kwargs)
+        log.info('considering dispatch: args=%r, kwargs=%r', args, kwargs)
         try:
             key, args, kwargs = self.process_args(*args, **kwargs)
         except (TypeError, ValueError):
