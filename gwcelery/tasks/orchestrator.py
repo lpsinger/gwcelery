@@ -81,7 +81,7 @@ def handle_superevent(alert):
         # launch second preliminary on GCN_PRELIM_SENT
         elif label_name == 'GCN_PRELIM_SENT':
             (
-                gracedb.get_events.si("superevent: %s", superevent_id).set(
+                gracedb.get_events.si(f'superevent: {superevent_id}').set(
                     app.conf['superevent_clean_up_timeout']
                 )
                 |
