@@ -11,7 +11,7 @@ import pkg_resources
 from . import app as celery_app
 from ._version import get_versions
 from .flask import app, cache
-from .tasks import first2years, gracedb, orchestrator, circulars
+from .tasks import first2years, gracedb, orchestrator, circulars, superevents
 
 
 @app.route('/')
@@ -101,37 +101,24 @@ def typeahead_superevent_id():
     return jsonify(list(take_n(max_results, superevent_ids)))
 
 
-# Regular expression for parsing query strings
-# that look like GraceDB event names.
-_typeahead_event_id_regex = re.compile(
-    r'(?P<prefix>[GMT]?)(?P<number>\d*)',
-    re.IGNORECASE)
-
-
 @app.route('/typeahead_event_id')
 @cache.cached(query_string=True)
 def typeahead_event_id():
     """Search GraceDB for events by ID."""
-
-    term = request.args.get('event_id')
-    match = _typeahead_event_id_regex.fullmatch(term) if term else None
-
-    if match:
-        # Determine GraceDB event category from regular expression.
-        prefix = match['prefix'].upper() or 'G'
-        number = int(match['number'] or '0')
-    else:
-        prefix = 'G'
-        number = 0
-
-    # Query GraceDB.
-    query = '{prefix}{number} {prefix}{number}0..{prefix}{number}9'.format(
-        prefix=prefix, number=number)
-    response = gracedb.client.events(query)
-    event_ids = reversed([event['graceid'] for event in response])
-
-    # Return only the first few matches.
-    return jsonify(list(event_ids))
+    superevent_id = request.args.get('superevent_id').strip()
+    query_terms = [f'superevent: {superevent_id}']
+    if superevent_id.startswith('T'):
+        query_terms.append('Test')
+    elif superevent_id.startswith('M'):
+        query_terms.append('MDC')
+    query = ' '.join(query_terms)
+    try:
+        results = gracedb.get_events(query)
+    except GraceDbHTTPError:
+        results = []
+    results = [dict(r, snr=superevents.get_snr(r)) for r in results
+               if superevents.is_complete(r)]
+    return jsonify(list(reversed(sorted(results, key=superevents.keyfunc))))
 
 
 def _search_by_tag_and_filename(superevent_id, filename, extension, tag):

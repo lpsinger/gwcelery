@@ -74,7 +74,7 @@
                     </div>
                     <div class="form-group col-md">
                         <label for=event_id>Preferred event ID</label>
-                        <input required name=event_id class="form-control typeahead">
+                        <input required name=event_id class="form-control typeahead" data-typeahead-url-template="{{ url_for('typeahead_event_id', superevent_id='SUPEREVENT_ID') }}">
                     </div>
                     <div class="form-group col-md">
                         <label for=submit-button class=w-100>&nbsp;</label>
@@ -287,18 +287,43 @@
     });
 
     /* Enable typeahead completion for event ID fields. */
-    $("[name='event_id']").typeahead({
-        highlight: true,
-        minLength: 0
-    }, {
-        source: new Bloodhound({
+    $("[name='event_id']").each(function() {
+        const url = $(this).data('typeahead-url-template');
+
+        const bloodhound = new Bloodhound({
             queryTokenizer: Bloodhound.tokenizers.whitespace,
-            datumTokenizer: Bloodhound.tokenizers.whitespace,
-            remote: {
-                url: '{{ url_for('typeahead_event_id', event_id='TERM') }}',
-                wildcard: 'TERM'
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('graceid'),
+            prefetch: url,
+            remote: url
+        });
+
+        const stringify = bloodhound.identify;
+
+        $(this).typeahead({
+            highlight: true,
+            minLength: 0
+        }, {
+            source: bloodhound,
+            display: 'graceid',
+            templates: {
+                suggestion: function(datum) {
+                    let graceid = datum.graceid;
+                    let group = datum.group;
+                    let pipeline = datum.pipeline;
+                    let far = Number.parseFloat(datum.far).toExponential(3);
+                    let snr = Number.parseFloat(datum.snr).toFixed(3);
+                    return `<div>${graceid} <small>${group}, ${pipeline}, SNR=${snr}, FAR=${far}</small></div>`;
+                }
             }
-        })
+        });
+
+        $(this).closest('form').find("input[name='superevent_id']").on('typeahead:change typeahead:select', ev => {
+            const superevent_id = $(ev.target).val();
+            bloodhound.prefetch.url = url.replace('SUPEREVENT_ID', superevent_id);
+            bloodhound.remote.url = url.replace('SUPEREVENT_ID', superevent_id);
+            bloodhound.identify = (datum => stringify({superevent_id: superevent_id, datum: datum}));
+            bloodhound.initialize();
+        });
     });
 
     /* Enable typeahead completion for fields whose options depend on the

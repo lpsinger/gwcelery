@@ -67,6 +67,9 @@ This is the initial release of GWCelery for O3b.
 
 -   Remove generation of em coinc circular when `EM_COINC` label is applied.
 
+-   Teach preliminary alert form in Flask dashboard to present a dropdown of
+    events sorted by the preferred event criterion.
+
 0.8.7 (2019-09-14)
 ------------------
 
