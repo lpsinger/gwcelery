@@ -65,4 +65,4 @@ arguments = "--unset OMP_NUM_THREADS gwcelery-condor-submit-helper gwcelery work
 description = gwcelery-openmp-worker-$(Process)
 error = gwcelery-openmp-worker-$(Process).log
 output = gwcelery-openmp-worker-$(Process).log
-queue 10
+queue 40
