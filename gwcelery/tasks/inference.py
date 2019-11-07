@@ -547,9 +547,9 @@ def dag_finished(rundir, preferred_event_id, superevent_id, pe_pipeline):
 
         resultdir = rundir + '/result'
 
-        resultfile = preferred_event_id + '_combined_result.json'
-        intrinsic = preferred_event_id + '_combined_intrinsic_corner.png'
-        extrinsic = preferred_event_id + '_combined_extrinsic_corner.png'
+        resultfile, = glob.glob('*_merged_result.json')
+        intrinsic, = glob.glob('*_intrinsic_corner.png')
+        extrinsic, = glob.glob('*_extrinsic_corner.png')
 
         uploads = [
             (resultdir, resultfile,
