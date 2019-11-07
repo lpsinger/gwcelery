@@ -577,17 +577,7 @@ def preliminary_initial_update_alert(filenames, superevent_id, alert_type):
                     and f.endswith('.json'):
                 p_astro_filename = fv
 
-    send_canvas = (
-        gracedb.download.s(superevent_id)
-        |
-        gcn.send.s()
-    )
-
-    if alert_type == 'preliminary':
-        send_canvas |= gracedb.create_label.si(
-            'GCN_PRELIM_SENT', superevent_id)
-
-    (
+    canvas = (
         group(
             gracedb.expose.s(superevent_id),
             *(
@@ -614,7 +604,9 @@ def preliminary_initial_update_alert(filenames, superevent_id, alert_type):
         )
         |
         group(
-            send_canvas,
+            gracedb.download.s(superevent_id)
+            |
+            gcn.send.s(),
 
             circulars.create_initial_circular.si(superevent_id)
             |
@@ -627,7 +619,12 @@ def preliminary_initial_update_alert(filenames, superevent_id, alert_type):
 
             gracedb.create_tag.s('public', superevent_id)
         )
-    ).apply_async()
+    )
+
+    if alert_type == 'preliminary':
+        canvas |= gracedb.create_label.si('GCN_PRELIM_SENT', superevent_id)
+
+    canvas.apply_async()
 
 
 @gracedb.task(ignore_result=True, shared=False)
