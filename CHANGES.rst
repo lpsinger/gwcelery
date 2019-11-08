@@ -71,6 +71,9 @@ This is the initial release of GWCelery for O3b.
 -   Teach preliminary alert form in Flask dashboard to present a dropdown of
     events sorted by the preferred event criterion.
 
+-   Make coincidence FAR synchronous within RAVEN pipeline to fix race
+    condition.
+
 0.8.7 (2019-09-14)
 ------------------
 

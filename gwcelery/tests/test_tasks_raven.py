@@ -61,8 +61,8 @@ def test_raven_search(mock_raven_search, mock_se_cls, mock_exttrig_cls,
 
 
 @pytest.mark.parametrize('group', ['CBC', 'Burst'])
-@patch('gwcelery.tasks.gracedb.get_search.run', return_value='GRB')
-@patch('gwcelery.tasks.raven.calc_signif.run')
+@patch('gwcelery.tasks.gracedb.get_search', return_value='GRB')
+@patch('gwcelery.tasks.raven.calc_signif')
 def test_calculate_coincidence_far(
         mock_calc_signif, mock_get_search, group):
     raven.calculate_coincidence_far('S1234', 'E4321',
@@ -80,8 +80,8 @@ def test_calculate_coincidence_far(
 @pytest.mark.parametrize('group', ['CBC', 'Burst'])  # noqa: F811
 @patch('gwcelery.tasks.ligo_fermi_skymaps.get_preferred_skymap',
        return_value='bayestar.fits.gz')
-@patch('gwcelery.tasks.gracedb.get_search.run', return_value='GRB')
-@patch('gwcelery.tasks.raven.calc_signif.run')
+@patch('gwcelery.tasks.gracedb.get_search', return_value='GRB')
+@patch('gwcelery.tasks.raven.calc_signif')
 def test_calculate_spacetime_coincidence_far(
         mock_calc_signif, mock_get_search, mock_get_preferred_skymap,
         group):

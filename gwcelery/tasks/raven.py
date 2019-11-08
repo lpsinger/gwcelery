@@ -1,7 +1,7 @@
 """Search for GRB-GW coincidences with ligo-raven."""
 import ligo.raven.search
 import json
-from celery import chain, group
+from celery import group
 from celery.utils.log import get_task_logger
 from ligo.gracedb.exceptions import HTTPError
 from ligo.raven import gracedb_events
@@ -46,16 +46,16 @@ def calculate_coincidence_far(superevent_id, exttrig_id, preferred_id, group):
     elif group == 'Burst':
         tl, th = tl_burst, th_burst
 
-    canvas = chain()
-    canvas |= gracedb.get_search.si(exttrig_id)
+    ext_search = gracedb.get_search(exttrig_id)
     if ext_skymap and preferred_skymap:
-        canvas |= calc_signif.s(superevent_id, exttrig_id, tl, th,
-                                incl_sky=True,
-                                se_fitsfile=preferred_skymap)
+        return calc_signif(ext_search,
+                           superevent_id, exttrig_id, tl, th,
+                           incl_sky=True,
+                           se_fitsfile=preferred_skymap)
     else:
-        canvas |= calc_signif.s(superevent_id, exttrig_id, tl, th,
-                                incl_sky=False)
-    canvas.delay()
+        return calc_signif(ext_search,
+                           superevent_id, exttrig_id, tl, th,
+                           incl_sky=False)
 
 
 @app.task(shared=False)
