@@ -36,6 +36,9 @@ task_default_priority = 0
 task_queue_max_priority = 1
 priority_steps = list(range(task_queue_max_priority + 1))
 
+# Turn off task prefetching.
+worker_prefetch_multiplier = 1
+
 # GWCelery-specific settings.
 
 expose_to_public = False
