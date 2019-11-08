@@ -26,7 +26,7 @@ error = gwcelery-flower.log
 output = gwcelery-flower.log
 queue
 
-arguments = "gwcelery worker -l info -n gwcelery-worker -Q celery --lvalert"
+arguments = "gwcelery worker -l info -n gwcelery-worker -Q celery --lvalert -c 128"
 description = gwcelery-worker
 error = gwcelery-worker.log
 output = gwcelery-worker.log
