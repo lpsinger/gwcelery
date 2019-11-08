@@ -63,6 +63,9 @@ options, see `GCN's list of available VOEvent servers
 <https://gcn.gsfc.nasa.gov/voevent.html#tc2>`_. If this is an empty string,
 then completely disable the GCN listener."""
 
+email_host = 'imap.gmail.com'
+"""IMAP hostname to receive the GCN e-mail notice formats."""
+
 superevent_d_t_start = {'gstlal': 1.0,
                         'spiir': 1.0,
                         'pycbc': 1.0,
