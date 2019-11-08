@@ -74,6 +74,9 @@ This is the initial release of GWCelery for O3b.
 -   Make coincidence FAR synchronous within RAVEN pipeline to fix race
     condition.
 
+-   Add spins in online PE on playground events so that embright probabilities
+    are calculated based on the posterior samples without errors.
+
 0.8.7 (2019-09-14)
 ------------------
 
