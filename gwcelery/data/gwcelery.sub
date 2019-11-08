@@ -26,6 +26,9 @@ error = gwcelery-flower.log
 output = gwcelery-flower.log
 queue
 
+# FIXME: The GraceDB tasks are not very computationally intensive, but take a
+# very long time to execute. Manually bump up the concurrency well past the
+# number of hardware threads until the GraceDB API throughput is improved.
 arguments = "gwcelery worker -l info -n gwcelery-worker -Q celery --lvalert -c 128"
 description = gwcelery-worker
 error = gwcelery-worker.log
