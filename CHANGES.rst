@@ -10,6 +10,8 @@ Changelog
     notifications about 30 seconds earlier, and will receive notifications even
     if some of the annotations fail.
 
+-   Increase the FAR threshold of online PE to the public alert threshold.
+
 0.9.0 (2019-11-23)
 ------------------
 

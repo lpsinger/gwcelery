@@ -574,11 +574,13 @@ def parameter_estimation(far_event, superevent_id):
     """
     far, event = far_event
     preferred_event_id = event['graceid']
+    threshold = (app.conf['preliminary_alert_far_threshold']['cbc'] /
+                 app.conf['preliminary_alert_trials_factor']['cbc'])
     # FIXME: it will be better to start parameter estimation for 'burst'
     # events.
     if event['group'] == 'CBC':
         canvas = inference.pre_pe_tasks(event, superevent_id)
-        if far <= app.conf['pe_threshold']:
+        if far <= threshold:
             canvas |= group(
                 inference.start_pe.s(
                     preferred_event_id, superevent_id, 'lalinference'
@@ -593,7 +595,7 @@ def parameter_estimation(far_event, superevent_id):
                           graceid=superevent_id,
                           message='FAR is larger than the PE threshold, '
                                   '{}  Hz. Parameter Estimation will not '
-                                  'start.'.format(app.conf['pe_threshold']),
+                                  'start.'.format(threshold),
                           tags='pe'
                       )
 
