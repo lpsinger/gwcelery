@@ -157,7 +157,6 @@ def handle_grb_lvalert(alert):
 @lvalert.handler('superevent',
                  'mdc_superevent',
                  'external_snews',
-                 'external_snews_supernova',
                  shared=False)
 def handle_snews_lvalert(alert):
     """Parse an LVAlert message related to superevents/SN external triggers and

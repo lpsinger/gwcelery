@@ -77,6 +77,8 @@ This is the initial release of GWCelery for O3b.
 -   Add spins in online PE on playground events so that embright probabilities
     are calculated based on the posterior samples without errors.
 
+-   Remove redundant SNEWS handler key.
+
 0.8.7 (2019-09-14)
 ------------------
 
