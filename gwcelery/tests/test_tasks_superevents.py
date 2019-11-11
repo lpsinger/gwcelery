@@ -214,7 +214,8 @@ def test_update_preferred_event(labels, mock_db):
             "created": "2018-05-09 07:23:16 UTC"
         }
     )
-    with patch.object(gracedb.client, 'updateSuperevent') as p:
+    with patch.object(gracedb.client, 'updateSuperevent') as p, \
+            patch('gwcelery.tasks.gracedb.create_label.run') as create_label:
         superevents._update_superevent(superevent_s0039,
                                        payload,
                                        None,
@@ -223,8 +224,13 @@ def test_update_preferred_event(labels, mock_db):
         if 'EM_Selected' not in labels:
             p.assert_called_with('S0039', preferred_event='T1234',
                                  t_start=None, t_end=None, t_0=None)
+            if superevents.is_complete(payload):
+                create_label.assert_called_once_with('EM_READY', 'S0039')
+            else:
+                create_label.assert_not_called()
         else:
             p.assert_not_called()
+            create_label.assert_not_called()
 
 
 @pytest.mark.parametrize('labels',
@@ -445,12 +451,17 @@ def test_parse_trigger_cbc_2(mock_db):
     # addEventToSuperevent should be called
     # preferred event should be updated, t_0 should change
     with patch.object(gracedb.client, 'addEventToSuperevent') as p1, \
-            patch.object(gracedb.client, 'updateSuperevent') as p2:
+            patch.object(gracedb.client, 'updateSuperevent') as p2, \
+            patch('gwcelery.tasks.gracedb.create_label.run') as create_label:
         superevents.handle(payload)
         p1.assert_called_once()
         p2.assert_called_once_with('S0039', preferred_event='G000003',
                                    t_0=1163905224.4332082, t_start=None,
                                    t_end=None)
+        if superevents.is_complete(event_dictionary):
+            create_label.assert_called_once_with('EM_READY', 'S0039')
+        else:
+            create_label.assert_not_called()
 
 
 def test_parse_trigger_cbc_3(mock_db):

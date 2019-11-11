@@ -26,6 +26,10 @@ FROZEN_LABEL = 'EM_Selected'
 """This label indicates that the superevent manager should make no further
 changes to the preferred event."""
 
+READY_LABEL = 'EM_READY'
+"""This label indicates that a preferred event has been assigned and it
+has all data products required to make it ready for annotations."""
+
 
 @lvalert.handler('cbc_gstlal',
                  'cbc_spiir',
@@ -165,7 +169,6 @@ def process(payload):
                          'creating new superevent', gid)
                 sid = gracedb.create_superevent(event_info['graceid'],
                                                 t_0, t_start, t_end, category)
-
     if should_publish(event_info):
         gracedb.create_label.delay('ADVREQ', sid)
         gracedb.create_label(FROZEN_LABEL, sid)
@@ -394,7 +397,7 @@ def _should_publish(event):
     trials_factor = app.conf['preliminary_alert_trials_factor'][group]
     far_threshold = app.conf['preliminary_alert_far_threshold'][group]
     far = trials_factor * event['far']
-    return not event['offline'], far <= far_threshold, is_complete(event)
+    return is_complete(event), not event['offline'], far <= far_threshold
 
 
 def keyfunc(event):
@@ -479,6 +482,9 @@ def _update_superevent(superevent, new_event_dict,
 
     if kwargs:
         gracedb.update_superevent(superevent_id, **kwargs)
+    # label superevent as ready for annotations
+    if ('preferred_event' in kwargs) and is_complete(new_event_dict):
+        gracedb.create_label.delay(READY_LABEL, superevent_id)
 
 
 def _superevent_segment_list(superevents):

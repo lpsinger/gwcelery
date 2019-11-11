@@ -53,19 +53,8 @@ def handle_superevent(alert):
             parameter_estimation.s(superevent_id)
         ).apply_async()
 
-        (
-            _get_preferred_event.si(superevent_id).set(
-                countdown=app.conf['subthreshold_annotation_timeout']
-            )
-            |
-            gracedb.get_event.s()
-            |
-            _preliminary_alert.s(superevent_id)
-        ).apply_async()
-
     elif alert['alert_type'] == 'label_added':
         label_name = alert['data']['name']
-        # launch first preliminary alert on EM_Selected
         if label_name == superevents.FROZEN_LABEL:
             (
                 gracedb.get_event.s(alert['object']['preferred_event'])
@@ -78,6 +67,20 @@ def handle_superevent(alert):
                 |
                 preliminary_alert.s(superevent_id)
             ).apply_async()
+
+        elif label_name == superevents.READY_LABEL:
+            (
+                _get_preferred_event.si(superevent_id).set(
+                    countdown=app.conf['subthreshold_annotation_timeout']
+                )
+                |
+                gracedb.get_event.s()
+                |
+                preliminary_alert.s(superevent_id,
+                                    annotation_prefix='subthreshold.',
+                                    initiate_voevent=False)
+            ).apply_async()
+
         # launch second preliminary on GCN_PRELIM_SENT
         elif label_name == 'GCN_PRELIM_SENT':
             (
@@ -362,13 +365,8 @@ def _create_label_and_return_filename(filename, label, graceid):
 
 
 @app.task(ignore_result=True, shared=False)
-def _preliminary_alert(event, superevent_id):
-    if {'ADVREQ', 'ADVOK', 'ADVNO'}.isdisjoint(event['labels']):
-        preliminary_alert(event, superevent_id)
-
-
-@app.task(ignore_result=True, shared=False)
-def preliminary_alert(event, superevent_id):
+def preliminary_alert(event, superevent_id, annotation_prefix='',
+                      initiate_voevent=True):
     """Produce a preliminary alert by copying any sky maps.
 
     This consists of the following steps:
@@ -409,14 +407,15 @@ def preliminary_alert(event, superevent_id):
             _download.si(original_skymap_filename, preferred_event_id)
             |
             ordered_group_first(
-                skymaps.flatten.s(skymap_filename)
+                skymaps.flatten.s(annotation_prefix + skymap_filename)
                 |
                 gracedb.upload.s(
-                    skymap_filename,
+                    annotation_prefix + skymap_filename,
                     superevent_id,
                     message='Flattened from multiresolution file {}'.format(
                         original_skymap_filename),
-                    tags=['sky_loc', 'public']
+                    tags=['sky_loc'] if annotation_prefix else [
+                        'sky_loc', 'public']
                 )
                 |
                 _create_label_and_return_filename.s(
@@ -424,17 +423,19 @@ def preliminary_alert(event, superevent_id):
                 ),
 
                 gracedb.upload.s(
-                    original_skymap_filename,
+                    annotation_prefix + original_skymap_filename,
                     superevent_id,
                     message='Localization copied from {}'.format(
                         preferred_event_id),
-                    tags=['sky_loc', 'public']
+                    tags=['sky_loc'] if annotation_prefix else [
+                        'sky_loc', 'public']
                 ),
 
                 skymaps.annotate_fits.s(
-                    skymap_filename,
+                    annotation_prefix + skymap_filename,
                     superevent_id,
-                    ['sky_loc', 'public']
+                    ['sky_loc'] if annotation_prefix else [
+                        'sky_loc', 'public']
                 )
             )
         ) if skymap_filename is not None else identity.s(None),
@@ -443,11 +444,12 @@ def preliminary_alert(event, superevent_id):
             _download.si('em_bright.json', preferred_event_id)
             |
             gracedb.upload.s(
-                'em_bright.json',
+                annotation_prefix + 'em_bright.json',
                 superevent_id,
                 message='Source properties copied from {}'.format(
                     preferred_event_id),
-                tags=['em_bright', 'public']
+                tags=['em_bright'] if annotation_prefix else [
+                    'em_bright', 'public']
             )
             |
             _create_label_and_return_filename.s(
@@ -459,11 +461,12 @@ def preliminary_alert(event, superevent_id):
             _download.si('p_astro.json', preferred_event_id)
             |
             gracedb.upload.s(
-                'p_astro.json',
+                annotation_prefix + 'p_astro.json',
                 superevent_id,
                 message='Source classification copied from {}'.format(
                     preferred_event_id),
-                tags=['p_astro', 'public']
+                tags=['p_astro'] if annotation_prefix else [
+                    'p_astro', 'public']
             )
             |
             _create_label_and_return_filename.s(
@@ -473,7 +476,7 @@ def preliminary_alert(event, superevent_id):
     )
 
     # Send GCN notice and upload GCN circular draft for online events.
-    if is_publishable:
+    if is_publishable and initiate_voevent:
         canvas |= preliminary_initial_update_alert.s(
             superevent_id, 'preliminary')
 

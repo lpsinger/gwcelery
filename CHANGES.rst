@@ -89,6 +89,9 @@ This is the initial release of GWCelery for O3b.
     (``ligo.dev.o3.cbc.pe.bayestar``) or the production environment
     (``ligo.prod.o3.cbc.pe.bayestar``).
 
+-   Make sub-threshold annotations independent of annotations for superevents
+    which pass public alert threshold.
+
 0.8.7 (2019-09-14)
 ------------------
 
