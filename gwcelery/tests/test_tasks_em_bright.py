@@ -1,4 +1,5 @@
 import json
+from unittest.mock import patch
 
 import h5py
 import numpy as np
@@ -6,6 +7,27 @@ import pytest
 
 from ..tasks import em_bright
 from ..util.tempfile import NamedTemporaryFile
+
+
+@patch('gwcelery.tasks.gracedb.download.run', return_value='mock_em_bright')
+@patch('gwcelery.tasks.gracedb.upload.run')
+@patch('gwcelery.tasks.em_bright.plot.run')
+def test_handle_em_bright_json(mock_plot, mock_upload, mock_download):
+    alert = {
+        "data": {
+            "tag_names": ["em_bright"],
+            "filename": "em_bright.json"
+        },
+        "uid": "TS123456",
+        "alert_type": "log"
+    }
+    em_bright.handle(alert)
+    mock_download.assert_called_once_with(
+        'em_bright.json',
+        'TS123456'
+    )
+    mock_plot.assert_called_once_with('mock_em_bright')
+    mock_upload.assert_called_once()
 
 
 def test_classify_gstlal():

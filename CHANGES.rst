@@ -9,6 +9,9 @@ Changelog
 -   Ignore Fermi triggers that are likely noise as possible RAVEN coincidence
     candidates by applying the label `NOT_GRB`.
 
+-   Automatically generate and upload a graphic showing the source property
+    values by means of a bar chart.
+
 0.10.0 (2020-02-07)
 -------------------
 

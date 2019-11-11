@@ -1,13 +1,83 @@
-"""Qualitative source classification for CBC events."""
+"""Qualitative source properties for CBC events."""
+import io
 import json
+from matplotlib import pyplot as plt
 
 from ligo import computeDiskMass, em_bright
 
 from celery.utils.log import get_task_logger
+
 from ..import app
+from . import gracedb, lvalert
+from .p_astro import _format_prob
 from ..util.tempfile import NamedTemporaryFile
 
 log = get_task_logger(__name__)
+
+
+@lvalert.handler('superevent',
+                 'mdc_superevent',
+                 shared=False)
+def handle(alert):
+    """LVAlert handler to plot and upload a visualization
+    of every ``em_bright.json``.
+    """
+    filename = 'em_bright.json'
+    graceid = alert['uid']
+    if alert['alert_type'] == 'log' and alert['data']['filename'] == filename:
+        (
+            gracedb.download.si(filename, graceid)
+            |
+            plot.s()
+            |
+            gracedb.upload.s(
+                filename.replace('.json', '.png'),
+                graceid,
+                message=(
+                    'Source properties visualization from '
+                    '<a href="/api/superevents/{graceid}/files/{filename}">'
+                    '{filename}</a>').format(
+                        graceid=graceid, filename=filename),
+                tags=['em_follow', 'em_bright', 'public']
+            )
+        ).delay()
+
+
+@app.task(shared=False)
+def plot(contents):
+    """Make a visualization of the source properties.
+
+    Examples
+    --------
+    .. plot::
+        :include-source:
+
+        >>> from gwcelery.tasks import em_bright
+        >>> contents = '{"HasNS": 0.9137, "HasRemnant": 0.0}'
+        >>> em_bright.plot(contents)
+    """
+    properties = json.loads(contents)
+    outfile = io.BytesIO()
+
+    properties = dict(sorted(properties.items(), reverse=True))
+    probs, names = list(properties.values()), list(properties.keys())
+
+    with plt.style.context('seaborn-white'):
+        fig, ax = plt.subplots(figsize=(3, 1))
+        ax.barh(names, probs)
+        ax.barh(names, [1.0 - p for p in probs],
+                color='lightgray', left=probs)
+        for i, prob in enumerate(probs):
+            ax.annotate(_format_prob(prob), (0, i), (4, 0),
+                        textcoords='offset points', ha='left', va='center')
+        ax.set_xlim(0, 1)
+        ax.set_xticks([])
+        ax.tick_params(left=False)
+        for side in ['top', 'bottom', 'right']:
+            ax.spines[side].set_visible(False)
+        fig.tight_layout()
+        fig.savefig(outfile, format='png')
+    return outfile.getvalue()
 
 
 @app.task(shared=False)
