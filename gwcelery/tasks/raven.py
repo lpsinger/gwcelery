@@ -305,23 +305,23 @@ def trigger_raven_alert(coinc_far_json, superevent, gracedb_id,
     #  preferred event
     messages = []
     if pass_far_threshold and not is_ext_subthreshold:
-        messages.append('RAVEN publishing criteria met for %s' % (
+        messages.append('RAVEN: publishing criteria met for %s' % (
                              preferred_gwevent_id))
         if no_previous_alert:
             messages.append('Triggering RAVEN alert for %s' % (
                              preferred_gwevent_id))
             gracedb.create_label.si('EM_COINC', preferred_gwevent_id).delay()
     if not pass_far_threshold:
-        messages.append(('RAVEN publishing criteria not met for %s:'
+        messages.append(('RAVEN: publishing criteria not met for %s,'
                          ' %s FAR (w/ trials) too large (%s>%s)' % (
                              preferred_gwevent_id, far_type,
                              coinc_far_f, far_threshold)))
     if is_ext_subthreshold:
-        messages.append(('RAVEN publishing criteria not met for %s:'
+        messages.append(('RAVEN: publishing criteria not met for %s,'
                          ' %s is subthreshold' % (preferred_gwevent_id,
                                                   ext_event['graceid'])))
     if not no_previous_alert:
-        messages.append(('RAVEN: Alert already triggered for  %s:'
+        messages.append(('RAVEN: Alert already triggered for  %s'
                          % (superevent_id)))
     for message in messages:
         gracedb.upload(None, None, superevent_id,
