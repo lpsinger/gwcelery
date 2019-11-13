@@ -37,7 +37,7 @@ def running():
     return classads.find('.//c') is not None
 
 
-def submit():
+def submit(app):
     """Submit all GWCelery jobs to HTCondor (if not already running)."""
     if running():
         print('error: GWCelery jobs are already running in this directory.\n'
@@ -46,10 +46,13 @@ def submit():
               file=sys.stderr)
         sys.exit(1)
     else:
-        run_exec('condor_submit', SUBMIT_FILE)
+        accounting_group = app.conf['condor_accounting_group']
+        run_exec('condor_submit',
+                 'accounting_group={}'.format(accounting_group),
+                 SUBMIT_FILE)
 
 
-def resubmit():
+def resubmit(app):
     """Remove any running GWCelery jobs and resubmit to HTCondor."""
     if running():
         subprocess.check_call(('condor_rm', *get_constraints()))
@@ -62,25 +65,27 @@ def resubmit():
     else:
         print('error: Could not stop all GWCelery jobs', file=sys.stderr)
         sys.exit(1)
-    run_exec('condor_submit', SUBMIT_FILE)
+    accounting_group = app.conf['condor_accounting_group']
+    run_exec('condor_submit', 'accounting_group={}'.format(accounting_group),
+             SUBMIT_FILE)
 
 
-def rm():
+def rm(app):
     """Remove all GWCelery jobs."""
     run_exec('condor_rm', *get_constraints())
 
 
-def hold():
+def hold(app):
     """Put all GWCelery jobs on hold."""
     run_exec('condor_hold', *get_constraints())
 
 
-def release():
+def release(app):
     """Release all GWCelery jobs from hold status."""
     run_exec('condor_release', *get_constraints())
 
 
-def q():
+def q(app):
     """Show status of all GWCelery jobs."""
     run_exec('condor_q', '-nobatch', *get_constraints())
 
@@ -94,7 +99,7 @@ class CondorCommand(Command):
             subparser.set_defaults(func=func)
 
     def run(self, func=None, **kwargs):
-        func()
+        func(self.app)
 
 
 CondorCommand.__doc__ = __doc__

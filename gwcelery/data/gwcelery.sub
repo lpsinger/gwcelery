@@ -1,5 +1,4 @@
 #!/usr/bin/env condor_submit
-accounting_group = ligo.dev.o3.cbc.pe.bayestar
 accounting_group_user = leo.singer
 universe = local
 getenv = true

@@ -264,6 +264,7 @@ intersphinx_mapping = {
     'comet': ('https://comet.readthedocs.io/en/stable/', None),
     'data-quality-report': (
         'https://docs.ligo.org/detchar/data-quality-report/', None),
+    'htcondor': ('https://htcondor.readthedocs.io/en/stable/', None),
     'gwpy': ('https://gwpy.github.io/docs/stable/', None),
     'ligo.skymap': ('https://leo-singer.docs.ligo.org/ligo.skymap/', None),
     'twisted': ('https://twistedmatrix.com/documents/current/api/', None),

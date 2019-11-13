@@ -80,3 +80,15 @@ different directories. Here is an example::
     $ pushd playground
     $ CELERY_CONFIG_MODULE=gwcelery.conf.playground gwcelery condor submit
     $ popd
+
+Job accounting
+--------------
+
+When GWCelery is started using ``gwcelery condor submit`` or ``gwcelery condor
+resubmit``, the :ref:`HTCondor accounting group
+<htcondor:admin-manual/user-priorities-negotiation:group accounting>` is set
+based on which GWCelery configuration you are using:
+
+* ``ligo.prod.o3.cbc.pe.bayestar`` for production
+* ``ligo.dev.o3.cbc.pe.bayestar`` for all other configurations, including
+  playground

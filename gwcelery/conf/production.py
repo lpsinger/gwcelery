@@ -3,6 +3,9 @@ from :mod:`gwcelery.conf.playground`, with the exceptions below."""
 
 from . import *  # noqa: F401, F403
 
+condor_accounting_group = 'ligo.prod.o3.cbc.pe.bayestar'
+"""HTCondor accounting group for Celery workers launched with condor_submit."""
+
 expose_to_public = True
 """Set to True if events meeting the public alert threshold really should be
 exposed to the public."""

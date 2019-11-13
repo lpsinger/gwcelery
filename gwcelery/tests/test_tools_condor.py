@@ -35,7 +35,9 @@ def test_condor_submit_not_yet_running(mock_execvp, mock_check_output):
     mock_check_output.assert_called_once_with(
         ('condor_q', '-xml', *condor.get_constraints()))
     mock_execvp.assert_called_once_with(
-        'condor_submit', ('condor_submit', condor.SUBMIT_FILE))
+        'condor_submit', ('condor_submit',
+                          'accounting_group=ligo.dev.o3.cbc.pe.bayestar',
+                          condor.SUBMIT_FILE))
 
 
 @mock.patch('subprocess.check_output',
@@ -93,4 +95,6 @@ def test_condor_resubmit_succeeds(mock_execvp, mock_check_call, _):
         assert e.code == 0
     mock_check_call.assert_not_called()
     mock_execvp.assert_called_once_with(
-        'condor_submit', ('condor_submit', condor.SUBMIT_FILE))
+        'condor_submit', ('condor_submit',
+                          'accounting_group=ligo.dev.o3.cbc.pe.bayestar',
+                          condor.SUBMIT_FILE))

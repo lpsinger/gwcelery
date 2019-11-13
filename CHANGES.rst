@@ -71,6 +71,7 @@ This is the initial release of GWCelery for O3b.
 -   Teach preliminary alert form in Flask dashboard to present a dropdown of
     events sorted by the preferred event criterion.
 
+<<<<<<< HEAD
 -   Make coincidence FAR synchronous within RAVEN pipeline to fix race
     condition.
 
@@ -81,6 +82,11 @@ This is the initial release of GWCelery for O3b.
 
 -   Drop support for Python 3.6 so that we can use the ``check_output`` keyword
     argument that was added to ``suprocess.run()`` in Python 3.7.
+
+-   Use different HTCondor accounting groups for Celery workers depending on
+    whether GWCelery is running in the playground environment
+    (``ligo.dev.o3.cbc.pe.bayestar``) or the production environment
+    (``ligo.prod.o3.cbc.pe.bayestar``).
 
 0.8.7 (2019-09-14)
 ------------------

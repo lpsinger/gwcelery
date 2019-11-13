@@ -38,6 +38,9 @@ priority_steps = list(range(task_queue_max_priority + 1))
 
 # GWCelery-specific settings.
 
+condor_accounting_group = 'ligo.dev.o3.cbc.pe.bayestar'
+"""HTCondor accounting group for Celery workers launched with condor_submit."""
+
 expose_to_public = False
 """Set to True if events meeting the public alert threshold really should be
 exposed to the public."""
