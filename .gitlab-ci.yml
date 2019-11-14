@@ -268,7 +268,8 @@ release:
     - umask 0077
     # Set up LSC DataGrid credentials
     - echo "${ROBOT_KEYTAB}" | base64 -d > keytab
-    - kinit emfollow-deployment/robot/runners.ligo.uwm.edu@LIGO.ORG -k -t keytab
+    - PRINCIPAL=$(klist -k keytab | head -n 4 | tail -n 1 | sed -E 's/^.* +//')
+    - kinit $PRINCIPAL -k -t keytab
     - ligo-proxy-init -k -p
     - grid-proxy-info -identity
     # Figure out which user to log in as (emfollow or emfollow-playground)
