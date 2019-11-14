@@ -263,9 +263,10 @@ release:
   only:
     - master@emfollow/gwcelery
     - tags@emfollow/gwcelery
-  variables:
-    REMOTE_HOST: "$(expr ${CI_ENVIRONMENT_URL} : '^.*://\(.*\)/.*$')"
   dependencies: []
+  variables:
+    REMOTE_HOST_1: ${CI_ENVIRONMENT_URL##*//}
+    REMOTE_HOST: ${REMOTE_HOST_1%%/*}
 
 # Continuous deployment.
 # Note that all deployments except playground/CIT are manual.
