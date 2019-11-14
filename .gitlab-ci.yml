@@ -258,7 +258,7 @@ release:
       fi
 
 .deploy-common: &deploy-common
-  <<: *ssh
+  extends: .ssh
   stage: deploy
   only:
     - master@emfollow/gwcelery
