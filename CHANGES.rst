@@ -59,9 +59,11 @@ This is the initial release of GWCelery for O3b.
 
 -   Notify which pe pipeline failed for the failure of pe condor jobs.
 
--   Pass the ``-j`` flag to ``ligo-skymap-from-samples`` to speed up skymap generation.
+-   Pass the ``-j`` flag to ``ligo-skymap-from-samples`` to speed up skymap
+    generation.
 
--   Remove skymap generation from PE DAG so that it will not be generated twice.
+-   Remove skymap generation from PE DAG so that it will not be generated
+    twice.
 
 -   Pin gwpy to <= 0.15.0 since the updated gwpy fails to read Virgo's state
     vector.
