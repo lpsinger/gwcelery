@@ -3,6 +3,8 @@ include:
     file: lint.yml
   - project: emfollow/gitlab-ci-templates
     file: sccb.yml
+  - project: emfollow/gitlab-ci-templates
+    file: ssh.yml
 
 variables:
   # Allow Celery to run as root, because everything runs as root under Docker.
@@ -256,35 +258,14 @@ release:
       fi
 
 .deploy-common: &deploy-common
+  <<: *ssh
   stage: deploy
-  image:
-    name: ligo/ssh
-    entrypoint: [""]
   only:
     - master@emfollow/gwcelery
     - tags@emfollow/gwcelery
+  variables:
+    REMOTE_HOST: "$(expr ${CI_ENVIRONMENT_URL} : '^.*://\(.*\)/.*$')"
   dependencies: []
-  before_script:
-    - umask 0077
-    # Set up LSC DataGrid credentials
-    - echo "${ROBOT_KEYTAB}" | base64 -d > keytab
-    - PRINCIPAL=$(klist -k keytab | head -n 4 | tail -n 1 | sed -E 's/^.* +//')
-    - kinit $PRINCIPAL -k -t keytab
-    - ligo-proxy-init -k -p
-    - grid-proxy-info -identity
-    # Figure out which user to log in as (emfollow or emfollow-playground)
-    - mkdir -p ~/.ssh
-    - |
-      cat > ~/.ssh/config <<EOF
-      Port 2222
-      Host emfollow-playground.*
-      User emfollow-playground
-      Host emfollow.*
-      User emfollow
-      EOF
-    - REMOTE_HOST=${CI_ENVIRONMENT_URL##*//}
-    - REMOTE_HOST=${REMOTE_HOST%%/*}
-    - echo $REMOTE_HOST
 
 # Continuous deployment.
 # Note that all deployments except playground/CIT are manual.
