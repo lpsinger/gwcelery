@@ -264,9 +264,6 @@ release:
     - master@emfollow/gwcelery
     - tags@emfollow/gwcelery
   dependencies: []
-  variables:
-    REMOTE_HOST_1: ${CI_ENVIRONMENT_URL##*//}
-    REMOTE_HOST: ${REMOTE_HOST_1%%/*}
 
 # Continuous deployment.
 # Note that all deployments except playground/CIT are manual.
@@ -313,6 +310,8 @@ deploy to production at CIT:
     name: production/CIT
     on_stop: stop deployment on production at CIT
     url: https://emfollow.ligo.caltech.edu/flower
+  variables:
+    REMOTE_HOST: emfollow.ligo.caltech.edu
 
 deploy to production at LHO:
   <<: *deploy-start
@@ -321,6 +320,8 @@ deploy to production at LHO:
     name: production/LHO
     on_stop: stop deployment on production at LHO
     url: https://emfollow.ligo-wa.caltech.edu/flower
+  variables:
+    REMOTE_HOST: emfollow.ligo-wa.caltech.edu
 
 deploy to playground at CIT:
   <<: *deploy-start
@@ -328,6 +329,8 @@ deploy to playground at CIT:
     name: playground/CIT
     on_stop: stop deployment on playground at CIT
     url: https://emfollow-playground.ligo.caltech.edu/flower
+  variables:
+    REMOTE_HOST: emfollow-playground.ligo.caltech.edu
 
 deploy to playground at LHO:
   <<: *deploy-start
@@ -336,6 +339,8 @@ deploy to playground at LHO:
     name: playground/LHO
     on_stop: stop deployment on playground at LHO
     url: https://emfollow-playground.ligo-wa.caltech.edu/flower
+  variables:
+    REMOTE_HOST: emfollow-playground.ligo-wa.caltech.edu
 
 stop deployment on production at CIT:
   <<: *deploy-stop
