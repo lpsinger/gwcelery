@@ -105,7 +105,16 @@ def handle_superevent(alert):
                     |
                     _update_superevent_and_return_event_dict.s(superevent_id)
                     |
+                    _leave_log_message_and_return_event_dict.s(
+                        superevent_id,
+                        "Superevent cleaned up. "
+                        "Sending second preliminary."
+                    )
+                    |
                     preliminary_alert.s(superevent_id)
+                    |
+                    gracedb.upload.si(None, None, superevent_id,
+                                      "Second preliminary alert sent")
                 ).apply_async()
             else:  # don't second second preliminary if vetoed
                 canvas = gracedb.upload.si(
@@ -369,6 +378,15 @@ def _create_voevent(classification, *args, **kwargs):
 def _create_label_and_return_filename(filename, label, graceid):
     gracedb.create_label(label, graceid)
     return filename
+
+
+@gracedb.task(shared=False)
+def _leave_log_message_and_return_event_dict(event, superevent_id, message):
+    """Wrapper around :meth:`gracedb.update_superevent`
+    that returns the event dictionary.
+    """
+    gracedb.upload(None, None, superevent_id, message)
+    return event
 
 
 @gracedb.task(shared=False)
