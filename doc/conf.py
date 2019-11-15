@@ -277,7 +277,7 @@ intersphinx_mapping = {
 
 # celery.contrib.sphinx does not show source links for tasks if this is set
 # to the default value of True
-viewcode_import = False
+viewcode_follow_imported_members = False
 
 
 # -- Options for graphviz extension ---------------------------------------
