@@ -206,7 +206,7 @@ def get_ts(event):
         ``frequency_mean`` fields.
     *   For all other pipelines, use the
         :obj:`~gwcelery.conf.superevent_d_t_start` and
-        :obj:`~gwcelery.conf.superevent_d_t_start` configuration values.
+        :obj:`~gwcelery.conf.superevent_d_t_end` configuration values.
 
     Parameters
     ----------
