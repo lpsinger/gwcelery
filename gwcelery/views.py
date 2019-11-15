@@ -5,7 +5,7 @@ import re
 from astropy.time import Time
 from flask import flash, jsonify, redirect, render_template, request, url_for
 from flask import make_response
-from ligo.gracedb.rest import HTTPError as GraceDbHTTPError
+from requests.exceptions import HTTPError
 import pkg_resources
 
 from . import app as celery_app
@@ -89,8 +89,8 @@ def typeahead_superevent_id():
     # Query GraceDB.
     query = 'category: {} t_0: {} .. {}'.format(
         category, Time(date_start).gps, Time(date_end).gps)
-    response = gracedb.client.superevents(
-        query, orderby='superevent_id', count=batch_results)
+    response = gracedb.client.superevents.search(
+        query=query, sort='superevent_id', count=batch_results)
 
     # Filter superevent IDs that match the search term.
     regex = re.compile(r'{}{}\d{{{}}}{}[a-z]*'.format(
@@ -116,7 +116,7 @@ def typeahead_event_id():
     query = ' '.join(query_terms)
     try:
         results = gracedb.get_events(query)
-    except GraceDbHTTPError:
+    except HTTPError:
         results = []
     results = [dict(r, snr=superevents.get_snr(r)) for r in results
                if superevents.is_complete(r)]
@@ -125,15 +125,15 @@ def typeahead_event_id():
 
 def _search_by_tag_and_filename(superevent_id, filename, extension, tag):
     try:
-        records = gracedb.client.logs(superevent_id).json()['log']
+        records = gracedb.get_log(superevent_id)
         return [
             '{},{}'.format(record['filename'], record['file_version'])
             for record in records if tag in record['tag_names']
             and record['filename'].startswith(filename)
             and record['filename'].endswith(extension)]
-    except GraceDbHTTPError as e:
+    except HTTPError as e:
         # Ignore 404 errors from server
-        if e.status == 404:
+        if e.response.status_code == 404:
             return []
         else:
             raise

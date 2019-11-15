@@ -110,6 +110,7 @@ for mod in ['astropy',
             'flask_caching',
             'gcn',
             'glue',
+            'gracedb_sdk',
             'gwdatafind',
             'gwpy',
             'healpy',
@@ -269,6 +270,7 @@ intersphinx_mapping = {
     'htcondor': ('https://htcondor.readthedocs.io/en/stable/', None),
     'gwpy': ('https://gwpy.github.io/docs/stable/', None),
     'ligo.skymap': ('https://lscsoft.docs.ligo.org/ligo.skymap/', None),
+    'requests': ('https://requests.readthedocs.io/en/master/', None),
     'twisted': ('https://twistedmatrix.com/documents/current/api/', None),
     'userguide': ('https://emfollow.docs.ligo.org/userguide/', None)
 }

@@ -19,6 +19,9 @@ Changelog
 
 -   Fix a bug in skymap generation with online PE posterior samples.
 
+-   Switch from GraceDB REST API calls from gracedb-client to gracedb-sdk to
+    gain increased transaction throughput due to HTTP connection pooling.
+
 0.10.0 (2020-02-07)
 -------------------
 

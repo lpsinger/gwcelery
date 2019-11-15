@@ -2,7 +2,8 @@ from celery import exceptions
 import pytest
 from unittest.mock import call, patch, Mock
 
-from ligo.gracedb import rest
+from requests.exceptions import HTTPError
+from requests.models import Response
 
 from ..tasks import gracedb, superevents
 from . import resource_json
@@ -527,8 +528,12 @@ def test_parse_trigger_raising():
         superevents.handle(garbage_payload)
 
 
+response_bad_gateway = Response()
+response_bad_gateway.status_code = 502
+
+
 @patch('gwcelery.tasks.gracedb.create_superevent',
-       side_effect=rest.HTTPError(502, "Bad Gateway", "Bad Gateway"))
+       side_effect=HTTPError(response=response_bad_gateway))
 def test_raising_http_error(failing_create_superevent):
     payload = {
         "uid": "G000003",
@@ -791,8 +796,7 @@ def test_parse_trigger_burst_3(mock_db):
         p.assert_called_once_with('G000007',
                                   pytest.approx(1163905249.5),
                                   pytest.approx(1163905248.5),
-                                  pytest.approx(1163905250.5),
-                                  'production')
+                                  pytest.approx(1163905250.5))
 
 
 def test_parse_trigger_burst_4(mock_db):

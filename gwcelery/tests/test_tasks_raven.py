@@ -3,7 +3,8 @@ from unittest.mock import call, patch
 import pytest
 
 from .test_tasks_skymaps import toy_fits_filecontents  # noqa: F401
-from ..tasks import gracedb, raven
+from ..tasks import legacy_gracedb as gracedb
+from ..tasks import raven
 
 
 @pytest.mark.parametrize(

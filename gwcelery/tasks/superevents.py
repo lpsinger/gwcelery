@@ -170,7 +170,8 @@ def process(payload):
                 log.info('New event %s with no superevent in GraceDB, '
                          'creating new superevent', gid)
                 sid = gracedb.create_superevent(event_info['graceid'],
-                                                t_0, t_start, t_end, category)
+                                                t_0, t_start, t_end)
+
     if should_publish(event_info):
         gracedb.create_label.delay('ADVREQ', sid)
         if is_complete(event_info):

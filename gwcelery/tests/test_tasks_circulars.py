@@ -1,6 +1,7 @@
 from unittest.mock import Mock
 
-from ..tasks import circulars, gracedb
+from ..tasks import circulars
+from ..tasks import legacy_gracedb as gracedb
 
 
 def test_create_initial_circular(monkeypatch):

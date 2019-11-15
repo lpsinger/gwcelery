@@ -12,8 +12,8 @@ import urllib
 
 from celery import group
 from gwdatafind import find_urls
-from ligo.gracedb.exceptions import HTTPError
 import numpy as np
+from requests.exceptions import HTTPError
 
 from .. import app
 from ..jinja import env

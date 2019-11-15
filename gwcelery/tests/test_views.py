@@ -2,7 +2,8 @@ import datetime
 from unittest.mock import Mock, patch
 
 from flask import get_flashed_messages, url_for
-from ligo.gracedb.rest import HTTPError as GraceDbHTTPError
+from requests.exceptions import HTTPError
+from requests.models import Response
 import pytest
 from werkzeug.http import HTTP_STATUS_CODES
 
@@ -169,7 +170,7 @@ def test_typeahead_superevent_id(client, monkeypatch):
             ).strftime('MS%y%m%da')
         } for i in range(31)))
     monkeypatch.setattr(
-        'gwcelery.tasks.gracedb.client.superevents', mock_superevents)
+        'gwcelery.tasks.gracedb.client.superevents.search', mock_superevents)
 
     response = client.get(
         url_for('typeahead_superevent_id', superevent_id='MS1902'))
@@ -186,7 +187,7 @@ def test_typeahead_superevent_id_invalid_date(client, monkeypatch):
     """
     mock_superevents = Mock()
     monkeypatch.setattr(
-        'gwcelery.tasks.gracedb.client.superevents', mock_superevents)
+        'gwcelery.tasks.gracedb.client.superevents.search', mock_superevents)
 
     response = client.get(
         url_for('typeahead_superevent_id', superevent_id='MS190235'))
@@ -200,8 +201,10 @@ def test_typeahead_skymap_filename_gracedb_error_404(client, monkeypatch):
     """Test that the typeahead endpoints return an empty list if GraceDB
     returns a 404 error.
     """
-    monkeypatch.setattr('gwcelery.tasks.gracedb.client.logs',
-                        Mock(side_effect=GraceDbHTTPError(404, None, None)))
+    response = Response()
+    response.status_code = 404
+    monkeypatch.setattr('gwcelery.tasks.gracedb.get_log',
+                        Mock(side_effect=HTTPError(response=response)))
 
     response = client.get(
         url_for('typeahead_skymap_filename', superevent_id='MS190208a'))
@@ -214,8 +217,10 @@ def test_typeahead_skymap_filename_gracedb_error_non_404(client, monkeypatch):
     """Test that the typeahead raises an internal error if GraceDB
     returns an error other than 404.
     """
-    monkeypatch.setattr('gwcelery.tasks.gracedb.client.logs',
-                        Mock(side_effect=GraceDbHTTPError(403, None, None)))
+    response = Response()
+    response.status_code = 403
+    monkeypatch.setattr('gwcelery.tasks.gracedb.get_log',
+                        Mock(side_effect=HTTPError(response=response)))
 
     response = client.get(
         url_for('typeahead_skymap_filename', superevent_id='MS190208a'))
@@ -230,8 +235,7 @@ def test_typeahead_skymap_filename_gracedb_error_non_404(client, monkeypatch):
 def test_typeahead_em_bright_and_p_astro(
         endpoint, tag, client, monkeypatch):
     """Test typeahead filtering for em_bright and p_astro files."""
-    mock_logs = Mock()
-    mock_logs.configure_mock(**{'return_value.json.return_value': {'log': [
+    mock_logs = Mock(return_value=[
         {'file_version': 0,
          'filename': 'foobar.txt',
          'tag_names': [tag]},
@@ -246,8 +250,8 @@ def test_typeahead_em_bright_and_p_astro(
          'tag_names': [tag]},
         {'file_version': 0,
          'filename': 'foobaz.json',
-         'tag_names': ['wrong_tag']}]}})
-    monkeypatch.setattr('gwcelery.tasks.gracedb.client.logs', mock_logs)
+         'tag_names': ['wrong_tag']}])
+    monkeypatch.setattr('gwcelery.tasks.gracedb.get_log', mock_logs)
 
     response = client.get(
         url_for(endpoint, superevent_id='MS190208a', filename='foo'))

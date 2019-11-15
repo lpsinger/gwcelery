@@ -1,7 +1,7 @@
 """Generate and upload automated circulars."""
 import ligo.followup_advocate
 
-from . import gracedb
+from . import legacy_gracedb as gracedb
 
 
 @gracedb.task(shared=False)

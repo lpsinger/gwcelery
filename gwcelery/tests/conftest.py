@@ -1,6 +1,5 @@
 import unittest
 
-from ligo.gracedb import rest
 import pytest
 from pytest_socket import disable_socket
 
@@ -32,9 +31,17 @@ def celeryconf(tmp_path_factory):
 
 @pytest.fixture(autouse=True)
 def fake_gracedb_client(monkeypatch):
-    mock_client = unittest.mock.create_autospec(rest.GraceDb)
-    mock_client._service_url = 'https://gracedb.invalid/api/'
+    mock_client = unittest.mock.MagicMock()
+    mock_client.url = 'https://gracedb.invalid/api/'
     monkeypatch.setattr('gwcelery.tasks.gracedb.client', mock_client)
+    yield
+
+
+@pytest.fixture(autouse=True)
+def fake_legacy_gracedb_client(monkeypatch):
+    mock_client = unittest.mock.MagicMock()
+    mock_client.url = 'https://gracedb.invalid/api/'
+    monkeypatch.setattr('gwcelery.tasks.legacy_gracedb.client', mock_client)
     yield
 
 
