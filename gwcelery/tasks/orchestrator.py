@@ -3,11 +3,8 @@ vetting and annotation workflow to produce preliminary, initial, and update
 alerts for gravitational-wave event candidates."""
 import json
 import re
-from socket import gaierror
-from urllib.error import URLError
 
 from celery import group
-from ligo.gracedb.rest import HTTPError
 
 from ..import app
 from . import bayestar
@@ -266,21 +263,6 @@ def handle_posterior_samples(alert):
     ).delay()
 
 
-@app.task(autoretry_for=(gaierror, HTTPError, URLError, TimeoutError),
-          default_retry_delay=20.0, retry_backoff=True,
-          retry_kwargs=dict(max_retries=500), shared=False)
-def _download(*args, **kwargs):
-    """Download a file from GraceDB.
-
-    This works just like :func:`gwcelery.tasks.gracedb.download`, except that
-    it is retried for both :class:`TimeoutError` and
-    :class:`~urllib.error.URLError`. In particular, it will be retried for 404
-    (not found) errors."""
-    # FIXME: remove ._orig_run when this bug is fixed:
-    # https://github.com/getsentry/sentry-python/issues/370
-    return gracedb.download._orig_run(*args, **kwargs)
-
-
 @app.task(shared=False, ignore_result=True)
 def _update_if_dqok(superevent_id, event_id):
     """Update `preferred_event` of `superevent_id` to `event_id`
@@ -404,7 +386,7 @@ def preliminary_alert(event, superevent_id, annotation_prefix='',
 
     canvas = ordered_group(
         (
-            _download.si(original_skymap_filename, preferred_event_id)
+            gracedb.download.si(original_skymap_filename, preferred_event_id)
             |
             ordered_group_first(
                 skymaps.flatten.s(annotation_prefix + skymap_filename)
@@ -441,7 +423,7 @@ def preliminary_alert(event, superevent_id, annotation_prefix='',
         ) if skymap_filename is not None else identity.s(None),
 
         (
-            _download.si('em_bright.json', preferred_event_id)
+            gracedb.download.si('em_bright.json', preferred_event_id)
             |
             gracedb.upload.s(
                 annotation_prefix + 'em_bright.json',
@@ -458,7 +440,7 @@ def preliminary_alert(event, superevent_id, annotation_prefix='',
         ) if event['group'] == 'CBC' else identity.s(None),
 
         (
-            _download.si('p_astro.json', preferred_event_id)
+            gracedb.download.si('p_astro.json', preferred_event_id)
             |
             gracedb.upload.s(
                 annotation_prefix + 'p_astro.json',
