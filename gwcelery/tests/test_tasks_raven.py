@@ -61,13 +61,14 @@ def test_raven_search(mock_raven_search, mock_se_cls, mock_exttrig_cls,
 
 
 @pytest.mark.parametrize('group', ['CBC', 'Burst'])
-@patch('gwcelery.tasks.gracedb.get_search', return_value='GRB')
 @patch('gwcelery.tasks.raven.calc_signif')
 def test_calculate_coincidence_far(
-        mock_calc_signif, mock_get_search, group):
-    raven.calculate_coincidence_far('S1234', 'E4321',
-                                    'G222', group)
-    mock_get_search.assert_called_once_with('E4321')
+        mock_calc_signif, group):
+    se = {'superevent_id': 'S1234'}
+    ext = {'graceid': 'E4321',
+           'pipeline': 'Fermi',
+           'search': 'GRB'}
+    raven.calculate_coincidence_far(se, ext, group)
     if group == 'CBC':
         tl, th = -5, 1
     else:
@@ -80,14 +81,14 @@ def test_calculate_coincidence_far(
 @pytest.mark.parametrize('group', ['CBC', 'Burst'])  # noqa: F811
 @patch('gwcelery.tasks.ligo_fermi_skymaps.get_preferred_skymap',
        return_value='bayestar.fits.gz')
-@patch('gwcelery.tasks.gracedb.get_search', return_value='GRB')
 @patch('gwcelery.tasks.raven.calc_signif')
 def test_calculate_spacetime_coincidence_far(
-        mock_calc_signif, mock_get_search, mock_get_preferred_skymap,
-        group):
-    raven.calculate_coincidence_far(
-        'S1234', 'E4321', 'G222', group)
-    mock_get_search.assert_called_once_with('E4321')
+        mock_calc_signif, mock_get_preferred_skymap, group):
+    se = {'superevent_id': 'S1234'}
+    ext = {'graceid': 'E4321',
+           'pipeline': 'Fermi',
+           'search': 'GRB'}
+    raven.calculate_coincidence_far(se, ext, group)
     if group == 'CBC':
         tl, th = -5, 1
     else:
@@ -174,14 +175,12 @@ def test_raven_pipeline(mock_create_label,
     elif graceid.startswith('E'):
         result = raven.preferred_superevent(raven_search_results)[0]
         label_calls.append(call('EM_COINC', result['superevent_id']))
-        coinc_calls.append(call(result['superevent_id'], graceid,
-                                result['preferred_event'], group))
+        coinc_calls.append(call(result, alert_object, group))
         label_calls.append(call('EM_COINC', graceid))
     else:
         for result in raven_search_results:
             label_calls.append(call('EM_COINC', result['graceid']))
-            coinc_calls.append(call(graceid, result['graceid'],
-                                    alert_object['preferred_event'], group))
+            coinc_calls.append(call(alert_object, result, group))
             label_calls.append(call('EM_COINC', graceid))
 
     alert_calls = []

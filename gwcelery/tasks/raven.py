@@ -14,24 +14,34 @@ log = get_task_logger(__name__)
 
 
 @app.task(shared=False)
-def calculate_coincidence_far(superevent_id, exttrig_id, preferred_id, group):
+def calculate_coincidence_far(superevent, exttrig, group):
     """Compute temporal coincidence FAR for external trigger and superevent
     coincidence by calling ligo.raven.search.calc_signif_gracedb.
 
     Parameters
     ----------
-    gracedb_id: str
-        ID of the superevent trigger used by GraceDB
+    superevent: dict
+        superevent dictionary
+    exttrig: dict
+        external event dictionary
     group: str
         CBC or Burst; group of the preferred_event associated with the
         gracedb_id superevent
 
     """
+    superevent_id = superevent['superevent_id']
+    exttrig_id = exttrig['graceid']
+
+    #  Don't compute coinc FAR for SNEWS coincidences
+    if exttrig['pipeline'] == 'SNEWS':
+        return
+
+    #  Try to grab superevent and external sky maps
     try:
-        preferred_skymap = ligo_fermi_skymaps.get_preferred_skymap(
-            preferred_id)
+        se_skymap = ligo_fermi_skymaps.get_preferred_skymap(
+            superevent_id)
     except ValueError:
-        preferred_skymap = None
+        se_skymap = None
     try:
         ext_skymap = gracedb.download('glg_healpix_all_bn_v00.fit',
                                       exttrig_id)
@@ -47,14 +57,13 @@ def calculate_coincidence_far(superevent_id, exttrig_id, preferred_id, group):
     elif group == 'Burst':
         tl, th = tl_burst, th_burst
 
-    ext_search = gracedb.get_search(exttrig_id)
-    if ext_skymap and preferred_skymap:
-        return calc_signif(ext_search,
+    if ext_skymap and se_skymap:
+        return calc_signif(exttrig['search'],
                            superevent_id, exttrig_id, tl, th,
                            incl_sky=True,
-                           se_fitsfile=preferred_skymap)
+                           se_fitsfile=se_skymap)
     else:
-        return calc_signif(ext_search,
+        return calc_signif(exttrig['search'],
                            superevent_id, exttrig_id, tl, th,
                            incl_sky=False)
 
@@ -175,21 +184,18 @@ def raven_pipeline(raven_search_results, gracedb_id, alert_object, gw_group):
         if gracedb_id.startswith('E'):
             superevent_id = result['superevent_id']
             exttrig_id = gracedb_id
-            preferred_gwevent_id = result['preferred_event']
             superevent = result
             ext_event = alert_object
         else:
             superevent_id = gracedb_id
             exttrig_id = result['graceid']
-            preferred_gwevent_id = alert_object['preferred_event']
             superevent = alert_object
             ext_event = result
 
         canvas = (
             gracedb.add_event_to_superevent.si(superevent_id, exttrig_id)
             |
-            calculate_coincidence_far.si(superevent_id, exttrig_id,
-                                         preferred_gwevent_id, gw_group)
+            calculate_coincidence_far.si(superevent, ext_event, gw_group)
             |
             group(gracedb.create_label.si('EM_COINC', superevent_id),
                   gracedb.create_label.si('EM_COINC', exttrig_id))

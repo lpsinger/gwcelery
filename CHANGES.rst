@@ -14,6 +14,9 @@ Changelog
 
 -   Update lalsuite to lalsuite==6.62.1.dev20191130 and unpin scipy.
 
+-   Change RAVEN to grab sky map from superevent. Block joint FAR calculation
+    for SNEWS coincidences.
+
 0.9.0 (2019-11-23)
 ------------------
 
