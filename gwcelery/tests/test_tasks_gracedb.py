@@ -1,8 +1,6 @@
 from unittest.mock import patch
 from pkg_resources import resource_string
 
-from ligo.gracedb import rest
-
 from ..tasks import gracedb
 
 
@@ -57,7 +55,7 @@ def test_create_superevent(monkeypatch):
     assert superevent_id == 'S20191031az'
 
 
-@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
+@patch('gwcelery.tasks.gracedb.client')
 def test_create_label(mock_gracedb):
     # Run function under test.
     gracedb.create_label('label', 'graceid')
@@ -66,7 +64,7 @@ def test_create_label(mock_gracedb):
     mock_gracedb.writeLabel.assert_called_once_with('graceid', 'label')
 
 
-@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
+@patch('gwcelery.tasks.gracedb.client')
 def test_remove_label(mock_gracedb):
     # Run function under test.
     gracedb.remove_label('label', 'graceid')
@@ -75,7 +73,7 @@ def test_remove_label(mock_gracedb):
     mock_gracedb.removeLabel.assert_called_once_with('graceid', 'label')
 
 
-@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
+@patch('gwcelery.tasks.gracedb.client')
 def test_create_signoff(mock_gracedb):
     """Create a label in GraceDB."""
     gracedb.create_signoff('status', 'comment', 'signoff_type', 'graceid')
@@ -83,7 +81,7 @@ def test_create_signoff(mock_gracedb):
         'graceid', 'signoff_type', 'status', 'comment')
 
 
-@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
+@patch('gwcelery.tasks.gracedb.client')
 @patch('gwcelery.tasks.gracedb.get_log',
        return_value=[{'filename': filename, 'N': i} for i, filename in
                      enumerate(['foo', 'bat', 'bat', 'baz'])])
@@ -93,7 +91,7 @@ def test_create_tag(mock_get_log, mock_gracedb):
     mock_gracedb.addTag.assert_called_once_with('graceid', 2, 'tag')
 
 
-@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
+@patch('gwcelery.tasks.gracedb.client')
 def test_create_voevent(mock_gracedb):
     # Run function under test.
     gracedb.create_voevent('graceid', 'voevent_type',
@@ -107,7 +105,7 @@ def test_create_voevent(mock_gracedb):
         skymap_type='skymap_type')
 
 
-@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
+@patch('gwcelery.tasks.gracedb.client')
 def test_download(mock_gracedb):
     # Run function under test.
     gracedb.download('filename', 'graceid')
@@ -116,7 +114,7 @@ def test_download(mock_gracedb):
     mock_gracedb.files.assert_called_once_with('graceid', 'filename', raw=True)
 
 
-@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
+@patch('gwcelery.tasks.gracedb.client')
 def test_expose(mock_gracedb):
     gracedb.expose('graceid')
     mock_gracedb.modify_permissions.assert_called_once_with(
@@ -144,7 +142,7 @@ def test_get_log(monkeypatch):
     assert ret == 'stuff'
 
 
-@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
+@patch('gwcelery.tasks.gracedb.client')
 def test_get_superevent(mock_gracedb):
     # Run function under test.
     gracedb.get_superevent('graceid')
@@ -153,13 +151,13 @@ def test_get_superevent(mock_gracedb):
     mock_gracedb.superevent.assert_called_once_with('graceid')
 
 
-@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
+@patch('gwcelery.tasks.gracedb.client')
 def test_get_superevents(mock_gracedb):
     gracedb.get_superevents('query')
     mock_gracedb.superevents.assert_called_once_with('query')
 
 
-@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
+@patch('gwcelery.tasks.gracedb.client')
 def test_upload(mock_gracedb):
     # Run function under test.
     gracedb.upload('filecontents', 'filename', 'graceid', 'message', 'tags')
@@ -169,19 +167,19 @@ def test_upload(mock_gracedb):
         'graceid', 'message', 'filename', 'filecontents', 'tags')
 
 
-@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
+@patch('gwcelery.tasks.gracedb.client')
 def test_get_event(mock_gracedb):
     gracedb.get_event('G123456')
     mock_gracedb.event.assert_called_once_with('G123456')
 
 
-@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
+@patch('gwcelery.tasks.gracedb.client')
 def test_get_search(mock_gracedb):
     gracedb.get_search('G123456')
     mock_gracedb.event.assert_called_once_with('G123456')
 
 
-@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
+@patch('gwcelery.tasks.gracedb.client')
 def test_get_events(mock_gracedb):
     gracedb.get_events(query='Some query', orderby=None,
                        count=None, columns=None)
@@ -208,10 +206,10 @@ def test_get_labels(monkeypatch):
     assert labels == {'LABEL1', 'LABEL2'}
 
 
-@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
+@patch('gwcelery.tasks.gracedb.client')
 def test_replace_event(mock_gracedb):
     text = resource_string(__name__, 'data/fermi_grb_gcn.xml')
     gracedb.replace_event(graceid='G123456', payload=text)
-    mock_gracedb.replaceEvent.assert_called_once_with(graceid='G123456',
-                                                      filename='initial.data',
+    mock_gracedb.replaceEvent.assert_called_once_with('G123456',
+                                                      'initial.data',
                                                       filecontents=text)
