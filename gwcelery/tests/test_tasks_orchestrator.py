@@ -2,7 +2,6 @@ import os
 import json
 from unittest.mock import call, Mock, patch
 
-from ligo.gracedb import rest
 import pkg_resources
 import pytest
 
@@ -316,8 +315,7 @@ def mock_download(filename, graceid, *args, **kwargs):
                        'SingleInspiral': [{'mass1': 10., 'mass2': 5.}]}})
 @patch('gwcelery.tasks.gracedb.download._orig_run', mock_download)
 @patch('gwcelery.tasks.bayestar.localize.run')
-@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
-def test_handle_cbc_event(mock_gracedb, mock_localize, mock_get_event):
+def test_handle_cbc_event(mock_localize, mock_get_event):
     """Test that an LVAlert message for a newly uploaded PSD file triggers
     BAYESTAR."""
     alert = resource_json(__name__, 'data/lvalert_psd.json')
@@ -420,8 +418,7 @@ def test_handle_cbc_event_new_event(mock_classifier):
 @patch('gwcelery.tasks.gracedb.download._orig_run', mock_download)
 @patch('gwcelery.tasks.em_bright.classifier_gstlal.run')
 @patch('gwcelery.tasks.bayestar.localize.run')
-@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
-def test_handle_cbc_event_ignored(mock_gracedb, mock_localize,
+def test_handle_cbc_event_ignored(mock_localize,
                                   mock_classifier,
                                   mock_get_event):
     """Test that unrelated LVAlert messages do not trigger BAYESTAR."""

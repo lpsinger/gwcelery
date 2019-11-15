@@ -5,7 +5,6 @@ import os
 from unittest.mock import patch
 
 from astropy.table import Table
-from ligo.gracedb import rest
 import numpy as np
 import pkg_resources
 import pytest
@@ -55,11 +54,9 @@ def mock_download(filename, graceid):
 
 
 @patch('gwcelery.tasks.gracedb.download.run', mock_download)
-@patch('gwcelery.tasks.gracedb.client', autospec=rest.GraceDb)
 @patch('ligo.skymap.tool.ligo_skymap_plot.main')
 @patch('ligo.skymap.tool.ligo_skymap_plot_volume.main')
-def test_annotate_fits(mock_plot_volume, mock_plot, mock_gracedb,
-                       toy_3d_fits_filecontents):
+def test_annotate_fits(mock_plot_volume, mock_plot, toy_3d_fits_filecontents):
     skymaps.annotate_fits(
         toy_3d_fits_filecontents, 'test.fits,0', 'T12345', ['tag1'])
 
