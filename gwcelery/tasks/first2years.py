@@ -157,7 +157,7 @@ def upload_event():
         |
         gracedb.get_superevents.si(
             'MDC event: {}'.format(graceid)
-        ).set(countdown=300)
+        ).set(countdown=600)
         |
         _vet_event.s()
     ).apply_async()
