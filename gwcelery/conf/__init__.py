@@ -98,6 +98,10 @@ superevent_default_d_t_end = 1.0
 superevent_far_threshold = 1 / 3600
 """Maximum false alarm rate to consider events superevents."""
 
+preliminary_alert_timeout = 30.
+"""Wait this many seconds for the preferred event to stabilize before issuing a
+preliminary alert."""
+
 preliminary_alert_far_threshold = {'cbc': 1 / (60 * 86400),
                                    'burst': 1 / (365 * 86400),
                                    'test': 1 / (30 * 86400)}
@@ -113,7 +117,7 @@ snews_gw_far_threshold = 1 / (3600 * 24)
 """Maximum false alarm rate for a superevent to send out a coincidence alert
 between an external SNEWS alert and the superevent."""
 
-superevent_clean_up_timeout = 30.
+superevent_clean_up_timeout = 270.
 """The orchestrator will wait this many seconds from the time of the
 application of the GCN_PRELIM_SENT label to revise the preferred
 event out of the accumulated events."""
