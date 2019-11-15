@@ -82,8 +82,13 @@ def create_label(label, graceid):
     except rest.HTTPError as e:
         # If we got a 400 error because no change was made, then ignore
         # the exception and return successfully to preserve idempotency.
-        if e.message != \
-                '"The fields superevent, label must make a unique set."':
+        messages = {
+            '"The \'ADVREQ\' label cannot be applied to request a signoff '
+            'because a related signoff already exists."',
+
+            '"The fields superevent, label must make a unique set."'
+        }
+        if e.message not in messages:
             raise
 
 
