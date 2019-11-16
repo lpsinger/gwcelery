@@ -176,26 +176,61 @@ def test_select_preferred_event():
     assert r['graceid'] == 'G3'
 
 
-@pytest.mark.parametrize('labels',
-                         [['EMBRIGHT_READY', 'PASTRO_READY'],
-                          ['EM_Selected', 'ADVREQ', 'DQOK']])
-def test_update_preferred_event(labels, mock_db):
-    payload = dict(
-        graceid="T1234",
-        instruments="I1,J1,K1,L1,M1",
-        group="CBC",
-        pipeline="gstlal",
-        offline=False,
-        superevent="some_superevent",
-        far=1e-30,
-        labels=[],
-        extra_attributes=dict(
-            CoincInspiral=dict(snr=30.0),
-            SingleInspiral=[
-                {'ifo': ifo} for ifo in "I1,J1,K1,L1,M1".split(',')
-            ]
+@pytest.mark.parametrize(
+    'superevent_labels,new_event_labels,preferred_event_labels,new_event_id',
+    [[[],
+      ['EMBRIGHT_READY', 'PASTRO_READY', 'SKYMAP_READY'],
+      ['EMBRIGHT_READY', 'PASTRO_READY'], 'T1234'],
+     [[],
+      ['EMBRIGHT_READY', 'PASTRO_READY'],
+      ['EMBRIGHT_READY', 'PASTRO_READY', 'SKYMAP_READY'], 'T1234'],
+     [[],
+      ['EMBRIGHT_READY', 'PASTRO_READY',
+       'SKYMAP_READY'],
+      ['EMBRIGHT_READY', 'PASTRO_READY',
+       'SKYMAP_READY'], 'T1234'],
+     [[],
+      ['EMBRIGHT_READY', 'PASTRO_READY'],
+      ['EMBRIGHT_READY', 'PASTRO_READY',
+       'SKYMAP_READY'], 'T0212'],
+     [['EM_Selected', 'ADVREQ', 'DQOK'],
+      ['EMBRIGHT_READY', 'PASTRO_READY',
+       'SKYMAP_READY'],
+      ['EMBRIGHT_READY', 'PASTRO_READY',
+       'SKYMAP_READY'], 'T1234']])
+def test_update_preferred_event(superevent_labels, new_event_labels,
+                                preferred_event_labels, new_event_id):
+    """Test scenarios pertaining to superevent S0039, with a
+    preferred event T0212. The new event dictionary corresponds
+    to either T0212, when new labels are added, or a new event
+    T1234. The new event T1234 passes FAR threshold and has higher
+    SNR compared to the preferred event.
+    """
+    preferred_event_dictionary = resource_json(
+        __name__, 'data/T0212_S0039_preferred.json')
+    preferred_event_dictionary['labels'] = preferred_event_labels
+    if new_event_id == 'T1234':
+        new_event_dictionary = dict(
+            graceid="T1234",
+            instruments="I1,J1,K1,L1,M1",
+            group="CBC",
+            pipeline="gstlal",
+            offline=False,
+            superevent="maybe S0039 or empty",
+            far=1e-30,
+            labels=[],
+            extra_attributes=dict(
+                CoincInspiral=dict(snr=30.0),
+                SingleInspiral=[
+                    {'ifo': ifo} for ifo in "I1,J1,K1,L1,M1".split(',')
+                ]
+            )
         )
-    )
+    elif new_event_id == 'T0212':
+        new_event_dictionary = preferred_event_dictionary.copy()
+
+    new_event_dictionary['labels'] = new_event_labels
+
     superevent_s0039 = superevents._SuperEvent(
         1163905214.44,
         1163905239.44,
@@ -203,7 +238,7 @@ def test_update_preferred_event(labels, mock_db):
         'S0039',
         preferred_event='T0212',
         event_dict={
-            "labels": labels, "superevent_id": "S0039",
+            "labels": superevent_labels, "superevent_id": "S0039",
             "submitter": "deep.chatterjee@LIGO.ORG",
             "preferred_event": "T0212",
             "t_start": 1163905214.44,
@@ -214,23 +249,56 @@ def test_update_preferred_event(labels, mock_db):
             "created": "2018-05-09 07:23:16 UTC"
         }
     )
+
     with patch.object(gracedb.client, 'updateSuperevent') as p, \
-            patch('gwcelery.tasks.gracedb.create_label.run') as create_label:
+            patch('gwcelery.tasks.gracedb.create_label.run') as create_label, \
+            patch('gwcelery.tasks.gracedb.get_event',
+                  return_value=preferred_event_dictionary):
         superevents._update_superevent(superevent_s0039,
-                                       payload,
+                                       new_event_dictionary,
                                        None,
                                        None,
                                        None)
-        if 'EM_Selected' not in labels:
-            p.assert_called_with('S0039', preferred_event='T1234',
-                                 t_start=None, t_end=None, t_0=None)
-            if superevents.is_complete(payload):
-                create_label.assert_called_once_with('EM_READY', 'S0039')
-            else:
-                create_label.assert_not_called()
-        else:
+        # presence of EM_Selected should not
+        if 'EM_Selected' in superevent_labels:
             p.assert_not_called()
-            create_label.assert_not_called()
+
+        else:
+            is_complete_preferred = superevents.is_complete(
+                preferred_event_dictionary
+            )
+            is_complete_new = superevents.is_complete(
+                new_event_dictionary
+            )
+
+            if new_event_id == 'T1234' and (
+                    is_complete_preferred and not is_complete_new):
+                p.assert_not_called()
+                create_label.assert_not_called()
+            elif new_event_id == 'T1234' and (
+                    not is_complete_preferred and is_complete_new):
+                p.assert_called_with('S0039', preferred_event='T1234',
+                                     t_start=None, t_end=None, t_0=None)
+                create_label.assert_called_once_with('EM_READY', 'S0039')
+
+            elif new_event_id == 'T1234' and (
+                    is_complete_preferred and is_complete_new):
+                p.assert_called_with('S0039', preferred_event='T1234',
+                                     t_start=None, t_end=None, t_0=None)
+                create_label.assert_called_once_with('EM_READY', 'S0039')
+            elif new_event_id == 'T1234' and (
+                    not is_complete_preferred and not is_complete_new):
+                p.assert_called_with('S0039', preferred_event='T1234',
+                                     t_start=None, t_end=None, t_0=None)
+                create_label.assert_called_once_with('EM_READY', 'S0039')
+            # this is the case of label addition to existing preferred event
+            elif new_event_id == 'T0212':
+                p.assert_not_called()
+                # label addition completes event
+                if not is_complete_preferred and is_complete_new:
+                    create_label.assert_called_once_with('EM_READY', 'S0039')
+                else:
+                    create_label.assert_not_called()
 
 
 @pytest.mark.parametrize('labels',

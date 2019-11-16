@@ -485,8 +485,9 @@ def _update_superevent(superevent, new_event_dict,
 
     if kwargs:
         gracedb.update_superevent(superevent_id, **kwargs)
-    # label superevent as ready for annotations
-    if ('preferred_event' in kwargs) and is_complete(new_event_dict):
+    # completeness takes first precedence in deciding preferred event
+    # necessary and suffiecient condition to superevent as ready
+    if is_complete(new_event_dict):
         gracedb.create_label.delay(READY_LABEL, superevent_id)
 
 
