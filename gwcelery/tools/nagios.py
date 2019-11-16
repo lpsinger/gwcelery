@@ -1,6 +1,6 @@
 """A `Nagios plugin <https://nagios-plugins.org/doc/guidelines.html>`_
-for monitoring GWCelery."""
-
+for monitoring GWCelery.
+"""
 from enum import IntEnum
 from sys import exit
 from traceback import format_exc, format_exception
@@ -14,6 +14,7 @@ from .. import tasks  # noqa: F401
 
 class NagiosPluginStatus(IntEnum):
     """Nagios plugin status codes."""
+
     OK = 0
     WARNING = 1
     CRITICAL = 2

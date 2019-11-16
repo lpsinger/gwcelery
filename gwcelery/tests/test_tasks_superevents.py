@@ -398,10 +398,10 @@ def test_upload_same_event():
 
 @pytest.mark.parametrize(
     'group,pipeline,offline,far,instruments,labels,expected_result',
-    [['CBC', 'gstlal', False, 1.e-10, 'H1', [
-        'PASTRO_READY', 'SKYMAP_READY', 'EMBRIGHT_READY'], True],
-     ['CBC', 'gstlal', False, 1.e-10, 'H1', [
-        'PASTRO_READY', 'SKYMAP_READY'], False],
+    [['CBC', 'gstlal', False, 1.e-10, 'H1',
+        ['PASTRO_READY', 'SKYMAP_READY', 'EMBRIGHT_READY'], True],
+     ['CBC', 'gstlal', False, 1.e-10, 'H1',
+         ['PASTRO_READY', 'SKYMAP_READY'], False],
      ['CBC', 'gstlal', False, 1.e-6, 'H1,L1', ['EMBRIGHT_READY'], False],
      ['Burst', 'cwb', False, 1e-15, 'H1,L1', ['SKYMAP_READY'], True],
      ['Burst', 'cwb', False, 1e-15, 'H1,L1', [], False],
@@ -467,7 +467,8 @@ def test_raising_http_error(failing_create_superevent):
 def test_parse_trigger_cbc_1(mock_db):
     """New trigger G000000, less significant than already
     existing superevent. Superevent window much larger than event
-    window of G000000"""
+    window of G000000.
+    """
     # New trigger G000000 time falls in S0039 window
     # addEventToSuperevent should be called
     # updateSuperevent should not be updated
@@ -498,7 +499,8 @@ def test_parse_trigger_cbc_1(mock_db):
 def test_parse_trigger_cbc_2(mock_db):
     """New trigger G000003, more significant than already
     existing superevent. Superevent window is much larger that
-    event window of G000000"""
+    event window of G000000
+    """
     event_dictionary = {'graceid': 'G000003',
                         'gpstime': 1163905224.4332082,
                         'group': 'CBC',
@@ -534,7 +536,8 @@ def test_parse_trigger_cbc_2(mock_db):
 
 def test_parse_trigger_cbc_3(mock_db):
     """New trigger G000001, not present among superevents
-    New superevent created"""
+    New superevent created.
+    """
     event_dictionary = {'graceid': 'G000001',
                         'gpstime': 1286741861.52678,
                         'group': 'CBC',

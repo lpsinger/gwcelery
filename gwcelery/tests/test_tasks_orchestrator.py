@@ -33,7 +33,8 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
                            alert_type, label, group, pipeline,
                            offline, far, instruments):
     """Test a superevent is dispatched to the correct annotation task based on
-    its preferred event's search group."""
+    its preferred event's search group.
+    """
     alert = {
         'alert_type': alert_type,
         'uid': 'S1234',
@@ -322,7 +323,8 @@ def mock_download(filename, graceid, *args, **kwargs):
 @patch('gwcelery.tasks.bayestar.localize.run')
 def test_handle_cbc_event(mock_localize, mock_get_event):
     """Test that an LVAlert message for a newly uploaded PSD file triggers
-    BAYESTAR."""
+    BAYESTAR.
+    """
     alert = resource_json(__name__, 'data/lvalert_psd.json')
     orchestrator.handle_cbc_event(alert)
     mock_localize.assert_called_once()

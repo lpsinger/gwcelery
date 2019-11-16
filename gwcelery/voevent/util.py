@@ -17,6 +17,7 @@ def get_host_port(address):
         The hostname, or an empty string if missing.
     port : int, None
         The port number, or None if missing.
+
     """
     host, _, port = address.partition(':')
     return host, (int(port) if port else None)
@@ -32,6 +33,7 @@ def get_local_ivo(app):
         A local IVOID composed of the machine's fully qualified domain name and
         the Celery application name (for example,
         `ivo://emfollow.ligo.caltech.edu/gwcelery`).
+
     """
     return 'ivo://{}/{}'.format(socket.getfqdn(), app.main)
 
@@ -49,6 +51,7 @@ def get_network(address):
     -------
     ipaddress.IPv4Network
         An object representing the IP address prefix.
+
     """
     try:
         net = ipaddress.ip_network(address, strict=False)

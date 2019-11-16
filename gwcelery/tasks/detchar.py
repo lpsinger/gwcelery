@@ -12,6 +12,7 @@ References
 .. [LIGO] https://wiki.ligo.org/Calibration/TDCalibReview
 .. [Virgo] https://dcc.ligo.org/G1801125/
 .. [DMT] https://wiki.ligo.org/DetChar/DmtDqVector
+
 """
 import getpass
 import glob
@@ -64,6 +65,7 @@ def create_cache(ifo, start, end):
      ...
       <glue.lal.CacheEntry at 0x7fbae6b15080>,
       <glue.lal.CacheEntry at 0x7fbae6b15828>]
+
     """
     pattern = app.conf['llhoft_glob'].format(detector=ifo)
     filenames = glob.glob(pattern)
@@ -110,6 +112,7 @@ def make_omegascan(ifo, t0, durs):
     -------
     plt.figure() or None
         Matplotlib figure of the omegascan, or None if no omegascan created.
+
     """
     # Set up output
     outfile = io.BytesIO()
@@ -164,19 +167,16 @@ def omegascan(t0, graceid):
     graceid : str
         GraceDB ID to which to upload the omegascan.
 
-    Returns
-    -------
-    None
     """
     durs = app.conf['omegascan_durations']
 
     group(
-            make_omegascan.s(ifo, t0, durs)
-            |
-            gracedb.upload.s(f"{ifo}_omegascan.png", graceid,
-                             f"{ifo} omegascan", tags=['data_quality'])
-            for ifo in ['H1', 'L1', 'V1']
-        ).delay()
+        make_omegascan.s(ifo, t0, durs)
+        |
+        gracedb.upload.s(f"{ifo}_omegascan.png", graceid,
+                         f"{ifo} omegascan", tags=['data_quality'])
+        for ifo in ['H1', 'L1', 'V1']
+    ).delay()
 
 
 def generate_table(title, high_bit_list, low_bit_list, unknown_bit_list):
@@ -197,6 +197,7 @@ def generate_table(title, high_bit_list, low_bit_list, unknown_bit_list):
     -------
     str
         HTML string of the table.
+
     """
     template = env.get_template('vector_table.jinja2')
     return template.render(title=title, high_bit_list=high_bit_list,
@@ -271,6 +272,7 @@ def check_idq(cache, channel, start, end):
     >>> check_idq(cache, 'H1:IDQ-PGLITCH-OVL-100-1000',
                   1216496260, 1216496262)
     ('H1:IDQ-PGLITCH-OVL-100-1000', 0.87)
+
     """
     if cache:
         try:
@@ -320,6 +322,7 @@ def check_vector(cache, channel, start, end, bits, logic_type='all'):
      'H1:NO_CBC_HW_INJ': True,
      'H1:NO_BURST_HW_INJ': True,
      'H1:NO_DETCHAR_HW_INJ': True}
+
     """
     if logic_type not in ('any', 'all'):
         raise ValueError("logic_type must be either 'all' or 'any'.")
@@ -382,6 +385,7 @@ def check_vectors(event, graceid, start, end):
     -------
     event : dict
         Details of the event, reflecting any labels that were added.
+
     """
     # Skip MDC events.
     if event.get('search') == 'MDC':

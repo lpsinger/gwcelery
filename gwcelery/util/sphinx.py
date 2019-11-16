@@ -1,6 +1,4 @@
-"""
-Detect if we are running under Sphinx.
-"""
+"""Detect if we are running under Sphinx."""
 import os
 import sys
 

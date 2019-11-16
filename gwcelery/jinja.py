@@ -1,3 +1,4 @@
+"""Jinja environment configuration."""
 from jinja2 import Environment, PackageLoader, select_autoescape
 
 __all__ = ('env',)

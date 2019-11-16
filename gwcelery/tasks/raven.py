@@ -25,10 +25,11 @@ def calculate_coincidence_far(superevent_id, exttrig_id, preferred_id, group):
     group: str
         CBC or Burst; group of the preferred_event associated with the
         gracedb_id superevent
+
     """
     try:
         preferred_skymap = ligo_fermi_skymaps.get_preferred_skymap(
-                               preferred_id)
+            preferred_id)
     except ValueError:
         preferred_skymap = None
     try:
@@ -82,8 +83,8 @@ def coincidence_search(gracedb_id, alert_object, group=None, pipelines=[]):
         Burst or CBC
     pipelines: list
         list of external trigger pipeline names
-    """
 
+    """
     tl_cbc, th_cbc = app.conf['raven_coincidence_windows']['GRB_CBC']
     tl_burst, th_burst = app.conf['raven_coincidence_windows']['GRB_Burst']
     tl_snews, th_snews = app.conf['raven_coincidence_windows']['SNEWS']
@@ -130,9 +131,11 @@ def search(gracedb_id, alert_object, tl=-5, th=5, group=None,
     pipelines: list
         list of external trigger pipelines for performing coincidence search
         against
+
     Returns
     -------
         list with the dictionaries of related gracedb events
+
     """
     if alert_object.get('superevent_id'):
         event = gracedb_events.SE(gracedb_id, gracedb=gracedb.client)
@@ -162,6 +165,7 @@ def raven_pipeline(raven_search_results, gracedb_id, alert_object, gw_group):
         lvalert['object'], either a superevent or an external event
     gw_group: str
         Burst or CBC
+
     """
     if not raven_search_results:
         return
@@ -208,8 +212,8 @@ def preferred_superevent(raven_search_results):
     ----------
     raven_search_results: list
         list of dictionaries of each related gracedb trigger
-    """
 
+    """
     minfar, idx = min((result['far'], idx) for (idx, result) in
                       enumerate(raven_search_results))
     return [raven_search_results[idx]]
@@ -235,7 +239,6 @@ def _get_coinc_far_try_raven_alert(superevent, ext_event, gracedb_id,
 @app.task(shared=False)
 def trigger_raven_alert(coinc_far_json, superevent, gracedb_id,
                         ext_event, gw_group):
-
     """Determine whether an event should be published as a public alert.
     If yes, then launches an alert by applying `EM_COINC` to the preferred
     event.
@@ -264,8 +267,8 @@ def trigger_raven_alert(coinc_far_json, superevent, gracedb_id,
         external event dictionary
     gw_group: str
         Burst or CBC
-    """
 
+    """
     preferred_gwevent_id = superevent['preferred_event']
     superevent_id = superevent['superevent_id']
     gw_group = gw_group.lower()
@@ -295,21 +298,21 @@ def trigger_raven_alert(coinc_far_json, superevent, gracedb_id,
 
         far_type = 'joint'
         far_threshold = app.conf['preliminary_alert_far_threshold'][gw_group]
-        coinc_far_f = coinc_far * trials_factor * (trials_factor-1.)
+        coinc_far_f = coinc_far * trials_factor * (trials_factor - 1.)
         pass_far_threshold = coinc_far_f <= far_threshold
 
     no_previous_alert = {'ADVREQ', 'ADVOK', 'ADVNO'}.isdisjoint(
-                        gracedb.get_labels(superevent_id))
+        gracedb.get_labels(superevent_id))
 
     #  If publishable, trigger an alert by applying `EM_COINC` label to
     #  preferred event
     messages = []
     if pass_far_threshold and not is_ext_subthreshold:
         messages.append('RAVEN: publishing criteria met for %s' % (
-                             preferred_gwevent_id))
+            preferred_gwevent_id))
         if no_previous_alert:
             messages.append('Triggering RAVEN alert for %s' % (
-                             preferred_gwevent_id))
+                preferred_gwevent_id))
             gracedb.create_label.si('EM_COINC', preferred_gwevent_id).delay()
     if not pass_far_threshold:
         messages.append(('RAVEN: publishing criteria not met for %s,'

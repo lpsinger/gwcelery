@@ -11,13 +11,12 @@ def NamedTemporaryFile(content=None, **kwargs):  # noqa: N802
 
     Parameters
     ----------
-
     content : str, bytes, None
         Initial contents of the file.
-
     \**kwargs
         Additional keyword arguments to pass to
         :func:`tempfile.NamedTemporaryFile`.
+
     """
     if isinstance(content, bytes):
         kwargs = dict(kwargs, mode='w+b')

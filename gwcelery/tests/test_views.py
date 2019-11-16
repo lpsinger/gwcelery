@@ -120,7 +120,6 @@ def test_send_update_gcn_circular_post(mock_create_circular,
                                        sky_loc, em_bright, p_astro, answer,
                                        client):
     """Test send_update_gcn_circular endpoint with complete form data."""
-
     response = client.post(url_for('create_update_gcn_circular'), data={
         'superevent_id': 'MS190208a',
         'sky_localization': sky_loc,
@@ -154,7 +153,8 @@ def test_typeahead_superevent_id(client, monkeypatch):
 
 def test_typeahead_superevent_id_invalid_date(client, monkeypatch):
     """Test typeahead filtering for superevent_id when the search term contains
-    an invalid date fragment."""
+    an invalid date fragment.
+    """
     mock_superevents = Mock()
     monkeypatch.setattr(
         'gwcelery.tasks.gracedb.client.superevents', mock_superevents)
@@ -169,7 +169,8 @@ def test_typeahead_superevent_id_invalid_date(client, monkeypatch):
 
 def test_typeahead_skymap_filename_gracedb_error_404(client, monkeypatch):
     """Test that the typeahead endpoints return an empty list if GraceDB
-    returns a 404 error."""
+    returns a 404 error.
+    """
     monkeypatch.setattr('gwcelery.tasks.gracedb.client.logs',
                         Mock(side_effect=GraceDbHTTPError(404, None, None)))
 
@@ -182,7 +183,8 @@ def test_typeahead_skymap_filename_gracedb_error_404(client, monkeypatch):
 
 def test_typeahead_skymap_filename_gracedb_error_non_404(client, monkeypatch):
     """Test that the typeahead raises an internal error if GraceDB
-    returns an error other than 404."""
+    returns an error other than 404.
+    """
     monkeypatch.setattr('gwcelery.tasks.gracedb.client.logs',
                         Mock(side_effect=GraceDbHTTPError(403, None, None)))
 

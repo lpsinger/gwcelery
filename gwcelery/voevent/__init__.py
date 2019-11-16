@@ -1,6 +1,7 @@
 """Embed a :doc:`comet:index` VOEvent broker and subscriber into a Celery
 worker by :doc:`extending Celery with bootsteps
-<celery:userguide/extending>`."""
+<celery:userguide/extending>`.
+"""
 from .bootsteps import Reactor, Broadcaster, Receiver
 
 

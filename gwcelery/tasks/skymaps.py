@@ -82,7 +82,8 @@ def fits_header(filecontents, filename):
 @app.task(shared=False)
 def plot_allsky(filecontents):
     """Plot a Mollweide projection of a sky map using the command-line tool
-    :doc:`ligo-skymap-plot <ligo/skymap/tool/ligo_skymap_plot>`."""
+    :doc:`ligo-skymap-plot <ligo/skymap/tool/ligo_skymap_plot>`.
+    """
     # Note: plt.style.context added as workaround for
     # https://github.com/astropy/astropy/issues/8004.
     with NamedTemporaryFile(mode='rb', suffix='.png') as pngfile, \
@@ -114,7 +115,8 @@ def plot_volume(filecontents):
 def flatten(filecontents, filename):
     """Convert a HEALPix FITS file from multi-resolution UNIQ indexing to the
     more common IMPLICIT indexing using the command-line tool
-    :doc:`ligo-skymap-flatten <ligo/skymap/tool/ligo_skymap_flatten>`."""
+    :doc:`ligo-skymap-flatten <ligo/skymap/tool/ligo_skymap_flatten>`.
+    """
     with NamedTemporaryFile(content=filecontents) as infile, \
             tempfile.TemporaryDirectory() as tmpdir, \
             handling_system_exit():
@@ -125,7 +127,7 @@ def flatten(filecontents, filename):
 
 @app.task(shared=False, queue='openmp')
 def skymap_from_samples(samplefilecontents):
-    """Generate multi-resolution fits file from samples"""
+    """Generate multi-resolution fits file from samples."""
     with NamedTemporaryFile(content=samplefilecontents) as samplefile, \
             tempfile.TemporaryDirectory() as tmpdir, \
             handling_system_exit():

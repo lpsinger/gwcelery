@@ -17,7 +17,9 @@ log = get_logger(__name__)
              shared=False)
 def handle_snews_gcn(payload):
     """Handles the payload from SNEWS alerts.
-    Prepares the alert to be sent to graceDB as 'E' events."""
+
+    Prepares the alert to be sent to graceDB as 'E' events.
+    """
     root = etree.fromstring(payload)
 
     #  Get TrigID and Test Event Boolean
@@ -65,7 +67,9 @@ def handle_snews_gcn(payload):
              shared=False)
 def handle_grb_gcn(payload):
     """Handles the payload from Fermi and Swift alerts.
-    Prepares the alert to be sent to graceDB as 'E' events."""
+
+    Prepares the alert to be sent to graceDB as 'E' events.
+    """
     root = etree.fromstring(payload)
     u = urlparse(root.attrib['ivorn'])
     stream_path = u.path
@@ -124,7 +128,6 @@ def handle_grb_lvalert(alert):
 
     Notes
     -----
-
     This LVAlert message handler is triggered by creating a new superevent or
     GRB external trigger event, or applying the ``EM_COINC`` label to any
     superevent:
@@ -133,6 +136,7 @@ def handle_grb_lvalert(alert):
       :meth:`gwcelery.tasks.raven.coincidence_search`.
     * The ``EM_COINC`` label triggers the creation of a combined GW-GRB sky map
       using :meth:`gwcelery.tasks.ligo_fermi_skymaps.create_combined_skymap`.
+
     """
     # Determine GraceDB ID
     graceid = alert['uid']
@@ -164,13 +168,13 @@ def handle_snews_lvalert(alert):
 
     Notes
     -----
-
     This LVAlert message handler is triggered by creating a new superevent or
     SN external trigger event, or applying the ``EM_COINC`` label to any
     superevent:
 
     * Any new event triggers a coincidence search with
       :meth:`gwcelery.tasks.raven.coincidence_search`.
+
     """
     # Determine GraceDB ID
     graceid = alert['uid']

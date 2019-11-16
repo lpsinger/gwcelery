@@ -27,7 +27,6 @@ def catch_retryable_http_errors(f):
     We retry HTTP status 502 (Bad Gateway), 503 (Service Unavailable), and
     504 (Gateway Timeout).
     """
-
     @functools.wraps(f)
     def wrapper(*args, **kwargs):
         try:
@@ -146,6 +145,7 @@ def create_voevent(graceid, voevent_type, **kwargs):
     -------
     str
         The filename of the new VOEvent.
+
     """
     response = client.createVOEvent(graceid, voevent_type, **kwargs).json()
     return response['filename']
@@ -167,6 +167,7 @@ def expose(graceid):
     -----
     If :obj:`~gwcelery.conf.expose_to_public` is False, then this because a
     no-op.
+
     """
     if app.conf['expose_to_public']:
         with client.modify_permissions(graceid, 'expose'):
@@ -248,6 +249,7 @@ def get_superevents(*args, **kwargs):
     -------
     superevents : list
         The list of the superevents.
+
     """
     return list(client.superevents(*args, **kwargs))
 
@@ -272,6 +274,7 @@ def update_superevent(superevent_id, t_start=None,
         superevent t_0, unchanged if None
     preferred_event : str
         uid of the preferred event, unchanged if None
+
     """
     try:
         with client.updateSuperevent(superevent_id,
@@ -303,6 +306,7 @@ def create_superevent(graceid, t0, t_start, t_end, category):
         ``t_end`` parameter of superevent
     category : str
         superevent category
+
     """
     try:
         response = client.createSuperevent(t_start, t0, t_end,

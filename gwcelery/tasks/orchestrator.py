@@ -1,6 +1,9 @@
-"""Tasks that comprise the alert orchestrator, which responsible for the
-vetting and annotation workflow to produce preliminary, initial, and update
-alerts for gravitational-wave event candidates."""
+"""Tasks that comprise the alert orchestrator.
+
+The orchestrator is responsible for the vetting and annotation workflow to
+produce preliminary, initial, and update alerts for gravitational-wave event
+candidates.
+"""
 import json
 import re
 
@@ -135,7 +138,6 @@ def handle_cbc_event(alert):
 
     Notes
     -----
-
     This LVAlert message handler is triggered by updates that include the file
     ``psd.xml.gz``. The table below lists which
     files are created as a result, and which tasks generate them.
@@ -147,8 +149,8 @@ def handle_cbc_event(alert):
     ``em_bright.json``             :meth:`gwcelery.tasks.em_bright.classifier`
     ``p_astro.json.json``          :meth:`gwcelery.tasks.p_astro.compute_p_astro`
     ============================== ================================================
-    """  # noqa: E501
 
+    """  # noqa: E501
     graceid = alert['uid']
     # priority = 0 if superevents.should_publish(alert['object']) else 1
     priority = 0  # FIXME: should_publish always false for incomplete events!
@@ -278,8 +280,8 @@ def handle_posterior_samples(alert):
 
 @app.task(shared=False, ignore_result=True)
 def _update_if_dqok(superevent_id, event_id):
-    """Update `preferred_event` of `superevent_id` to `event_id`
-    if `DQOK` label has been applied
+    """Update `preferred_event` of `superevent_id` to `event_id` if `DQOK`
+    label has been applied.
     """
     if 'DQOK' in gracedb.get_labels(superevent_id):
         gracedb.update_superevent(superevent_id, preferred_event=event_id)
@@ -293,7 +295,8 @@ def _get_preferred_event(superevent_id):
 
     This works just like :func:`gwcelery.tasks.gracedb.get_superevent`, except
     that it returns only the preferred event, and not the entire GraceDB JSON
-    response."""
+    response.
+    """
     # FIXME: remove ._orig_run when this bug is fixed:
     # https://github.com/getsentry/sentry-python/issues/370
     return gracedb.get_superevent._orig_run(superevent_id)['preferred_event']
@@ -322,6 +325,7 @@ def _create_voevent(classification, *args, **kwargs):
     -------
     str
         The filename of the newly created VOEvent.
+
     """
     kwargs = dict(kwargs)
 
@@ -480,8 +484,7 @@ def preliminary_alert(event, superevent_id, annotation_prefix='',
 
 @gracedb.task(shared=False)
 def _get_lowest_far(superevent_id):
-    """Obtain the lowest FAR of the events contained in the target
-    superevent"""
+    """Obtain the lowest FAR of the events in the target superevent."""
     # FIXME: remove ._orig_run when this bug is fixed:
     # https://github.com/getsentry/sentry-python/issues/370
     return min(gracedb.get_event._orig_run(gid)['far'] for gid in
@@ -550,6 +553,7 @@ def preliminary_initial_update_alert(filenames, superevent_id, alert_type):
     than :obj:`gwcelery.app.task` so that a synchronous call to
     :func:`gwcelery.tasks.gracedb.get_log` is retried in the event of GraceDB
     API failures.
+
     """
     skymap_filename, em_bright_filename, p_astro_filename = filenames
     skymap_needed = (skymap_filename is None)
@@ -647,6 +651,7 @@ def initial_alert(filenames, superevent_id):
     than :obj:`gwcelery.app.task` so that a synchronous call to
     :func:`gwcelery.tasks.gracedb.get_log` is retried in the event of GraceDB
     API failures.
+
     """
     preliminary_initial_update_alert(filenames, superevent_id, 'initial')
 
@@ -672,6 +677,7 @@ def update_alert(filenames, superevent_id):
     than :obj:`gwcelery.app.task` so that a synchronous call to
     :func:`gwcelery.tasks.gracedb.get_log` is retried in the event of GraceDB
     API failures.
+
     """
     preliminary_initial_update_alert(filenames, superevent_id, 'update')
 
@@ -679,7 +685,8 @@ def update_alert(filenames, superevent_id):
 @app.task(ignore_result=True, shared=False)
 def retraction_alert(superevent_id):
     """Produce a retraction alert. This is currently just a stub and does
-    nothing more than create and send a VOEvent."""
+    nothing more than create and send a VOEvent.
+    """
     (
         gracedb.expose.si(superevent_id)
         |

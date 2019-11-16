@@ -194,12 +194,11 @@ def test_handle_superevent_emcoinc_label1(mock_create_combined_skymap,
                                           mock_get_event, mock_get_superevent,
                                           mock_se_cls, mock_exttrig_cls):
     """Test dispatch of an LVAlert message for a superevent EM_COINC label
-    application."""
-    alert = {
-            "uid": "S180616h",
-            "alert_type": "label_added",
-            "data": {"name": "EM_COINC"}
-            }
+    application.
+    """
+    alert = {"uid": "S180616h",
+             "alert_type": "label_added",
+             "data": {"name": "EM_COINC"}}
 
     external_triggers.handle_grb_lvalert(alert)
     mock_create_combined_skymap.assert_called_once_with('S180616h')

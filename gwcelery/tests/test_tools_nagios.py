@@ -9,7 +9,8 @@ from ..tools import nagios
 
 def test_nagios_unknown_error(monkeypatch, capsys):
     """Test that we generate the correct message when there is an unexpected
-    exception."""
+    exception.
+    """
     monkeypatch.setattr('gwcelery.app.connection',
                         Mock(side_effect=RuntimeError))
 

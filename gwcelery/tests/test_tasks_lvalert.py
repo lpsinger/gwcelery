@@ -43,7 +43,8 @@ def fake_lvalert():
 def test_handle_messages(mock_superevents_handle, mock_get_event,
                          netrc_lvalert, fake_lvalert):
     """Test handling an LVAlert message that originates from the configured
-    GraceDB server."""
+    GraceDB server.
+    """
     node, payload = fake_lvalert
 
     # Manipulate alert content
@@ -61,7 +62,8 @@ def test_handle_messages(mock_superevents_handle, mock_get_event,
 def test_handle_messages_wrong_server(mock_superevents_handle,
                                       netrc_lvalert, fake_lvalert, caplog):
     """Test handling an LVAlert message that originates from a GraceDB server
-    other than the configured GraceDB server. It should be ignored."""
+    other than the configured GraceDB server. It should be ignored.
+    """
     node, payload = fake_lvalert
 
     # Manipulate alert content
@@ -85,7 +87,8 @@ def test_handle_messages_wrong_server(mock_superevents_handle,
 def test_handle_messages_no_self_link(mock_superevents_handle,
                                       netrc_lvalert, fake_lvalert, caplog):
     """Test handling an LVAlert message that does not identify the GraceDB
-    server of origin. It should be rejected."""
+    server of origin. It should be rejected.
+    """
     node, payload = fake_lvalert
 
     # Manipulate alert content

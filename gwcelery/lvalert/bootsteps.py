@@ -13,7 +13,8 @@ class LVAlertBootStep(bootsteps.ConsumerStep):
     """Generic boot step to limit us to appropriate kinds of workers.
 
     Only include this bootstep in workers that are started with the
-    ``--lvalert`` command line option."""
+    ``--lvalert`` command line option.
+    """
 
     def __init__(self, consumer, lvalert=False, **kwargs):
         self.enabled = bool(lvalert)

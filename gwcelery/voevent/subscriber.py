@@ -1,6 +1,7 @@
 """Subclasses of :class:`comet.protocol.VOEventSubscriber` and
 :class:`comet.protocol.VOEventSubscriberFactory` that allow inspection of the
-list of active subscribers."""
+list of active subscribers.
+"""
 from comet.protocol.subscriber import (
     VOEventSubscriber as _VOEventSubscriber,
     VOEventSubscriberFactory as _VOEventSubscriberFactory)

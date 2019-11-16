@@ -157,12 +157,11 @@ def test_raven_pipeline(mock_create_label,
                         mock_download,
                         mock_trigger_raven_alert,
                         raven_search_results, graceid, group):
-    """ This function tests that the RAVEN pipeline runs
-    correctly for scenarios where RAVEN finds nothing,
-    a coincidence is found but does not pass threshold, when
-    a coincidence is found but does pass threshold, and when
-    multiple events are found."""
-
+    """This function tests that the RAVEN pipeline runs correctly for scenarios
+    where RAVEN finds nothing, a coincidence is found but does not pass
+    threshold, when a coincidence is found but does pass threshold, and when
+    multiple events are found.
+    """
     alert_object = {'preferred_event': 'G1', 'pipeline': 'GRB'}
     raven.raven_pipeline(raven_search_results, graceid, alert_object, group)
 
@@ -225,78 +224,54 @@ def test_preferred_superevent(raven_search_results, testnum):
 
 def _mock_get_event(graceid):
     if graceid == "S1234":
-        return {
-            "superevent_id": "S1234",
-            "preferred_event": "G000001",
-            "far": 1e-5
-            }
+        return {"superevent_id": "S1234",
+                "preferred_event": "G000001",
+                "far": 1e-5}
     elif graceid == "S2345":
-        return {
-            "superevent_id": "S2345",
-            "preferred_event": "G000002",
-            "far": 1e-10
-            }
+        return {"superevent_id": "S2345",
+                "preferred_event": "G000002",
+                "far": 1e-10}
     elif graceid == "S2468":
-        return {
-            "superevent_id": "S2468",
-            "preferred_event": "G000002",
-            "far": 1e-4
-            }
+        return {"superevent_id": "S2468",
+                "preferred_event": "G000002",
+                "far": 1e-4}
     elif graceid == "S5678":
-        return {
-            "superevent_id": "S5678",
-            "preferred_event": "G000003",
-            "far": 1e-5
-            }
+        return {"superevent_id": "S5678",
+                "preferred_event": "G000003",
+                "far": 1e-5}
     elif graceid == "S8642":
-        return {
-            "superevent_id": "S8642",
-            "preferred_event": "G000003",
-            "far": 1e-3
-            }
+        return {"superevent_id": "S8642",
+                "preferred_event": "G000003",
+                "far": 1e-3}
     elif graceid == 'E1':
-        return {
-            "graceid": "E1",
-            "pipeline": 'Swift',
-            "search": 'GRB'
-            }
+        return {"graceid": "E1",
+                "pipeline": 'Swift',
+                "search": 'GRB'}
     elif graceid == 'E2':
-        return {
-            "graceid": "E2",
-            "pipeline": 'Fermi',
-            "search": 'SubGRB'
-            }
+        return {"graceid": "E2",
+                "pipeline": 'Fermi',
+                "search": 'SubGRB'}
     elif graceid == 'E3':
-        return {
-            "graceid": "E3",
-            "pipeline": 'SNEWS',
-            "search": 'Supernova'
-            }
+        return {"graceid": "E3",
+                "pipeline": 'SNEWS',
+                "search": 'Supernova'}
     else:
         raise AssertionError
 
 
 def _mock_get_coinc_far(graceid):
     if graceid == "S1234":
-        return {
-            "temporal_coinc_far": 1e-05,
-            "spatiotemporal_coinc_far": None
-            }
+        return {"temporal_coinc_far": 1e-05,
+                "spatiotemporal_coinc_far": None}
     elif graceid == "S2468":
-        return {
-            "temporal_coinc_far": 1e-09,
-            "spatiotemporal_coinc_far": None
-            }
+        return {"temporal_coinc_far": 1e-09,
+                "spatiotemporal_coinc_far": None}
     elif graceid == "S5678":
-        return {
-            "temporal_coinc_far": 1e-15,
-            "spatiotemporal_coinc_far": None
-            }
+        return {"temporal_coinc_far": 1e-15,
+                "spatiotemporal_coinc_far": None}
     elif graceid == "S8642":
-        return {
-            "temporal_coinc_far": 1e-03,
-            "spatiotemporal_coinc_far": None
-            }
+        return {"temporal_coinc_far": 1e-03,
+                "spatiotemporal_coinc_far": None}
     else:
         return {}
 

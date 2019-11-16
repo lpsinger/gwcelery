@@ -8,6 +8,7 @@ References
 ----------
 .. [1] http://research.cs.wisc.edu/htcondor/manual/latest/condor_submit.html
 .. [2] http://research.cs.wisc.edu/htcondor/classad/refman/node3.html
+
 """
 from distutils.dir_util import mkpath
 import os
@@ -57,7 +58,8 @@ def _parse_classad(c):
     """Turn a ClassAd XML fragment into a dictionary of Python values.
 
     Note that this supports only the small subset of the ClassAd XML
-    syntax [2]_ that we need to determine if a job succeeded or failed."""
+    syntax [2]_ that we need to determine if a job succeeded or failed.
+    """
     if c is not None:
         for a in c.findall('a'):
             key = a.attrib['n']
@@ -138,6 +140,7 @@ def submit(self, submit_file, log=None):
     -------
     >>> submit.s('example.sub',
     ...          accounting_group='ligo.dev.o3.cbc.explore.test')
+
     """
     if log is None:
         log = _mklog('.log')
@@ -198,6 +201,7 @@ def check_output(self, args, log=None, error=None, output=None, **kwargs):
     -------
     >>> check_output.s(['sleep', '10'],
     ...                accounting_group='ligo.dev.o3.cbc.explore.test')
+
     """
     # FIXME: Refactor to reuse common code from this task and
     # gwcelery.tasks.condor.submit.

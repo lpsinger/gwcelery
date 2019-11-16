@@ -93,6 +93,7 @@ def upload_no_frame_files(request, exc, traceback, superevent_id):
         Traceback message from a task
     superevent_id : str
         The GraceDB ID of a target superevent
+
     """
     if isinstance(exc, NotEnoughData):
         gracedb.upload.delay(
@@ -124,6 +125,7 @@ def _find_appropriate_cal_env(trigtime, dir_name):
     path : str
         The path to the calibration uncertainties appropriate for a target
         event
+
     """
     filename, = glob.glob(os.path.join(dir_name, '[HLV]_CalEnvs.txt'))
     calibration_index = np.atleast_1d(
@@ -217,6 +219,7 @@ def _setup_dag_for_lalinference(coinc_psd, ini_contents,
     -------
     path_to_dag : str
         The path to the .dag file
+
     """
     coinc_contents, psd_contents = coinc_psd
 
@@ -281,6 +284,7 @@ def _setup_dag_for_bilby(event, rundir, preferred_event_id, superevent_id):
     -------
     path_to_dag : str
         The path to the .dag file
+
     """
     path_to_json = os.path.join(rundir, 'event.json')
     with open(path_to_json, 'w') as f:
@@ -350,6 +354,7 @@ def dag_prepare_task(rundir, superevent_id, preferred_event_id, pe_pipeline,
     -------
     canvas : canvas of tasks
         The canvas of tasks to prepare DAG
+
     """
     if pe_pipeline == 'lalinference':
         canvas = ordered_group(
@@ -382,6 +387,7 @@ def _find_paths_from_name(directory, name):
     -------
     paths : generator
         Paths to the target files or directories
+
     """
     return glob.iglob(os.path.join(directory, '**', name), recursive=True)
 
@@ -406,6 +412,7 @@ def job_error_notification(request, exc, traceback,
     pe_pipeline : str
         The parameter estimation pipeline used
         Either lalinference OR bilby
+
     """
     if isinstance(exc, condor.JobAborted):
         gracedb.upload.delay(
@@ -495,6 +502,7 @@ def clean_up(rundir):
     ----------
     rundir : str
         The path to a run directory where the DAG file exits
+
     """
     shutil.rmtree(rundir)
 
@@ -519,6 +527,7 @@ def dag_finished(rundir, preferred_event_id, superevent_id, pe_pipeline):
     -------
     tasks : canvas
         The work-flow for uploading PE results
+
     """
     if pe_pipeline == 'lalinference':
         # path to lalinference pe results
@@ -608,6 +617,7 @@ def start_pe(ini_contents, preferred_event_id, superevent_id, pe_pipeline):
     pe_pipeline : str
         The parameter estimation pipeline used
         lalinference OR bilby
+
     """
     gracedb.upload.delay(
         filecontents=None, filename=None, graceid=superevent_id,

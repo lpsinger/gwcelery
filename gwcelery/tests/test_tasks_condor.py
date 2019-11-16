@@ -12,8 +12,8 @@ def get_submit_kwargs(args):
 @pytest.fixture
 def mock_condor_submit_aborted(monkeypatch):
     """Simulate submitting a condor job: don't actually do anything, just
-    write a log message as if the job was aborted."""
-
+    write a log message as if the job was aborted.
+    """
     def mock_check_call(args):
         assert args[0] == 'condor_submit'
         submit_kwargs = get_submit_kwargs(args)
@@ -31,8 +31,8 @@ def mock_condor_submit_aborted(monkeypatch):
 @pytest.fixture
 def mock_condor_submit_running(monkeypatch):
     """Simulate submitting a condor job: don't actually do anything, just
-    write a log message as if the job was submitted."""
-
+    write a log message as if the job was submitted.
+    """
     files_to_remove = []
 
     def mock_check_call(args):
@@ -58,8 +58,8 @@ def mock_condor_submit_running(monkeypatch):
 @pytest.fixture
 def mock_condor_submit(monkeypatch):
     """Simulate submitting a condor job by running the underlying executable
-    right away and writing the status of the executable to the log file."""
-
+    right away and writing the status of the executable to the log file.
+    """
     def mock_check_call(args):
         assert args[0] == 'condor_submit'
         submit_kwargs = get_submit_kwargs(args)
@@ -84,7 +84,6 @@ def mock_condor_submit(monkeypatch):
 
 def test_check_output_error_on_submit(monkeypatch):
     """Test capturing an error from condor_submit."""
-
     accounting_group = 'foo.bar'
     cmd = ('sleep', '1')
     msg = 'no such accounting group'  # fake accounting group error
@@ -102,14 +101,12 @@ def test_check_output_error_on_submit(monkeypatch):
 
 def test_check_output_aborted(mock_condor_submit_aborted):
     """Test a job that is aborted."""
-
     with pytest.raises(condor.JobAborted):
         condor.check_output.delay(['sleep', '1'])
 
 
 def test_check_output_fails(mock_condor_submit):
     """Test a job that immediately fails."""
-
     with pytest.raises(condor.JobFailed) as exc_info:
         condor.check_output.delay(['sleep', '--foo="bar bat"', '1'])
     assert exc_info.value.returncode == 1

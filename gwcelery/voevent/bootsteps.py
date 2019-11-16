@@ -22,7 +22,8 @@ class VOEventBootStep(bootsteps.ConsumerStep):
 
     def include_if(self, consumer):
         """Only include this bootstep in workers that are configured to listen
-        to the ``voevent`` queue."""
+        to the ``voevent`` queue.
+        """
         return 'voevent' in consumer.app.amqp.queues
 
     def create(self, consumer):
@@ -44,7 +45,8 @@ class Reactor(VOEventBootStep):
     The Twisted reactor is a global run loop that drives all Twisted services
     and operations. This boot step starts the Twisted reactor in a background
     thread when the Celery consumer starts, and stops the thread when the
-    Consumer terminates."""
+    Consumer terminates.
+    """
 
     name = 'Twisted reactor'
 

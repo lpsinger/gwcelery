@@ -39,7 +39,8 @@ def ordered_group(*args):
     """Like :meth:`celery.group`, but preserve order.
 
     This is a temporary workaround for
-    https://github.com/celery/celery/pull/4858."""
+    https://github.com/celery/celery/pull/4858.
+    """
     return group(arg | _pack.s(i) for i, arg in enumerate(args)) | _unpack.s()
 
 
@@ -76,6 +77,7 @@ class DispatchHandler(dict):
             The arguments to pass to the registered callback.
         \*\*kwargs
             The keyword arguments to pass to the registered callback.
+
         """
         key, *args = args
         return key, args, kwargs
@@ -90,8 +92,8 @@ class DispatchHandler(dict):
             Keys to match
         \*\*kwargs
             Additional keyword arguments for `celery.Celery.task`.
-        """
 
+        """
         def wrap(f):
             f = app.task(ignore_result=True, **kwargs)(f)
             for key in keys:

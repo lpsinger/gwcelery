@@ -46,8 +46,8 @@ def compute_p_astro(snr, far, mass1, mass2, pipeline, instruments):
     >>> p_astros = json.loads(compute_p_astro(files))
     >>> p_astros
     {'BNS': 0.999, 'BBH': 0.0, 'NSBH': 0.0, 'Terrestrial': 0.001}
-    """
 
+    """
     # Read mean values from file
     with open(pkg_resources.resource_filename(
             'ligo.data', 'H1L1V1-mean_counts-1126051217-61603201.json')) as f:
@@ -129,7 +129,6 @@ def plot(contents):
 
     Examples
     --------
-
     .. plot::
        :include-source:
 
@@ -139,6 +138,7 @@ def plot(contents):
        ... "MassGap": 0.10, "BBH": 0.059}
        ... '''
        >>> p_astro.plot(contents)
+
     """
     classification = json.loads(contents)
     outfile = io.BytesIO()
@@ -167,7 +167,8 @@ def plot(contents):
                  shared=False)
 def handle(alert):
     """LVAlert handler to plot and upload a visualization of every
-    ``p_astro.json`` that is added to a superevent."""
+    ``p_astro.json`` that is added to a superevent.
+    """
     graceid = alert['uid']
     filename = 'p_astro.json'
 

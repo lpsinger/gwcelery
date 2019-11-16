@@ -2,8 +2,8 @@
 Data Grid clusters.
 
 These commands apply to the GWCelery instance that is
-running in the current working directory."""
-
+running in the current working directory.
+"""
 import json
 import os
 import shlex

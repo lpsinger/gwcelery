@@ -1,10 +1,9 @@
-"""Tasks for sending, receiving, and processing Gamma-ray Coordinates
-Network [GCN]_ notices.
+"""Tasks to send and receive Gamma-ray Coordinates Network [GCN]_ notices.
 
 References
 ----------
-
 .. [GCN] https://gcn.gsfc.nasa.gov
+
 """
 import html
 import difflib
@@ -88,6 +87,7 @@ def send(self, message):
     SendingError
         If the VOEvent could not be sent because there were no network peers
         connected to the VOEvent broadcaster.
+
     """
     broadcasters = self.app.conf['voevent_broadcaster_factory'].broadcasters
     if broadcasters:
@@ -105,15 +105,18 @@ def send(self, message):
          gcn.NoticeType.LVC_RETRACTION,
          bind=True, shared=False)
 def validate(self, payload):
-    """Check that the contents of a public LIGO/Virgo GCN matches the original
+    """Validate LIGO/Virgo GCN notices.
+
+    Check that the contents of a public LIGO/Virgo GCN matches the original
     VOEvent in GraceDB.
 
     Notes
     -----
     If the VOEvent broadcaster is disabled by setting
     :obj:`~gwcelery.conf.voevent_broadcaster_whitelist` to an empty list, then
-    this task becomes a no-op."""
+    this task becomes a no-op.
 
+    """
     if not self.app.conf['voevent_broadcaster_whitelist']:
         return
 

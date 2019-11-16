@@ -73,7 +73,8 @@ class MockMonotonic:
 @mock.patch('subprocess.check_call')
 def test_condor_resubmit_fail(mock_check_call, _, __, ___):
     """Test that ``gwcelery condor resubmit`` fails if we are unable to
-    ``condor_rm`` the jobs."""
+    ``condor_rm`` the jobs.
+    """
     try:
         app.start(['gwcelery', 'condor', 'resubmit'])
     except SystemExit as e:
@@ -88,7 +89,8 @@ def test_condor_resubmit_fail(mock_check_call, _, __, ___):
 @mock.patch('os.execvp', side_effect=SystemExit(0))
 def test_condor_resubmit_succeeds(mock_execvp, mock_check_call, _):
     """Test that ``gwcelery condor resubmit`` fails if we are unable to
-    ``condor_rm`` the jobs."""
+    ``condor_rm`` the jobs.
+    """
     try:
         app.start(['gwcelery', 'condor', 'resubmit'])
     except SystemExit as e:

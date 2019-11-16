@@ -40,13 +40,13 @@ def localize(coinc_psd, graceid, filename='bayestar.fits.gz',
 
     Notes
     -----
-
     This task is adapted from the command-line tool
     :doc:`bayestar-localize-lvalert
     <ligo/skymap/tool/bayestar_localize_lvalert>`.
 
     It should execute in a special queue for computationally intensive,
     multithreaded, OpenMP tasks.
+
     """
     # Determine the base URL for event pages.
     scheme, netloc, *_ = urllib.parse.urlparse(gracedb.client._service_url)

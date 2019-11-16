@@ -93,7 +93,6 @@ async def _python_process_wait(r_pipes, loop, magic_words, timeout):
 @pytest.fixture
 def starter(capsys):
     """Fixture for starting subprocesses."""
-
     @contextmanager
     def _python_process_context(target, args, kwargs, magic_words, timeout):
         with capsys.disabled():

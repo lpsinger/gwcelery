@@ -16,7 +16,8 @@ class EmailBootStep(bootsteps.ConsumerStep):
     """Generic boot step to limit us to appropriate kinds of workers.
 
     Only include this bootstep in workers that are started with the
-    ``--email`` command line option."""
+    ``--email`` command line option.
+    """
 
     def __init__(self, consumer, email=False, **kwargs):
         self.enabled = bool(email)

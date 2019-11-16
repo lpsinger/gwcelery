@@ -82,6 +82,7 @@ def process(payload):
     ----------
     payload : dict
         LVAlert payload
+
     """
     event_info = payload['object']
     gid = event_info['graceid']
@@ -189,6 +190,7 @@ def get_category(event):
     Returns
     -------
     {'mdc', 'test', 'production'}
+
     """
     if event.get('search') == 'MDC':
         return 'mdc'
@@ -223,6 +225,7 @@ def get_ts(event):
 
     t_end : float
         Segment end time in GPS seconds.
+
     """
     pipeline = event['pipeline'].lower()
     if pipeline == 'cwb':
@@ -256,6 +259,7 @@ def get_snr(event):
     -------
     snr : float
         The SNR.
+
     """
     group = event['group'].lower()
     pipeline = event['pipeline'].lower()
@@ -322,6 +326,7 @@ def get_instruments_in_ranking_statistic(event):
     detectors listed in the SingleInspiral table contribute to the significance
     even if the chi^2 is not computed for some of them. Hence PyCBC Live is
     handled as a special case.
+
     """
     if event['pipeline'].lower() == 'pycbc':
         return set(event['instruments'].split(','))
@@ -340,6 +345,7 @@ def select_preferred_event(events):
     ----------
     events : list
         list of event dictionaries
+
     """
     return max(events, key=keyfunc)
 
@@ -357,6 +363,7 @@ def is_complete(event):
     event : dict
         Event dictionary (e.g., the return value from
         :meth:`gwcelery.tasks.gracedb.get_event`).
+
     """
     group = event['group'].lower()
     label_set = set(event['labels'])
@@ -388,6 +395,7 @@ def should_publish(event):
     should_publish : bool
         :obj:`True` if the event meets the criteria for a public alert or
         :obj:`False` if it does not.
+
     """
     return all(_should_publish(event))
 
@@ -425,6 +433,7 @@ def keyfunc(event):
     -----
     Tuples are compared lexicographically in Python: they are compared
     element-wise until an unequal pair of elements is found.
+
     """
     group = event['group'].lower()
     try:
@@ -467,6 +476,7 @@ def _update_superevent(superevent, new_event_dict,
         start time of `superevent_id`, None for no change
     t_end : float
         end time of `superevent_id`, None for no change
+
     """
     superevent_id = superevent.superevent_id
     preferred_event = superevent.preferred_event
@@ -505,6 +515,7 @@ def _superevent_segment_list(superevents):
     -------
     superevent_list : segmentlist
         superevents as a segmentlist object
+
     """
     return segmentlist([_SuperEvent(s.get('t_start'),
                         s.get('t_end'),
@@ -532,6 +543,7 @@ def _partially_intersects(superevents, event_segment):
     -------
     match_segment   : segment
         segment in `self` which intersects. `None` if not found
+
     """
     # create a segmentlist using start and end times
     superevents = _superevent_segment_list(superevents)
@@ -543,6 +555,7 @@ def _partially_intersects(superevents, event_segment):
 
 class _Event(segment):
     """An event implemented as an extension of :class:`segment`."""
+
     def __new__(cls, t0, t_start, t_end, *args, **kwargs):
         return super().__new__(cls, t_start, t_end)
 
@@ -558,6 +571,7 @@ class _Event(segment):
 
 class _SuperEvent(segment):
     """An superevent implemented as an extension of :class:`segment`."""
+
     def __new__(cls, t_start, t_end, *args, **kwargs):
         return super().__new__(cls, t_start, t_end)
 

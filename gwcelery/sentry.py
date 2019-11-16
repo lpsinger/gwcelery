@@ -1,6 +1,4 @@
-"""
-Integration of the Celery logging system with `Sentry <https://sentry.io>`_.
-"""
+"""Error telemetry for `Sentry <https://sentry.io>`_."""
 from urllib.parse import urlparse, urlunparse
 
 from celery.utils.log import get_logger
@@ -20,10 +18,15 @@ DSN = 'https://sentry.io/1425216'
 
 
 def configure():
-    """Configure Sentry logging integration for Celery according to the
-    `official instructions <https://docs.sentry.io/platforms/python/celery/>`_.
+    """Configure Sentry logging integration for Celery.
 
+    See the `official instructions for Celery integration
+    <https://docs.sentry.io/platforms/python/celery/>`_.
+
+    Notes
+    -----
     Add the API key username/pasword pair to your netrc file.
+
     """
     # Catching NetrcParseError confuses sphinx.
     if SPHINX:  # pragma: no cover

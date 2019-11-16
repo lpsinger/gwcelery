@@ -5,7 +5,8 @@ from ..tasks import circulars, gracedb
 
 def test_create_initial_circular(monkeypatch):
     """Test that the compose circulars method is called with the correct
-    input parameters."""
+    input parameters.
+    """
     superevent_id = 'S1234'
     mock_compose = Mock()
     monkeypatch.setattr('ligo.followup_advocate.compose', mock_compose)
@@ -17,7 +18,8 @@ def test_create_initial_circular(monkeypatch):
 
 def test_create_emcoinc_circular(monkeypatch):
     """Test that the compose emcoinc circulars method is called with the
-    correct input parameters."""
+    correct input parameters.
+    """
     superevent_id = 'S1234'
     mock_compose_emcoinc_circular = Mock()
     monkeypatch.setattr('ligo.followup_advocate.compose_raven',
@@ -31,7 +33,8 @@ def test_create_emcoinc_circular(monkeypatch):
 
 def test_create_retraction_circular(monkeypatch):
     """Test that the compose retraction circulars method is called with
-    the correct input parameters."""
+    the correct input parameters.
+    """
     superevent_id = 'S1234'
     mock_compose_retraction = Mock()
     monkeypatch.setattr('ligo.followup_advocate.compose_retraction',

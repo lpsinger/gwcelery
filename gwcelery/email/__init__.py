@@ -1,5 +1,6 @@
 """Embed an IMAP email client into a Celery worker by :doc:`extending Celery
-with bootsteps <celery:userguide/extending>`."""
+with bootsteps <celery:userguide/extending>`.
+"""
 from .bootsteps import Receiver
 
 

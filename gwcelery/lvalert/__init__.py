@@ -1,5 +1,6 @@
 """Embed a :doc:`comet:index` LVAlert listener into a Celery worker by
-:doc:`extending Celery with bootsteps <celery:userguide/extending>`."""
+:doc:`extending Celery with bootsteps <celery:userguide/extending>`.
+"""
 from .bootsteps import Receiver
 
 

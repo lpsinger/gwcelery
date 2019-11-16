@@ -52,7 +52,6 @@ def mock_download(monkeypatch, toy_3d_fits_filecontents):  # noqa: F811
 
 def mock_get_file_contents(monkeypatch, toy_fits_filecontents):  # noqa: F811
     """Mocks astropy get_file_contents functionality"""
-
     def get_file_contents(heasarc_link):
         assert heasarc_link == true_heasarc_link
         return toy_fits_filecontents
