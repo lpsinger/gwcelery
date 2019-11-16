@@ -41,6 +41,7 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
         'object': {
             'superevent_id': 'S1234',
             't_start': 1214714160,
+            't_0': 1214714162,
             't_end': 1214714164,
             'preferred_event': 'G1234'
         },

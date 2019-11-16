@@ -54,11 +54,10 @@ def handle_superevent(alert):
         ).apply_async()
 
         # Create and upload omegascans
-        (
-            gracedb.get_superevent.si(superevent_id)['t_0']
-            |
-            detchar.omegascan.s(superevent_id)
-        ).apply_async(countdown=10)
+        detchar.omegascan.apply_async(
+            args=[alert['object']['t_0'], superevent_id],
+            countdown=10
+        )
 
     elif alert['alert_type'] == 'label_added':
         label_name = alert['data']['name']
