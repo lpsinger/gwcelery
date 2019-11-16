@@ -112,9 +112,6 @@ def handle_superevent(alert):
                     )
                     |
                     preliminary_alert.s(superevent_id)
-                    |
-                    gracedb.upload.si(None, None, superevent_id,
-                                      "Second preliminary alert sent")
                 )
             else:  # don't second second preliminary if vetoed
                 canvas = gracedb.upload.si(
