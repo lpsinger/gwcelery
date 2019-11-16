@@ -123,7 +123,7 @@ def make_omegascan(ifo, t0, durs):
     strain_name = app.conf['strain_channel_names'][ifo]
     try:
         ts = TimeSeries.read(cache, strain_name,
-                             start=long_start, end=long_end)
+                             start=long_start, end=long_end).astype('float64')
     except IORegistryError:  # data from cache can't be properly read
         fig = plt.figure()
         plt.axis("off")
