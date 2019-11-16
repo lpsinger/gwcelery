@@ -51,8 +51,8 @@ This is the initial release of GWCelery for O3b.
 -   Use nodes dedicated to online PE also for playground events so that the
     test runs do not get stuck due to the lack of resources.
 
--   Use ``EM_Selected`` to freeze the preferred event of a superevent and launch
-    a preliminary alert.
+-   Use ``EM_Selected`` to freeze the preferred event of a superevent and
+    launch a preliminary alert.
 
 -   Add a task to ``em_bright.py`` to compute and upload source properties
     upon the upload of ``LALInference.posterior_samples.hdf5``.
