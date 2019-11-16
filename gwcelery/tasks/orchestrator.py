@@ -98,7 +98,7 @@ def handle_superevent(alert):
 
                 canvas = (
                     gracedb.get_events.si(query).set(
-                        app.conf['superevent_clean_up_timeout']
+                        countdown=app.conf['superevent_clean_up_timeout']
                     )
                     |
                     superevents.select_preferred_event.s()
@@ -115,7 +115,7 @@ def handle_superevent(alert):
                     |
                     gracedb.upload.si(None, None, superevent_id,
                                       "Second preliminary alert sent")
-                ).apply_async()
+                )
             else:  # don't second second preliminary if vetoed
                 canvas = gracedb.upload.si(
                     None, None, superevent_id,
