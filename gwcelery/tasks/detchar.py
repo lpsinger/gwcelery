@@ -437,8 +437,8 @@ def check_vectors(event, graceid, start, end):
 
     # Logging iDQ to GraceDB
     if None not in idq_probs.values():
+        idq_probs_readable = {k: round(v, 3) for k, v in idq_probs.items()}
         if max(idq_probs.values()) >= app.conf['idq_pglitch_thresh']:
-            idq_probs_readable = {k: round(v, 3) for k, v in idq_probs.items()}
             idq_msg = ("iDQ glitch probability is high: "
                        "maximum p(glitch) is {}. ").format(
                 json.dumps(idq_probs_readable)[1:-1])
@@ -457,7 +457,7 @@ def check_vectors(event, graceid, start, end):
                        "are good (below {} threshold). "
                        "Maximum p(glitch) is {}. ").format(
                            app.conf['idq_pglitch_thresh'],
-                           json.dumps(idq_probs)[1:-1])
+                           json.dumps(idq_probs_readable)[1:-1])
     else:
         idq_msg = "iDQ glitch probabilities unknown. "
     gracedb.upload.delay(
