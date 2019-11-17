@@ -28,7 +28,7 @@
                 "sha256:5b26757dc6f79a3b7dc9fab95359328d5747fcb2409d331ea66d0272b90ab2a0",
                 "sha256:8b995ffe925347a2138d7ac0fe77155e4311a0ea6d6da4f5128fe4b3cbe5ed71"
             ],
-            "markers": "sys_platform == 'darwin'",
+            "markers": "platform_system == 'Darwin'",
             "version": "==0.1.0"
         },
         "astroplan": {
@@ -594,15 +594,15 @@
         },
         "ligo.skymap": {
             "hashes": [
-                "sha256:1d4ae83539293c8283f4b92c223e0d667be46a7e1d62f27f6df737ad52c6e3f6",
-                "sha256:5853fe76a29902e496ffbda1f0be857b49ecb5f982ed7a388bf2a335c81484d3",
-                "sha256:5961abe23a2e39a02774aae7a1b9779bc50e22ed630b1f76cf8d503df7882bf7",
-                "sha256:5ad92321e6e5d218b6cfaf4790ad13177adbc11db92f49966bb5ab54678fe497",
-                "sha256:c7efabaa04a62dc64b75b14b4fb1c3410d699bdc2c1492eb5d09388438e30be5",
-                "sha256:cdb858628b9bc0a9fe71ea69280d580dc2109aa640f7d53a3174c1167219b980",
-                "sha256:d42939a4adb72803ba8ae1d2e429647a79a7d94c2a6486ef480eea196f64389c"
+                "sha256:067d07bb70f15fae485b359aece8b820a57bc694c54b9ab92f73297f7fc85279",
+                "sha256:0f712fba850aac47bec65b23342c0eb20fd80fa9b8908bd71c2f725866b1058f",
+                "sha256:2765efa67099d0af5357ebdb9075527c87e473bb03e630b3f26135f950601a9c",
+                "sha256:53cfb589388b8257a79a24e15377c2306285f6ebb4952d9bf55b7c8a1c028e0f",
+                "sha256:5ad17a5329e6c2dfc2ef1d19c5f2a7413ca7f2f8c544757dcfcb30d69065fa51",
+                "sha256:a32ef639d2460d3214af49d91c6c6bbb4103ddf716d8a8b16e8beb039c65e51f",
+                "sha256:dd075473441b304836b6d332c8caea1293835ef79a98759033ec5e1de02c2596"
             ],
-            "version": "==0.1.13"
+            "version": "==0.1.14"
         },
         "ligotimegps": {
             "hashes": [
@@ -921,10 +921,10 @@
         },
         "pytest": {
             "hashes": [
-                "sha256:27abc3fef618a01bebb1f0d6d303d2816a99aa87a5968ebc32fe971be91eb1e6",
-                "sha256:58cee9e09242937e136dbb3dab466116ba20d6b7828c7620f23947f37eb4dae4"
+                "sha256:8e256fe71eb74e14a4d20a5987bb5e1488f0511ee800680aaedc62b9358714e8",
+                "sha256:ff0090819f669aaa0284d0f4aad1a6d9d67a6efdc6dd4eb4ac56b704f890a0d6"
             ],
-            "version": "==5.2.2"
+            "version": "==5.2.4"
         },
         "python-dateutil": {
             "hashes": [
