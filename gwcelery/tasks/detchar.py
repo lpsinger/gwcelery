@@ -124,7 +124,8 @@ def make_omegascan(ifo, t0, durs):
     try:
         ts = TimeSeries.read(cache, strain_name,
                              start=long_start, end=long_end).astype('float64')
-    except IORegistryError:  # data from cache can't be properly read
+    except (IORegistryError, FloatingPointError):
+        # data from cache can't be properly read, or data is weird
         fig = plt.figure()
         plt.axis("off")
         plt.text(0.1, 0.45, f"Failed to create {ifo} omegascan", fontsize=17)
