@@ -1,5 +1,6 @@
 """Error telemetry for `Sentry <https://sentry.io>`_."""
 from urllib.parse import urlparse, urlunparse
+from subprocess import CalledProcessError
 
 from celery.utils.log import get_logger
 from safe_netrc import netrc, NetrcParseError
@@ -15,6 +16,28 @@ __all__ = ('configure', 'DSN')
 
 DSN = 'https://sentry.io/1425216'
 """Sentry data source name (DSN)."""
+
+
+def before_send(event, hint):
+    """Capture stderr and stdout from CalledProcessError exceptions."""
+    if 'exc_info' not in hint:
+        return event
+
+    _, e, _ = hint['exc_info']
+    if not isinstance(e, CalledProcessError):
+        return event
+
+    breadcrumbs = event.get('breadcrumbs', [])
+    if len(breadcrumbs) < 1:
+        return event
+    breadcrumb = breadcrumbs[0]
+
+    for key in ['stderr', 'stdout']:
+        value = getattr(e, key)
+        if value:
+            breadcrumb.setdefault('data', {})[key] = value.decode(
+                errors='replace')
+    return event
 
 
 def configure():
@@ -56,6 +79,7 @@ def configure():
     version = 'gwcelery-{}'.format(_version.get_versions()['version'])
     environment = app.conf['sentry_environment']
     sentry_sdk.init(dsn, environment=environment, release=version,
+                    before_send=before_send,
                     integrations=[celery.CeleryIntegration(),
                                   flask.FlaskIntegration(),
                                   redis.RedisIntegration(),
