@@ -98,7 +98,7 @@ def _submit(submit_file=None, **kwargs):
         args += ['/dev/null', '-queue', '1']
     else:
         args += [submit_file]
-    subprocess.check_call(args)
+    subprocess.run(args, capture_output=True, check=True)
 
 
 class JobAborted(Exception):
