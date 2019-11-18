@@ -8,7 +8,7 @@ from ligo.raven import gracedb_events
 
 from ..import app
 from . import gracedb
-from . import ligo_fermi_skymaps
+from . import external_skymaps
 
 log = get_task_logger(__name__)
 
@@ -38,7 +38,7 @@ def calculate_coincidence_far(superevent, exttrig, group):
 
     #  Try to grab superevent and external sky maps
     try:
-        se_skymap = ligo_fermi_skymaps.get_preferred_skymap(
+        se_skymap = external_skymaps.get_preferred_skymap(
             superevent_id)
     except ValueError:
         se_skymap = None

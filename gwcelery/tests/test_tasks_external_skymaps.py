@@ -6,7 +6,7 @@ import pytest
 from . import resource_json
 from .test_tasks_skymaps import toy_fits_filecontents  # noqa: F401
 from .test_tasks_skymaps import toy_3d_fits_filecontents  # noqa: F401
-from ..tasks import ligo_fermi_skymaps
+from ..tasks import external_skymaps
 
 
 true_heasarc_link = ('http://heasarc.gsfc.nasa.gov/FTP/fermi/data/gbm/'
@@ -67,13 +67,13 @@ def mock_get_file_contents(monkeypatch, toy_fits_filecontents):  # noqa: F811
 def test_create_combined_skymap():
     """Test creating combined LVC and Fermi skymap"""
     # Run function under test
-    ligo_fermi_skymaps.create_combined_skymap('S12345')
+    external_skymaps.create_combined_skymap('S12345')
 
 
 @patch('gwcelery.tasks.gracedb.get_log', mock_get_log)
 def test_get_preferred_skymap():
     """Test getting the LVC skymap fits filename"""
-    ligo_fermi_skymaps.get_preferred_skymap('S12345')
+    external_skymaps.get_preferred_skymap('S12345')
 
 
 @patch('gwcelery.tasks.gracedb.get_event', mock_get_event)
@@ -81,20 +81,20 @@ def test_get_preferred_skymap():
        return_value={'em_events': ['E12345']})
 def test_external_trigger(mock_get_superevent, mock_download):
     """Test getting related em event for superevent"""
-    assert ligo_fermi_skymaps.external_trigger('S12345') == 'E12345'
+    assert external_skymaps.external_trigger('S12345') == 'E12345'
 
 
 @patch('gwcelery.tasks.gracedb.get_log', mock_get_log)
 def test_external_trigger_heasarc(mock_download):
     """Test retrieving HEASARC fits file link from GCN"""
-    heasarc_link = ligo_fermi_skymaps.external_trigger_heasarc('E12345')
+    heasarc_link = external_skymaps.external_trigger_heasarc('E12345')
     assert heasarc_link == true_heasarc_link
 
 
 @patch('urllib.request.urlopen')
 def test_get_external_skymap(mock_urlopen):
     """Assert that the correct call to astropy.get_file_contents is used"""
-    ligo_fermi_skymaps.get_external_skymap(true_heasarc_link)
+    external_skymaps.get_external_skymap(true_heasarc_link)
 
     mock_urlopen.assert_called_once()
 
@@ -102,4 +102,40 @@ def test_get_external_skymap(mock_urlopen):
 def test_get_upload_external_skymap():
     """Test that an external sky map is grabbed and uploaded."""
     graceid = 'E12345'
-    ligo_fermi_skymaps.get_upload_external_skymap(graceid)
+    external_skymaps.get_upload_external_skymap(graceid)
+
+
+@pytest.mark.parametrize('ra,dec,error,pix',
+                         [[0, 90, 0, 0],
+                          [270, -90, .01, -1]])
+def test_create_swift_skymap(ra, dec, error, pix):
+    """Test created single pixel sky maps for Swift localization."""
+    skymap = external_skymaps.create_external_skymap(ra, dec, error)
+    assert skymap[pix] == 1
+
+
+def test_create_fermi_skymap():
+    """Test created single pixel sky maps for Swift localization."""
+    ra, dec, error = 0, 90, 10
+    external_skymaps.create_external_skymap(ra, dec, error)
+
+
+@patch('gwcelery.tasks.gracedb.upload.run')
+@patch('gwcelery.tasks.skymaps.plot_allsky.run')
+def test_create_upload_swift_skymap(mock_plot_allsky,
+                                    mock_upload):
+    """Test the creation and upload of sky maps for Swift localization."""
+    event = {'graceid': 'E1234',
+             'pipeline': 'Swift',
+             'gpstime': 1259790538.77,
+             'extra_attributes': {
+                 'GRB': {
+                     'trigger_id': 1234567,
+                     'ra': 0,
+                     'dec': 0,
+                     'error_radius': 0}},
+             'links': {
+                 'self': 'https://gracedb.ligo.org/api/events/E356793'}}
+    external_skymaps.create_upload_external_skymap(event)
+    mock_upload.assert_called()
+    mock_plot_allsky.assert_called_once()

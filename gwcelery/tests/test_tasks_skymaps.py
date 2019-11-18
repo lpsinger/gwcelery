@@ -81,6 +81,18 @@ def test_plot_allsky(mock_plot):
     assert cmdline[2].endswith('.png')
 
 
+@patch('ligo.skymap.tool.ligo_skymap_plot.main')
+def test_plot_allsky_swift(mock_plot):
+    # Run function under test
+    skymaps.plot_allsky('', ra=0, dec=0)
+
+    # Check that the script would have been run once
+    # with the correct arguments
+    mock_plot.assert_called_once()
+    cmdline, = mock_plot.call_args[0]
+    assert cmdline[2].endswith('.png')
+
+
 def test_is_3d_fits_file(toy_fits_filecontents, toy_3d_fits_filecontents):
     # This is not a 3D FITS file.
     assert not skymaps.is_3d_fits_file(toy_fits_filecontents)

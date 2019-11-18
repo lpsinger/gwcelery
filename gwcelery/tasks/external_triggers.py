@@ -5,7 +5,7 @@ from celery.utils.log import get_logger
 from . import detchar
 from . import gcn
 from . import gracedb
-from . import ligo_fermi_skymaps
+from . import external_skymaps
 from . import lvalert
 from . import raven
 
@@ -112,7 +112,10 @@ def handle_grb_gcn(payload):
         start = event['gpstime']
         end = start + event['extra_attributes']['GRB']['trigger_duration']
         detchar.check_vectors(event, event['graceid'], start, end)
-    ligo_fermi_skymaps.get_upload_external_skymap(graceid)
+
+    external_skymaps.create_upload_external_skymap(event)
+    if event['pipeline'] == 'Fermi':
+        external_skymaps.get_upload_external_skymap(graceid)
 
 
 @lvalert.handler('superevent',
@@ -133,7 +136,7 @@ def handle_grb_lvalert(alert):
     * Any new event triggers a coincidence search with
       :meth:`gwcelery.tasks.raven.coincidence_search`.
     * The ``EM_COINC`` label triggers the creation of a combined GW-GRB sky map
-      using :meth:`gwcelery.tasks.ligo_fermi_skymaps.create_combined_skymap`.
+      using :meth:`gwcelery.tasks.external_skymaps.create_combined_skymap`.
 
     """
     # Determine GraceDB ID
@@ -151,9 +154,6 @@ def handle_grb_lvalert(alert):
             raven.coincidence_search(graceid, alert['object'],
                                      group=group,
                                      pipelines=['Fermi', 'Swift'])
-        elif alert['alert_type'] == 'label_added' and \
-                alert['data']['name'] == 'EM_COINC':
-            ligo_fermi_skymaps.create_combined_skymap(graceid).delay()
 
 
 @lvalert.handler('superevent',

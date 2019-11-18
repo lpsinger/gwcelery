@@ -80,7 +80,7 @@ def test_calculate_coincidence_far(
 
 
 @pytest.mark.parametrize('group', ['CBC', 'Burst'])  # noqa: F811
-@patch('gwcelery.tasks.ligo_fermi_skymaps.get_preferred_skymap',
+@patch('gwcelery.tasks.external_skymaps.get_preferred_skymap',
        return_value='bayestar.fits.gz')
 @patch('gwcelery.tasks.raven.calc_signif')
 def test_calculate_spacetime_coincidence_far(

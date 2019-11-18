@@ -9,13 +9,15 @@ from ..tasks import detchar
 from . import resource_json
 
 
-@patch('gwcelery.tasks.ligo_fermi_skymaps.get_upload_external_skymap',
+@patch('gwcelery.tasks.external_skymaps.get_upload_external_skymap',
        return_value=None)
 @patch('gwcelery.tasks.detchar.dqr_json', return_value='dqrjson')
 @patch('gwcelery.tasks.gracedb.upload.run')
 @patch('gwcelery.tasks.gracedb.get_event', return_value={
     'graceid': 'E1', 'gpstime': 1, 'instruments': '', 'pipeline': 'Fermi',
-    'extra_attributes': {'GRB': {'trigger_duration': 1}}})
+    'extra_attributes': {'GRB': {'trigger_duration': 1, 'trigger_id': 123,
+                                 'ra': 0., 'dec': 0., 'error_radius': 10.}},
+    'links': {'self': 'https://gracedb.ligo.org/events/E356793/'}})
 @patch('gwcelery.tasks.gracedb.create_event')
 def test_handle_create_grb_event(mock_create_event, mock_get_event,
                                  mock_upload, mock_json,
@@ -50,7 +52,11 @@ def test_handle_create_grb_event(mock_create_event, mock_get_event,
 
 
 @patch('gwcelery.tasks.gracedb.get_events', return_value=[])
-@patch('gwcelery.tasks.gracedb.get_event')
+@patch('gwcelery.tasks.gracedb.get_event', return_value={
+    'graceid': 'E1', 'gpstime': 1, 'instruments': '', 'pipeline': 'Fermi',
+    'extra_attributes': {'GRB': {'trigger_duration': 1, 'trigger_id': 123,
+                                 'ra': 0., 'dec': 0., 'error_radius': 10.}},
+    'links': {'self': 'https://gracedb.ligo.org/events/E356793/'}})
 @patch('gwcelery.tasks.gracedb.create_event')
 @patch('gwcelery.tasks.detchar.check_vectors')
 def test_handle_create_subthreshold_grb_event(mock_check_vectors,
@@ -76,7 +82,11 @@ def test_handle_create_subthreshold_grb_event(mock_check_vectors,
 
 
 @patch('gwcelery.tasks.gracedb.replace_event')
-@patch('gwcelery.tasks.gracedb.get_events', return_value=[{'graceid': 'E1'}])
+@patch('gwcelery.tasks.gracedb.get_events', return_value=[{
+    'graceid': 'E1', 'gpstime': 1, 'instruments': '', 'pipeline': 'Fermi',
+    'extra_attributes': {'GRB': {'trigger_duration': 1, 'trigger_id': 123,
+                                 'ra': 0., 'dec': 0., 'error_radius': 10.}},
+    'links': {'self': 'https://gracedb.ligo.org/events/E356793/'}}])
 def test_handle_replace_grb_event(mock_get_events, mock_replace_event):
     text = resource_string(__name__, 'data/fermi_grb_gcn.xml')
     external_triggers.handle_grb_gcn(payload=text)
@@ -180,25 +190,3 @@ def test_handle_superevent_creation(mock_raven_coincidence_search,
     mock_raven_coincidence_search.assert_called_once_with(
         'S180616h', alert['object'], group='CBC',
         pipelines=['Fermi', 'Swift'])
-
-
-@patch('ligo.raven.gracedb_events.ExtTrig')
-@patch('ligo.raven.gracedb_events.SE')
-@patch('gwcelery.tasks.gracedb.get_superevent',
-       return_value={'preferred_event': 'M4634'})
-@patch('gwcelery.tasks.gracedb.get_event', return_value={'group': 'CBC'})
-@patch('gwcelery.tasks.raven.calculate_coincidence_far')
-@patch('gwcelery.tasks.ligo_fermi_skymaps.create_combined_skymap')
-def test_handle_superevent_emcoinc_label1(mock_create_combined_skymap,
-                                          mock_calc_coinc_far,
-                                          mock_get_event, mock_get_superevent,
-                                          mock_se_cls, mock_exttrig_cls):
-    """Test dispatch of an LVAlert message for a superevent EM_COINC label
-    application.
-    """
-    alert = {"uid": "S180616h",
-             "alert_type": "label_added",
-             "data": {"name": "EM_COINC"}}
-
-    external_triggers.handle_grb_lvalert(alert)
-    mock_create_combined_skymap.assert_called_once_with('S180616h')

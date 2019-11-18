@@ -13,7 +13,7 @@ gwcelery.tasks module
     gwcelery.tasks.em_bright
     gwcelery.tasks.external_triggers
     gwcelery.tasks.first2years
-    gwcelery.tasks.ligo_fermi_skymaps
+    gwcelery.tasks.external_skymaps
     gwcelery.tasks.gcn
     gwcelery.tasks.gracedb
     gwcelery.tasks.inference
