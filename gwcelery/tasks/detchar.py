@@ -110,8 +110,8 @@ def make_omegascan(ifo, t0, durs):
 
     Returns
     -------
-    plt.figure() or None
-        Matplotlib figure of the omegascan, or None if no omegascan created.
+    bytes or None
+        bytes of png of the omegascan, or None if no omegascan created.
 
     """
     # Set up output
@@ -124,6 +124,10 @@ def make_omegascan(ifo, t0, durs):
     try:
         ts = TimeSeries.read(cache, strain_name,
                              start=long_start, end=long_end).astype('float64')
+        # Do q_transforms for the different durations
+        qgrams = [ts.q_transform(
+            frange=(20, 4096), gps=t0, outseg=(t0 - durs[n], t0 + durs[n]),
+            logf=True) for n in range(len(durs))]
     except (IORegistryError, FloatingPointError):
         # data from cache can't be properly read, or data is weird
         fig = plt.figure()
@@ -132,11 +136,6 @@ def make_omegascan(ifo, t0, durs):
         fig.savefig(outfile, format='png', dpi=100)
         png = outfile.getvalue()
         return png
-
-    # Do q_transforms for the different durations
-    qgrams = [ts.q_transform(
-        frange=(20, 4096), gps=t0, outseg=(t0 - durs[n], t0 + durs[n]),
-        logf=True) for n in range(len(durs))]
 
     # Plot
     fig, axs = plt.subplots(1, len(durs),
