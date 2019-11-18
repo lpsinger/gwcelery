@@ -119,7 +119,6 @@ def handle_grb_gcn(payload):
 @lvalert.handler('superevent',
                  'mdc_superevent',
                  'external_fermi',
-                 'external_grb',
                  'external_swift',
                  shared=False)
 def handle_grb_lvalert(alert):
