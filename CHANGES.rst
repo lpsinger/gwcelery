@@ -97,6 +97,9 @@ This is the initial release of GWCelery for O3b.
 -   Run ``check_vectors`` upon the creation of a superevent. This will
     allow subthreshold superevents to be annotated with DQ label.
 
+-   Prevent second preliminary to be sent in the event of any advocate action.
+    Previously, this was only being prevented for ADVNO.
+
 0.8.7 (2019-09-14)
 ------------------
 

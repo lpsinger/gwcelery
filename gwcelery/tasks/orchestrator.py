@@ -104,36 +104,28 @@ def handle_superevent(alert):
 
         # launch second preliminary on GCN_PRELIM_SENT
         elif label_name == 'GCN_PRELIM_SENT':
-            if {'ADVNO', 'DQV'}.isdisjoint(alert['object']['labels']):
-                query = f'superevent: {superevent_id}'
-                if alert['object']['category'] == 'MDC':
-                    query += ' MDC'
-                elif alert['object']['category'] == 'Test':
-                    query += ' Test'
+            query = f'superevent: {superevent_id}'
+            if alert['object']['category'] == 'MDC':
+                query += ' MDC'
+            elif alert['object']['category'] == 'Test':
+                query += ' Test'
 
-                canvas = (
-                    gracedb.get_events.si(query).set(
-                        countdown=app.conf['superevent_clean_up_timeout']
-                    )
-                    |
-                    superevents.select_preferred_event.s()
-                    |
-                    _update_superevent_and_return_event_dict.s(superevent_id)
-                    |
-                    _leave_log_message_and_return_event_dict.s(
-                        superevent_id,
-                        "Superevent cleaned up. "
-                        "Sending second preliminary."
-                    )
-                    |
-                    preliminary_alert.s(superevent_id)
+            (
+                gracedb.get_events.si(query).set(
+                    countdown=app.conf['superevent_clean_up_timeout']
                 )
-            else:  # don't second second preliminary if vetoed
-                canvas = gracedb.upload.si(
-                    None, None, superevent_id,
-                    "Second preliminary not sent due to ADVNO or DQV"
+                |
+                superevents.select_preferred_event.s()
+                |
+                _update_superevent_and_return_event_dict.s(superevent_id)
+                |
+                _leave_log_message_and_return_event_dict.s(
+                    superevent_id,
+                    "Superevent cleaned up."
                 )
-            canvas.apply_async()
+                |
+                preliminary_alert.s(superevent_id)
+            ).apply_async()
         # launch initial/retraction alert on ADVOK/ADVNO
         elif label_name == 'ADVOK':
             initial_alert((None, None, None), superevent_id)
@@ -412,6 +404,26 @@ def _update_superevent_and_return_event_dict(event, superevent_id):
     return event
 
 
+@gracedb.task(shared=False)
+def _proceed_if_no_advocate_action(filenames, superevent_id):
+    """Return filenames in case the superevent does not have labels
+    indicating advocate action.
+    """
+    superevent_labels = gracedb.get_labels(superevent_id)
+    blocking_labels = {'ADVOK', 'ADVNO'}.intersection(
+        superevent_labels)
+    if blocking_labels:
+        gracedb.upload(
+            None, None, superevent_id,
+            "Blocking automated notice due to labels %s" % (blocking_labels)
+        )
+        return None
+    else:
+        gracedb.upload(None, None, superevent_id,
+                       "Sending preliminary notice")
+        return filenames
+
+
 @app.task(ignore_result=True, shared=False)
 def preliminary_alert(event, superevent_id, annotation_prefix='',
                       initiate_voevent=True):
@@ -525,8 +537,12 @@ def preliminary_alert(event, superevent_id, annotation_prefix='',
 
     # Send GCN notice and upload GCN circular draft for online events.
     if is_publishable and initiate_voevent:
-        canvas |= preliminary_initial_update_alert.s(
-            superevent_id, 'preliminary')
+        canvas |= (
+            _proceed_if_no_advocate_action.s(superevent_id)
+            |
+            preliminary_initial_update_alert.s(
+                superevent_id, 'preliminary')
+        )
 
     canvas.apply_async(priority=priority)
 
@@ -604,6 +620,9 @@ def preliminary_initial_update_alert(filenames, superevent_id, alert_type):
     API failures.
 
     """
+    if filenames is None:
+        return
+
     skymap_filename, em_bright_filename, p_astro_filename = filenames
     skymap_needed = (skymap_filename is None)
     em_bright_needed = (em_bright_filename is None)
