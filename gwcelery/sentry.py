@@ -59,7 +59,7 @@ def _add_htcondor():
     sentry_sdk.add_breadcrumb(category='htcondor', level='info', data=data)
     with sentry_sdk.configure_scope() as scope:
         scope.set_tag('htcondor.cluster_id', '{}.{}'.format(
-            data['ClusterId'], data['ProcIda']))
+            data['ClusterId'], data['ProcId']))
 
 
 def configure():
