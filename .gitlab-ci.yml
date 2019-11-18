@@ -342,6 +342,26 @@ deploy to playground at LHO:
   variables:
     REMOTE_HOST: emfollow-playground.ligo-wa.caltech.edu
 
+deploy to test at CIT:
+  <<: *deploy-start
+  when: manual
+  environment:
+    name: test/CIT
+    on_stop: stop deployment on test at CIT
+    url: https://emfollow-test.ligo.caltech.edu/flower
+  variables:
+    REMOTE_HOST: emfollow-test.ligo.caltech.edu
+
+deploy to test at LHO:
+  <<: *deploy-start
+  when: manual
+  environment:
+    name: test/LHO
+    on_stop: stop deployment on test at LHO
+    url: https://emfollow-test.ligo-wa.caltech.edu/flower
+  variables:
+    REMOTE_HOST: emfollow-test.ligo-wa.caltech.edu
+
 stop deployment on production at CIT:
   <<: *deploy-stop
   when: manual
@@ -368,4 +388,18 @@ stop deployment on playground at LHO:
   when: manual
   environment:
     name: playground/LHO
+    action: stop
+
+stop deployment on test at CIT:
+  <<: *deploy-stop
+  when: manual
+  environment:
+    name: test/CIT
+    action: stop
+
+stop deployment on test at LHO:
+  <<: *deploy-stop
+  when: manual
+  environment:
+    name: test/LHO
     action: stop

@@ -45,4 +45,7 @@ emfollow)
 emfollow-playground)
     export CELERY_CONFIG_MODULE="gwcelery.conf.playground"
     ;;
+emfollow-test)
+    export CELERY_CONFIG_MODULE="gwcelery.conf.test"
+    ;;
 esac
