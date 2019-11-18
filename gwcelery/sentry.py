@@ -1,6 +1,7 @@
 """Error telemetry for `Sentry <https://sentry.io>`_."""
 from urllib.parse import urlparse, urlunparse
 from subprocess import CalledProcessError
+import os
 
 from celery.utils.log import get_logger
 from safe_netrc import netrc, NetrcParseError
@@ -38,6 +39,27 @@ def before_send(event, hint):
             breadcrumb.setdefault('data', {})[key] = value.decode(
                 errors='replace')
     return event
+
+
+def _read_classad(filename):
+    with open(filename) as f:
+        for line in f:
+            key, value = line.partition('=')
+            key = key.strip()
+            value = value.strip().strip('"')
+            yield key, value
+
+
+def _add_htcondor():
+    """Record HTCondor job information in Sentry."""
+    try:
+        data = dict(_read_classad(os.environ['_CONDOR_JOB_AD']))
+    except (KeyError, IOError):
+        return
+    with sentry_sdk.configure_scope() as scope:
+        scope.add_breadcrumb(category='htcondor', level='info', data=data)
+        scope.set_tag('htcondor.cluster_id', '{}.{}'.format(
+            data['ClusterId'], data['ProcIda']))
 
 
 def configure():
@@ -84,3 +106,4 @@ def configure():
                                   flask.FlaskIntegration(),
                                   redis.RedisIntegration(),
                                   tornado.TornadoIntegration()])
+    _add_htcondor()
