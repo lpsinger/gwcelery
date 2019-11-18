@@ -53,17 +53,32 @@ def handle_superevent(alert):
             parameter_estimation.s(superevent_id)
         ).apply_async()
 
-        # Create and upload omegascans
-        detchar.omegascan.apply_async(
-            args=[alert['object']['t_0'], superevent_id],
-            countdown=10
-        )
+        # run check_vectors. Create and upload omegascans
+        group(
+            detchar.omegascan.si(
+                alert['object']['t_0'],
+                superevent_id
+            ).set(countdown=10),
+
+            detchar.check_vectors.si(
+                superevent_id,
+                alert['object']['t_start'],
+                alert['object']['t_end']
+            )
+        ).delay()
 
     elif alert['alert_type'] == 'label_added':
         label_name = alert['data']['name']
         if label_name == superevents.FROZEN_LABEL:
             (
                 gracedb.get_event.s(alert['object']['preferred_event'])
+                |
+                _leave_log_message_and_return_event_dict.s(
+                    superevent_id,
+                    "Automated DQ check before sending preliminary alert. "
+                    "New results supersede old results.",
+                    tags=['data_quality']
+                )
                 |
                 detchar.check_vectors.s(
                     superevent_id,
@@ -378,11 +393,12 @@ def _create_label_and_return_filename(filename, label, graceid):
 
 
 @gracedb.task(shared=False)
-def _leave_log_message_and_return_event_dict(event, superevent_id, message):
+def _leave_log_message_and_return_event_dict(event, superevent_id,
+                                             message, **kwargs):
     """Wrapper around :meth:`gracedb.update_superevent`
     that returns the event dictionary.
     """
-    gracedb.upload(None, None, superevent_id, message)
+    gracedb.upload(None, None, superevent_id, message, **kwargs)
     return event
 
 

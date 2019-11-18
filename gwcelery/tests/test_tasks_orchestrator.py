@@ -111,6 +111,7 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
     preliminary_alert_pipeline = Mock()
     select_preferred_event_task = Mock()
     omegascan = Mock()
+    check_vectors = Mock()
 
     monkeypatch.setattr('gwcelery.tasks.gcn.send.run', send)
     monkeypatch.setattr('gwcelery.tasks.skymaps.plot_allsky.run', plot_allsky)
@@ -144,6 +145,8 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
         select_preferred_event_task
     )
     monkeypatch.setattr('gwcelery.tasks.detchar.omegascan.run', omegascan)
+    monkeypatch.setattr('gwcelery.tasks.detchar.check_vectors.run',
+                        check_vectors)
 
     # Run function under test
     orchestrator.handle_superevent(alert)
@@ -180,6 +183,7 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
 
     if alert_type == 'new':
         omegascan.assert_called_once()
+        check_vectors.assert_called_once()
 
 
 @patch('gwcelery.tasks.gracedb.get_labels', return_value={'DQV', 'ADVREQ'})

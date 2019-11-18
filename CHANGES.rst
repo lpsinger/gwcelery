@@ -94,6 +94,9 @@ This is the initial release of GWCelery for O3b.
 
 -   Create omegascans for all detectors upon creation of new superevent.
 
+-   Run ``check_vectors`` upon the creation of a superevent. This will
+    allow subthreshold superevents to be annotated with DQ label.
+
 0.8.7 (2019-09-14)
 ------------------
 
