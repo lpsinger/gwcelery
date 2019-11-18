@@ -44,7 +44,7 @@ def before_send(event, hint):
 def _read_classad(filename):
     with open(filename) as f:
         for line in f:
-            key, value = line.partition('=')
+            key, _, value = line.partition('=')
             key = key.strip()
             value = value.strip().strip('"')
             yield key, value
