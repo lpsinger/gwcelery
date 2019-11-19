@@ -14,7 +14,7 @@ def mock_condor_submit_aborted(monkeypatch):
     """Simulate submitting a condor job: don't actually do anything, just
     write a log message as if the job was aborted.
     """
-    def mock_check_call(args):
+    def mock_run(args):
         assert args[0] == 'condor_submit'
         submit_kwargs = get_submit_kwargs(args)
 
@@ -25,7 +25,7 @@ def mock_condor_submit_aborted(monkeypatch):
                      <a n="EventTypeNumber"><i>9</i></a>
                      </c>''', file=f)
 
-    monkeypatch.setattr('subprocess.check_call', mock_check_call)
+    monkeypatch.setattr('subprocess.run', mock_run)
 
 
 @pytest.fixture
@@ -35,7 +35,7 @@ def mock_condor_submit_running(monkeypatch):
     """
     files_to_remove = []
 
-    def mock_check_call(args):
+    def mock_run(args):
         assert args[0] == 'condor_submit'
         submit_kwargs = get_submit_kwargs(args)
         files_to_remove.extend(
@@ -49,7 +49,7 @@ def mock_condor_submit_running(monkeypatch):
                      <a n="EventTypeNumber"><i>6</i></a>
                      </c>''', file=f)
 
-    monkeypatch.setattr('subprocess.check_call', mock_check_call)
+    monkeypatch.setattr('subprocess.run', mock_run)
     yield
     # Clean up log files
     condor._rm_f(*files_to_remove)
@@ -60,7 +60,7 @@ def mock_condor_submit(monkeypatch):
     """Simulate submitting a condor job by running the underlying executable
     right away and writing the status of the executable to the log file.
     """
-    def mock_check_call(args):
+    def mock_run(args):
         assert args[0] == 'condor_submit'
         submit_kwargs = get_submit_kwargs(args)
 
@@ -79,7 +79,7 @@ def mock_condor_submit(monkeypatch):
                      <a n="EventTypeNumber"><i>5</i></a>
                      </c>'''.format(returncode), file=f)
 
-    monkeypatch.setattr('subprocess.check_call', mock_check_call)
+    monkeypatch.setattr('subprocess.run', mock_run)
 
 
 def test_check_output_error_on_submit(monkeypatch):
@@ -88,10 +88,10 @@ def test_check_output_error_on_submit(monkeypatch):
     cmd = ('sleep', '1')
     msg = 'no such accounting group'  # fake accounting group error
 
-    def mock_check_call(args):
+    def mock_run(args):
         raise subprocess.CalledProcessError(1, args, msg)
 
-    monkeypatch.setattr('subprocess.check_call', mock_check_call)
+    monkeypatch.setattr('subprocess.run', mock_run)
 
     with pytest.raises(subprocess.CalledProcessError) as exc_info:
         condor.check_output.delay(cmd, accounting_group=accounting_group)
