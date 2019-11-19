@@ -14,7 +14,7 @@ def mock_condor_submit_aborted(monkeypatch):
     """Simulate submitting a condor job: don't actually do anything, just
     write a log message as if the job was aborted.
     """
-    def mock_run(args):
+    def mock_run(args, check=None, capture_output=None):
         assert args[0] == 'condor_submit'
         submit_kwargs = get_submit_kwargs(args)
 
@@ -35,7 +35,7 @@ def mock_condor_submit_running(monkeypatch):
     """
     files_to_remove = []
 
-    def mock_run(args):
+    def mock_run(args, check=None, capture_output=None):
         assert args[0] == 'condor_submit'
         submit_kwargs = get_submit_kwargs(args)
         files_to_remove.extend(
@@ -60,7 +60,7 @@ def mock_condor_submit(monkeypatch):
     """Simulate submitting a condor job by running the underlying executable
     right away and writing the status of the executable to the log file.
     """
-    def mock_run(args):
+    def mock_run(args, check=None, capture_output=None):
         assert args[0] == 'condor_submit'
         submit_kwargs = get_submit_kwargs(args)
 
@@ -88,7 +88,7 @@ def test_check_output_error_on_submit(monkeypatch):
     cmd = ('sleep', '1')
     msg = 'no such accounting group'  # fake accounting group error
 
-    def mock_run(args):
+    def mock_run(args, check=None, capture_output=None):
         raise subprocess.CalledProcessError(1, args, msg)
 
     monkeypatch.setattr('subprocess.run', mock_run)
