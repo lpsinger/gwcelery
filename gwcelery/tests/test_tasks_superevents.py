@@ -1,6 +1,6 @@
 from celery import exceptions
 import pytest
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 from ligo.gracedb import rest
 
@@ -39,116 +39,93 @@ lvalert_content = {
 }
 
 
-class T0212HTTPResponse(object):
-    def json(self):
-        return resource_json(__name__, 'data/T0212_S0039_preferred.json')
-
-
-class G000012HTTPResponse(object):
-    def json(self):
-        return resource_json(__name__, 'data/G000012_S0040_preferred.json')
-
-
-class G330308HTTPResponse(object):
-    def json(self):
-        return {
-            'graceid': 'G330308',
-            'gpstime': 1239917954.250977,
-            'pipeline': 'pycbc',
-            'group': 'CBC',
-            'offline': False,
-            'far': 1.48874654585461e-08,
-            'instruments': 'H1,L1',
-            'extra_attributes': {
-                'SingleInspiral': [
-                    {
-                        'chisq': 1.07,
-                        'snr': 7.95,
-                        'ifo': 'L1'
-                    },
-                    {
-                        'chisq': 0.54,
-                        'snr': 6.35,
-                        'ifo': 'H1'
-                    }
-                ],
-                'CoincInspiral': {
-                    'snr': 10.17
-                }
+G330308_RESPONSE = {
+    'graceid': 'G330308',
+    'gpstime': 1239917954.250977,
+    'pipeline': 'pycbc',
+    'group': 'CBC',
+    'offline': False,
+    'far': 1.48874654585461e-08,
+    'instruments': 'H1,L1',
+    'extra_attributes': {
+        'SingleInspiral': [
+            {
+                'chisq': 1.07,
+                'snr': 7.95,
+                'ifo': 'L1'
             },
-            'search': 'AllSky',
-            'superevent': 'S190421ar',
-            'labels': ['PASTRO_READY', 'EMBRIGHT_READY']
+            {
+                'chisq': 0.54,
+                'snr': 6.35,
+                'ifo': 'H1'
+            }
+        ],
+        'CoincInspiral': {
+            'snr': 10.17
         }
+    },
+    'search': 'AllSky',
+    'superevent': 'S190421ar',
+    'labels': ['PASTRO_READY', 'EMBRIGHT_READY']
+}
 
 
-class G330298HTTPResponse(object):
-    def json(self):
-        return {
-            'graceid': 'G330298',
-            'gpstime': 1239917954.40918,
-            'pipeline': 'spiir',
-            'group': 'CBC',
-            'offline': False,
-            'far': 5.57979637960671e-06,
-            'instruments': 'H1,L1',
-            'extra_attributes': {
-                'SingleInspiral': [
-                    {
-                        'chisq': 0.61,
-                        'snr': 6.64,
-                        'ifo': 'L1'
-                    },
-                    {
-                        'chisq': 1.1,
-                        'snr': 8.14,
-                        'ifo': 'H1'
-                    }
-                ],
-                'CoincInspiral': {
-                    'snr': 10.51
-                }
+G330298_RESPONSE = {
+    'graceid': 'G330298',
+    'gpstime': 1239917954.40918,
+    'pipeline': 'spiir',
+    'group': 'CBC',
+    'offline': False,
+    'far': 5.57979637960671e-06,
+    'instruments': 'H1,L1',
+    'extra_attributes': {
+        'SingleInspiral': [
+            {
+                'chisq': 0.61,
+                'snr': 6.64,
+                'ifo': 'L1'
             },
-            'search': 'HighMass',
-            'superevent': 'S190421ar',
-            'labels': []
+            {
+                'chisq': 1.1,
+                'snr': 8.14,
+                'ifo': 'H1'
+            }
+        ],
+        'CoincInspiral': {
+            'snr': 10.51
         }
+    },
+    'search': 'HighMass',
+    'superevent': 'S190421ar',
+    'labels': []
+}
 
 
 @pytest.fixture(autouse=True)
 def mock_db(monkeypatch):
-    class FakeDb(object):
-        def __init__(self):
-            self._service_url = 'service_url'
 
-        def createSuperevent(self, *args, **kwargs):    # noqa: N802
-            pass
+    def get_superevents(*args, **kwargs):
+        return resource_json(__name__, 'data/superevents.json')['superevents']
 
-        def superevents(self, *args, **kwargs):
-            response = resource_json(__name__, 'data/superevents.json')
-            return (s for s in response['superevents'])
+    def get_event(gid):
+        if gid == "T0212":
+            return resource_json(__name__, 'data/T0212_S0039_preferred.json')
+        elif gid == "G000012":
+            return resource_json(__name__, 'data/G000012_S0040_preferred.json')
+        elif gid == "G330308":
+            return G330308_RESPONSE
+        elif gid == "G330298":
+            return G330298_RESPONSE
+        else:
+            raise ValueError("Called with incorrect preferred event %s" % gid)
 
-        def updateSuperevent(self, *args, **kwargs):    # noqa: N802
-            pass
-
-        def addEventToSuperevent(self, *args, **kwargs):    # noqa: N802
-            pass
-
-        def event(self, gid):
-            if gid == "T0212":
-                return T0212HTTPResponse()
-            elif gid == "G000012":
-                return G000012HTTPResponse()
-            elif gid == "G330308":
-                return G330308HTTPResponse()
-            elif gid == "G330298":
-                return G330298HTTPResponse()
-            else:
-                raise ValueError("Called with incorrect preferred event %s"
-                                 % (gid))
-
-    monkeypatch.setattr('gwcelery.tasks.gracedb.client', FakeDb())
-    yield
+    monkeypatch.setattr('gwcelery.tasks.gracedb.create_superevent', Mock())
+    monkeypatch.setattr('gwcelery.tasks.gracedb.get_superevents', Mock())
+    monkeypatch.setattr('gwcelery.tasks.gracedb.add_event_to_superevent',
+                        Mock())
+    monkeypatch.setattr('gwcelery.tasks.gracedb.get_superevents',
+                        get_superevents)
+    monkeypatch.setattr('gwcelery.tasks.gracedb.get_event', get_event)
 
 
 def test_select_preferred_event():
@@ -232,7 +209,7 @@ def test_update_preferred_event(superevent_labels, new_event_labels,
         }
     )
 
-    with patch.object(gracedb.client, 'updateSuperevent') as p, \
+    with patch('gwcelery.tasks.gracedb.update_superevent') as p, \
             patch('gwcelery.tasks.gracedb.create_label.run') as create_label, \
             patch('gwcelery.tasks.gracedb.get_event',
                   return_value=preferred_event_dictionary):
@@ -260,18 +237,18 @@ def test_update_preferred_event(superevent_labels, new_event_labels,
             elif new_event_id == 'T1234' and (
                     not is_complete_preferred and is_complete_new):
                 p.assert_called_with('S0039', preferred_event='T1234',
-                                     t_start=None, t_end=None, t_0=None)
+                                     t_0=None)
                 create_label.assert_called_once_with('EM_READY', 'S0039')
 
             elif new_event_id == 'T1234' and (
                     is_complete_preferred and is_complete_new):
                 p.assert_called_with('S0039', preferred_event='T1234',
-                                     t_start=None, t_end=None, t_0=None)
+                                     t_0=None)
                 create_label.assert_called_once_with('EM_READY', 'S0039')
             elif new_event_id == 'T1234' and (
                     not is_complete_preferred and not is_complete_new):
                 p.assert_called_with('S0039', preferred_event='T1234',
-                                     t_start=None, t_end=None, t_0=None)
+                                     t_0=None)
                 create_label.assert_called_once_with('EM_READY', 'S0039')
             # this is the case of label addition to existing preferred event
             elif new_event_id == 'T0212':
@@ -371,8 +348,8 @@ def test_upload_same_event():
             "labels": []
         }
     }
-    with patch.object(gracedb.client, 'addEventToSuperevent') as p1, \
-            patch.object(gracedb.client, 'updateSuperevent') as p2:
+    with patch('gwcelery.tasks.gracedb.add_event_to_superevent') as p1, \
+            patch('gwcelery.tasks.gracedb.update_superevent') as p2:
         superevents.handle(payload)
         p1.assert_called_once()
         p2.assert_not_called()
@@ -471,8 +448,8 @@ def test_parse_trigger_cbc_1(mock_db):
                    data=event_dictionary,
                    alert_type='new',
                    uid='G000000')
-    with patch.object(gracedb.client, 'addEventToSuperevent') as p1, \
-            patch.object(gracedb.client, 'updateSuperevent') as p2:
+    with patch('gwcelery.tasks.gracedb.add_event_to_superevent') as p1, \
+            patch('gwcelery.tasks.gracedb.update_superevent') as p2:
         superevents.handle(payload)
         p1.assert_called_once()
         p2.assert_not_called()
@@ -502,14 +479,13 @@ def test_parse_trigger_cbc_2(mock_db):
                    uid='G000003')
     # addEventToSuperevent should be called
     # preferred event should be updated, t_0 should change
-    with patch.object(gracedb.client, 'addEventToSuperevent') as p1, \
-            patch.object(gracedb.client, 'updateSuperevent') as p2, \
+    with patch('gwcelery.tasks.gracedb.add_event_to_superevent') as p1, \
+            patch('gwcelery.tasks.gracedb.update_superevent') as p2, \
             patch('gwcelery.tasks.gracedb.create_label.run') as create_label:
         superevents.handle(payload)
         p1.assert_called_once()
         p2.assert_called_once_with('S0039', preferred_event='G000003',
-                                   t_0=1163905224.4332082, t_start=None,
-                                   t_end=None)
+                                   t_0=1163905224.4332082)
         if superevents.is_complete(event_dictionary):
             create_label.assert_called_once_with('EM_READY', 'S0039')
         else:
@@ -540,7 +516,7 @@ def test_parse_trigger_cbc_3(mock_db):
                    uid='G000001')
     # G000001 absent in any superevent window, new superevent created
     # createSuperevent should be called exactly once
-    with patch.object(gracedb.client, 'createSuperevent') as p:
+    with patch('gwcelery.tasks.gracedb.create_superevent') as p:
         superevents.handle(payload)
         p.assert_called_once()
 
@@ -597,11 +573,11 @@ def test_parse_trigger_burst_1(mock_db):
                    uid='G000005')
     # preferred event should not be updated
     # superevent window should change
-    with patch.object(gracedb.client, 'addEventToSuperevent') as p1, \
-            patch.object(gracedb.client, 'updateSuperevent') as p2:
+    with patch('gwcelery.tasks.gracedb.add_event_to_superevent') as p1, \
+            patch('gwcelery.tasks.gracedb.update_superevent') as p2:
         superevents.handle(payload)
         p1.assert_called_once()
-        p2.assert_called_once_with('S0039', preferred_event=None, t_0=None,
+        p2.assert_called_once_with('S0039',
                                    t_end=pytest.approx(1163905239, abs=1),
                                    t_start=pytest.approx(1163905214, abs=1))
 
@@ -631,11 +607,11 @@ def test_parse_trigger_burst_2(mock_db):
                    data=event_dictionary,
                    alert_type='new',
                    uid='G000006')
-    with patch.object(gracedb.client, 'addEventToSuperevent') as p1, \
-            patch.object(gracedb.client, 'updateSuperevent') as p2:
+    with patch('gwcelery.tasks.gracedb.add_event_to_superevent') as p1, \
+            patch('gwcelery.tasks.gracedb.update_superevent') as p2:
         superevents.handle(payload)
         p1.assert_called_once()
-        p2.assert_called_once_with('S0039', t_0=None, preferred_event=None,
+        p2.assert_called_once_with('S0039',
                                    t_end=pytest.approx(1163905239, abs=1),
                                    t_start=pytest.approx(1163905214, abs=1))
 
@@ -664,13 +640,13 @@ def test_parse_trigger_burst_3(mock_db):
                    alert_type='new',
                    uid='G000007')
     # G000007 absent in any superevent window, new superevent created
-    with patch.object(gracedb.client, 'createSuperevent') as p:
+    with patch('gwcelery.tasks.gracedb.create_superevent') as p:
         superevents.handle(payload)
-        p.assert_called_once_with(pytest.approx(1163905248.5),
+        p.assert_called_once_with('G000007',
                                   pytest.approx(1163905249.5),
+                                  pytest.approx(1163905248.5),
                                   pytest.approx(1163905250.5),
-                                  preferred_event='G000007',
-                                  category='production')
+                                  'production')
 
 
 def test_parse_trigger_burst_4(mock_db):
@@ -697,7 +673,7 @@ def test_parse_trigger_burst_4(mock_db):
                    alert_type='new',
                    uid='G000008')
     # G000008 absent in any superevent window, new superevent created
-    with patch.object(gracedb.client, 'createSuperevent') as p:
+    with patch('gwcelery.tasks.gracedb.create_superevent') as p:
         superevents.handle(payload)
         p.assert_called_once()
 
@@ -727,8 +703,8 @@ def test_S190421ar_spiir_scenario(mock_db):    # noqa: N802
                    object=event_dictionary,
                    data=event_dictionary,
                    uid='G330298')
-    with patch.object(gracedb.client, 'addEventToSuperevent') as p1, \
-            patch.object(gracedb.client, 'updateSuperevent') as p2:
+    with patch('gwcelery.tasks.gracedb.add_event_to_superevent') as p1, \
+            patch('gwcelery.tasks.gracedb.update_superevent') as p2:
         superevents.handle(payload)
         p1.assert_called_once()
         p2.assert_not_called()
