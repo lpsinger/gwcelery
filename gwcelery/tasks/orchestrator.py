@@ -60,7 +60,9 @@ def handle_superevent(alert):
                 superevent_id
             ).set(countdown=10),
 
-            detchar.check_vectors.si(
+            gracedb.get_event.si(alert['object']['preferred_event'])
+            |
+            detchar.check_vectors.s(
                 superevent_id,
                 alert['object']['t_start'],
                 alert['object']['t_end']
