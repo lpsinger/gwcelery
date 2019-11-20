@@ -44,24 +44,6 @@ class T0212HTTPResponse(object):
         return resource_json(__name__, 'data/T0212_S0039_preferred.json')
 
 
-class SingleT0212HTTPResponse(object):
-    def __init__(self, event):
-        if event != 'T0212':
-            raise ValueError("Called with incorrect preferred event")
-
-    def json(self):
-        response = resource_json(
-            __name__, 'data/T0212_S0039_preferred.json')
-        response['instruments'] = "H1"
-        # FIXME setting the chisq value for None for other detetors
-        # this is supposed to be temporary fix. To be removed when
-        # gstlal uploads correct 'instruments' field
-        response['extra_attributes']['SingleInspiral'] = [
-            {'chisq': 1 if instrument in ['H1'] else None}
-            for instrument in ['H1', 'L1', 'V1']]
-        return response
-
-
 class G000012HTTPResponse(object):
     def json(self):
         return resource_json(__name__, 'data/G000012_S0040_preferred.json')
