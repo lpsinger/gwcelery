@@ -29,12 +29,12 @@
     - [ ] `p_astro.json`
     - [ ] `p_astro.png`
     - [ ] `em_bright.json`
-    - [ ] `LALInference.posterior_samples.hdf5`
-    - [ ] `LALInference.multiorder.fits`
-    - [ ] `LALInference.fits.gz`
-    - [ ] `LALInference.png`
-    - [ ] `LALInference.volume.png`
-    - [ ] `LALInference.html`
+    - ~~[ ] `LALInference.posterior_samples.hdf5`~~ (LALInference known to be broken; see #273)
+    - ~~[ ] `LALInference.multiorder.fits`~~ (LALInference known to be broken; see #273)
+    - ~~[ ] `LALInference.fits.gz`~~ (LALInference known to be broken; see #273)
+    - ~~[ ] `LALInference.png`~~ (LALInference known to be broken; see #273)
+    - ~~[ ] `LALInference.volume.png`~~ (LALInference known to be broken; see #273)
+    - ~~[ ] `LALInference.html`~~ (LALInference known to be broken; see #273)
 12. [ ] The MDC superevent has the following labels.
     - [ ] `EMBRIGHT_READY`
     - [ ] `GCN_PRELIM_SENT`
