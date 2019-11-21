@@ -7,7 +7,7 @@ candidates.
 import json
 import re
 
-from celery import chain, group
+from celery import group
 
 from ..import app
 from . import bayestar
@@ -675,7 +675,7 @@ def preliminary_initial_update_alert(filenames, superevent_id, alert_type,
                 tags=tags)
         )
     else:
-        circular_canvas = chain()
+        circular_canvas = identity.s()
 
     canvas = (
         group(
