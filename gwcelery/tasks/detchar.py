@@ -333,11 +333,13 @@ def check_vector(cache, channel, start, end, bits, logic_type='all'):
         try:
             statevector = StateVector.read(cache, channel,
                                            start=start, end=end, bits=bits)
-            return {bitname.format(channel.split(':')[0], key):
-                    bool(logic_map[logic_type](value.value))
-                    for key, value in statevector.get_bit_series().items()}
         except IndexError:
             log.exception('Failed to read from low-latency frame files')
+        if len(statevector) > 0:  # statevector must not be empty
+            return {bitname.format(channel.split(':')[0], key):
+                    bool(logic_map[logic_type](
+                        value.value if len(value.value) > 0 else None))
+                    for key, value in statevector.get_bit_series().items()}
     # FIXME: figure out how to get access to low-latency frames outside
     # of the cluster. Until we figure that out, actual I/O errors have
     # to be non-fatal.

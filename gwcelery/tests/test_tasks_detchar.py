@@ -174,6 +174,21 @@ def test_check_vector(llhoft_glob_pass):
         'H1:NO_DMT-ETMY_ESD_DAC_OVERFLOW': True}
 
 
+@patch('gwcelery.tasks.detchar.StateVector.read', return_value=[])
+def test_check_vector_fails_on_empty(mock_statevector, llhoft_glob_pass):
+    channel = 'H1:DMT-DQ_VECTOR'
+    start, end = 1216577976, 1216577980
+    cache = detchar.create_cache('H1', start, end)
+    bit_defs = {channel_type: Bits(channel=bitdef['channel'],
+                                   bits=bitdef['bits'])
+                for channel_type, bitdef
+                in app.conf['detchar_bit_definitions'].items()}
+    assert detchar.check_vector(cache, channel, start, end,
+                                bit_defs['dmt_dq_vector_bits']) == {
+        'H1:NO_OMC_DCPD_ADC_OVERFLOW': None,
+        'H1:NO_DMT-ETMY_ESD_DAC_OVERFLOW': None}
+
+
 def test_check_vectors_skips_mdc(caplog):
     """Test that state vector checks are skipped for MDC events."""
     caplog.set_level(logging.INFO)
