@@ -190,13 +190,13 @@ def test_check_vectors(mock_create_label, mock_remove_label, mock_upload,
                        mock_json, llhoft_glob_pass, ifo_h1, ifo_h1_idq):
     event = {'search': 'AllSky', 'instruments': 'H1', 'pipeline': 'oLIB'}
     superevent_id = 'S12345a'
-    start, end = 1216577977, 1216577979
+    start, end = 1216577978, 1216577978.1
     detchar.check_vectors(event, superevent_id, start, end)
     calls = [
         call(
             None, None, 'S12345a',
             ('Detector state for active instruments is good.\n{}'
-             'Check looked within -0.5/+0.5 seconds of superevent. ').format(
+             'Check looked within -1.5/+1.5 seconds of superevent. ').format(
                  detchar.generate_table(
                      'Data quality bits',
                      ['H1:NO_OMC_DCPD_ADC_OVERFLOW',
@@ -206,14 +206,14 @@ def test_check_vectors(mock_create_label, mock_remove_label, mock_upload,
         call(
             None, None, 'S12345a',
             ('No HW injections found. '
-             'Check looked within -0.5/+0.5 seconds of superevent. '),
+             'Check looked within -1.5/+1.5 seconds of superevent. '),
             ['data_quality']),
         call(
             None, None, 'S12345a',
             ('iDQ glitch probabilities at both H1 and L1'
              ' are good (below {} threshold). '
              'Maximum p(glitch) is "H1:IDQ-PGLITCH_OVL_32_2048": 0.0. '
-             'Check looked within -0.5/+0.5 seconds of superevent. ').format(
+             'Check looked within -1.5/+1.5 seconds of superevent. ').format(
                  app.conf['idq_pglitch_thresh']),
             ['data_quality']),
         call(
