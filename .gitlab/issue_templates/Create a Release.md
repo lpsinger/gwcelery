@@ -41,10 +41,13 @@
     - [ ] `PASTRO_READY`
     - [ ] `PE_READY`
     - [ ] `SKYMAP_READY`
-13. [ ] The MDC superevent has a preliminary VOEvent.
-14. [ ] The MDC superevent has either an `ADVOK` or an `ADVNO` label.
-15. [ ] Issuing an `ADVOK` signoff through GraceDB results in an initial VOEvent.
-16. [ ] Issuing an `ADVNO` signoff through GraceDB results in a retraction VOEvent.
-17. [ ] Requesting an update alert through the [Flask dashboard](https://emfollow-playground.ligo.caltech.edu/gwcelery) results in an update VOEvent.
+13. [ ] The MDC superevent has two automatic preliminary VOEvent if `GCN_PRELIM_SENT` is applied.
+14. [ ] Issuing a manual preliminary alert from the [Flask dashboard](https://emfollow-playground.ligo.caltech.edu/gwcelery) sends another preliminary alert.
+    - [ ] The alert **is sent** successfully if `ADVOK` or an `ADVNO` label is **not applied** this time.
+    - [ ] Alternatively, a preliminary alert is **blocked** due to presence of `ADVOK` or `ADVNO`.
+15. [ ] The MDC superevent has either an `ADVOK` or an `ADVNO` label.
+16. [ ] Issuing an `ADVOK` signoff through GraceDB results in an initial VOEvent.
+17. [ ] Issuing an `ADVNO` signoff through GraceDB results in a retraction VOEvent.
+18. [ ] Requesting an update alert through the [Flask dashboard](https://emfollow-playground.ligo.caltech.edu/gwcelery) results in an update VOEvent.
 
 /label ~Release
