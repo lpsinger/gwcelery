@@ -273,7 +273,7 @@ release:
   script:
     # Update the repository.
     - |
-      gsissh -vT $REMOTE_HOST bash <<EOF
+      gsissh -T $REMOTE_HOST bash <<EOF
       set -e
       if [ ! -d .git ]; then git init; fi
       git fetch ${CI_REPOSITORY_URL}
@@ -282,7 +282,7 @@ release:
       EOF
     # Reinstall and start (new session to reload bashrc).
     - |
-      gsissh -vT $REMOTE_HOST bash <<EOF
+      gsissh -T $REMOTE_HOST bash <<EOF
       . .bashrc
       set -e
       python -m pip install --upgrade pipenv pip setuptools
@@ -297,7 +297,7 @@ release:
 .deploy-stop: &deploy-stop
   <<: *deploy-common
   script: |
-    gsissh -vT $REMOTE_HOST bash <<EOF
+    gsissh -T $REMOTE_HOST bash <<EOF
     . .bashrc
     set -e
     gwcelery condor rm
