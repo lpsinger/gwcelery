@@ -6,101 +6,119 @@ Changelog
 
 This is the initial release of GWCelery for O3b.
 
--   Try to get and upload Fermi sky map every time a GCN notice is received.
+-   Changes related to configuration settings
 
--   Update ligo-followup-advocate version to 1.1.3.
+    - Use the Redis server that is provided by the operating system (e.g. as a
+      systemd unit) rather than starting our own Redis server. This prevents a
+      race condition between the shutdown of Redis and the shutdown of the
+      workers that caused the workers to hang on shutdown.
 
--   Copy a comment attached to posterior samples into the comment attached to
-    the corresponding skymap.
+    - Update HTCondor accounting group from O2 to O3.
 
--   Add bilby online parameter inference workflow.
+    - Increase throughput for sky localization tasks by offloading processing
+      of the ``openmp`` Celery queue to 40 workers that are launched via
+      HTCondor on specially configured cluster nodes.
 
--   Fix approximant name used for automatic parameter estimation.
+    - Use mpich as the MPI runtime for parameter estimation.
 
--   Start parameter estimation on mock events.
+    - Use different HTCondor accounting groups for Celery workers depending on
+      whether GWCelery is running in the playground environment
+      (``ligo.dev.o3.cbc.pe.bayestar``) or the production environment
+      (``ligo.prod.o3.cbc.pe.bayestar``).
 
--   Add acceptance tests of parameter estimation.
+    - Drop support for Python 3.6 so that we can use the ``check_output`` keyword
+      argument that was added to ``suprocess.run()`` in Python 3.7.
 
--   Apply EM_COINC to preferred event when coincidence passes RAVEN publishing
-    conditions.
+    - Pin gwpy to <= 0.15.0 since the updated gwpy fails to read Virgo's state
+      vector.
 
--   Use the Redis server that is provided by the operating system (e.g. as a
-    systemd unit) rather than starting our own Redis server. This prevents a
-    race condition between the shutdown of Redis and the shutdown of the
-    workers that caused the workers to hang on shutdown.
+    - Update ligo-followup-advocate version to 1.1.3.
 
--   Incorporate update circular into flask app.
+-   Changes related to superevent/orchestrator design
 
--   Update HTCondor accounting group from O2 to O3.
+    - Add event completeness to publishability criterion. All three of
+      ``PASTRO_READY``, ``SKYMAP_READY``, and ``EMBRIGHT_READY`` will be used
+      to evaluate event completeness for CBC events. Only the ``SKYMAP_READY``
+      label will be used to evaluate completeness for burst events.
 
--   Increase throughput for sky localization tasks by offloading processing of
-    the ``openmp`` Celery queue to 40 workers that are launched via HTCondor on
-    specially configured cluster nodes.
+    - Use ``EM_Selected`` to freeze the preferred event of a superevent and
+      launch a preliminary alert.
 
--   Use mpich as the MPI runtime for parameter estimation.
+    - Make sub-threshold annotations independent of annotations for superevents
+      which pass public alert threshold.
 
--   Add event completeness to publishability criterion. All three of
-    ``PASTRO_READY``, ``SKYMAP_READY``, and ``EMBRIGHT_READY`` will be used to
-    evaluate event completeness for CBC events. Only the ``SKYMAP_READY`` label
-    will be used to evaluate completeness for burst events.
+    - Prevent second preliminary to be sent in the event of any advocate action.
+      Previously, this was only being prevented for ADVNO.
 
--   Revert back to running BAYESTAR for all ``G`` events.
+    - Make skymaps from parameter estimation public automatically.
 
--   Make skymaps from parameter estimation public automatically.
+-   Changes related to online parameter estimation
 
--   Use nodes dedicated to online PE also for playground events so that the
-    test runs do not get stuck due to the lack of resources.
+    - Move a comment attached to posterior samples to
+      the corresponding skymap.
 
--   Use ``EM_Selected`` to freeze the preferred event of a superevent and
-    launch a preliminary alert.
+    - Add bilby online parameter inference workflow.
 
--   Add a task to ``em_bright.py`` to compute and upload source properties
-    upon the upload of ``LALInference.posterior_samples.hdf5``.
+    - Fix approximant name used for automatic parameter estimation.
 
--   Notify which pe pipeline failed for the failure of pe condor jobs.
+    - Start parameter estimation on mock events.
 
--   Pass the ``-j`` flag to ``ligo-skymap-from-samples`` to speed up skymap
-    generation.
+    - Add acceptance tests of parameter estimation.
 
--   Remove skymap generation from PE DAG so that it will not be generated
-    twice.
+    - Use nodes dedicated to online PE also for playground events so that the
+      test runs do not get stuck due to the lack of resources.
 
--   Pin gwpy to <= 0.15.0 since the updated gwpy fails to read Virgo's state
-    vector.
+    - Add spins in online PE on playground events so that embright probabilities
+      are calculated based on the posterior samples without errors.
 
--   Remove generation of em coinc circular when `EM_COINC` label is applied.
+    - Remove skymap generation from PE DAG so that it will not be generated
+      twice.
 
--   Teach preliminary alert form in Flask dashboard to present a dropdown of
-    events sorted by the preferred event criterion.
+    - Notify which pe pipeline failed for the failure of pe condor jobs.
 
--   Make coincidence FAR synchronous within RAVEN pipeline to fix race
-    condition.
+-   Changes related to external coincidences
 
--   Add spins in online PE on playground events so that embright probabilities
-    are calculated based on the posterior samples without errors.
+    - Create RAVEN circular if EM_COINC label is applied to superevent.
 
--   Remove redundant SNEWS handler key.
+    - Make coincidence FAR synchronous within RAVEN pipeline to fix race
+      condition.
 
--   Drop support for Python 3.6 so that we can use the ``check_output`` keyword
-    argument that was added to ``suprocess.run()`` in Python 3.7.
+    - Remove redundant SNEWS handler key.
 
--   Use different HTCondor accounting groups for Celery workers depending on
-    whether GWCelery is running in the playground environment
-    (``ligo.dev.o3.cbc.pe.bayestar``) or the production environment
-    (``ligo.prod.o3.cbc.pe.bayestar``).
+    - Remove generation of em_coinc circular when ``EM_COINC`` label is
+      applied.
 
--   Make sub-threshold annotations independent of annotations for superevents
-    which pass public alert threshold.
+    - Apply EM_COINC to preferred event when coincidence passes RAVEN publishing
+      conditions.
 
--   Create omegascans for all detectors upon creation of new superevent.
+    - Attempt fetching and uploading Fermi skymap upon receinving GCN notice.
 
--   Run ``check_vectors`` upon the creation of a superevent. This will
-    allow subthreshold superevents to be annotated with DQ label.
+-   Changes related to skymap generation
 
--   Prevent second preliminary to be sent in the event of any advocate action.
-    Previously, this was only being prevented for ADVNO.
+    - Revert back to running BAYESTAR for all ``G`` events.
 
--   Create RAVEN circular if EM_COINC label is applied to superevent.
+    - Pass the ``-j`` flag to ``ligo-skymap-from-samples`` to speed up skymap
+      generation.
+
+-   Changes related to automated data quality checks
+
+    - Create omegascans for all detectors upon creation of new superevent.
+
+    - Run ``check_vectors`` upon the creation of a superevent. This will
+      allow subthreshold superevents to be annotated with ``DQOK`` or
+      ``DQV`` label.
+
+-   Changes to the Flask dashboard
+
+    - Teach preliminary alert form in Flask dashboard to present a dropdown of
+      events sorted by the preferred event criterion.
+
+    - Incorporate update circular into flask app.
+
+-   Other changes
+
+    - Add a task to ``em_bright.py`` to compute and upload source properties
+      upon the upload of ``LALInference.posterior_samples.hdf5``.
 
 0.8.7 (2019-09-14)
 ------------------
