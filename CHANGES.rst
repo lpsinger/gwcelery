@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.9.0 (unreleased)
+0.9.0 (2019-11-23)
 ------------------
 
 This is the initial release of GWCelery for O3b.
