@@ -176,8 +176,7 @@ def handle_cbc_event(alert):
 
     """  # noqa: E501
     graceid = alert['uid']
-    # priority = 0 if superevents.should_publish(alert['object']) else 1
-    priority = 0  # FIXME: should_publish always false for incomplete events!
+    priority = 0 if superevents.should_publish(alert['object']) else 1
 
     # em_bright and p_astro calculation
     if alert['alert_type'] == 'new':

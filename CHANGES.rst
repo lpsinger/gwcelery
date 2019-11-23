@@ -4,7 +4,11 @@ Changelog
 0.9.1 (unreleased)
 ------------------
 
--   No changes yet.
+-   Produce an ``ADVREQ`` notification as soon as there is an alert which meets
+    the public alert threshold, regardless of whether its annotations are
+    complete. As a result, follow-up advocates will usually receive
+    notifications about 30 seconds earlier, and will receive notifications even
+    if some of the annotations fail.
 
 0.9.0 (2019-11-23)
 ------------------

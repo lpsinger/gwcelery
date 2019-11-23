@@ -1,6 +1,6 @@
 from celery import exceptions
 import pytest
-from unittest.mock import patch, Mock
+from unittest.mock import call, patch, Mock
 
 from ligo.gracedb import rest
 
@@ -99,6 +99,10 @@ G330298_RESPONSE = {
     'superevent': 'S190421ar',
     'labels': []
 }
+
+
+def assert_not_called_with(mock, *args, **kwargs):
+    assert call(*args, **kwargs) not in mock.call_args_list
 
 
 @pytest.fixture(autouse=True)
@@ -374,7 +378,8 @@ def test_should_publish(group, pipeline, offline, far, instruments, labels,
                  far=far,
                  offline=offline,
                  instruments=instruments)
-    result = superevents.should_publish(event)
+    result = (superevents.is_complete(event) and
+              superevents.should_publish(event))
     assert result == expected_result
 
 
@@ -486,10 +491,11 @@ def test_parse_trigger_cbc_2(mock_db):
         p1.assert_called_once()
         p2.assert_called_once_with('S0039', preferred_event='G000003',
                                    t_0=1163905224.4332082)
+        create_label.assert_called_once_with('ADVREQ', 'S0039')
         if superevents.is_complete(event_dictionary):
             create_label.assert_called_once_with('EM_READY', 'S0039')
         else:
-            create_label.assert_not_called()
+            assert_not_called_with(create_label, 'EM_READY', 'S0039')
 
 
 def test_parse_trigger_cbc_3(mock_db):
@@ -516,7 +522,8 @@ def test_parse_trigger_cbc_3(mock_db):
                    uid='G000001')
     # G000001 absent in any superevent window, new superevent created
     # createSuperevent should be called exactly once
-    with patch('gwcelery.tasks.gracedb.create_superevent') as p:
+    with patch('gwcelery.tasks.gracedb.create_superevent') as p, \
+            patch('gwcelery.tasks.gracedb.create_label'):
         superevents.handle(payload)
         p.assert_called_once()
 
@@ -640,7 +647,8 @@ def test_parse_trigger_burst_3(mock_db):
                    alert_type='new',
                    uid='G000007')
     # G000007 absent in any superevent window, new superevent created
-    with patch('gwcelery.tasks.gracedb.create_superevent') as p:
+    with patch('gwcelery.tasks.gracedb.create_superevent') as p, \
+            patch('gwcelery.tasks.gracedb.create_label'):
         superevents.handle(payload)
         p.assert_called_once_with('G000007',
                                   pytest.approx(1163905249.5),
@@ -673,7 +681,8 @@ def test_parse_trigger_burst_4(mock_db):
                    alert_type='new',
                    uid='G000008')
     # G000008 absent in any superevent window, new superevent created
-    with patch('gwcelery.tasks.gracedb.create_superevent') as p:
+    with patch('gwcelery.tasks.gracedb.create_superevent') as p, \
+            patch('gwcelery.tasks.gracedb.create_label'):
         superevents.handle(payload)
         p.assert_called_once()
 

@@ -171,10 +171,11 @@ def process(payload):
                                                 t_0, t_start, t_end, category)
     if should_publish(event_info):
         gracedb.create_label.delay('ADVREQ', sid)
-        gracedb.create_label.s(FROZEN_LABEL, sid).set(
-            queue='superevent',
-            countdown=app.conf['preliminary_alert_timeout']
-        ).delay()
+        if is_complete(event_info):
+            gracedb.create_label.s(FROZEN_LABEL, sid).set(
+                queue='superevent',
+                countdown=app.conf['preliminary_alert_timeout']
+            ).delay()
 
 
 def get_category(event):
@@ -376,7 +377,6 @@ def should_publish(event):
     All of the following conditions must be true for a public alert:
 
     *   The event's ``offline`` flag is not set.
-    *   The event should be complete based on :meth:`is_complete`.
     *   The event's false alarm rate, weighted by the group-specific trials
         factor as specified by the
         :obj:`~gwcelery.conf.preliminary_alert_trials_factor` configuration
@@ -407,7 +407,7 @@ def _should_publish(event):
     trials_factor = app.conf['preliminary_alert_trials_factor'][group]
     far_threshold = app.conf['preliminary_alert_far_threshold'][group]
     far = trials_factor * event['far']
-    return is_complete(event), not event['offline'], far <= far_threshold
+    return not event['offline'], far <= far_threshold
 
 
 def keyfunc(event):
@@ -451,7 +451,8 @@ def keyfunc(event):
         # Use -FAR instead of IFAR=1/FAR so that rank for FAR=0 is defined.
         significance = -event['far']
 
-    return (*_should_publish(event), group_rank, n_ifos, significance)
+    return (is_complete(event), *_should_publish(event), group_rank, n_ifos,
+            significance)
 
 
 def _update_superevent(superevent, new_event_dict,
