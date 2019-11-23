@@ -114,7 +114,12 @@ the decision tree below.
         shape = diamond
     ]
 
-    how_many_detectors [
+    detectors_differ [
+        label = "Does one event\ninvolve more\ndetectors?"
+        shape = diamond
+    ]
+
+    detectors_decide [
         label = "Select the events\nwith the greatest\nnumber of detectors"
     ]
 
@@ -132,8 +137,9 @@ the decision tree below.
     far_differs -> group_differs [label = No]
     group_differs -> group_decides [label = Yes]
     group_differs -> which_group [label = No]
-    which_group -> how_many_detectors [label = CBC]
-    how_many_detectors -> cbc_significance
+    which_group -> detectors_differ [label = CBC]
+    detectors_differ -> detectors_decide [label = Yes]
+    detectors_differ -> cbc_significance [label = No]
     which_group -> burst_significance [label = Burst]
 
 .. note::
