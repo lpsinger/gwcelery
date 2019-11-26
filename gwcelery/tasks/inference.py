@@ -295,7 +295,7 @@ def _setup_dag_for_bilby(event, rundir, preferred_event_id, superevent_id):
     )
 
     setup_arg = ['bilby_pipe_gracedb', '--webdir', path_to_webdir,
-                 '--outdir', rundir, '--json', path_to_json]
+                 '--outdir', rundir, '--json', path_to_json, '--online-pe']
     if not app.conf['sentry_environment'] == 'production':
         setup_arg += ['--channel-dict', 'o2replay',
                       '--sampler-kwargs', 'FastTest']
