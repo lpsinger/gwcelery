@@ -21,7 +21,6 @@ import json
 import socket
 import time
 
-from astropy.io.registry import IORegistryError
 from celery import group
 from celery.utils.log import get_task_logger
 from glue.lal import Cache
