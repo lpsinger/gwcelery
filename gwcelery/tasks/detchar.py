@@ -128,7 +128,7 @@ def make_omegascan(ifo, t0, durs):
         qgrams = [ts.q_transform(
             frange=(20, 4096), gps=t0, outseg=(t0 - durs[n], t0 + durs[n]),
             logf=True) for n in range(len(durs))]
-    except (IORegistryError, FloatingPointError):
+    except (IndexError, FloatingPointError):
         # data from cache can't be properly read, or data is weird
         fig = plt.figure()
         plt.axis("off")
