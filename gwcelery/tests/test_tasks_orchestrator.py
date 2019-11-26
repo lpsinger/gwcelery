@@ -224,7 +224,7 @@ def superevent_initial_alert_download(filename, graceid):
 
 @pytest.mark.parametrize(  # noqa: F811
     'labels',
-    [[], ['EM_COINC']])
+    [[], ['EM_COINC', 'RAVEN_ALERT']])
 @patch('gwcelery.tasks.gracedb.expose._orig_run', return_value=None)
 @patch('gwcelery.tasks.gracedb.get_log',
        return_value=[{'tag_names': ['sky_loc', 'public'],
@@ -264,7 +264,8 @@ def test_handle_superevent_initial_alert(mock_create_initial_circular,
     mock_create_voevent.assert_called_once_with(
         'S1234', 'initial', BBH=0.02, BNS=0.94, NSBH=0.03, ProbHasNS=0.0,
         ProbHasRemnant=0.0, Terrestrial=0.01, internal=False, open_alert=True,
-        skymap_filename='foobar.fits.gz,0', skymap_type='foobar', vetted=True)
+        skymap_filename='foobar.fits.gz,0', skymap_type='foobar', vetted=True,
+        raven_coinc='RAVEN_ALERT' in labels)
     mock_send.assert_called_once_with('contents of S1234-Initial-1.xml')
     if 'EM_COINC' in labels:
         mock_create_emcoinc_circular.assert_called_once_with('S1234')

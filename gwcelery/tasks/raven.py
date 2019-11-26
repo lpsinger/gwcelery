@@ -277,6 +277,7 @@ def trigger_raven_alert(coinc_far_json, superevent, gracedb_id,
     """
     preferred_gwevent_id = superevent['preferred_event']
     superevent_id = superevent['superevent_id']
+    ext_id = ext_event['graceid']
     gw_group = gw_group.lower()
     trials_factor = app.conf['preliminary_alert_trials_factor'][gw_group]
 
@@ -290,6 +291,7 @@ def trigger_raven_alert(coinc_far_json, superevent, gracedb_id,
         pass_far_threshold = gw_far * trials_factor < far_threshold
         is_ext_subthreshold = False
         #  Set coinc FAR to gw FAR only for the sake of a message below
+        coinc_far = None
         coinc_far_f = gw_far
 
     #  The GBM team requested we not send automatic alerts from subthreshold
@@ -317,6 +319,8 @@ def trigger_raven_alert(coinc_far_json, superevent, gracedb_id,
         messages.append('RAVEN: publishing criteria met for %s' % (
             preferred_gwevent_id))
         if no_previous_alert:
+            gracedb.update_superevent(superevent_id, em_type=ext_id,
+                                      coinc_far=coinc_far)
             messages.append('Triggering RAVEN alert for %s' % (
                 preferred_gwevent_id))
             (
@@ -332,7 +336,7 @@ def trigger_raven_alert(coinc_far_json, superevent, gracedb_id,
     if is_ext_subthreshold:
         messages.append(('RAVEN: publishing criteria not met for %s,'
                          ' %s is subthreshold' % (preferred_gwevent_id,
-                                                  ext_event['graceid'])))
+                                                  ext_id)))
     if not no_previous_alert:
         messages.append(('RAVEN: Alert already triggered for  %s'
                          % (superevent_id)))

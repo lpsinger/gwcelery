@@ -289,8 +289,10 @@ def _mock_get_coinc_far(graceid):
      ['E3', 'S8642', 'Burst', False],
      ['E1', 'S5678', 'CBC', True]])
 @patch('gwcelery.tasks.gracedb.get_labels', return_value={})
+@patch('gwcelery.tasks.gracedb.update_superevent')
 @patch('gwcelery.tasks.gracedb.create_label.run')
-def test_trigger_raven_alert(mock_create_label, mock_get_labels,
+def test_trigger_raven_alert(mock_create_label, mock_update_superevent,
+                             mock_get_labels,
                              graceid, result_id, group, expected_result):
     if graceid.startswith('E'):
         superevent_id = result_id
@@ -308,6 +310,14 @@ def test_trigger_raven_alert(mock_create_label, mock_get_labels,
     if expected_result:
         label_calls = [call('RAVEN_ALERT', superevent_id),
                        call('RAVEN_ALERT', preferred_id)]
+        if ext_event['pipeline'] == 'SNEWS':
+            coinc_far = None
+        else:
+            coinc_far = coinc_far_json['temporal_coinc_far']
+        mock_update_superevent.assert_called_once_with(
+            superevent_id,
+            em_type=ext_id,
+            coinc_far=coinc_far)
         mock_create_label.assert_has_calls(label_calls)
     else:
         mock_create_label.assert_not_called()

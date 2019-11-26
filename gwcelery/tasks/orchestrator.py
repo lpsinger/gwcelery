@@ -701,7 +701,8 @@ def preliminary_initial_update_alert(filenames, superevent_id, alert_type,
             skymap_filename=skymap_filename,
             internal=False,
             open_alert=True,
-            vetted=True
+            vetted=True,
+            raven_coinc=('RAVEN_ALERT' in labels)
         )
         |
         group(

@@ -257,7 +257,8 @@ def get_superevents(*args, **kwargs):
 @task(ignore_result=True, shared=False)
 @catch_retryable_http_errors
 def update_superevent(superevent_id, t_start=None,
-                      t_end=None, t_0=None, preferred_event=None):
+                      t_end=None, t_0=None, preferred_event=None,
+                      em_type=None, coinc_far=None):
     """
     Update superevent information. Wrapper around
     :meth:`updateSuperevent`
@@ -279,7 +280,8 @@ def update_superevent(superevent_id, t_start=None,
     try:
         with client.updateSuperevent(superevent_id,
                                      t_start=t_start, t_end=t_end, t_0=t_0,
-                                     preferred_event=preferred_event):
+                                     preferred_event=preferred_event,
+                                     em_type=em_type, coinc_far=coinc_far):
             pass  # Close without reading response; we only needed the status
     except rest.HTTPError as e:
         # If we got a 400 error because no change was made, then ignore
