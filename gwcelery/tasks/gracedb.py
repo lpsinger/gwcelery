@@ -12,7 +12,7 @@ from ..util import PromiseProxy
 
 client = PromiseProxy(rest.GraceDb,
                       ('https://' + app.conf.gracedb_host + '/api/',),
-                      {'reload_certificate': True})
+                      {'fail_if_noauth': True, 'reload_certificate': True})
 
 log = get_task_logger(__name__)
 
