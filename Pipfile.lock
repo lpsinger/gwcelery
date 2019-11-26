@@ -390,7 +390,7 @@
                 "sha256:63457dde589b17c493a62b216d80d22c010c5b3fb385222dce6ff128f887ac72",
                 "sha256:f2325b1b5a6633f9de587b63b7c6ff3c31933ad2c9f7d37fcbd7b0e41b10fc24"
             ],
-            "version": "==0.15.0"
+            "version": "==1.0.0"
         },
         "h5py": {
             "hashes": [

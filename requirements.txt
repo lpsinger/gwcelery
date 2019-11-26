@@ -10,7 +10,7 @@ flask
 flask-caching
 flower
 gwdatafind
-gwpy <= 0.15.0
+gwpy
 healpy
 imapclient
 jinja2
