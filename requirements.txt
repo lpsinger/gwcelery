@@ -14,7 +14,7 @@ gwpy
 healpy
 imapclient
 jinja2
-lalsuite == 6.54
+lalsuite == 6.62.1.dev20191130
 ligo-followup-advocate >= 1.1.3
 ligo-gracedb >= 2.3.0
 ligo-raven >= 1.17
@@ -28,7 +28,6 @@ pygcn >= 0.1.19
 pytest >= 3.0
 python-ligo-lw
 safe-netrc
-scipy <= 1.2.2  # This is because lalinference postprocess is not compatible with scipy >= 1.3.0. See https://git.ligo.org/lscsoft/lalsuite/issues/170.
 sentry-sdk[flask]
 service_identity  # We don't actually use this package, but it silences some annoying warnings from twistd.
 sleek-lvalert >= 0.0.4

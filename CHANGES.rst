@@ -12,6 +12,8 @@ Changelog
 
 -   Increase the FAR threshold of online PE to the public alert threshold.
 
+-   Update lalsuite to lalsuite==6.62.1.dev20191130 and unpin scipy.
+
 0.9.0 (2019-11-23)
 ------------------
 
