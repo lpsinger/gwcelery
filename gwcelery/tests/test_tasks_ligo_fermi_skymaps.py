@@ -91,13 +91,12 @@ def test_external_trigger_heasarc(mock_download):
     assert heasarc_link == true_heasarc_link
 
 
-@patch('astropy.utils.data.get_file_contents')
-def test_get_external_skymap(mock_astropy_get_file_contents):
+@patch('urllib.request.urlopen')
+def test_get_external_skymap(mock_urlopen):
     """Assert that the correct call to astropy.get_file_contents is used"""
     ligo_fermi_skymaps.get_external_skymap(true_heasarc_link)
 
-    mock_astropy_get_file_contents.assert_called_once_with(
-        (true_skymap_link), encoding='binary', cache=False)
+    mock_urlopen.assert_called_once()
 
 
 def test_get_upload_external_skymap():

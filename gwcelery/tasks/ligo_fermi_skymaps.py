@@ -1,10 +1,11 @@
 """Create and upload LVC-Fermi sky maps."""
 import re
+import ssl
 import urllib
 
 from celery import group
 from ligo.skymap.tool import ligo_skymap_combine
-import astropy.utils.data
+#  import astropy.utils.data
 import lxml.etree
 
 from . import gracedb
@@ -129,8 +130,14 @@ def get_external_skymap(heasarc_link):
     trigger_id = re.sub(r'.*\/(\D+?)(\d+)(\D+)\/.*', r'\2', heasarc_link)
     skymap_name = 'glg_healpix_all_bn{0}_v00.fit'.format(trigger_id)
     skymap_link = heasarc_link + skymap_name
-    return astropy.utils.data.get_file_contents(
-        (skymap_link), encoding='binary', cache=False)
+    #  FIXME: Under Anaconda on the LIGO Caltech computing cluster, Python
+    #  (and curl, for that matter) fail to negotiate TLSv1.2 with
+    #  heasarc.gsfc.nasa.gov
+    context = ssl.create_default_context()
+    context.options |= ssl.OP_NO_TLSv1_3
+    #  return astropy.utils.data.get_file_contents(
+    #      (skymap_link), encoding='binary', cache=False)
+    return urllib.request.urlopen(skymap_link, context=context).read()
 
 
 @app.task(autoretry_for=(urllib.error.HTTPError,), retry_backoff=10,
