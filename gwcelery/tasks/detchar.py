@@ -335,6 +335,10 @@ def check_vector(cache, channel, start, end, bits, logic_type='all'):
         except IndexError:
             log.exception('Failed to read from low-latency frame files')
         else:
+            # FIXME: In the playground environment, the Virgo state vector
+            # channel is stored as a float. Is this also the case in the
+            # production environment?
+            statevector = statevector.astype(np.uint32)
             if len(statevector) > 0:  # statevector must not be empty
                 return {bitname.format(channel.split(':')[0], key):
                         bool(logic_map[logic_type](
