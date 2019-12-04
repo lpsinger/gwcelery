@@ -4,6 +4,7 @@ from unittest.mock import call, patch
 
 from gwpy.timeseries import Bits
 import matplotlib.pyplot as plt
+import numpy as np
 from pkg_resources import resource_filename
 import pytest
 
@@ -174,7 +175,7 @@ def test_check_vector(llhoft_glob_pass):
         'H1:NO_DMT-ETMY_ESD_DAC_OVERFLOW': True}
 
 
-@patch('gwcelery.tasks.detchar.StateVector.read', return_value=[])
+@patch('gwcelery.tasks.detchar.StateVector.read', return_value=np.asarray([]))
 def test_check_vector_fails_on_empty(mock_statevector, llhoft_glob_pass):
     channel = 'H1:DMT-DQ_VECTOR'
     start, end = 1216577976, 1216577980
