@@ -261,7 +261,7 @@ release:
   extends: .ssh
   stage: deploy
   only:
-    - master@emfollow/gwcelery
+    - branches@emfollow/gwcelery
     - tags@emfollow/gwcelery
   dependencies: []
 
