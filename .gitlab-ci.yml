@@ -177,8 +177,8 @@ doc:
   <<: *in-tmpdir
   script:
     - apt-get update -qq && apt-get install -y -qq graphviz
-    - pip install -r docs-requirements.txt
     - tar --strip-components 1 -xf ${CI_PROJECT_DIR}/*.tar.*
+    - pip install -r docs-requirements.txt
     - python setup.py build_sphinx
   dependencies:
     - sdist
