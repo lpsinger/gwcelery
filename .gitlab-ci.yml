@@ -277,8 +277,7 @@ release:
       gsissh -T $REMOTE_HOST bash <<EOF
       set -e
       if [ ! -d .git ]; then git init; fi
-      git fetch ${CI_REPOSITORY_URL}
-      git fetch --tags ${CI_REPOSITORY_URL}
+      git fetch --tags ${CI_REPOSITORY_URL} $CI_COMMIT_SHA
       git checkout -f $CI_COMMIT_SHA
       EOF
     # Reinstall and start (new session to reload bashrc).
