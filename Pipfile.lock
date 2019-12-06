@@ -426,19 +426,21 @@
         },
         "healpy": {
             "hashes": [
-                "sha256:00b1e482fa9c0beb506490399c39570ef8682cfbafd098f3fff873db19f28ebf",
-                "sha256:1cdecd6ab3c9209cd124928753c406513cac0aa2d80fdb4eb3e66bb944174840",
-                "sha256:32448c30c50fdc7093c9796e095f487149c28408f3e88c60319601ec7c58e62c",
-                "sha256:3d797aee3501a810d4f210c1f89af4540e7873eaf196d01a0187bb19d5bfab91",
-                "sha256:64820d61a0c5eaeaedbe316686f5b237f691312583d2c237a7f03b50d02004ce",
-                "sha256:64e9768d361a68f3504431e3f98f458419c9bb3111274f7aa1e4b30149831ce4",
-                "sha256:6dfdb72cd4fdc58c734542e8271e0235cd8779eb2975c3e823f2c6f72c7cba0f",
-                "sha256:763b5bf815708e8c16bc73639a579dae986af959ed3a2979a0cffbe09e30def8",
-                "sha256:be229d546cfdb7d2673251e50444327c2fcfafb96a48325b9d115198bf1f10ab",
-                "sha256:dc7327cc24710460b3880dd1b08ac10ea92e2e344f8cde1a79978c2709f95e52",
-                "sha256:e92af538530898468fe746ab0f4964d88dee598805050bc175ae62f67735869d"
+                "sha256:05518207b9dd2021309bac13804c352427cd12eabb34b614f4bfef5e28646cd5",
+                "sha256:190ba766b97bb9acb8da2bfe14317a23f0f514f41a222af3ce8cf6c014f30c44",
+                "sha256:217a97aaf9b84f31137040355d442895344971a21c73a593a8156038cecc17ab",
+                "sha256:3c0b0a3eb1ea5299444d26a3e600e6b162fc139804ede36dd26c260faee3e835",
+                "sha256:6946367fac0747f2f6a329e6cf7fb6cfd9c1df8dc998c68eb1d84ee85c08c87b",
+                "sha256:a409b59bd3e5d222318fa4a3f52dd58fe40e037704304ecba49ded8a1ec522af",
+                "sha256:ab3820dd7fb52a51fb666b204e6140be185ee90cbe09ff98de1aa9a7fff5bb8d",
+                "sha256:bb5c90be006ebe62e98e8fe125bd734d7cdf8ec2530f7e54d05a87712f9ebf4e",
+                "sha256:bcbef9af7b71a8b757b11f04c2116d7c3f1e0e9f5567f2ff88a2f7bc4d21ede1",
+                "sha256:c6b5ae4ad061a4eedbb92a4c89c855b8f6fe9efba1accbf25e5d22cdb7fd6477",
+                "sha256:cbc5cc99bcb76cc0e9eacea1000709aa8ec9e5392e4797f43eabb2fc22012044",
+                "sha256:d0ae02791c2404002a09c643e9e50bc58e3d258f702c736dc1f39ce1e6526f73",
+                "sha256:f48c989bb7fe3eef472acf9bdf401629a72bc1f89023710a753f8ca636c332dc"
             ],
-            "version": "==1.12.10"
+            "version": "==1.13.0"
         },
         "html5lib": {
             "hashes": [
