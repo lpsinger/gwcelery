@@ -19,10 +19,10 @@ import os
 
 # Celery application settings.
 
-# Task tombstones expire after 5 minutes.
+# Task tombstones expire after 2 hours.
 # Celery's default setting of 1 day could cause the Redis database to grow too
 # large because we pass large byte strings as task arguments and return values.
-result_expires = 300
+result_expires = 7200
 
 # Use pickle serializer, because it supports byte values.
 accept_content = ['json', 'pickle']
