@@ -25,6 +25,10 @@ explanation on jinja is here http://jinja.pocoo.org . #}
 {% endif %}
 
 {% if 'playground' in service_url %}
+    {# FIXME: lalinference_pipe fails to read state vector in Virgo's Replay
+    data with gwpy. This issue will be solved by
+    https://git.ligo.org/lscsoft/lalsuite/merge_requests/1110. #}
+    {% set ifos = '["H1", "L1"]' %}
     {% set accounting_group = 'ligo.dev.o3.cbc.pe.lalinference' %}
     {% set engine = 'lalinferencemcmc' %}
     {% set nparallel = '2' %}
@@ -32,6 +36,7 @@ explanation on jinja is here http://jinja.pocoo.org . #}
     {% set neff = '100' %}
     {% set zeroLogLike = 'zeroLogLike=' %}
 {% else %}
+    {% set ifos = '["H1", "L1", "V1"]' %}
     {% set accounting_group = 'ligo.prod.o3.cbc.pe.lalinference' %}
 {% endif %}
 
@@ -41,7 +46,7 @@ explanation on jinja is here http://jinja.pocoo.org . #}
 
 
 [analysis]
-ifos=['H1', 'L1', 'V1']
+ifos={{ ifos | safe }}
 engine={{ engine }}
 nparallel={{ nparallel }}
 service-url={{ service_url }}

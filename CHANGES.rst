@@ -17,6 +17,9 @@ Changelog
 -   Change RAVEN to grab sky map from superevent. Block joint FAR calculation
     for SNEWS coincidences.
 
+-   Skip Virgo data when online PE is started on O2Replay data since its
+    statevector can not be read with gwpy.
+
 0.9.0 (2019-11-23)
 ------------------
 
