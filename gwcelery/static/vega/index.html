@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<title>GWCelery task times</title>
+<div id="vis"></div>
+<script src="https://cdn.jsdelivr.net/npm/vega"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-lite"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-embed"></script>
+<script type="text/javascript">
+  (async() => {
+    const resp = await fetch('/flower/api/tasks');
+    const json = await resp.json();
+    const data = Object.values(json);
+    const spec = {
+      $schema: 'https://vega.github.io/schema/vega-lite/v4.0.json',
+      width: 600,
+      title: 'gwcelery task times',
+      data: {values: data},
+      transform: [
+        {filter: {field: 'state', equal: 'SUCCESS'}},
+        {filter: {field: 'received', valid: true}},
+        {filter: {field: 'started', valid: true}},
+        {filter: {field: 'succeeded', valid: true}},
+        {calculate: 'datum.succeeded - datum.started', as: 'succeeded'},
+        {calculate: 'datum.received - datum.started', as: 'received'},
+        {fold: ['succeeded', 'received']},
+        {
+          aggregate: [
+            {op: 'q1', field: 'value', as: 'time q1'},
+            {op: 'q3', field: 'value', as: 'time q3'}
+          ],
+          groupby: ['key', 'name']
+        }
+      ],
+      layer: [
+        {
+          mark: {type: 'bar', tooltip: {content: 'data'}},
+          encoding: {
+            x: {
+              field: 'time q1',
+              type: 'quantitative',
+              axis: {
+                format: '.3~f',
+                title: 'time from task start',
+                values: [
+                  -1000, -100, -10, -1, -0.1, -0.01, -0.001, 0,
+                  0.001, 0.01, 0.1, 1, 10, 100, 1000
+                ]
+              },
+              scale: {type: 'symlog', constant: 0.0001, domain: [-1000, 1000]}
+            },
+            x2: {
+              field: 'time q3',
+              type: 'quantitative',
+            },
+            y: {field: 'name', type: 'nominal', sort: '-x'},
+            color: {field: 'key', type: 'nominal'},
+          }
+        },
+        {mark: 'rule', encoding: {x: {value: 300}}}
+      ]
+    };
+    return await vegaEmbed('#vis', spec);
+  })();
+</script>
