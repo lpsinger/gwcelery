@@ -48,6 +48,7 @@
         {filter: {field: 'succeeded', valid: true}},
         {calculate: 'datum.succeeded - datum.started', as: 'succeeded'},
         {calculate: 'datum.received - datum.started', as: 'received'},
+        {calculate: 'replace(datum.name, "gwcelery.tasks.", "")', as: 'name'},
         {fold: ['succeeded', 'received']},
         {
           aggregate: [
@@ -78,7 +79,15 @@
               field: 'time q3',
               type: 'quantitative',
             },
-            y: {field: 'name', type: 'nominal', sort: '-x'},
+            y: {
+              field: 'name',
+              type: 'nominal',
+              sort: 'ascending',
+              axis: {
+                orient: 'right',
+                title: null
+              }
+            },
             color: {field: 'key', type: 'nominal'},
           }
         },
