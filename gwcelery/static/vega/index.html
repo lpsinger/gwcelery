@@ -56,7 +56,8 @@
             {op: 'q3', field: 'value', as: 'time q3'}
           ],
           groupby: ['key', 'name']
-        }
+        },
+        {calculate: 'split(datum.name, ".")[0]', as: 'module'}
       ],
       layer: [
         {
@@ -88,7 +89,7 @@
                 title: null
               }
             },
-            color: {field: 'key', type: 'nominal'},
+            color: {field: 'module', type: 'nominal'},
           }
         },
         {mark: 'rule', encoding: {x: {value: 300}}}
