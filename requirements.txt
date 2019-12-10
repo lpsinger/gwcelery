@@ -1,7 +1,7 @@
 kombu <= 4.5.0  # FIXME: https://github.com/celery/celery/issues/5261
 
 astropy
-bilby-pipe >= 0.3.5
+bilby-pipe == 0.3.6
 celery[redis] == 4.3.0
 comet
 corner
