@@ -129,7 +129,7 @@ G000003_RESPONSE = {
     },
     "offline": False,
     "gpstime": 1000000,
-    "labels": ["EM_SENT", "PASTRO_READY",
+    "labels": ["RAVEN_ALERT", "PASTRO_READY",
                "EMBRIGHT_READY", "SKYMAP_READY"]
 }
 
@@ -320,9 +320,9 @@ def test_update_preferred_event(superevent_labels, new_event_labels,
 
 
 @pytest.mark.parametrize('labels',
-                         [['PASTRO_READY', 'EM_SENT'],
+                         [['PASTRO_READY', 'RAVEN_ALERT'],
                           ['SKYMAP_READY', 'EMBRIGHT_READY',
-                           'PASTRO_READY', 'EM_SENT']])
+                           'PASTRO_READY', 'RAVEN_ALERT']])
 @patch('gwcelery.tasks.gracedb.create_label.run')
 @patch('gwcelery.tasks.gracedb.get_superevent', s100response)
 def test_raven_alert(mock_create_label, labels):
@@ -360,7 +360,7 @@ def test_raven_alert(mock_create_label, labels):
             },
         },
         "data": {
-            "name": "EM_SENT"
+            "name": "RAVEN_ALERT"
         }
     }
     superevents.handle(payload)
@@ -475,11 +475,11 @@ def test_upload_same_event():
      ['Burst', 'cwb', False, 1e-15, 'H1,L1', ['SKYMAP_READY'], True],
      ['Burst', 'cwb', False, 1e-15, 'H1,L1', [], False],
      ['Burst', 'cwb', True, 1e-30, 'H1,L1,V1', [], False],
-     ['CBC', 'gstlal', False, 1.e-6, 'H1,L1,V1', ['EM_SENT'], False],
+     ['CBC', 'gstlal', False, 1.e-6, 'H1,L1,V1', ['RAVEN_ALERT'], False],
      ['CBC', 'gstlal', False, 1.e-6, 'H1,L1,V1', [
-      'PASTRO_READY', 'SKYMAP_READY', 'EMBRIGHT_READY', 'EM_SENT'], True],
+      'PASTRO_READY', 'SKYMAP_READY', 'EMBRIGHT_READY', 'RAVEN_ALERT'], True],
      ['CBC', 'gstlal', False, 1.e-15, 'H1,L1,V1', [
-      'PASTRO_READY', 'SKYMAP_READY', 'EMBRIGHT_READY', 'EM_SENT'], True]])
+      'PASTRO_READY', 'SKYMAP_READY', 'EMBRIGHT_READY', 'RAVEN_ALERT'], True]])
 def test_should_publish(group, pipeline, offline, far, instruments, labels,
                         expected_result):
     event = dict(graceid='G123456',

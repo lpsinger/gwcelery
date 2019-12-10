@@ -313,8 +313,8 @@ def test_trigger_raven_alert(mock_create_label, mock_update_superevent,
             superevent_id,
             em_type=ext_id,
             coinc_far=coinc_far)
-        label_calls = [call('EM_SENT', superevent_id),
-                       call('EM_SENT', preferred_id)]
+        label_calls = [call('RAVEN_ALERT', superevent_id),
+                       call('RAVEN_ALERT', preferred_id)]
         mock_create_label.assert_has_calls(label_calls)
     else:
         mock_create_label.assert_not_called()
