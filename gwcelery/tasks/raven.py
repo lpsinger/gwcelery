@@ -100,13 +100,13 @@ def coincidence_search(gracedb_id, alert_object, group=None, pipelines=[]):
 
     if 'SNEWS' in pipelines:
         tl, th = tl_snews, th_snews
-    elif group == 'CBC' and gracedb_id.startswith('E'):
+    elif group == 'CBC' and alert_object.get('group') == 'External':
         tl, th = tl_cbc, th_cbc
-    elif group == 'CBC' and gracedb_id.startswith('S'):
+    elif group == 'CBC' and 'S' in gracedb_id:
         tl, th = -th_cbc, -tl_cbc
-    elif group == 'Burst' and gracedb_id.startswith('E'):
+    elif group == 'Burst' and alert_object.get('group') == 'External':
         tl, th = tl_burst, th_burst
-    elif group == 'Burst' and gracedb_id.startswith('S'):
+    elif group == 'Burst' and 'S' in gracedb_id:
         tl, th = -th_burst, -tl_burst
     else:
         raise ValueError('Invalid RAVEN search request for {0}'.format(
@@ -178,15 +178,15 @@ def raven_pipeline(raven_search_results, gracedb_id, alert_object, gw_group):
     """
     if not raven_search_results:
         return
-    if gracedb_id.startswith('E'):
+    if alert_object.get('group') == 'External':
         raven_search_results = preferred_superevent(raven_search_results)
     for result in raven_search_results:
-        if gracedb_id.startswith('E'):
+        if alert_object.get('group') == 'External':
             superevent_id = result['superevent_id']
             exttrig_id = gracedb_id
             superevent = result
             ext_event = alert_object
-        else:
+        elif 'S' in gracedb_id:
             superevent_id = gracedb_id
             exttrig_id = result['graceid']
             superevent = alert_object

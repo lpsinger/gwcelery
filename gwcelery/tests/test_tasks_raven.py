@@ -23,7 +23,8 @@ def test_coincidence_search(mock_calculate_coincidence_far,
                             group, gracedb_id, pipelines, tl, th):
     """Test that correct time windows are used for each RAVEN search."""
     alert_object = {'superevent_id': gracedb_id}
-
+    if 'E' in gracedb_id:
+        alert_object['group'] = 'External'
     raven.coincidence_search(gracedb_id, alert_object, group,
                              pipelines)
 
@@ -164,6 +165,8 @@ def test_raven_pipeline(mock_create_label,
     multiple events are found.
     """
     alert_object = {'preferred_event': 'G1', 'pipeline': 'GRB'}
+    if 'E' in graceid:
+        alert_object['group'] = 'External'
     raven.raven_pipeline(raven_search_results, graceid, alert_object, group)
 
     coinc_calls = []

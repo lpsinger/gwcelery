@@ -141,11 +141,11 @@ def handle_grb_lvalert(alert):
     graceid = alert['uid']
 
     if alert['alert_type'] == 'new' and \
-            alert['object'].get('group', '') == 'External':
+            alert['object'].get('group') == 'External':
         raven.coincidence_search(graceid, alert['object'], group='CBC')
         raven.coincidence_search(graceid, alert['object'],
                                  group='Burst')
-    elif graceid.startswith('S'):
+    elif 'S' in graceid:
         preferred_event_id = gracedb.get_superevent(graceid)['preferred_event']
         group = gracedb.get_event(preferred_event_id)['group']
         if alert['alert_type'] == 'new':
@@ -181,10 +181,10 @@ def handle_snews_lvalert(alert):
     if alert['object'].get('group', '') == 'Test':
         pass
     elif alert['alert_type'] == 'new' and \
-            alert['object'].get('group', '') == 'External':
+            alert['object'].get('group') == 'External':
         raven.coincidence_search(graceid, alert['object'],
                                  group='Burst', pipelines=['SNEWS'])
-    elif graceid.startswith('S'):
+    elif 'S' in graceid:
         preferred_event_id = gracedb.get_superevent(graceid)['preferred_event']
         group = gracedb.get_event(preferred_event_id)['group']
         if alert['alert_type'] == 'new' and group == 'Burst':

@@ -20,6 +20,8 @@ Changelog
 -   Skip Virgo data when online PE is started on O2Replay data since its
     statevector can not be read with gwpy.
 
+-   Modify RAVEN to run on MDC events.
+
 0.9.0 (2019-11-23)
 ------------------
 
