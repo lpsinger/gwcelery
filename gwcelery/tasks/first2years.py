@@ -157,7 +157,7 @@ def upload_event():
     log.info('uploaded as %s', graceid)
 
     if app.conf['mock_events_simulate_multiple_uploads']:
-        num = 10
+        num = 20
         for _ in range(num):
             (
                 gracedb.create_event.s(
