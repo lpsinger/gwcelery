@@ -60,8 +60,7 @@ def handle_snews_gcn(payload):
              gcn.NoticeType.FERMI_GBM_FLT_POS,
              gcn.NoticeType.FERMI_GBM_GND_POS,
              gcn.NoticeType.FERMI_GBM_FIN_POS,
-             gcn.NoticeType.SWIFT_BAT_GRB_ALERT,
-             gcn.NoticeType.SWIFT_BAT_GRB_LC,
+             gcn.NoticeType.SWIFT_BAT_GRB_POS_ACK,
              gcn.NoticeType.FERMI_GBM_SUBTHRESH,
              queue='exttrig',
              shared=False)
