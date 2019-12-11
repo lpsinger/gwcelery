@@ -17,7 +17,6 @@ from . import gracedb
 log = get_task_logger(__name__)
 
 
-@app.task(shared=False)
 def pick_coinc():
     """Pick a coincidence from the "First Two Years" paper."""
     filename = pkg_resources.resource_filename(
