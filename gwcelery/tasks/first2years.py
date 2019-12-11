@@ -109,6 +109,22 @@ def pick_coinc():
     return coinc_xml.getvalue()
 
 
+def _jitter_snr(coinc_bytes):
+    coinc_xml = io.BytesIO(coinc_bytes)
+    xmldoc, _ = utils.load_fileobj(coinc_xml, contenthandler=ContentHandler)
+
+    coinc_inspiral_table = lsctables.CoincInspiralTable.get_table(xmldoc)
+
+    # Add a tiny amount of jitter in SNR so that uploads have random
+    # preferred event precedence.
+    for row in coinc_inspiral_table:
+        row.snr += random.gauss(0, 1e-9)
+
+    coinc_xml = io.BytesIO()
+    utils.write_fileobj(xmldoc, coinc_xml)
+    return coinc_xml.getvalue()
+
+
 @app.task(shared=False)
 def _vet_event(superevents):
     if superevents:
@@ -145,7 +161,7 @@ def upload_event():
         for _ in range(num):
             (
                 gracedb.create_event.s(
-                    coinc, 'MDC', 'gstlal', 'CBC'
+                    _jitter_snr(coinc), 'MDC', 'gstlal', 'CBC'
                 )
                 |
                 _upload_psd.s()
