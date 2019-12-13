@@ -174,6 +174,12 @@ def test_get_event(mock_gracedb):
 
 
 @patch('gwcelery.tasks.gracedb.client')
+def test_get_group(mock_gracedb):
+    gracedb.get_group('G123456')
+    mock_gracedb.event.assert_called_once_with('G123456')
+
+
+@patch('gwcelery.tasks.gracedb.client')
 def test_get_search(mock_gracedb):
     gracedb.get_search('G123456')
     mock_gracedb.event.assert_called_once_with('G123456')

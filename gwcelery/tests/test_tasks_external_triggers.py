@@ -9,6 +9,7 @@ from ..tasks import detchar
 from . import resource_json
 
 
+@patch('gwcelery.tasks.external_skymaps.create_upload_external_skymap')
 @patch('gwcelery.tasks.external_skymaps.get_upload_external_skymap',
        return_value=None)
 @patch('gwcelery.tasks.detchar.dqr_json', return_value='dqrjson')
@@ -21,7 +22,8 @@ from . import resource_json
 @patch('gwcelery.tasks.gracedb.create_event')
 def test_handle_create_grb_event(mock_create_event, mock_get_event,
                                  mock_upload, mock_json,
-                                 mock_get_upload_external_skymap):
+                                 mock_get_upload_external_skymap,
+                                 mock_create_upload_external_skymap):
     text = resource_string(__name__, 'data/fermi_grb_gcn.xml')
     external_triggers.handle_grb_gcn(payload=text)
     mock_create_event.assert_called_once_with(filecontents=text,
@@ -49,6 +51,25 @@ def test_handle_create_grb_event(mock_create_event, mock_get_event,
             ['data_quality'])
     ]
     mock_upload.assert_has_calls(calls, any_order=True)
+    mock_create_upload_external_skymap.assert_called_once_with(
+        {'graceid': 'E1',
+         'gpstime': 1,
+         'instruments': '',
+         'pipeline': 'Fermi',
+         'extra_attributes': {
+             'GRB': {
+                 'trigger_duration': 1,
+                 'trigger_id': 123,
+                 'ra': 0.0,
+                 'dec': 0.0,
+                 'error_radius': 10.0
+                    }
+              },
+         'links': {
+             'self': 'https://gracedb.ligo.org/events/E356793/'
+                  }
+         },
+        '115', '2018-05-24T18:35:45')
 
 
 @patch('gwcelery.tasks.gracedb.get_events', return_value=[])
@@ -97,6 +118,91 @@ def test_handle_replace_grb_event(mock_get_event, mock_get_events,
     text = resource_string(__name__, 'data/fermi_grb_gcn.xml')
     external_triggers.handle_grb_gcn(payload=text)
     mock_replace_event.assert_called_once_with('E1', text)
+
+
+@patch('gwcelery.tasks.gracedb.get_group', return_value='CBC')
+@patch('gwcelery.tasks.gracedb.create_label.run')
+@patch('gwcelery.tasks.gracedb.get_labels',
+       return_value=['SKYMAP_READY'])
+def test_handle_create_skymap_label_from_ext_event(mock_get_labels,
+                                                   mock_create_label,
+                                                   mock_get_group):
+    alert = {"uid": "E1212",
+             "alert_type": "label_added",
+             "data": {"name": "EM_COINC"},
+             "object": {
+                 "group": "External",
+                 "labels": ["EM_COINC", "EXT_SKYMAP_READY"],
+                 "superevent": "S1234"
+                       }
+             }
+    external_triggers.handle_grb_lvalert(alert)
+    mock_create_label.assert_called_once_with('SKYMAP_READY', 'E1212')
+
+
+@patch('gwcelery.tasks.gracedb.get_group', return_value='CBC')
+@patch('gwcelery.tasks.gracedb.create_label.run')
+def test_handle_create_skymap_label_from_superevent(mock_create_label,
+                                                    mock_get_group):
+    alert = {"uid": "S1234",
+             "alert_type": "label_added",
+             "data": {"name": "SKYMAP_READY"},
+             "object": {
+                 "group": "CBC",
+                 "labels": ["SKYMAP_READY"],
+                 "superevent_id": "S1234",
+                 "em_events": ['E1212']
+                       }
+             }
+    external_triggers.handle_grb_lvalert(alert)
+    mock_create_label.assert_called_once_with('SKYMAP_READY', 'E1212')
+
+
+@patch('gwcelery.tasks.gracedb.get_group', return_value='CBC')
+@patch('gwcelery.tasks.raven.raven_pipeline')
+@patch('gwcelery.tasks.gracedb.get_superevent',
+       return_value={
+           'superevent_id': 'S1234',
+           'preferred_event': 'G1234'
+                    })
+@patch('gwcelery.tasks.gracedb.get_event',
+       return_value={
+           'graceid': 'G1234',
+           'group': 'CBC'
+                    })
+def test_handle_skymap_comparison(mock_get_event, mock_get_superevent,
+                                  mock_raven_pipeline, mock_get_group):
+    alert = {"uid": "E1212",
+             "alert_type": "label_added",
+             "data": {"name": "SKYMAP_READY"},
+             "object": {
+                 "graceid": "E1212",
+                 "group": "External",
+                 "labels": ["EM_COINC", "EXT_SKYMAP_READY", "SKYMAP_READY"],
+                 "superevent": "S1234"
+                       }
+             }
+    external_triggers.handle_grb_lvalert(alert)
+    mock_raven_pipeline.assert_called_once_with([alert['object']], 'S1234',
+                                                {'superevent_id': 'S1234',
+                                                 'preferred_event': 'G1234'},
+                                                'CBC')
+
+
+@patch('gwcelery.tasks.external_skymaps.create_combined_skymap')
+def test_handle_skymap_combine(mock_create_combined_skymap):
+    alert = {"uid": "E1212",
+             "alert_type": "label_added",
+             "data": {"name": "RAVEN_ALERT"},
+             "object": {
+                 "graceid": "E1212",
+                 "group": "External",
+                 "labels": ["EM_COINC", "EXT_SKYMAP_READY", "SKYMAP_READY",
+                            "RAVEN_ALERT"],
+                 "superevent": "S1234"}
+             }
+    external_triggers.handle_grb_lvalert(alert)
+    mock_create_combined_skymap.assert_called_once_with('S1234', 'E1212')
 
 
 @patch('gwcelery.tasks.detchar.dqr_json', return_value='dqrjson')
@@ -180,10 +286,10 @@ def test_handle_sntrig_creation(mock_raven_coincidence_search, calls, path):
 
 @patch('gwcelery.tasks.gracedb.get_superevent',
        return_value={'preferred_event': 'M4634'})
-@patch('gwcelery.tasks.gracedb.get_event', return_value={'group': 'CBC'})
+@patch('gwcelery.tasks.gracedb.get_group', return_value='CBC')
 @patch('gwcelery.tasks.raven.coincidence_search')
 def test_handle_superevent_creation(mock_raven_coincidence_search,
-                                    mock_get_event,
+                                    mock_get_group,
                                     mock_get_superevent):
     """Test dispatch of an LVAlert message for a superevent creation."""
     # Test LVAlert payload.

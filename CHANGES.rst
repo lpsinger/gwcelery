@@ -15,6 +15,9 @@ Changelog
 -   Do not start parameter estimation for mock events uploaded to
     gracedb.ligo.org.
 
+-   Automate the calculation of joint FAR with sky maps and creation of
+    combined sky map, executed when both sky maps are available
+
 0.9.2 (2020-01-07)
 ------------------
 

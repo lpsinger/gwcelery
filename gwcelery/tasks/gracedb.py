@@ -190,6 +190,13 @@ def get_event(graceid):
 
 @task(shared=False)
 @catch_retryable_http_errors
+def get_group(graceid):
+    """Retrieve the search field of an event from GraceDB."""
+    return client.event(graceid).json()['group']
+
+
+@task(shared=False)
+@catch_retryable_http_errors
 def get_search(graceid):
     """Retrieve the search field of an event from GraceDB."""
     return client.event(graceid).json()['search']
@@ -329,6 +336,6 @@ def add_event_to_superevent(superevent_id, graceid):
         with client.addEventToSuperevent(superevent_id, graceid):
             pass  # Close without reading response; we only needed the status
     except rest.HTTPError as e:
-        error_msg = '"is already assigned to a Superevent"'
-        if not (e.status == 400 and e.message == error_msg):
+        error_msg = 'is already assigned to a Superevent'
+        if not (e.status == 400 and error_msg in e.message):
             raise

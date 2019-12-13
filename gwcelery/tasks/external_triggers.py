@@ -1,5 +1,6 @@
 from lxml import etree
 from urllib.parse import urlparse
+from celery import group
 from celery.utils.log import get_logger
 
 from . import detchar
@@ -10,6 +11,15 @@ from . import lvalert
 from . import raven
 
 log = get_logger(__name__)
+
+
+REQUIRED_LABELS_BY_TASK = {
+    'compare': {'SKYMAP_READY', 'EXT_SKYMAP_READY', 'EM_COINC'},
+    'combine': {'SKYMAP_READY', 'EXT_SKYMAP_READY', 'RAVEN_ALERT'}
+}
+"""These labels should be present on an external event to consider it to
+be ready for sky map comparison.
+"""
 
 
 @gcn.handler(gcn.NoticeType.SNEWS,
@@ -113,7 +123,11 @@ def handle_grb_gcn(payload):
         end = start + event['extra_attributes']['GRB']['trigger_duration']
         detchar.check_vectors(event, event['graceid'], start, end)
 
-    external_skymaps.create_upload_external_skymap(event)
+    notice_type = \
+        root.find("./What/Param[@name='Packet_Type']").attrib['value']
+    notice_date = root.find("./Who/Date").text
+    external_skymaps.create_upload_external_skymap(
+        event, notice_type, notice_date)
     if event['pipeline'] == 'Fermi':
         external_skymaps.get_upload_external_skymap(graceid)
 
@@ -135,8 +149,12 @@ def handle_grb_lvalert(alert):
 
     * Any new event triggers a coincidence search with
       :meth:`gwcelery.tasks.raven.coincidence_search`.
-    * The ``EM_COINC`` label triggers the creation of a combined GW-GRB sky map
-      using :meth:`gwcelery.tasks.external_skymaps.create_combined_skymap`.
+    * When both a GW and GRB sky map are available during a coincidence,
+      indicated by the labels ``SKYMAP_READY`` and ``EXT_SKYMAP_READY``
+      respectfully, this trigger the spacetime coinc FAR to be calculated. If
+      an alert is triggered with these same conditions, indicated by the
+      ``RAVEN_ALERT`` label, a combined GW-GRB sky map is created using
+      :meth:`gwcelery.tasks.external_skymaps.create_combined_skymap`.
 
     """
     # Determine GraceDB ID
@@ -145,15 +163,46 @@ def handle_grb_lvalert(alert):
     if alert['alert_type'] == 'new' and \
             alert['object'].get('group') == 'External':
         raven.coincidence_search(graceid, alert['object'], group='CBC')
+        raven.coincidence_search(graceid, alert['object'], group='Burst')
+    elif alert['alert_type'] == 'new' and 'S' in graceid:
+        preferred_event_id = alert['object']['preferred_event']
+        gw_group = gracedb.get_group(preferred_event_id)
         raven.coincidence_search(graceid, alert['object'],
-                                 group='Burst')
-    elif 'S' in graceid:
-        preferred_event_id = gracedb.get_superevent(graceid)['preferred_event']
-        group = gracedb.get_event(preferred_event_id)['group']
-        if alert['alert_type'] == 'new':
-            raven.coincidence_search(graceid, alert['object'],
-                                     group=group,
-                                     pipelines=['Fermi', 'Swift'])
+                                 group=gw_group,
+                                 pipelines=['Fermi', 'Swift'])
+    elif alert['alert_type'] == 'label_added' and \
+            alert['object'].get('group') == 'External':
+        if _skymaps_are_ready(alert['object'], alert['data']['name'],
+                              'compare'):
+            #  if both sky maps present and a coincidence, compare sky maps
+            se_id, ext_ids = _get_superevent_ext_ids(graceid, alert['object'],
+                                                     'compare')
+            superevent = gracedb.get_superevent(se_id)
+            preferred_event_id = superevent['preferred_event']
+            gw_group = gracedb.get_group(preferred_event_id)
+            raven.raven_pipeline([alert['object']], se_id, superevent,
+                                 gw_group)
+        if _skymaps_are_ready(alert['object'], alert['data']['name'],
+                              'combine'):
+            #  if both sky maps present and a raven alert, create combined
+            #  skymap
+            se_id, ext_id = _get_superevent_ext_ids(graceid, alert['object'],
+                                                    'combine')
+            external_skymaps.create_combined_skymap(se_id, ext_id)
+        elif 'EM_COINC' in alert['object']['labels']:
+            #  if not complete, check if GW sky map; apply label to external
+            #  event if GW sky map
+            se_labels = gracedb.get_labels(alert['object']['superevent'])
+            if 'SKYMAP_READY' in se_labels:
+                gracedb.create_label.si('SKYMAP_READY', graceid).delay()
+    elif alert['alert_type'] == 'label_added' and 'S' in graceid and \
+            'SKYMAP_READY' in alert['object']['labels']:
+        #  if sky map in superevent, apply label to all external events
+        #  at the time
+        group(
+            gracedb.create_label.si('SKYMAP_READY', ext_id)
+            for ext_id in alert['object']['em_events']
+        ).delay()
 
 
 @lvalert.handler('superevent',
@@ -189,3 +238,27 @@ def handle_snews_lvalert(alert):
         if alert['alert_type'] == 'new' and group == 'Burst':
             raven.coincidence_search(graceid, alert['object'],
                                      group=group, pipelines=['SNEWS'])
+
+
+def _skymaps_are_ready(event, label, task):
+    label_set = set(event['labels'])
+    required_labels = REQUIRED_LABELS_BY_TASK[task]
+    return required_labels.issubset(label_set) and label in required_labels
+
+
+def _get_superevent_ext_ids(graceid, event, task):
+    if task == 'combine':
+        if 'S' in graceid:
+            se_id = event['superevent_id']
+            ext_id = event['em_type']
+        else:
+            se_id = event['superevent']
+            ext_id = event['graceid']
+    elif task == 'compare':
+        if 'S' in graceid:
+            se_id = event['superevent_id']
+            ext_id = event['em_events']
+        else:
+            se_id = event['superevent']
+            ext_id = [event['graceid']]
+    return se_id, ext_id

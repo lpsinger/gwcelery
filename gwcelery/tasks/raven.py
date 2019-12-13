@@ -3,7 +3,6 @@ import ligo.raven.search
 import json
 from celery import group
 from celery.utils.log import get_task_logger
-from ligo.gracedb.exceptions import HTTPError
 from ligo.raven import gracedb_events
 
 from ..import app
@@ -36,19 +35,6 @@ def calculate_coincidence_far(superevent, exttrig, group):
     if exttrig['pipeline'] == 'SNEWS':
         return
 
-    #  Try to grab superevent and external sky maps
-    try:
-        se_skymap = external_skymaps.get_preferred_skymap(
-            superevent_id)
-    except ValueError:
-        se_skymap = None
-    try:
-        ext_skymap = gracedb.download('glg_healpix_all_bn_v00.fit',
-                                      exttrig_id)
-    except HTTPError as e:
-        if e.status == 404:
-            ext_skymap = None
-
     tl_cbc, th_cbc = app.conf['raven_coincidence_windows']['GRB_CBC']
     tl_burst, th_burst = app.conf['raven_coincidence_windows']['GRB_Burst']
 
@@ -57,24 +43,23 @@ def calculate_coincidence_far(superevent, exttrig, group):
     elif group == 'Burst':
         tl, th = tl_burst, th_burst
 
-    if ext_skymap and se_skymap:
-        return calc_signif(exttrig['search'],
-                           superevent_id, exttrig_id, tl, th,
-                           incl_sky=True,
-                           se_fitsfile=se_skymap)
+    if {'EXT_SKYMAP_READY', 'SKYMAP_READY'}.issubset(exttrig['labels']):
+        #  if both sky maps available, calculate spatial coinc far
+        se_skymap = external_skymaps.get_skymap_filename(
+            superevent_id)
+        ext_skymap = external_skymaps.get_skymap_filename(
+            exttrig_id)
+
+        return ligo.raven.search.calc_signif_gracedb(
+                   superevent_id, exttrig_id, tl, th,
+                   grb_search=exttrig['search'],
+                   se_fitsfile=se_skymap, ext_fitsfile=ext_skymap,
+                   incl_sky=True, gracedb=gracedb.client)
     else:
-        return calc_signif(exttrig['search'],
-                           superevent_id, exttrig_id, tl, th,
-                           incl_sky=False)
-
-
-@app.task(shared=False)
-def calc_signif(search, se_id, exttrig_id, tl, th, incl_sky=False,
-                se_fitsfile=None):
-    """Calculate FAR of GRB exttrig-GW coincidence"""
-    return ligo.raven.search.calc_signif_gracedb(
-        se_id, exttrig_id, tl, th, grb_search=search, se_fitsfile=se_fitsfile,
-        incl_sky=incl_sky, gracedb=gracedb.client)
+        return ligo.raven.search.calc_signif_gracedb(
+                   superevent_id, exttrig_id, tl, th,
+                   grb_search=exttrig['search'],
+                   incl_sky=False, gracedb=gracedb.client)
 
 
 @app.task(shared=False)
@@ -325,6 +310,8 @@ def trigger_raven_alert(coinc_far_json, superevent, gracedb_id,
                 preferred_gwevent_id))
             (
                 gracedb.create_label.si('RAVEN_ALERT', superevent_id)
+                |
+                gracedb.create_label.si('RAVEN_ALERT', ext_id)
                 |
                 gracedb.create_label.si('RAVEN_ALERT', preferred_gwevent_id)
             ).delay()

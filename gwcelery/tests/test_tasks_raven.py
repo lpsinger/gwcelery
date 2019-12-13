@@ -62,67 +62,47 @@ def test_raven_search(mock_raven_search, mock_se_cls, mock_exttrig_cls,
 
 
 @pytest.mark.parametrize('group', ['CBC', 'Burst'])
-@patch('gwcelery.tasks.raven.calc_signif')
+@patch('ligo.raven.search.calc_signif_gracedb')
 def test_calculate_coincidence_far(
         mock_calc_signif, group):
     se = {'superevent_id': 'S1234'}
     ext = {'graceid': 'E4321',
            'pipeline': 'Fermi',
-           'search': 'GRB'}
+           'search': 'GRB',
+           'labels': []}
     raven.calculate_coincidence_far(se, ext, group)
     if group == 'CBC':
         tl, th = -5, 1
     else:
         tl, th = -600, 60
-    mock_calc_signif.assert_called_once_with('GRB', 'S1234',
-                                             'E4321', tl, th,
-                                             incl_sky=False)
-
-
-@pytest.mark.parametrize('group', ['CBC', 'Burst'])  # noqa: F811
-@patch('gwcelery.tasks.external_skymaps.get_preferred_skymap',
-       return_value='bayestar.fits.gz')
-@patch('gwcelery.tasks.raven.calc_signif')
-def test_calculate_spacetime_coincidence_far(
-        mock_calc_signif, mock_get_preferred_skymap, group):
-    se = {'superevent_id': 'S1234'}
-    ext = {'graceid': 'E4321',
-           'pipeline': 'Fermi',
-           'search': 'GRB'}
-    raven.calculate_coincidence_far(se, ext, group)
-    if group == 'CBC':
-        tl, th = -5, 1
-    else:
-        tl, th = -600, 60
-    mock_calc_signif.assert_called_once_with('GRB', 'S1234',
-                                             'E4321', tl, th,
-                                             incl_sky=True,
-                                             se_fitsfile='bayestar.fits.gz')
-
-
-@patch('ligo.raven.search.calc_signif_gracedb')
-def test_calc_signif(
-        mock_raven_calc_signif):
-    tl, th = -1, 5
-    raven.calc_signif('GRB', 'S1234', 'E1234', tl, th,
-                      incl_sky=False)
-
-    mock_raven_calc_signif.assert_called_once_with(
-        'S1234', 'E1234', tl, th, grb_search='GRB',
-        se_fitsfile=None, incl_sky=False,
+    mock_calc_signif.assert_called_once_with(
+        'S1234', 'E4321', tl, th,
+        incl_sky=False, grb_search='GRB',
         gracedb=gracedb.client)
 
 
+@pytest.mark.parametrize('group', ['CBC', 'Burst'])  # noqa: F811
+@patch('gwcelery.tasks.external_skymaps.get_skymap_filename',
+       return_value='fermi_skymap.fits.gz')
 @patch('ligo.raven.search.calc_signif_gracedb')
-def test_calc_signif_skymaps(mock_raven_calc_signif):
-    tl, th = -1, 5
-    raven.calc_signif('GRB', 'S1234', 'E1234', tl, th,
-                      incl_sky=True, se_fitsfile='bayestar.fits.gz')
-
-    mock_raven_calc_signif.assert_called_once_with(
-        'S1234', 'E1234', tl, th, grb_search='GRB',
-        se_fitsfile='bayestar.fits.gz',
-        incl_sky=True, gracedb=gracedb.client)
+def test_calculate_spacetime_coincidence_far(
+        mock_calc_signif, mock_get_skymap_filename, group):
+    se = {'superevent_id': 'S1234'}
+    ext = {'graceid': 'E4321',
+           'pipeline': 'Fermi',
+           'search': 'GRB',
+           'labels': ['EXT_SKYMAP_READY', 'SKYMAP_READY']}
+    raven.calculate_coincidence_far(se, ext, group)
+    if group == 'CBC':
+        tl, th = -5, 1
+    else:
+        tl, th = -600, 60
+    mock_calc_signif.assert_called_once_with(
+        'S1234', 'E4321', tl, th,
+        incl_sky=True, grb_search='GRB',
+        se_fitsfile='fermi_skymap.fits.gz',
+        ext_fitsfile='fermi_skymap.fits.gz',
+        gracedb=gracedb.client)
 
 
 def mock_get_labels(superevent_id):
@@ -164,7 +144,9 @@ def test_raven_pipeline(mock_create_label,
     threshold, when a coincidence is found but does pass threshold, and when
     multiple events are found.
     """
-    alert_object = {'preferred_event': 'G1', 'pipeline': 'GRB'}
+    alert_object = {'preferred_event': 'G1', 'pipeline': 'GRB', 'labels': []}
+    for result in raven_search_results:
+        result['labels'] = []
     if 'E' in graceid:
         alert_object['group'] = 'External'
     raven.raven_pipeline(raven_search_results, graceid, alert_object, group)
@@ -309,6 +291,7 @@ def test_trigger_raven_alert(mock_create_label, mock_update_superevent,
 
     if expected_result:
         label_calls = [call('RAVEN_ALERT', superevent_id),
+                       call('RAVEN_ALERT', ext_id),
                        call('RAVEN_ALERT', preferred_id)]
         if ext_event['pipeline'] == 'SNEWS':
             coinc_far = None

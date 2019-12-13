@@ -2,8 +2,8 @@
 from astropy import units as u
 from astropy.coordinates import ICRS, SkyCoord
 from astropy_healpix import HEALPix, pixel_resolution_to_nside
-#  import astropy.utils.data
 from celery import group
+#  import astropy.utils.data
 import numpy as np
 from ligo.skymap.io import fits
 from ligo.skymap.tool import ligo_skymap_combine
@@ -20,66 +20,62 @@ from ..util.tempfile import NamedTemporaryFile
 from ..import _version
 
 
-def create_combined_skymap(graceid):
+def create_combined_skymap(se_id, ext_id):
     """Creates and uploads the combined LVC-Fermi skymap.
 
     This also uploads the external trigger skymap to the external trigger
     GraceDB page.
     """
-    preferred_skymap = get_preferred_skymap(graceid)
-    message = 'Combined LVC-Fermi sky map using {0}.'.format(preferred_skymap)
-    new_skymap = re.findall(r'(.*).fits', preferred_skymap)[0] + '-gbm.fits.gz'
-    external_trigger_id = external_trigger(graceid)
-    return (external_trigger_heasarc.s(external_trigger_id) |
-            get_external_skymap.s() |
-            group(
-                combine_skymaps.s(gracedb.download(preferred_skymap,
-                                                   graceid)) |
-                gracedb.upload.s(
-                    new_skymap, graceid, message, ['sky_loc', 'public']),
+    se_skymap_filename = get_skymap_filename(se_id)
+    ext_skymap_filename = get_skymap_filename(ext_id)
+    new_skymap_filename = re.findall(r'(.*).fits.gz', se_skymap_filename)[0]
 
-                gracedb.upload.s('glg_healpix_all_bn_v00.fit',
-                                 external_trigger_id,
-                                 'Sky map from HEASARC.',
-                                 ['sky_loc', 'public']))
-            )
+    #  FIXME: put download functions in canvas
+    se_skymap = gracedb.download(se_skymap_filename, se_id)
+    ext_skymap = gracedb.download(ext_skymap_filename, ext_id)
+    message = 'Combined LVC-external sky map using {0} and {1}'.format(
+        se_skymap_filename, ext_skymap_filename)
+    message_png = (
+        'Mollweide projection of <a href="/api/events/{graceid}/files/'
+        '{filename}">{filename}</a>').format(
+            graceid=se_id, filename=new_skymap_filename + '-ext.fits.gz')
+
+    (
+        combine_skymaps.si(se_skymap, ext_skymap)
+        |
+        group(
+            gracedb.upload.s(new_skymap_filename + '-ext.fits.gz', se_id,
+                             message, ['sky_loc', 'public']),
+
+            skymaps.plot_allsky.s()
+            |
+            gracedb.upload.s(new_skymap_filename + '-ext.png', se_id,
+                             message_png, ['sky_loc', 'ext_coinc', 'public'])
+        )
+    ).delay()
 
 
 @app.task(autoretry_for=(ValueError,), retry_backoff=10,
           retry_backoff_max=600)
-def get_preferred_skymap(graceid):
-    """Get the LVC skymap fits filename.
+def get_skymap_filename(graceid):
+    """Get the skymap fits filename.
 
     If not available, will try again 10 seconds later, then 20, then 40, etc.
     until up to 10 minutes after initial attempt.
     """
     gracedb_log = gracedb.get_log(graceid)
-    for message in reversed(gracedb_log):
-        comment = message['comment']
-        filename = message['filename']
-        if (filename.endswith('.fits.gz') or filename.endswith('.fits')) and \
-                'copied' in comment:
-            return filename
-    raise ValueError('No skymap available for {0} yet.'.format(graceid))
-
-
-@app.task(autoretry_for=(ValueError,), retry_backoff=10,
-          retry_backoff_max=600)
-def get_external_skymap_filename(graceid):
-    """Get the external skymap fits filename.
-
-    If not available, will try again 10 seconds later, then 20, then 40, etc.
-    until up to 10 minutes after initial attempt.
-    """
-    gracedb_log = gracedb.get_log(graceid)
-    for message in reversed(gracedb_log):
-        filename = message['filename']
-        if (filename.endswith('.fits') or filename.endswith('.fit') or
-                filename.endswith('.fits.gz')):
-            if 'bayestar' not in filename and 'LALinference' not in filename:
+    if 'S' in graceid:
+        for message in reversed(gracedb_log):
+            filename = message['filename']
+            if filename.endswith('.fits.gz'):
                 return filename
-    raise ValueError('No external skymap available for {0} yet.'.format(
-        graceid))
+    else:
+        for message in reversed(gracedb_log):
+            filename = message['filename']
+            if (filename.endswith('.fits') or filename.endswith('.fit') or
+                    filename.endswith('.fits.gz')):
+                return filename
+    raise ValueError('No skymap available for {0} yet.'.format(graceid))
 
 
 @app.task(shared=False)
@@ -155,7 +151,7 @@ def get_upload_external_skymap(graceid):
     re-run the next time an update GCN notice is received.
     """
     try:
-        filename = get_external_skymap_filename(graceid)
+        filename = get_skymap_filename(graceid)
         if 'glg_healpix_all_bn_v00.fit' in filename:
             return
     except ValueError:
@@ -172,6 +168,8 @@ def get_upload_external_skymap(graceid):
                 graceid,
                 'Sky map from HEASARC.',
                 ['sky_loc'])
+            |
+            gracedb.create_label.si('EXT_SKYMAP_READY', graceid)
         ).delay()
 
     except ValueError:
@@ -229,7 +227,7 @@ def create_external_skymap(ra, dec, error):
     return skymap
 
 
-def write_to_fits(skymap, event):
+def write_to_fits(skymap, event, notice_type, notice_date):
     """Write external sky map fits file, populating the
     header with relevant info.
 
@@ -246,6 +244,15 @@ def write_to_fits(skymap, event):
         bytes array of sky map
 
     """
+    notice_type_dict = {
+        '60': 'SWIFT_BAT_GRB_ALERT',
+        '61': 'SWIFT_BAT_GRB_POSITION',
+        '110': 'FERMI_GBM_ALERT',
+        '111': 'FERMI_GBM_FLT_POS',
+        '112': 'FERMI_GBM_GND_POS',
+        '115': 'FERMI_GBM_FINAL_POS',
+        '131': 'FERMI_GBM_SUBTHRESHOLD'}
+
     gcn_id = event['extra_attributes']['GRB']['trigger_id']
     with NamedTemporaryFile(suffix='.fits.gz') as f:
         fits.write_sky_map(f.name, skymap,
@@ -253,6 +260,8 @@ def write_to_fits(skymap, event):
                            url=event['links']['self'],
                            instruments=event['pipeline'],
                            gps_time=event['gpstime'],
+                           msgtype=notice_type_dict[notice_type],
+                           msgdate=notice_date,
                            creator='gwcelery',
                            origin='LIGO-VIRGO-KAGRA',
                            vcs_version=_version.get_versions()['version'],
@@ -262,7 +271,7 @@ def write_to_fits(skymap, event):
 
 
 @app.task(shared=False)
-def create_upload_external_skymap(event):
+def create_upload_external_skymap(event, notice_type, notice_date):
     """Create and upload external sky map using
     RA, dec, and error radius information.
 
@@ -280,7 +289,7 @@ def create_upload_external_skymap(event):
     error = event['extra_attributes']['GRB']['error_radius']
     skymap = create_external_skymap(ra, dec, error)
 
-    skymap_data = write_to_fits(skymap, event)
+    skymap_data = write_to_fits(skymap, event, notice_type, notice_date)
 
     message = (
         'Mollweide projection of <a href="/api/events/{graceid}/files/'
@@ -300,4 +309,6 @@ def create_upload_external_skymap(event):
                          graceid,
                          message,
                          ['sky_loc'])
+        |
+        gracedb.create_label.si('EXT_SKYMAP_READY', graceid)
     ).delay()

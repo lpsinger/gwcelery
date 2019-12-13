@@ -60,20 +60,27 @@ def mock_get_file_contents(monkeypatch, toy_fits_filecontents):  # noqa: F811
         'astropy.utils.data.get_file_contents', get_file_contents)
 
 
-@patch('gwcelery.tasks.gracedb.get_superevent', mock_get_superevent)
-@patch('gwcelery.tasks.gracedb.get_event', mock_get_event)
-@patch('gwcelery.tasks.gracedb.get_log', mock_get_log)
-@patch('astropy.utils.data.get_file_contents', mock_get_file_contents)
-def test_create_combined_skymap():
+@patch('gwcelery.tasks.skymaps.plot_allsky.run')
+@patch('gwcelery.tasks.gracedb.upload.run')
+@patch('gwcelery.tasks.external_skymaps.combine_skymaps.run')
+@patch('gwcelery.tasks.gracedb.download')
+@patch('gwcelery.tasks.external_skymaps.get_skymap_filename',
+       return_value='fermi_skymap.fits.gz,0')
+def test_create_combined_skymap(mock_get_skymap_filename,
+                                mock_download,
+                                mock_combine_skymaps, mock_upload,
+                                mock_plot_allsky):
     """Test creating combined LVC and Fermi skymap"""
     # Run function under test
-    external_skymaps.create_combined_skymap('S12345')
+    external_skymaps.create_combined_skymap('S12345', 'E12345')
+    mock_combine_skymaps.assert_called_once()
+    mock_upload.assert_called()
 
 
 @patch('gwcelery.tasks.gracedb.get_log', mock_get_log)
-def test_get_preferred_skymap():
+def test_get_skymap_filename():
     """Test getting the LVC skymap fits filename"""
-    external_skymaps.get_preferred_skymap('S12345')
+    external_skymaps.get_skymap_filename('S12345')
 
 
 @patch('gwcelery.tasks.gracedb.get_event', mock_get_event)
@@ -136,6 +143,7 @@ def test_create_upload_swift_skymap(mock_plot_allsky,
                      'error_radius': 0}},
              'links': {
                  'self': 'https://gracedb.ligo.org/api/events/E356793'}}
-    external_skymaps.create_upload_external_skymap(event)
+    external_skymaps.create_upload_external_skymap(event, '111',
+                                                   '2020-01-09T01:47:09')
     mock_upload.assert_called()
     mock_plot_allsky.assert_called_once()
