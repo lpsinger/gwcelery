@@ -283,7 +283,8 @@ def test_is_complete(labels):
      [['SKYMAP_READY', 'EMBRIGHT_READY', 'PASTRO_READY'], 'SKYMAP_READY']])
 def test_process_called(labels, label):
     """Test whether the :meth:`superevents.process` is called
-    new type lvalerts, and label additions that complete the event."""
+    new type lvalerts, and label additions that complete the event.
+    """
     payload = {
         "alert_type": "label_added",
         "data": {"name": label},
