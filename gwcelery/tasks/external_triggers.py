@@ -101,6 +101,7 @@ def handle_grb_gcn(payload):
         event, = events
         graceid = event['graceid']
         gracedb.replace_event(graceid, payload)
+        event = gracedb.get_event(graceid)
 
     else:
         graceid = gracedb.create_event(filecontents=payload,
