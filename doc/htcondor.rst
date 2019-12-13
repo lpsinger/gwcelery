@@ -63,7 +63,7 @@ you will get the following error message::
 
     $ gwcelery condor submit
     error: GWCelery jobs are already running in this directory.
-    You must first remove exist jobs with "gwcelery condor rm".
+    First remove existing jobs with "gwcelery condor rm".
     To see the status of those jobs, run "gwcelery condor q".
 
 However, there are situations where you may actually want to run multiple

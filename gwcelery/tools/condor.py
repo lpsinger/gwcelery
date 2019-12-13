@@ -41,7 +41,7 @@ def submit(app):
     """Submit all GWCelery jobs to HTCondor (if not already running)."""
     if running():
         print('error: GWCelery jobs are already running in this directory.\n'
-              'You must first remove exist jobs with "gwcelery condor rm".\n'
+              'First remove existing jobs with "gwcelery condor rm".\n'
               'To see the status of those jobs, run "gwcelery condor q".',
               file=sys.stderr)
         sys.exit(1)
