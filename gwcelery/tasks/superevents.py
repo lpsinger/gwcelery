@@ -39,9 +39,8 @@ has all data products required to make it ready for annotations."""
                  'burst_cwb',
                  shared=False)
 def handle(payload):
-    """Respond to lvalert nodes from low-latency search
-    pipelines and delegate to :meth:`process` for
-    superevent management.
+    """Respond to lvalert nodes from low-latency search pipelines and delegate
+    to :meth:`process` for superevent management.
     """
     alert_type = payload['alert_type']
     gid = payload['object']['graceid']
@@ -74,8 +73,8 @@ def handle(payload):
 @gracedb.catch_retryable_http_errors
 def process(payload):
     """
-    Respond to `payload` and serially processes them
-    to create new superevents, add events to existing ones
+    Respond to `payload` and serially processes them to create new superevents,
+    add events to existing ones.
 
     Parameters
     ----------
@@ -338,8 +337,8 @@ def get_instruments_in_ranking_statistic(event):
 
 @app.task(shared=False)
 def select_preferred_event(events):
-    """Select the preferred event out of a list of events,
-    typically contents of a superevent, based on :meth:`keyfunc`.
+    """Select the preferred event out of a list of events, typically contents
+    of a superevent, based on :meth:`keyfunc`.
 
     Parameters
     ----------
@@ -400,8 +399,8 @@ def should_publish(event):
 
 
 def _should_publish(event):
-    """Wrapper around :meth:`should_publish`. Returns the boolean returns
-    of the publishability criteria as a tuple for later use.
+    """Wrapper around :meth:`should_publish`. Returns the boolean returns of
+    the publishability criteria as a tuple for later use.
     """
     group = event['group'].lower()
     trials_factor = app.conf['preliminary_alert_trials_factor'][group]
@@ -457,8 +456,7 @@ def keyfunc(event):
 
 def _update_superevent(superevent, new_event_dict,
                        t_0, t_start, t_end):
-    """
-    Update preferred event and/or change time window. Events with multiple
+    """Update preferred event and/or change time window. Events with multiple
     detectors take precedence over single-detector events, then CBC events take
     precedence over burst events, and any remaining tie is broken by SNR/FAR
     values for CBC/Burst. Single detector are not promoted to preferred event
