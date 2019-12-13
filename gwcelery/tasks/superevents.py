@@ -64,7 +64,7 @@ def handle(payload):
         elif label not in REQUIRED_LABELS_BY_GROUP[group] and \
                 not is_complete(payload['object']):
             log.info("Ignoring since %s has %s labels. "
-                     "It is not complete" % (gid, alert['object']['labels']))
+                     "It is not complete" % (gid, payload['object']['labels']))
             return
     elif alert_type != 'new':
         return
