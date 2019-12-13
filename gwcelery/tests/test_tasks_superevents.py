@@ -277,6 +277,31 @@ def test_is_complete(labels):
         assert result is True
 
 
+@pytest.mark.parametrize(
+    'labels,label',
+    [[['EMBRIGHT_READY', 'PASTRO_READY'], 'EMBRIGHT_READY'],
+     [['SKYMAP_READY', 'EMBRIGHT_READY', 'PASTRO_READY'], 'SKYMAP_READY']])
+def test_process_called(labels, label):
+    """Test whether the :meth:`superevents.process` is called
+    new type lvalerts, and label additions that complete the event."""
+    payload = {
+        "alert_type": "label_added",
+        "data": {"name": label},
+        "object": {
+            "graceid": "ABCD",
+            "far": 1e-6,
+            "group": "CBC",
+            "labels": labels
+        }
+    }
+    with patch('gwcelery.tasks.superevents.process.run') as process:
+        superevents.handle(payload)
+        if superevents.is_complete(payload['object']):
+            process.assert_called()
+        else:
+            process.assert_not_called()
+
+
 def _mock_superevents(*args, **kwargs):
     return [
         {

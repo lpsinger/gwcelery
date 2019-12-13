@@ -61,8 +61,9 @@ def handle(payload):
         if label == 'EM_COINC':
             # FIXME: Add RAVEN preliminary alert
             log.info('Label %s added to %s', label, gid)
-        elif label not in REQUIRED_LABELS_BY_GROUP[group] and \
-                not is_complete(payload['object']):
+        elif label not in REQUIRED_LABELS_BY_GROUP[group]:
+            return
+        elif not is_complete(payload['object']):
             log.info("Ignoring since %s has %s labels. "
                      "It is not complete" % (gid, payload['object']['labels']))
             return
