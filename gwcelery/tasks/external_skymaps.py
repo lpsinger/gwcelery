@@ -4,7 +4,6 @@ from astropy.coordinates import ICRS, SkyCoord
 from astropy_healpix import HEALPix, pixel_resolution_to_nside
 #  import astropy.utils.data
 from celery import group
-import io
 import numpy as np
 from ligo.skymap.io import fits
 from ligo.skymap.tool import ligo_skymap_combine
@@ -182,7 +181,6 @@ def get_upload_external_skymap(graceid):
         pass
 
 
-@app.task(shared=False)
 def create_external_skymap(ra, dec, error):
     """Create an sky map, either a gaussian or a single
     pixel sky map, given an RA, dec, and error radius.
@@ -249,8 +247,8 @@ def write_to_fits(skymap, event):
 
     """
     gcn_id = event['extra_attributes']['GRB']['trigger_id']
-    with io.BytesIO() as f:
-        fits.write_sky_map(f, skymap, moc=True,
+    with NamedTemporaryFile(suffix='.fits.gz') as f:
+        fits.write_sky_map(f.name, skymap,
                            objid=gcn_id,
                            url=event['links']['self'],
                            instruments=event['pipeline'],
@@ -259,7 +257,8 @@ def write_to_fits(skymap, event):
                            origin='LIGO-VIRGO-KAGRA',
                            vcs_version=_version.get_versions()['version'],
                            history='file only for internal use')
-        return f.getvalue()
+        with open(f.name, 'rb') as file:
+            return file.read()
 
 
 @app.task(shared=False)
