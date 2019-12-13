@@ -61,7 +61,8 @@ def handle(payload):
         if label == 'EM_COINC':
             # FIXME: Add RAVEN preliminary alert
             log.info('Label %s added to %s', label, gid)
-        elif label not in REQUIRED_LABELS_BY_GROUP[group]:
+        elif label not in REQUIRED_LABELS_BY_GROUP[group] and \
+                not is_complete(payload['object']):
             return
     elif alert_type != 'new':
         return

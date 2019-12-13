@@ -22,6 +22,10 @@ Changelog
 
 -   Modify RAVEN to run on MDC events.
 
+-   Restrict the ``superevents.process`` task to process only complete
+    G events instead of running for all the superevent completeness labels.
+    The behavior for running on the ``new`` type events remains unchanged.
+
 0.9.0 (2019-11-23)
 ------------------
 
