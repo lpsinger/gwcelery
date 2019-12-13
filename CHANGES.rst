@@ -31,6 +31,13 @@ Changelog
     G events instead of running for all the superevent completeness labels.
     The behavior for running on the ``new`` type events remains unchanged.
 
+-   Add bullet charts for BAYESTAR coherence-versus-incoherence Bayes factors.
+    The BAYESTAR log Bayes factor for coherence versus incoherence is stored in
+    the FITS file header's `LOGBCI` field. For each FITS file that has this
+    header field, make a bullet chart to compare the log Bayes factor to a
+    standard table of threshold confidence levels from Kass & Raftery (1995).
+
+
 0.9.0 (2019-11-23)
 ------------------
 

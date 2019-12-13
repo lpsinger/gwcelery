@@ -17,14 +17,35 @@ def resource_unicode(*args, **kwargs):
         return f.read()
 
 
-@pytest.fixture
-def toy_fits_filecontents():
-    """Generate the binary contents of a toy FITS file."""
+def get_toy_fits_filecontents():
     bytesio = io.BytesIO()
     table = Table([[1, 2, 3], [4, 5, 6]], names=['foo', 'bar'],
                   dtype=[np.float64, np.float64])
     table.meta['comment'] = 'This is a comment.'
     table.meta['history'] = 'This is a history line. <This should be escaped.>'
+    table.meta['OBJECT'] = 'T12345'
+    table.meta['LOGBCI'] = 3.5
+    table.meta['ORDERING'] = 'NESTED'
+    with gzip.GzipFile(fileobj=bytesio, mode='wb') as f:
+        table.write(f, format='fits')
+    return bytesio.getvalue()
+
+
+@pytest.fixture
+def toy_fits_filecontents():
+    """Generate the binary contents of a toy FITS file."""
+    return get_toy_fits_filecontents()
+
+
+def get_toy_3d_fits_filecontents():
+    bytesio = io.BytesIO()
+    table = Table(
+        [np.arange(12, dtype=np.float64)] * 4,
+        names=['PROB', 'DISTMU', 'DISTSIGMA', 'DISTNORM'])
+    table.meta['comment'] = 'This is a comment.'
+    table.meta['history'] = 'This is a history line. <This should be escaped.>'
+    table.meta['OBJECT'] = 'T12345'
+    table.meta['LOGBCI'] = 3.5
     table.meta['ORDERING'] = 'NESTED'
     with gzip.GzipFile(fileobj=bytesio, mode='wb') as f:
         table.write(f, format='fits')
@@ -34,21 +55,12 @@ def toy_fits_filecontents():
 @pytest.fixture
 def toy_3d_fits_filecontents():
     """Generate the binary contents of a toy FITS file."""
-    bytesio = io.BytesIO()
-    table = Table(
-        [np.arange(12, dtype=np.float64)] * 4,
-        names=['PROB', 'DISTMU', 'DISTSIGMA', 'DISTNORM'])
-    table.meta['comment'] = 'This is a comment.'
-    table.meta['history'] = 'This is a history line. <This should be escaped.>'
-    table.meta['ORDERING'] = 'NESTED'
-    with gzip.GzipFile(fileobj=bytesio, mode='wb') as f:
-        table.write(f, format='fits')
-    return bytesio.getvalue()
+    return get_toy_3d_fits_filecontents()
 
 
 def mock_download(filename, graceid):
     if filename == 'test.fits,0' and graceid == 'T12345':
-        return toy_3d_fits_filecontents()
+        return get_toy_3d_fits_filecontents()
     else:
         raise RuntimeError('Asked for unexpected FITS file')
 
@@ -131,3 +143,19 @@ def test_skymap_from_samples(toy_3d_fits_filecontents):
         outbytes = skymaps.skymap_from_samples(inbytes)
 
     assert skymaps.is_3d_fits_file(outbytes)
+
+
+@patch('gwcelery.tasks.gracedb.download.run', mock_download)
+@patch('gwcelery.tasks.gracedb.upload.run')
+def test_handle_plot_coherence(mock_upload):
+    alert = {
+        "data": {
+            "filename": "test.fits",
+            "file_version": 0
+        },
+        "uid": "T12345",
+        "alert_type": "log"
+    }
+
+    skymaps.handle_plot_coherence(alert)
+    mock_upload.asert_called_once()

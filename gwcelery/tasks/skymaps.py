@@ -1,17 +1,22 @@
 """Annotations for sky maps."""
+import io
 import os
 import tempfile
 
 from astropy.io import fits
 from astropy import table
 from celery import group
+from celery.exceptions import Ignore
 from ligo.skymap.tool import ligo_skymap_flatten
 from ligo.skymap.tool import ligo_skymap_from_samples
 from ligo.skymap.tool import ligo_skymap_plot
 from ligo.skymap.tool import ligo_skymap_plot_volume
 from matplotlib import pyplot as plt
+import numpy as np
+import seaborn
 
 from . import gracedb
+from . import lvalert
 from ..import app
 from ..jinja import env
 from ..util.cmdline import handling_system_exit
@@ -139,3 +144,154 @@ def skymap_from_samples(samplefilecontents):
             ['-j', '-o', tmpdir, samplefile.name])
         with open(os.path.join(tmpdir, 'skymap.fits'), 'rb') as f:
             return f.read()
+
+
+def plot_bayes_factor(logb,
+                      values=(1, 3, 5),
+                      labels=('', 'strong', 'very strong'),
+                      xlim=7, title=None, palette='RdYlBu'):
+    """Visualize a Bayes factor as a `bullet graph`_.
+
+    Make a bar chart of a log Bayes factor as compared to a set of subjective
+    threshold values. By default, use the thresholds from
+    Kass & Raftery (1995).
+
+    .. _`bullet graph`: https://en.wikipedia.org/wiki/Bullet_graph
+
+    Parameters
+    ----------
+    logb : float
+        The natural logarithm of the Bayes factor.
+    values : list
+        A list of floating point values for human-friendly confidence levels.
+    labels : list
+        A list of string labels for human-friendly confidence levels.
+    xlim : float
+        Limits of plot (`-xlim` to `+xlim`).
+    title : str
+        Title for plot.
+    palette : str
+        Color palette.
+
+    Returns
+    -------
+    fig : Matplotlib figure
+    ax : Matplotlib axes
+
+    Example
+    -------
+    .. plot::
+        :alt: Example Bayes factor plot
+
+        from gwcelery.tasks.skymaps import plot_bayes_factor
+        plot_bayes_factor(6.3, title='GWCelery is awesome')
+
+    """
+    with seaborn.axes_style('ticks', seaborn.plotting_context('notebook')):
+        fig, ax = plt.subplots(figsize=(6, 1.7), tight_layout=True)
+        ax.set_xlim(-xlim, xlim)
+        ax.set_ylim(-0.5, 0.5)
+        ax.set_yticks([])
+        ax.set_title(title)
+        ax.set_ylabel(r'$\ln\,B$', rotation=0,
+                      rotation_mode='anchor',
+                      ha='right', va='center')
+
+        # Add human-friendly labels
+        ticks = (*(-x for x in reversed(values)), 0, *values)
+        ticklabels = (
+            *(f'{s}\nevidence\nagainst'.strip() for s in reversed(labels)), '',
+            *(f'{s}\nevidence\nfor'.strip() for s in labels))
+        ax.set_xticks(ticks)
+        ax.set_xticklabels(ticklabels)
+        plt.setp(ax.get_xticklines(), visible=False)
+        plt.setp(ax.get_xticklabels()[:len(ticks) // 2], ha='right')
+        plt.setp(ax.get_xticklabels()[len(ticks) // 2:], ha='left')
+
+        # Plot colored bands for confidence thresholds
+        fmt = plt.FuncFormatter(lambda x, _: f'{x:+g}'.replace('+0', '0'))
+        ax2 = ax.twiny()
+        ax2.set_xlim(*ax.get_xlim())
+        ax2.set_xticks(ticks)
+        ax2.xaxis.set_major_formatter(fmt)
+        levels = (-xlim, *ticks, xlim)
+        colors = seaborn.color_palette(palette, len(levels) - 1)
+        ax.barh(0, np.diff(levels), 1, levels[:-1], color=colors)
+
+        # Plot bar for log Bayes factor value
+        ax.barh(0, logb, 0.5, color='black')
+
+        seaborn.despine(fig, ax, top=True, right=True, bottom=True, left=True)
+
+    return fig, ax
+
+
+@app.task(shared=False)
+def plot_coherence(filecontents):
+    """LVAlert handler to plot the coherence Bayes factor.
+
+    Parameters
+    ----------
+    contents : str, bytes
+        The contents of the FITS file.
+
+    Returns
+    -------
+    png : bytes
+        The contents of a PNG file.
+
+    Notes
+    -----
+    Under the hood, this just calls :meth:`plot_bayes_factor`.
+
+    """
+    with NamedTemporaryFile(content=filecontents) as fitsfile:
+        header = fits.getheader(fitsfile, 1)
+    try:
+        logb = header['LOGBCI']
+    except KeyError:
+        raise Ignore('FITS file does not have a LOGBCI field')
+
+    objid = header['OBJECT']
+    fig, _ = plot_bayes_factor(logb, title=f'Coherence of {objid}')
+    outfile = io.BytesIO()
+    fig.savefig(outfile, format='png')
+    return outfile.getvalue()
+
+
+@lvalert.handler('superevent',
+                 'mdc_superevent',
+                 shared=False)
+def handle_plot_coherence(alert):
+    """LVAlert handler to plot and upload a visualization of the coherence
+    Bayes factor.
+
+    Notes
+    -----
+    Under the hood, this just calls :meth:`plot_coherence`.
+
+    """
+    if alert['alert_type'] != 'log':
+        return  # not for us
+    if not alert['data']['filename'].endswith('.fits'):
+        return  # not for us
+
+    graceid = alert['uid']
+    f = alert['data']['filename']
+    v = alert['data']['file_version']
+    fv = '{},{}'.format(f, v)
+
+    (
+        gracedb.download.s(fv, graceid)
+        |
+        plot_coherence.s()
+        |
+        gracedb.upload.s(
+            f.replace('.fits', '.coherence.png'), graceid,
+            message=(
+                f'Bayes factor for coherence vs. incoherence of '
+                f'<a href="/api/superevents/{graceid}/files/{fv}">'
+                f'{fv}</a>'),
+            tags=['sky_loc']
+        )
+    ).delay()
