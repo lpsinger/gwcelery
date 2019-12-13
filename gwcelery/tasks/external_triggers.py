@@ -56,8 +56,7 @@ def handle_snews_gcn(payload):
     detchar.check_vectors(event, event['graceid'], start, end)
 
 
-@gcn.handler(gcn.NoticeType.FERMI_GBM_ALERT,
-             gcn.NoticeType.FERMI_GBM_FLT_POS,
+@gcn.handler(gcn.NoticeType.FERMI_GBM_FLT_POS,
              gcn.NoticeType.FERMI_GBM_GND_POS,
              gcn.NoticeType.FERMI_GBM_FIN_POS,
              gcn.NoticeType.SWIFT_BAT_GRB_POS_ACK,
