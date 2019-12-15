@@ -18,7 +18,7 @@ Changelog
     for SNEWS coincidences.
 
 -   Skip Virgo data when online PE is started on O2Replay data since its
-    statevector can not be read with gwpy.
+    statevector cannot be read by gwpy.
 
 -   Modify RAVEN to run on MDC events.
 
