@@ -4,7 +4,7 @@ Changelog
 0.9.2 (unreleased)
 ------------------
 
--   No changes yet.
+-   Update to Celery 4.4.0.
 
 0.9.1 (2019-12-15)
 ------------------

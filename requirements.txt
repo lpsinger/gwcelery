@@ -1,8 +1,6 @@
-kombu <= 4.5.0  # FIXME: https://github.com/celery/celery/issues/5261
-
 astropy
 bilby-pipe == 0.3.6
-celery[redis] == 4.3.0
+celery[redis] == 4.4.0
 comet
 corner
 dnspython  # silence "DNS: dnspython not found. Can not use SRV lookup." warning from SleekXMPP
