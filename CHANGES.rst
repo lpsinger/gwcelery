@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.9.1 (unreleased)
+0.9.1 (2019-12-15)
 ------------------
 
 -   Produce an ``ADVREQ`` notification as soon as there is an alert which meets
