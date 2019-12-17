@@ -18,7 +18,9 @@ Changelog
 -   Enable the RAVEN alert pipeline by having the superevent manager listen
     to the label RAVEN_ALERT.
 
--   Use emcoinc circular if RAVEN_ALERT.
+-   Use RAVEN VOEvent if RAVEN_ALERT.
+
+-   Generate emcoinc circular if RAVEN_ALERT instead of EM_COINC.
 
 0.9.1 (2019-12-15)
 ------------------

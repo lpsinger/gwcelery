@@ -656,7 +656,7 @@ def preliminary_initial_update_alert(filenames, superevent_id, alert_type,
                 p_astro_filename = fv
 
     if alert_type in ['preliminary', 'initial']:
-        if 'EM_COINC' in labels:
+        if 'RAVEN_ALERT' in labels:
             circular_task = circulars.create_emcoinc_circular.si(superevent_id)
             circular_filename = '{}-emcoinc-circular.txt'.format(alert_type)
             tags = ['em_follow', 'ext_coinc']

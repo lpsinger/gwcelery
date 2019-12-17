@@ -267,7 +267,7 @@ def test_handle_superevent_initial_alert(mock_create_initial_circular,
         skymap_filename='foobar.fits.gz,0', skymap_type='foobar', vetted=True,
         raven_coinc='RAVEN_ALERT' in labels)
     mock_send.assert_called_once_with('contents of S1234-Initial-1.xml')
-    if 'EM_COINC' in labels:
+    if 'RAVEN_ALERT' in labels:
         mock_create_emcoinc_circular.assert_called_once_with('S1234')
     else:
         mock_create_initial_circular.assert_called_once_with('S1234')
