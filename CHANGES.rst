@@ -17,7 +17,7 @@ Changelog
 
 -   Increase the FAR threshold of online PE to the public alert threshold.
 
--   Update lalsuite to lalsuite==6.62.1.dev20191130 and unpin scipy.
+-   Update lalsuite to lalsuite==6.63 and unpin scipy.
 
 -   Change RAVEN to grab sky map from superevent. Block joint FAR calculation
     for SNEWS coincidences.
