@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.9.2 (unreleased)
-------------------
+0.10.0 (unreleased)
+-------------------
 
 -   Update to Celery 4.4.0.
 
