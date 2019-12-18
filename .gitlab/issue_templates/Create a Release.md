@@ -7,6 +7,10 @@
 1.  [ ] The CI pipeline succeeded, including all unit tests and code quality checks. *place link to pipeline here*
 2.  [ ] [CHANGES.rst](CHANGES.rst) lists all significant changes since the last release. It is free from spelling and grammatical errors.
 3.  [ ] The [latest Readthedocs documentation build](https://readthedocs.org/projects/gwcelery/builds/) passed and the [latest docs](https://gwcelery.readthedocs.io/en/latest/) are correctly rendered. Autodoc-generated API docs for tasks are shown.
+4.  [ ] If there is [milestone](https://git.ligo.org/emfollow/gwcelery/-/milestones) for this
+    release, then the list of issues and merge requests that have been
+    addressed is accurate. Any unaddressed issues and merge requests have been
+    moved to another milestone.
 
 ## Playground deployment
 
