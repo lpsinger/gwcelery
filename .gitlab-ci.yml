@@ -90,7 +90,7 @@ dependencies/python3.7:
   script:
     - apt-get update -qq && apt-get install -y -qq redis-server
     - tar --strip-components 1 -xf ${CI_PROJECT_DIR}/*.tar.*
-    - pip install pytest-cov -r test-requirements.txt
+    - pip install pytest-cov
     - python setup.py test --addopts="-vv --cov --cov-report=html:${CI_PROJECT_DIR}/htmlcov --cov-report=term --junit-xml=${CI_PROJECT_DIR}/junit.xml"
   dependencies:
     - sdist
