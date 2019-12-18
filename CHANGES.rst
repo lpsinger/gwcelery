@@ -22,6 +22,9 @@ Changelog
 
 -   Generate emcoinc circular if RAVEN_ALERT instead of EM_COINC.
 
+-   Increase both CBC and Burst trials factors by one due to enabling the
+    RAVEN pipeline.
+
 0.9.1 (2019-12-15)
 ------------------
 
