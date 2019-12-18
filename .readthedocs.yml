@@ -1,1 +1,5 @@
-requirements_file: docs-requirements.txt
+version: 2
+
+python:
+  install:
+    - requirements: docs-requirements.txt
