@@ -54,3 +54,18 @@ password should be stored in your `netrc file`_.
 .. _`obtain a robot certificate`: https://robots.ligo.org
 .. _`LVAlert Account Activation`: https://www.lsc-group.phys.uwm.edu/cgi-bin/jabber-acct.cgi
 .. _`netrc file`: https://www.gnu.org/software/inetutils/manual/html_node/The-_002enetrc-file.html
+
+.. _redis-configuration:
+
+Redis
+-----
+
+We recommend that you make the following settings in your Redis server
+configuration file (which is located at :file:`/etc/redis.conf` on most
+systems)::
+
+    # Disable RDB snapshots.
+    save ""
+
+    # Enable appendonly snapshots.
+    appendonly yes
