@@ -1,4 +1,2 @@
 graft doc
 include *requirements.txt
-include versioneer.py
-include gwcelery/_version.py

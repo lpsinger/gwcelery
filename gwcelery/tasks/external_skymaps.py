@@ -255,7 +255,7 @@ def write_to_fits(skymap, event):
                            gps_time=event['gpstime'],
                            creator='gwcelery',
                            origin='LIGO-VIRGO-KAGRA',
-                           vcs_version=_version.get_versions()['version'],
+                           vcs_version=_version.version,
                            history='file only for internal use')
         with open(f.name, 'rb') as file:
             return file.read()

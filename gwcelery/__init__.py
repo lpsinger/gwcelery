@@ -2,7 +2,7 @@
 
 from celery import Celery
 
-from ._version import get_versions
+from ._version import version as __version__  # noqa: F401
 from .conf import playground
 from . import email
 from . import lvalert
@@ -10,9 +10,6 @@ from . import sentry
 from . import voevent
 
 __all__ = ('app',)
-
-__version__ = get_versions()['version']
-del get_versions
 
 # Use redis broker, because it supports locks (and thus singleton tasks).
 app = Celery(__name__, broker='redis://', autofinalize=False)

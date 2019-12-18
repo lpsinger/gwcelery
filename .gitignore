@@ -12,6 +12,7 @@ __pycache__
 build
 dist
 htmlcov
+gwcelery/_version.py
 
 # Files created by running gwcelery inside the source directory
 appendonly.aof
