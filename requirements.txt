@@ -12,7 +12,7 @@ gwpy
 healpy < 1.13.0
 imapclient
 jinja2
-lalsuite == 6.63.1.dev20191218
+lalsuite == 6.63.1.dev20191219
 ligo-followup-advocate >= 1.1.3
 ligo-gracedb >= 2.3.0
 ligo-raven >= 1.17
