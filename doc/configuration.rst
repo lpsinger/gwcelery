@@ -73,3 +73,6 @@ systems)::
 
     # Enable appendonly snapshots.
     appendonly yes
+
+If you have to make any changes to your Redis configuration, be sure to restart
+the Redis daemon.
