@@ -296,11 +296,13 @@ def trigger_raven_alert(coinc_far_json, superevent, gracedb_id,
 
     no_previous_alert = {'RAVEN_ALERT'}.isdisjoint(
         gracedb.get_labels(superevent_id))
+    likely_real_ext_event = {'NOT_GRB'}.isdisjoint(ext_event['labels'])
 
     #  If publishable, trigger an alert by applying `RAVEN_ALERT` label to
     #  preferred event
     messages = []
-    if pass_far_threshold and not is_ext_subthreshold:
+    if pass_far_threshold and not is_ext_subthreshold and \
+            likely_real_ext_event:
         messages.append('RAVEN: publishing criteria met for %s' % (
             preferred_gwevent_id))
         if no_previous_alert:
@@ -324,6 +326,9 @@ def trigger_raven_alert(coinc_far_json, superevent, gracedb_id,
         messages.append(('RAVEN: publishing criteria not met for %s,'
                          ' %s is subthreshold' % (preferred_gwevent_id,
                                                   ext_id)))
+    if not likely_real_ext_event:
+        messages.append(('RAVEN: %s is likely non-astrophysical.'
+                         % (ext_id)))
     if not no_previous_alert:
         messages.append(('RAVEN: Alert already triggered for  %s'
                          % (superevent_id)))

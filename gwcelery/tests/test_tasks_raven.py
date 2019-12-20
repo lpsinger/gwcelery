@@ -230,15 +230,23 @@ def _mock_get_event(graceid):
     elif graceid == 'E1':
         return {"graceid": "E1",
                 "pipeline": 'Swift',
-                "search": 'GRB'}
+                "search": 'GRB',
+                "labels": []}
     elif graceid == 'E2':
         return {"graceid": "E2",
                 "pipeline": 'Fermi',
-                "search": 'SubGRB'}
+                "search": 'SubGRB',
+                "labels": []}
     elif graceid == 'E3':
         return {"graceid": "E3",
                 "pipeline": 'SNEWS',
-                "search": 'Supernova'}
+                "search": 'Supernova',
+                "labels": []}
+    elif graceid == 'E4':
+        return {"graceid": "E4",
+                "pipeline": 'Fermi',
+                "search": 'GRB',
+                "labels": ['NOT_GRB']}
     else:
         raise AssertionError
 
@@ -269,7 +277,8 @@ def _mock_get_coinc_far(graceid):
      ['E1', 'S2468', 'CBC', True],
      ['E2', 'S5678', 'CBC', False],
      ['E3', 'S8642', 'Burst', False],
-     ['E1', 'S5678', 'CBC', True]])
+     ['E1', 'S5678', 'CBC', True],
+     ['E4', 'S5678', 'CBC', False]])
 @patch('gwcelery.tasks.gracedb.get_labels', return_value={})
 @patch('gwcelery.tasks.gracedb.update_superevent')
 @patch('gwcelery.tasks.gracedb.create_label.run')

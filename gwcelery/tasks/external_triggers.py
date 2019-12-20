@@ -21,6 +21,15 @@ REQUIRED_LABELS_BY_TASK = {
 be ready for sky map comparison.
 """
 
+FERMI_GRB_CLASS_VALUE = 4
+"""This is the index that denote GRBs within Fermi's Flight Position
+classification."""
+
+FERMI_GRB_CLASS_THRESH = .5
+"""This values denotes the threshold of the most likely Fermi source
+classification, above which we will consider a Fermi Flight Position
+notice."""
+
 
 @gcn.handler(gcn.NoticeType.SNEWS,
              queue='exttrig',
@@ -96,6 +105,25 @@ def handle_grb_gcn(payload):
     if reliability is not None and int(reliability.attrib['value']) <= 4:
         return
 
+    #  Check if Fermi trigger is likely noise by checking classification
+    #  Most_Likely_Index of 4 is an astrophysical GRB
+    #  If not at least 50% chance of GRB we will not consider it for RAVEN
+    likely_source = root.find("./What/Param[@name='Most_Likely_Index']")
+    likely_prob = root.find("./What/Param[@name='Most_Likely_Prob']")
+    if likely_source is not None and \
+        (likely_source.attrib['value'] != FERMI_GRB_CLASS_VALUE
+         or likely_prob.attrib['value'] < FERMI_GRB_CLASS_THRESH):
+        labels = ['NOT_GRB']
+    else:
+        labels = None
+
+    #  Check if Swift has lost lock. If so then veto
+    lost_lock = \
+        root.find("./What/Group[@name='Solution_Status']" +
+                  "/Param[@name='StarTrack_Lost_Lock']")
+    if lost_lock is not None and lost_lock.attrib['value']:
+        labels = ['NOT_GRB']
+
     ivorn = root.attrib['ivorn']
     if 'subthresh' in ivorn.lower():
         search = 'SubGRB'
@@ -111,13 +139,18 @@ def handle_grb_gcn(payload):
         event, = events
         graceid = event['graceid']
         gracedb.replace_event(graceid, payload)
+        if labels:
+            gracedb.create_label(labels[0], graceid)
+        else:
+            gracedb.remove_label('NOT_GRB', graceid)
         event = gracedb.get_event(graceid)
 
     else:
         graceid = gracedb.create_event(filecontents=payload,
                                        search=search,
                                        group='External',
-                                       pipeline=event_observatory)
+                                       pipeline=event_observatory,
+                                       labels=labels)
         event = gracedb.get_event(graceid)
         start = event['gpstime']
         end = start + event['extra_attributes']['GRB']['trigger_duration']

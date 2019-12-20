@@ -6,6 +6,9 @@ Changelog
 
 -   Use Online_PE condor slots for lalinference parameter estimation.
 
+-   Ignore Fermi triggers that are likely noise as possible RAVEN coincidence
+    candidates by applying the label `NOT_GRB`.
+
 0.10.0 (2020-02-07)
 -------------------
 
