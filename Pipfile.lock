@@ -138,15 +138,15 @@
         },
         "bilby": {
             "hashes": [
-                "sha256:3b004fb9ee37398975a8245225f240c8d91c3ca390dd426efb84840dea702caa"
+                "sha256:63d413cedebe473162b6021cf18d92c79a1f8828fd179d758a3d360914f81106"
             ],
-            "version": "==0.6.1"
+            "version": "==0.6.2"
         },
         "bilby-pipe": {
             "hashes": [
-                "sha256:58c47815d6a780f03e9eaf45188a80add7256125f95d70ba835df94f5ec31aaa"
+                "sha256:10d3b9b27fdb61c5086e886a722851bbb846de7e15af7bf0d965ec499fb92234"
             ],
-            "version": "==0.3.6"
+            "version": "==0.3.7"
         },
         "billiard": {
             "hashes": [
@@ -523,10 +523,10 @@
         },
         "jedi": {
             "hashes": [
-                "sha256:786b6c3d80e2f06fd77162a07fed81b8baa22dde5d62896a790a331d6ac21a27",
-                "sha256:ba859c74fa3c966a22f2aeebe1b74ee27e2a462f56d3f5f7ca4a59af61bfe42e"
+                "sha256:1349c1e8c107095a55386628bb3b2a79422f3a2cab8381e34ce19909e0cf5064",
+                "sha256:e909527104a903606dd63bea6e8e888833f0ef087057829b89a18364a856f807"
             ],
-            "version": "==0.15.1"
+            "version": "==0.15.2"
         },
         "jinja2": {
             "hashes": [
