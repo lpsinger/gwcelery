@@ -8,11 +8,11 @@ from ..tasks import raven
 
 
 @pytest.mark.parametrize(
-    'group,gracedb_id,pipelines,tl,th',
-    [['CBC', 'S1', ['Fermi', 'Swift'], -1, 5],
-     ['Burst', 'S2', ['Fermi', 'Swift'], -60, 600],
-     ['Burst', 'S3', ['SNEWS'], -10, 10],
-     ['CBC', 'E1', ['Fermi'], -5, 1]])
+    'group,gracedb_id,pipelines,ext_search,tl,th',
+    [['CBC', 'S1', ['Fermi', 'Swift'], 'GRB', -1, 5],
+     ['Burst', 'S2', ['Fermi', 'Swift'], 'GRB', -60, 600],
+     ['Burst', 'S3', ['SNEWS'], 'Supernova', -10, 10],
+     ['CBC', 'E1', ['Fermi'], 'GRB', -5, 1]])
 @patch('gwcelery.tasks.gracedb.create_label.run')
 @patch('gwcelery.tasks.raven.raven_pipeline.run')
 @patch('gwcelery.tasks.raven.search.run', return_value=[{'superevent_id': 'S5',
@@ -21,19 +21,19 @@ from ..tasks import raven
 def test_coincidence_search(mock_calculate_coincidence_far,
                             mock_search, mock_raven_pipeline,
                             mock_create_label,
-                            group, gracedb_id, pipelines, tl, th):
+                            group, gracedb_id, pipelines, ext_search, tl, th):
     """Test that correct time windows are used for each RAVEN search."""
     alert_object = {'superevent_id': gracedb_id}
     if 'E' in gracedb_id:
         alert_object['group'] = 'External'
     raven.coincidence_search(gracedb_id, alert_object, group,
-                             pipelines)
+                             pipelines, ext_search)
 
     mock_search.assert_called_once_with(
-        gracedb_id, alert_object, tl, th, group, pipelines)
+        gracedb_id, alert_object, tl, th, group, pipelines, ext_search)
     mock_raven_pipeline.assert_called_once_with(
         [{'superevent_id': 'S5', 'graceid': 'E2'}],
-        gracedb_id, alert_object, group)
+        gracedb_id, alert_object, tl, th, group)
 
 
 @pytest.mark.parametrize(
@@ -53,11 +53,11 @@ def test_raven_search(mock_raven_search, mock_se_cls, mock_exttrig_cls,
     if event_id == 'S1234':
         mock_raven_search.assert_called_once_with(
             mock_se_cls(event_id, gracedb=gracedb.client), -5, 5,
-            gracedb=gracedb.client, group=None, pipelines=[])
+            gracedb=gracedb.client, group=None, pipelines=[], searches=[])
     elif event_id == 'E1234':
         mock_raven_search.assert_called_once_with(
             mock_exttrig_cls(event_id, gracedb=gracedb.client), -5, 5,
-            gracedb=gracedb.client, group=None, pipelines=[])
+            gracedb=gracedb.client, group=None, pipelines=[], searches=[])
     else:
         raise ValueError
 
@@ -70,16 +70,33 @@ def test_calculate_coincidence_far(
     ext = {'graceid': 'E4321',
            'pipeline': 'Fermi',
            'search': 'GRB',
-           'labels': []}
-    raven.calculate_coincidence_far(se, ext, group)
+           'labels': [],
+           'far': None}
     if group == 'CBC':
         tl, th = -5, 1
     else:
         tl, th = -600, 60
+    raven.calculate_coincidence_far(se, ext, tl, th)
     mock_calc_signif.assert_called_once_with(
         'S1234', 'E4321', tl, th,
         incl_sky=False, grb_search='GRB',
-        gracedb=gracedb.client)
+        gracedb=gracedb.client, far_grb=None)
+
+
+@patch('ligo.raven.search.calc_signif_gracedb')
+def test_calculate_coincidence_far_subgrb(mock_calc_signif):
+    se = {'superevent_id': 'S1234'}
+    ext = {'graceid': 'E4321',
+           'pipeline': 'Fermi',
+           'search': 'GRB',
+           'labels': [],
+           'far': 1e5}
+    tl, th = -1, 10
+    raven.calculate_coincidence_far(se, ext, tl, th)
+    mock_calc_signif.assert_called_once_with(
+        'S1234', 'E4321', tl, th,
+        incl_sky=False, grb_search='GRB',
+        gracedb=gracedb.client, far_grb=1e5)
 
 
 @pytest.mark.parametrize('group', ['CBC', 'Burst'])  # noqa: F811
@@ -92,18 +109,19 @@ def test_calculate_spacetime_coincidence_far(
     ext = {'graceid': 'E4321',
            'pipeline': 'Fermi',
            'search': 'GRB',
-           'labels': ['EXT_SKYMAP_READY', 'SKYMAP_READY']}
-    raven.calculate_coincidence_far(se, ext, group)
+           'labels': ['EXT_SKYMAP_READY', 'SKYMAP_READY'],
+           'far': None}
     if group == 'CBC':
         tl, th = -5, 1
     else:
         tl, th = -600, 60
+    raven.calculate_coincidence_far(se, ext, tl, th)
     mock_calc_signif.assert_called_once_with(
         'S1234', 'E4321', tl, th,
         incl_sky=True, grb_search='GRB',
         se_fitsfile='fermi_skymap.fits.gz',
         ext_fitsfile='fermi_skymap.fits.gz',
-        gracedb=gracedb.client)
+        gracedb=gracedb.client, far_grb=None)
 
 
 def mock_get_labels(superevent_id):
@@ -118,17 +136,17 @@ def mock_download_json(superevent_id):
 
 
 @pytest.mark.parametrize(
-    'raven_search_results,graceid,group',
-    [[[{'graceid': 'E1', 'pipeline': 'GRB'}], 'S1', 'CBC'],
+    'raven_search_results,graceid,tl,th,group',
+    [[[{'graceid': 'E1', 'pipeline': 'GRB'}], 'S1', -5, 1, 'CBC'],
      [[{'superevent_id': 'S10', 'far': 1, 'preferred_event': 'G1'}],
-        'E2', 'Burst'],
+        'E2', -1, 5, 'CBC'],
      [[{'graceid': 'E3', 'pipeline': 'GRB'},
-       {'graceid': 'E4', 'pipeline': 'GRB'}], 'S2', 'Burst'],
+       {'graceid': 'E4', 'pipeline': 'GRB'}], 'S2', -600, 60, 'Burst'],
      [[{'superevent_id': 'S11', 'far': 1, 'preferred_event': 'G2'},
        {'superevent_id': 'S12', 'far': .001, 'preferred_event': 'G3'}],
-        'E5', 'CBC'],
-     [[], 'S13', 'Group'],
-     [[{'graceid': 'E4', 'pipeline': 'GRB'}], 'S14', 'Group']])
+        'E5', -1, 5, 'CBC'],
+     [[], 'S13', -1, 5, 'CBC'],
+     [[{'graceid': 'E4', 'pipeline': 'GRB'}], 'S14', -1, 5, 'CBC']])
 @patch('gwcelery.tasks.raven.trigger_raven_alert.run')
 @patch('gwcelery.tasks.gracedb.download.run')
 @patch('json.loads', mock_download_json)
@@ -139,7 +157,7 @@ def test_raven_pipeline(mock_create_label,
                         mock_calculate_coincidence_far,
                         mock_download,
                         mock_trigger_raven_alert,
-                        raven_search_results, graceid, group):
+                        raven_search_results, graceid, tl, th, group):
     """This function tests that the RAVEN pipeline runs correctly for scenarios
     where RAVEN finds nothing, a coincidence is found but does not pass
     threshold, when a coincidence is found but does pass threshold, and when
@@ -150,7 +168,8 @@ def test_raven_pipeline(mock_create_label,
         result['labels'] = []
     if 'E' in graceid:
         alert_object['group'] = 'External'
-    raven.raven_pipeline(raven_search_results, graceid, alert_object, group)
+    raven.raven_pipeline(raven_search_results, graceid, alert_object, tl, th,
+                         group)
 
     coinc_calls = []
     label_calls = []
@@ -161,12 +180,12 @@ def test_raven_pipeline(mock_create_label,
     elif graceid.startswith('E'):
         result = raven.preferred_superevent(raven_search_results)[0]
         label_calls.append(call('EM_COINC', result['superevent_id']))
-        coinc_calls.append(call(result, alert_object, group))
+        coinc_calls.append(call(result, alert_object, tl, th))
         label_calls.append(call('EM_COINC', graceid))
     else:
         for result in raven_search_results:
             label_calls.append(call('EM_COINC', result['graceid']))
-            coinc_calls.append(call(alert_object, result, group))
+            coinc_calls.append(call(alert_object, result, tl, th))
             label_calls.append(call('EM_COINC', graceid))
 
     alert_calls = []

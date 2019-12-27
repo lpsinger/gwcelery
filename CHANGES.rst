@@ -18,6 +18,10 @@ Changelog
 -   Append to, and do not overwrite, log files, when starting GWCelery via
     Condor.
 
+-   Launch raven coincidence search for subthreshold GRBs separately in order
+    to use different time windows. This enables the joint LVK-Fermi and
+    LVK-Swift targeted searches to b integrated with RAVEN.
+
 0.11.2 (2020-02-28)
 -------------------
 

@@ -200,16 +200,36 @@ def handle_grb_lvalert(alert):
     # Determine GraceDB ID
     graceid = alert['uid']
 
-    if alert['alert_type'] == 'new' and \
-            alert['object'].get('group') == 'External':
-        raven.coincidence_search(graceid, alert['object'], group='CBC')
-        raven.coincidence_search(graceid, alert['object'], group='Burst')
-    elif alert['alert_type'] == 'new' and 'S' in graceid:
-        preferred_event_id = alert['object']['preferred_event']
-        gw_group = gracedb.get_group(preferred_event_id)
-        raven.coincidence_search(graceid, alert['object'],
-                                 group=gw_group,
-                                 pipelines=['Fermi', 'Swift'])
+    if alert['alert_type'] == 'new':
+        if alert['object'].get('group') == 'External':
+            # launch standard Burst-GRB search
+            subthresh_search = \
+                (alert['object']['search'] in ['SubGRB', 'SubGRBTargeted'])
+            raven.coincidence_search(graceid, alert['object'], group='Burst',
+                                     searches=['GRB'])
+            if not subthresh_search:
+                # if threshold GRB, launch standard CBC-GRB search
+                raven.coincidence_search(graceid, alert['object'],
+                                         group='CBC', searches=['GRB'])
+        elif 'S' in graceid:
+            # launch standard GRB search based on group
+            preferred_event_id = alert['object']['preferred_event']
+            gw_group = gracedb.get_group(preferred_event_id)
+            raven.coincidence_search(graceid, alert['object'],
+                                     group=gw_group, searches=['GRB'])
+            if gw_group == 'CBC':
+                subthresh_search = True
+            else:
+                subthresh_search = False
+        if subthresh_search:
+            # launch subthreshold searches if CBC or subthreshold GRB
+            # for Fermi and Swift separately to use different time windows
+            raven.coincidence_search(graceid, alert['object'], group='CBC',
+                                     searches=['SubGRB', 'SubGRBTargeted'],
+                                     pipelines=['Fermi'])
+            raven.coincidence_search(graceid, alert['object'], group='CBC',
+                                     searches=['SubGRB', 'SubGRBTargeted'],
+                                     pipelines=['Swift'])
     elif alert['alert_type'] == 'label_added' and \
             alert['object'].get('group') == 'External':
         if _skymaps_are_ready(alert['object'], alert['data']['name'],

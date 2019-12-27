@@ -14,7 +14,7 @@ log = get_task_logger(__name__)
 
 
 @app.task(shared=False)
-def calculate_coincidence_far(superevent, exttrig, group):
+def calculate_coincidence_far(superevent, exttrig, tl, th):
     """Compute temporal coincidence FAR for external trigger and superevent
     coincidence by calling ligo.raven.search.calc_signif_gracedb.
 
@@ -24,9 +24,10 @@ def calculate_coincidence_far(superevent, exttrig, group):
         superevent dictionary
     exttrig: dict
         external event dictionary
-    group: str
-        CBC or Burst; group of the preferred_event associated with the
-        gracedb_id superevent
+    tl: float
+        start of coincident time window
+    th: float
+        end of coincident time window
 
     """
     superevent_id = superevent['superevent_id']
@@ -35,14 +36,6 @@ def calculate_coincidence_far(superevent, exttrig, group):
     #  Don't compute coinc FAR for SNEWS coincidences
     if exttrig['pipeline'] == 'SNEWS':
         return
-
-    tl_cbc, th_cbc = app.conf['raven_coincidence_windows']['GRB_CBC']
-    tl_burst, th_burst = app.conf['raven_coincidence_windows']['GRB_Burst']
-
-    if group == 'CBC':
-        tl, th = tl_cbc, th_cbc
-    elif group == 'Burst':
-        tl, th = tl_burst, th_burst
 
     if {'EXT_SKYMAP_READY', 'SKYMAP_READY'}.issubset(exttrig['labels']):
         #  if both sky maps available, calculate spatial coinc far
@@ -55,16 +48,19 @@ def calculate_coincidence_far(superevent, exttrig, group):
                    superevent_id, exttrig_id, tl, th,
                    grb_search=exttrig['search'],
                    se_fitsfile=se_skymap, ext_fitsfile=ext_skymap,
-                   incl_sky=True, gracedb=legacy_gracedb.client)
+                   incl_sky=True, gracedb=legacy_gracedb.client,
+                   far_grb=exttrig['far'])
     else:
         return ligo.raven.search.calc_signif_gracedb(
                    superevent_id, exttrig_id, tl, th,
                    grb_search=exttrig['search'],
-                   incl_sky=False, gracedb=legacy_gracedb.client)
+                   incl_sky=False, gracedb=legacy_gracedb.client,
+                   far_grb=exttrig['far'])
 
 
 @app.task(shared=False)
-def coincidence_search(gracedb_id, alert_object, group=None, pipelines=[]):
+def coincidence_search(gracedb_id, alert_object, group=None, pipelines=[],
+                       searches=None):
     """Perform ligo-raven search for coincidences.
     The ligo.raven.search.search method applies EM_COINC label on its own.
 
@@ -80,34 +76,64 @@ def coincidence_search(gracedb_id, alert_object, group=None, pipelines=[]):
         list of external trigger pipeline names
 
     """
+    tl, th = _time_window(gracedb_id, group, pipelines, searches)
+
+    (
+        search.si(gracedb_id, alert_object, tl, th, group, pipelines,
+                  searches)
+        |
+        raven_pipeline.s(gracedb_id, alert_object, tl, th, group)
+    ).delay()
+
+
+def _time_window(gracedb_id, group, pipelines, searches):
+    """Determine the correct time window given the parameters of the search.
+
+    Parameters
+    ----------
+    gracedb_id: str
+        ID of the trigger used by GraceDB
+    group: str
+        Burst or CBC
+    pipelines: list
+        list of external trigger pipeline names
+    searches: list
+        list of external trigger search names
+
+    """
     tl_cbc, th_cbc = app.conf['raven_coincidence_windows']['GRB_CBC']
+    tl_subfermi, th_subfermi = \
+        app.conf['raven_coincidence_windows']['GRB_CBC_SubFermi']
+    tl_subswift, th_subswift = \
+        app.conf['raven_coincidence_windows']['GRB_CBC_SubSwift']
     tl_burst, th_burst = app.conf['raven_coincidence_windows']['GRB_Burst']
     tl_snews, th_snews = app.conf['raven_coincidence_windows']['SNEWS']
 
     if 'SNEWS' in pipelines:
         tl, th = tl_snews, th_snews
-    elif group == 'CBC' and alert_object.get('group') == 'External':
-        tl, th = tl_cbc, th_cbc
-    elif group == 'CBC' and 'S' in gracedb_id:
-        tl, th = -th_cbc, -tl_cbc
-    elif group == 'Burst' and alert_object.get('group') == 'External':
+    elif group == 'CBC':
+        if not {'SubGRB', 'SubGRBTargeted'}.isdisjoint(searches):
+            if 'Fermi' in pipelines:
+                tl, th = tl_subfermi, th_subfermi
+            elif 'Swift' in pipelines:
+                tl, th = tl_subswift, th_subswift
+        else:
+            tl, th = tl_cbc, th_cbc
+    elif group == 'Burst':
         tl, th = tl_burst, th_burst
-    elif group == 'Burst' and 'S' in gracedb_id:
-        tl, th = -th_burst, -tl_burst
     else:
         raise ValueError('Invalid RAVEN search request for {0}'.format(
             gracedb_id))
+    if 'S' in gracedb_id:
+        # If triggering on a superevent, need to reverse the time window
+        tl, th = -th, -tl
 
-    (
-        search.si(gracedb_id, alert_object, tl, th, group, pipelines)
-        |
-        raven_pipeline.s(gracedb_id, alert_object, group)
-    ).delay()
+    return tl, th
 
 
 @app.task(shared=False)
 def search(gracedb_id, alert_object, tl=-5, th=5, group=None,
-           pipelines=[]):
+           pipelines=[], searches=[]):
     """Perform ligo-raven search for coincidences.
     The ligo.raven.search.search method applies EM_COINC label on its own.
 
@@ -141,11 +167,13 @@ def search(gracedb_id, alert_object, tl=-5, th=5, group=None,
         pipelines = []
     return ligo.raven.search.search(event, tl, th,
                                     gracedb=legacy_gracedb.client,
-                                    group=group, pipelines=pipelines)
+                                    group=group, pipelines=pipelines,
+                                    searches=searches)
 
 
 @app.task(shared=False)
-def raven_pipeline(raven_search_results, gracedb_id, alert_object, gw_group):
+def raven_pipeline(raven_search_results, gracedb_id, alert_object, tl, th,
+                   gw_group):
     """Executes much of the full raven pipeline, including adding
     the external trigger to the superevent, calculating the
     coincidence false alarm rate, and applying 'EM_COINC' to the
@@ -183,7 +211,7 @@ def raven_pipeline(raven_search_results, gracedb_id, alert_object, gw_group):
         canvas = (
             gracedb.add_event_to_superevent.si(superevent_id, exttrig_id)
             |
-            calculate_coincidence_far.si(superevent, ext_event, gw_group)
+            calculate_coincidence_far.si(superevent, ext_event, tl, th)
             |
             group(gracedb.create_label.si('EM_COINC', superevent_id),
                   gracedb.create_label.si('EM_COINC', exttrig_id))

@@ -314,8 +314,25 @@ def test_handle_grb_exttrig_creation(mock_raven_coincidence_search):
 
     # Check that the correct tasks were dispatched.
     mock_raven_coincidence_search.assert_has_calls([
-        call('E1234', alert['object'], group='CBC'),
-        call('E1234', alert['object'], group='Burst')])
+        call('E1234', alert['object'], group='Burst', searches=['GRB']),
+        call('E1234', alert['object'], group='CBC', searches=['GRB'])])
+
+
+@patch('gwcelery.tasks.raven.coincidence_search')
+def test_handle_subgrb_exttrig_creation(mock_raven_coincidence_search):
+    """Test dispatch of an LVAlert message for an exttrig creation."""
+    # Test LVAlert payload.
+    alert = resource_json(__name__, 'data/lvalert_subgrb_creation.json')
+
+    # Run function under test
+    external_triggers.handle_grb_lvalert(alert)
+
+    # Check that the correct tasks were dispatched.
+    mock_raven_coincidence_search.assert_has_calls([
+        call('E1234', alert['object'], group='CBC',
+             searches=['SubGRB', 'SubGRBTargeted'], pipelines=['Fermi']),
+        call('E1234', alert['object'], group='CBC',
+             searches=['SubGRB', 'SubGRBTargeted'], pipelines=['Swift'])])
 
 
 @pytest.mark.parametrize('calls, path',
@@ -342,10 +359,10 @@ def test_handle_sntrig_creation(mock_raven_coincidence_search, calls, path):
        return_value={'preferred_event': 'M4634'})
 @patch('gwcelery.tasks.gracedb.get_group', return_value='CBC')
 @patch('gwcelery.tasks.raven.coincidence_search')
-def test_handle_superevent_creation(mock_raven_coincidence_search,
-                                    mock_get_group,
-                                    mock_get_superevent):
-    """Test dispatch of an LVAlert message for a superevent creation."""
+def test_handle_superevent_cbc_creation(mock_raven_coincidence_search,
+                                        mock_get_group,
+                                        mock_get_superevent):
+    """Test dispatch of an LVAlert message for a CBC superevent creation."""
     # Test LVAlert payload.
     alert = resource_json(__name__, 'data/lvalert_superevent_creation.json')
 
@@ -353,6 +370,29 @@ def test_handle_superevent_creation(mock_raven_coincidence_search,
     external_triggers.handle_grb_lvalert(alert)
 
     # Check that the correct tasks were dispatched.
-    mock_raven_coincidence_search.assert_called_once_with(
-        'S180616h', alert['object'], group='CBC',
-        pipelines=['Fermi', 'Swift'])
+    mock_raven_coincidence_search.assert_has_calls([
+        call('S180616h', alert['object'], group='CBC',
+             searches=['GRB']),
+        call('S180616h', alert['object'], group='CBC',
+             pipelines=['Fermi'], searches=['SubGRB', 'SubGRBTargeted']),
+        call('S180616h', alert['object'], group='CBC',
+             pipelines=['Swift'], searches=['SubGRB', 'SubGRBTargeted'])])
+
+
+@patch('gwcelery.tasks.gracedb.get_superevent',
+       return_value={'preferred_event': 'M4634'})
+@patch('gwcelery.tasks.gracedb.get_group', return_value='Burst')
+@patch('gwcelery.tasks.raven.coincidence_search')
+def test_handle_superevent_burst_creation(mock_raven_coincidence_search,
+                                          mock_get_group,
+                                          mock_get_superevent):
+    """Test dispatch of an LVAlert message for a burst superevent creation."""
+    # Test LVAlert payload.
+    alert = resource_json(__name__, 'data/lvalert_superevent_creation.json')
+
+    # Run function under test
+    external_triggers.handle_grb_lvalert(alert)
+
+    # Check that the correct tasks were dispatched.
+    mock_raven_coincidence_search.assert_has_calls([
+        call('S180616h', alert['object'], group='Burst', searches=['GRB'])])

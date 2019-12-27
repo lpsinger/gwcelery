@@ -303,6 +303,8 @@ pe_results_url = ('https://ldas-jobs.ligo.caltech.edu/~{}/'
 (see :mod:`gwcelery.tasks.inference`)"""
 
 raven_coincidence_windows = {'GRB_CBC': [-5, 1],
+                             'GRB_CBC_SubFermi': [-11, 1],
+                             'GRB_CBC_SubSwift': [-20, 10],
                              'GRB_Burst': [-600, 60],
                              'SNEWS': [-10, 10]}
 """Time coincidence windows passed to ligo-raven. External events and
