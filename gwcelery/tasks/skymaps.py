@@ -188,7 +188,7 @@ def plot_bayes_factor(logb,
 
     """
     with seaborn.axes_style('ticks', seaborn.plotting_context('notebook')):
-        fig, ax = plt.subplots(figsize=(6, 1.7), tight_layout=True)
+        fig, ax = plt.subplots(figsize=(5, 2), tight_layout=True)
         ax.set_xlim(-xlim, xlim)
         ax.set_ylim(-0.5, 0.5)
         ax.set_yticks([])
