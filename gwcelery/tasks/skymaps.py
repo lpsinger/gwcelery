@@ -253,9 +253,9 @@ def plot_coherence(filecontents):
         raise Ignore('FITS file does not have a LOGBCI field')
 
     objid = header['OBJECT']
-    lnb_string = np.format_float_positional(0, 1, trim='0', sign=True)
+    logb_string = np.format_float_positional(logb, 1, trim='0', sign=True)
     fig, _ = plot_bayes_factor(
-        logb, title=rf'Coherence of {objid} $[\ln\,B = {lnb_string}]$')
+        logb, title=rf'Coherence of {objid} $[\ln\,B = {logb_string}]$')
     outfile = io.BytesIO()
     fig.savefig(outfile, format='png')
     return outfile.getvalue()
