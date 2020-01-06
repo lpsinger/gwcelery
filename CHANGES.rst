@@ -27,6 +27,11 @@ Changelog
 -   Increase both CBC and Burst trials factors by one due to enabling the
     RAVEN pipeline.
 
+-   Refactor ``gwcelery.tasks.detchar.make_omegascan`` to reuse GWPy's own
+    plotting functions, instead of using our own Matplotlib code. This fixes a
+    bug that prevented ``make_omegascan`` from working with Astropy 4.0 or
+    later.
+
 0.9.1 (2019-12-15)
 ------------------
 

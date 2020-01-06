@@ -92,9 +92,9 @@ def test_make_omegascan_worked(mock_create_cache, scan_strainname):
     t0 = 1126259463
     png = detchar.make_omegascan('H1', t0, durs)
     pngarray = plt.imread(BytesIO(png))
-    # Test to see that the png is taller than 500 pixels, indicating
+    # Test to see that the png is taller than 1400 pixels, indicating
     # presence of omegascan(s)
-    assert plt.imshow(pngarray).get_extent()[2] > 400
+    assert plt.imshow(pngarray).get_extent()[2] > 1400
 
 
 @patch('gwcelery.tasks.detchar.create_cache', return_value=[])
@@ -103,8 +103,8 @@ def test_make_omegascan_failed(mock_create_cache, scan_strainname):
     t0 = 1126259463
     png = detchar.make_omegascan('H1', t0, durs)
     pngarray = plt.imread(BytesIO(png))
-    # Test to see that the png is shorter than 500 pixels
-    assert plt.imshow(pngarray).get_extent()[2] < 500
+    # Test to see that the png is shorter than 1500 pixels
+    assert plt.imshow(pngarray).get_extent()[2] < 1500
 
 
 @patch('gwcelery.tasks.detchar.make_omegascan.run',

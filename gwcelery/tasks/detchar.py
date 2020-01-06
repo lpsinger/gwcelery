@@ -26,6 +26,7 @@ from celery.utils.log import get_task_logger
 from glue.lal import Cache
 from gwdatafind import find_urls
 from gwpy.timeseries import Bits, StateVector, TimeSeries
+from gwpy.plot import Plot
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -113,8 +114,6 @@ def make_omegascan(ifo, t0, durs):
         bytes of png of the omegascan, or None if no omegascan created.
 
     """
-    # Set up output
-    outfile = io.BytesIO()
     # Collect data
     longest = max(durs)
     long_start, long_end = t0 - longest, t0 + longest
@@ -132,27 +131,20 @@ def make_omegascan(ifo, t0, durs):
         fig = plt.figure()
         plt.axis("off")
         plt.text(0.1, 0.45, f"Failed to create {ifo} omegascan", fontsize=17)
-        fig.savefig(outfile, format='png', dpi=100)
-        png = outfile.getvalue()
-        return png
+    else:
+        fig = Plot(*qgrams,
+                   figsize=(10 * len(durs), 5),
+                   geometry=(1, len(durs)),
+                   yscale='log',
+                   method='pcolormesh')
+        for ax in fig.axes:
+            fig.colorbar(ax=ax, label='Normalized energy', clim=(0, 30))
+            ax.set_epoch(t0)
+        fig.suptitle(f'Omegascans of {strain_name} at {t0}', fontweight="bold")
 
-    # Plot
-    fig, axs = plt.subplots(1, len(durs),
-                            figsize=(10 * len(durs), 5))
-    fig.suptitle(f'Omegascans of {strain_name} at {t0}', fontweight="bold")
-    for ax, qgram, dur in zip(axs, qgrams, durs):
-        ax.pcolormesh(qgram.xindex, qgram.yindex,
-                      np.transpose(qgram))
-        ax.set_ylabel("Frequency (Hz)")
-        ax.set_yscale("log")
-        ax.set_xlabel("Seconds from $t_0$")
-        ax.set_xticks(np.arange(t0 - dur, t0 + dur + 0.0001, dur / 5))
-        ax.set_xticklabels(np.around(
-            np.arange(-dur, dur + 0.1, dur / 5), decimals=2))
-        ax.colorbar(label='Normalized energy', clim=(0, 30))
-    fig.savefig(outfile, format='png', dpi=300, bbox_inches='tight')
-    png = outfile.getvalue()
-    return png
+    outfile = io.BytesIO()
+    fig.savefig(outfile, format='png', dpi=300)
+    return outfile.getvalue()
 
 
 @app.task(shared=False)
