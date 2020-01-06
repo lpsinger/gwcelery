@@ -1,4 +1,3 @@
-astropy < 4.0  # Astropy 4.0 breaks test_make_omegascan_worked, https://git.ligo.org/emfollow/gwcelery/issues/283
 bilby-pipe >= 0.3.8
 celery[redis] == 4.4.0
 comet

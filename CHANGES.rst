@@ -32,6 +32,9 @@ Changelog
     bug that prevented ``make_omegascan`` from working with Astropy 4.0 or
     later.
 
+-   Unpin Astropy version, now that ``make_omegascan`` works with the most
+    recent version.
+
 0.9.1 (2019-12-15)
 ------------------
 
