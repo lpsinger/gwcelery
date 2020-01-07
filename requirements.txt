@@ -26,6 +26,7 @@ pygcn >= 0.1.19
 pytest >= 3.0
 python-ligo-lw
 safe-netrc
+seaborn
 sentry-sdk[flask]
 service_identity  # We don't actually use this package, but it silences some annoying warnings from twistd.
 sleek-lvalert >= 0.0.4
