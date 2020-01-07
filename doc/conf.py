@@ -73,7 +73,7 @@ spec = importlib.util.spec_from_file_location(
     '_version', '../gwcelery/_version.py')
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
-parsed_version = pkg_resources.parse_version(module.version)
+parsed_version = pkg_resources.parse_version(module.get_versions()['version'])
 del module, spec
 
 # The short X.Y version.

@@ -9,7 +9,7 @@ from ligo.gracedb.rest import HTTPError as GraceDbHTTPError
 import pkg_resources
 
 from . import app as celery_app
-from ._version import version
+from ._version import get_versions
 from .flask import app, cache
 from .tasks import first2years, gracedb, orchestrator, circulars, superevents
 
@@ -21,7 +21,7 @@ def index():
         'index.jinja2',
         conf=celery_app.conf,
         packages=pkg_resources.working_set,
-        version=pkg_resources.parse_version(version))
+        versions=get_versions())
 
 
 def take_n(n, iterable):

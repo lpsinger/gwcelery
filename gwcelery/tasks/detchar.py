@@ -236,7 +236,7 @@ def dqr_json(state, summary):
     return dict(
         state=state,
         process_name=__name__,
-        process_version=_version.version,
+        process_version=_version.get_versions()['version'],
         librarian='Geoffrey Mo (geoffrey.mo@ligo.org)',
         date=time.strftime("%H:%M:%S UTC %a %d %b %Y", time.gmtime()),
         hostname=socket.gethostname(),

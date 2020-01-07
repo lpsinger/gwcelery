@@ -9,7 +9,7 @@
     <div class=jumbotron>
         <h1>
             GWCelery
-            <small><a href="https://git.ligo.org/emfollow/gwcelery/tree/{% if version.local %}{{version.local[1:]}}{% else %}v{{version}}{% endif %}">{{version}}</a></small>
+            <small><a href="https://git.ligo.org/emfollow/gwcelery/commit/{{versions['full-revisionid']}}">{{versions.version}}</a></small>
         </h1>
         {% if request.remote_user %}
         Welcome, {{request.remote_user}}

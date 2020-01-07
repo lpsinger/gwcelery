@@ -97,7 +97,7 @@ def configure():
     username, _, _ = auth
     dsn = urlunparse(
         (scheme, '{}@{}'.format(username, netloc), *rest))
-    version = 'gwcelery-{}'.format(_version.version)
+    version = 'gwcelery-{}'.format(_version.get_versions()['version'])
     environment = app.conf['sentry_environment']
     sentry_sdk.init(dsn, environment=environment, release=version,
                     before_send=before_send,

@@ -12,9 +12,6 @@ Changelog
     header field, make a bullet chart to compare the log Bayes factor to a
     standard table of threshold confidence levels from Kass & Raftery (1995).
 
--   Switch from versioneer to setuptools_scm because versioneer is not
-    maintained.
-
 -   Enable the RAVEN alert pipeline by having the superevent manager listen
     to the label RAVEN_ALERT.
 

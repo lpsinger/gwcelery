@@ -137,7 +137,7 @@ def test_dqr_json(mock_time, mock_host, mock_user):
     assert detchar.dqr_json(state, summary) == {
         'state': 'pass',
         'process_name': 'gwcelery.tasks.detchar',
-        'process_version': _version.version,
+        'process_version': _version.get_versions()['version'],
         'librarian': 'Geoffrey Mo (geoffrey.mo@ligo.org)',
         'date': '00:00:00 UTC Mon 01 Jan 2000',
         'hostname': 'test_host',
