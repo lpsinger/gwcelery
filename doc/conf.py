@@ -103,6 +103,7 @@ todo_include_todos = False
 
 autodoc_mock_imports = []
 for mod in ['astropy',
+            'astropy_healpix',
             'click',
             'comet',
             'flask',
