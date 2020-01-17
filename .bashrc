@@ -6,7 +6,7 @@ if [ -f /etc/bashrc ]; then
     . /etc/bashrc
 fi
 
-source source /cvmfs/oasis.opensciencegrid.org/ligo/sw/conda/etc/profile.d/conda.sh
+source /cvmfs/oasis.opensciencegrid.org/ligo/sw/conda/etc/profile.d/conda.sh
 conda activate igwn-py37
 
 # Add user site directory to the PATH. On Linux, this is usuall ~/.local/bin.
