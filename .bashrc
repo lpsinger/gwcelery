@@ -6,8 +6,8 @@ if [ -f /etc/bashrc ]; then
     . /etc/bashrc
 fi
 
-source /cvmfs/ligo-containers.opensciencegrid.org/lscsoft/conda/latest/etc/profile.d/conda.sh
-conda activate ligo-py37
+source source /cvmfs/oasis.opensciencegrid.org/ligo/sw/conda/etc/profile.d/conda.sh
+conda activate igwn-py37
 
 # Add user site directory to the PATH. On Linux, this is usuall ~/.local/bin.
 export PATH="$(python -m site --user-base)/bin${PATH+:${PATH}}"
