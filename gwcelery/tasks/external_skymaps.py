@@ -143,8 +143,8 @@ def get_external_skymap(heasarc_link):
     return urllib.request.urlopen(skymap_link, context=context).read()
 
 
-@app.task(autoretry_for=(urllib.error.HTTPError,), retry_backoff=10,
-          retry_backoff_max=60)
+@app.task(autoretry_for=(urllib.error.HTTPError, urllib.error.URLError,
+          ValueError,), retry_backoff=10, retry_backoff_max=1200)
 def get_upload_external_skymap(graceid):
     """If a Fermi sky map is not uploaded yet, tries to download one and upload
     to external event. If sky map is not available, passes so that this can be
@@ -157,26 +157,19 @@ def get_upload_external_skymap(graceid):
     except ValueError:
         pass
 
-    try:
-        (
-            external_trigger_heasarc.si(graceid)
-            |
-            get_external_skymap.s().set(max_retries=5)
-            |
-            gracedb.upload.s(
-                'glg_healpix_all_bn_v00.fit',
-                graceid,
-                'Sky map from HEASARC.',
-                ['sky_loc'])
-            |
-            gracedb.create_label.si('EXT_SKYMAP_READY', graceid)
-        ).delay()
-
-    except ValueError:
-        #  Pass if heasarc_link not able to be retrieved. If the sky map is not
-        #  available a 404 error will still be raised.
-        #  FIXME: Add automatic generation of external skymap as ini !595
-        pass
+    (
+        external_trigger_heasarc.si(graceid)
+        |
+        get_external_skymap.s()
+        |
+        gracedb.upload.s(
+            'glg_healpix_all_bn_v00.fit',
+            graceid,
+            'Sky map from HEASARC.',
+            ['sky_loc'])
+        |
+        gracedb.create_label.si('EXT_SKYMAP_READY', graceid)
+    ).delay()
 
 
 def create_external_skymap(ra, dec, error):

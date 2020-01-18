@@ -129,7 +129,7 @@ def handle_grb_gcn(payload):
     external_skymaps.create_upload_external_skymap(
         event, notice_type, notice_date)
     if event['pipeline'] == 'Fermi':
-        external_skymaps.get_upload_external_skymap(graceid)
+        external_skymaps.get_upload_external_skymap(graceid).delay()
 
 
 @lvalert.handler('superevent',

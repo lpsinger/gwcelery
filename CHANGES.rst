@@ -18,6 +18,8 @@ Changelog
 -   Automate the calculation of joint FAR with sky maps and creation of
     combined sky map, executed when both sky maps are available
 
+-   Increase retries when trying to grab Fermi sky map from HEASARC
+
 0.9.2 (2020-01-07)
 ------------------
 

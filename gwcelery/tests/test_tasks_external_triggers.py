@@ -10,8 +10,7 @@ from . import resource_json
 
 
 @patch('gwcelery.tasks.external_skymaps.create_upload_external_skymap')
-@patch('gwcelery.tasks.external_skymaps.get_upload_external_skymap',
-       return_value=None)
+@patch('gwcelery.tasks.external_skymaps.get_upload_external_skymap.run')
 @patch('gwcelery.tasks.detchar.dqr_json', return_value='dqrjson')
 @patch('gwcelery.tasks.gracedb.upload.run')
 @patch('gwcelery.tasks.gracedb.get_event', return_value={
@@ -80,7 +79,9 @@ def test_handle_create_grb_event(mock_create_event, mock_get_event,
     'links': {'self': 'https://gracedb.ligo.org/events/E356793/'}})
 @patch('gwcelery.tasks.gracedb.create_event')
 @patch('gwcelery.tasks.detchar.check_vectors')
-def test_handle_create_subthreshold_grb_event(mock_check_vectors,
+@patch('gwcelery.tasks.external_skymaps.get_upload_external_skymap')
+def test_handle_create_subthreshold_grb_event(mock_get_upload_ext_skymap,
+                                              mock_check_vectors,
                                               mock_create_event,
                                               mock_get_event,
                                               mock_get_events):
@@ -100,8 +101,10 @@ def test_handle_create_subthreshold_grb_event(mock_check_vectors,
                                               pipeline='Fermi',
                                               group='External')
     mock_check_vectors.assert_called_once()
+    mock_get_upload_ext_skymap.assert_called_once()
 
 
+@patch('gwcelery.tasks.external_skymaps.get_upload_external_skymap')
 @patch('gwcelery.tasks.gracedb.replace_event')
 @patch('gwcelery.tasks.gracedb.get_events', return_value=[{
     'graceid': 'E1', 'gpstime': 1, 'instruments': '', 'pipeline': 'Fermi',
@@ -114,7 +117,8 @@ def test_handle_create_subthreshold_grb_event(mock_check_vectors,
                                  'ra': 10., 'dec': 0., 'error_radius': 10.}},
     'links': {'self': 'https://gracedb.ligo.org/events/E356793/'}})
 def test_handle_replace_grb_event(mock_get_event, mock_get_events,
-                                  mock_replace_event):
+                                  mock_replace_event,
+                                  mock_get_upload_external_skymap):
     text = resource_string(__name__, 'data/fermi_grb_gcn.xml')
     external_triggers.handle_grb_gcn(payload=text)
     mock_replace_event.assert_called_once_with('E1', text)
