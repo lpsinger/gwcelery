@@ -156,11 +156,12 @@ def handle_grb_gcn(payload):
         end = start + event['extra_attributes']['GRB']['trigger_duration']
         detchar.check_vectors(event, event['graceid'], start, end)
 
-    notice_type = \
-        root.find("./What/Param[@name='Packet_Type']").attrib['value']
-    notice_date = root.find("./Who/Date").text
-    external_skymaps.create_upload_external_skymap(
-        event, notice_type, notice_date)
+    if search == 'GRB':
+        notice_type = \
+            int(root.find("./What/Param[@name='Packet_Type']").attrib['value'])
+        notice_date = root.find("./Who/Date").text
+        external_skymaps.create_upload_external_skymap(
+            event, notice_type, notice_date)
     if event['pipeline'] == 'Fermi':
         external_skymaps.get_upload_external_skymap(graceid).delay()
 

@@ -125,14 +125,14 @@ def test_get_upload_external_skymap(mock_external_trigger_heasarc,
                           [270, -90, .01, -1]])
 def test_create_swift_skymap(ra, dec, error, pix):
     """Test created single pixel sky maps for Swift localization."""
-    skymap = external_skymaps.create_external_skymap(ra, dec, error)
+    skymap = external_skymaps.create_external_skymap(ra, dec, error, 'Swift')
     assert skymap[pix] == 1
 
 
 def test_create_fermi_skymap():
     """Test created single pixel sky maps for Swift localization."""
     ra, dec, error = 0, 90, 10
-    external_skymaps.create_external_skymap(ra, dec, error)
+    external_skymaps.create_external_skymap(ra, dec, error, 'Fermi')
 
 
 @patch('gwcelery.tasks.gracedb.upload.run')

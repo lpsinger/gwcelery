@@ -7,6 +7,8 @@ from celery import group
 import numpy as np
 from ligo.skymap.io import fits
 from ligo.skymap.tool import ligo_skymap_combine
+import gcn
+import healpy as hp
 import lxml.etree
 import re
 import ssl
@@ -172,9 +174,17 @@ def get_upload_external_skymap(graceid):
     ).delay()
 
 
-def create_external_skymap(ra, dec, error):
-    """Create an sky map, either a gaussian or a single
+def create_external_skymap(ra, dec, error, pipeline, notice_type=111):
+    """Create a sky map, either a gaussian or a single
     pixel sky map, given an RA, dec, and error radius.
+
+    If from Fermi, convolves the sky map with both a core and
+    tail Gaussian and then sums these to account for systematic
+    effects as measured in :doi:`10.1088/0067-0049/216/2/32`
+
+    If from Swift, converts the error radius from that containing 90% of the
+    credible region to ~68% (see description of Swift error
+    here:`https://gcn.gsfc.nasa.gov/swift.html#tc7`)
 
     Parameters
     ----------
@@ -193,6 +203,9 @@ def create_external_skymap(ra, dec, error):
     """
     max_nside = 2048
     if error:
+        # Correct 90% containment to 1-sigma for Swift
+        if pipeline == 'Swift':
+            error /= np.sqrt(-2 * np.log1p(-.9))
         error_radius = error * u.deg
         nside = pixel_resolution_to_nside(error_radius, round='up')
     else:
@@ -216,6 +229,32 @@ def create_external_skymap(ra, dec, error):
         skymap = np.exp(-0.5 * np.square(distance / error_radius).to_value(
             u.dimensionless_unscaled))
         skymap /= skymap.sum()
+    if pipeline == 'Fermi':
+        # Correct for Fermi systematics based on recommendations from GBM team
+        # Convolve with both a narrow core and wide tail Gaussian with error
+        # radius determined by the scales respectively, each comprising a
+        # fraction determined by the weights respectively
+        if notice_type == gcn.NoticeType.FERMI_GBM_FLT_POS:
+            # Flight notice
+            # Values from first row of Table 7
+            weights = [0.897, 0.103]
+            scales = [7.52, 55.6]
+        elif notice_type == gcn.NoticeType.FERMI_GBM_GND_POS:
+            # Ground notice
+            # Values from first row of Table 3
+            weights = [0.804, 0.196]
+            scales = [3.72, 13.7]
+        elif notice_type == gcn.NoticeType.FERMI_GBM_FIN_POS:
+            # Final notice
+            # Values from second row of Table 3
+            weights = [0.900, 0.100]
+            scales = [3.71, 14.3]
+        else:
+            raise AssertionError(
+                'Need to provide a supported Fermi notice type')
+        skymap = sum(
+            weight * hp.sphtfunc.smoothing(skymap, sigma=np.radians(scale))
+            for weight, scale in zip(weights, scales))
 
     return skymap
 
@@ -253,7 +292,7 @@ def write_to_fits(skymap, event, notice_type, notice_date):
                            url=event['links']['self'],
                            instruments=event['pipeline'],
                            gps_time=event['gpstime'],
-                           msgtype=notice_type_dict[notice_type],
+                           msgtype=notice_type_dict[str(notice_type)],
                            msgdate=notice_date,
                            creator='gwcelery',
                            origin='LIGO-VIRGO-KAGRA',
@@ -280,7 +319,8 @@ def create_upload_external_skymap(event, notice_type, notice_date):
     ra = event['extra_attributes']['GRB']['ra']
     dec = event['extra_attributes']['GRB']['dec']
     error = event['extra_attributes']['GRB']['error_radius']
-    skymap = create_external_skymap(ra, dec, error)
+    pipeline = event['pipeline']
+    skymap = create_external_skymap(ra, dec, error, pipeline, notice_type)
 
     skymap_data = write_to_fits(skymap, event, notice_type, notice_date)
 

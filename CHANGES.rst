@@ -24,6 +24,8 @@ Changelog
 
 -   Use Bayeswave PSD for online PE.
 
+-   Add corrections to generated Fermi sky maps.
+
 0.10.0 (2020-02-07)
 -------------------
 

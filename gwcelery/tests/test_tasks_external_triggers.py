@@ -69,7 +69,7 @@ def test_handle_create_grb_event(mock_create_event, mock_get_event,
              'self': 'https://gracedb.ligo.org/events/E356793/'
                   }
          },
-        '115', '2018-05-24T18:35:45')
+        115, '2018-05-24T18:35:45')
 
 
 @patch('gwcelery.tasks.gracedb.get_events', return_value=[])
