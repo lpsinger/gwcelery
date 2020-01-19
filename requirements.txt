@@ -8,7 +8,7 @@ flask-caching
 flower
 gwdatafind
 gwpy
-healpy < 1.13.0
+healpy
 imapclient
 jinja2
 lalsuite == 6.64
