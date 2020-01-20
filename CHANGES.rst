@@ -4,7 +4,8 @@ Changelog
 0.10.0 (unreleased)
 -------------------
 
--   No changes yet.
+-   Decrease the number of OpenMP workers from 40 to 16, now that gstlal is
+    uploading a reduced number of events.
 
 0.9.2 (2020-01-07)
 ------------------
