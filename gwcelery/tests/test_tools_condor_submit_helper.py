@@ -1,4 +1,5 @@
 import os
+import sys
 from unittest.mock import Mock
 
 from ..tools.condor_submit_helper import main
@@ -20,9 +21,10 @@ def test_condor_submit_helper(monkeypatch, tmpdir):
     monkeypatch.setenv('_CONDOR_MACHINE_AD', filename)
     monkeypatch.setenv('CELERY_BROKER_URL', '')
     mock_execvp = Mock()
+    monkeypatch.setattr(sys, 'argv', ['condor_submit_helper', 'foo', 'bar'])
     monkeypatch.setattr(os, 'execvp', mock_execvp)
 
     main()
 
     assert os.environ['CELERY_BROKER_URL'] == 'redis://hal9000.discovery'
-    mock_execvp.assert_called_once()
+    mock_execvp.assert_called_once_with('foo', ['foo', 'bar'])
