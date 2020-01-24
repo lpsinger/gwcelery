@@ -7,6 +7,9 @@ Changelog
 -   Decrease the number of OpenMP workers from 40 to 16, now that gstlal is
     uploading a reduced number of events.
 
+-   Add VOEvent broker and receiver configuration for playground environment in
+    order to enable end-to-end testing of transmission to and receipt from GCN.
+
 0.9.2 (2020-01-07)
 ------------------
 
