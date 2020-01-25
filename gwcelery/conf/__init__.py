@@ -98,7 +98,7 @@ superevent_default_d_t_end = 1.0
 superevent_far_threshold = 1 / 3600
 """Maximum false alarm rate to consider events superevents."""
 
-preliminary_alert_timeout = 30.
+preliminary_alert_timeout = 0.
 """Wait this many seconds for the preferred event to stabilize before issuing a
 preliminary alert."""
 

@@ -10,6 +10,8 @@ Changelog
 -   Add VOEvent broker and receiver configuration for playground environment in
     order to enable end-to-end testing of transmission to and receipt from GCN.
 
+-   Set delay to produce preliminary alert to 0 seconds.
+
 0.9.2 (2020-01-07)
 ------------------
 
