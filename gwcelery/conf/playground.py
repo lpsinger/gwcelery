@@ -16,7 +16,7 @@ voevent_broadcaster_address = ':5341'
 This should be a string of the form `host:port`. If `host` is empty,
 then listen on all available interfaces."""
 
-voevent_broadcaster_whitelist = ['50.116.49.68']
+voevent_broadcaster_whitelist = ['capella2.gsfc.nasa.gov']
 """List of hosts from which the broker will accept connections.
 If empty, then completely disable the broker's broadcast capability."""
 
