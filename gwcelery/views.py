@@ -199,6 +199,34 @@ def send_preliminary_gcn():
     return redirect(url_for('index'))
 
 
+@app.route('/change_prefered_event', methods=['POST'])
+def change_prefered_event():
+    """Handle submission of preliminary alert form."""
+    keys = ('superevent_id', 'event_id')
+    superevent_id, event_id, *_ = tuple(request.form.get(key) for key in keys)
+    if superevent_id and event_id:
+        (
+            gracedb.upload.s(
+                None, None, superevent_id,
+                'User {} queued a prefered event change to {}.'
+                .format(request.remote_user or '(unknown)', event_id),
+                tags=['em_follow'])
+            |
+            gracedb.update_superevent.si(
+                superevent_id, preferred_event=event_id)
+            |
+            gracedb.get_event.si(event_id)
+            |
+            orchestrator.preliminary_alert.s(
+                superevent_id, initiate_voevent=False)
+        ).delay()
+        flash('Changed prefered event for {}.'.format(superevent_id),
+              'success')
+    else:
+        flash('No change performed. Please fill in all fields.', 'danger')
+    return redirect(url_for('index'))
+
+
 @app.route('/send_update_gcn', methods=['POST'])
 def send_update_gcn():
     """Handle submission of update alert form."""
