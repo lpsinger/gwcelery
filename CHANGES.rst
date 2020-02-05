@@ -12,6 +12,8 @@ Changelog
 
 -   Set delay to produce preliminary alert to 0 seconds.
 
+-   Fix a bug in the upload of bilby results.
+
 0.9.2 (2020-01-07)
 ------------------
 

@@ -555,20 +555,15 @@ def dag_finished(rundir, preferred_event_id, superevent_id, pe_pipeline):
             app.conf['pe_results_path'], preferred_event_id, 'bilby'
         )
 
-        resultdir = rundir + '/result'
-
-        resultfile, = glob.glob('*merge_result.json')
-        intrinsic, = glob.glob('*_intrinsic_corner.png')
-        extrinsic, = glob.glob('*_extrinsic_corner.png')
-
+        resultdir = os.path.join(rundir, 'result')
         uploads = [
-            (resultdir, resultfile,
+            (resultdir, '*merge_result.json',
              'Bilby posterior samples',
              'Bilby.posterior_samples.json'),
-            (resultdir, extrinsic,
+            (resultdir, '*_extrinsic_corner.png',
              'Bilby corner plot for extrinsic parameters',
              'Bilby.extrinsic.png'),
-            (resultdir, intrinsic,
+            (resultdir, '*_intrinsic_corner.png',
              'Bilby corner plot for intrinsic parameters',
              'Bilby.intrinsic.png'),
         ]
