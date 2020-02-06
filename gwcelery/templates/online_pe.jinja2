@@ -24,7 +24,7 @@ explanation on jinja is here http://jinja.pocoo.org . #}
     {% set margphi = 'margphi=' %}
 {% endif %}
 
-{% if 'playground' in service_url %}
+{% if gracedb_host != 'gracedb.ligo.org' %}
     {# FIXME: lalinference_pipe fails to read state vector in Virgo's Replay
     data with gwpy. This issue will be solved by
     https://git.ligo.org/lscsoft/lalsuite/merge_requests/1110. #}
@@ -49,7 +49,6 @@ explanation on jinja is here http://jinja.pocoo.org . #}
 ifos={{ ifos | safe }}
 engine={{ engine }}
 nparallel={{ nparallel }}
-service-url={{ service_url }}
 roq={{ roq }}
 coherence-test=False
 upload-to-gracedb=False

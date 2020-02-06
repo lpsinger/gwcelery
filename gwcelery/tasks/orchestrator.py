@@ -578,7 +578,10 @@ def parameter_estimation(far_event, superevent_id):
                  app.conf['preliminary_alert_trials_factor']['cbc'])
     # FIXME: it will be better to start parameter estimation for 'burst'
     # events.
-    if event['group'] == 'CBC':
+    if event['group'] == 'CBC' and not (
+        app.conf['gracedb_host'] == 'gracedb.ligo.org'
+        and event['search'] == 'MDC'
+    ):
         canvas = inference.pre_pe_tasks(event, superevent_id)
         if far <= threshold:
             canvas |= group(

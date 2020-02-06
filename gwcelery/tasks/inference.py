@@ -153,7 +153,7 @@ def prepare_ini(frametype_dict, event, superevent_id=None):
     singleinspiraltable = event['extra_attributes']['SingleInspiral']
     trigtime = event['gpstime']
     ini_settings = {
-        'service_url': gracedb.client._service_url,
+        'gracedb_host': app.conf['gracedb_host'],
         'types': frametype_dict,
         'channels': app.conf['strain_channel_names'],
         'state_vector_channels': app.conf['state_vector_channel_names'],
@@ -298,7 +298,7 @@ def _setup_dag_for_bilby(event, rundir, preferred_event_id, superevent_id):
                  '--outdir', rundir, '--json', path_to_json, '--online-pe',
                  '--convert-to-flat-in-component-mass']
 
-    if not app.conf['sentry_environment'] == 'production':
+    if not app.conf['gracedb_host'] == 'gracedb.ligo.org':
         setup_arg += ['--channel-dict', 'o2replay',
                       '--sampler-kwargs', 'FastTest']
     try:
