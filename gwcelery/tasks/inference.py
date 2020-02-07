@@ -371,8 +371,7 @@ def dag_prepare_task(rundir, superevent_id, preferred_event_id, pe_pipeline,
         canvas = gracedb.get_event.si(preferred_event_id) | \
             _setup_dag_for_bilby.s(rundir, preferred_event_id, superevent_id)
     else:
-        print("A PE pipeline named {} does not exist.".format(pe_pipeline))
-        raise
+        raise NotImplementedError(f'Unknown PE pipeline {pe_pipeline}.')
     canvas |= _condor_no_submit.s()
     return canvas
 
@@ -462,6 +461,8 @@ def _upload_url(pe_results_path, graceid, pe_pipeline):
         path_to_posplots, = _find_paths_from_name(
             pe_results_path, 'home.html'
         )
+    else:
+        raise NotImplementedError(f'Unknown PE pipeline {pe_pipeline}.')
 
     baseurl = urllib.parse.urljoin(
                   app.conf['pe_results_url'],
@@ -551,12 +552,11 @@ def dag_finished(rundir, preferred_event_id, superevent_id, pe_pipeline):
         The work-flow for uploading PE results
 
     """
-    if pe_pipeline == 'lalinference':
-        # path to lalinference pe results
-        pe_results_path = os.path.join(
-            app.conf['pe_results_path'], preferred_event_id, 'lalinference'
-        )
+    pe_results_path = os.path.join(
+        app.conf['pe_results_path'], preferred_event_id, pe_pipeline
+    )
 
+    if pe_pipeline == 'lalinference':
         uploads = [
             (rundir, 'glitch_median_PSD_for*_PSD*.dat',
              'Bayeswave PSD used for LALInference PE', None),
@@ -570,13 +570,7 @@ def dag_finished(rundir, preferred_event_id, superevent_id, pe_pipeline):
              'LALInference corner plot for source frame parameters',
              'LALInference.intrinsic.png')
         ]
-
     elif pe_pipeline == 'bilby':
-        # path to bilby pe results
-        pe_results_path = os.path.join(
-            app.conf['pe_results_path'], preferred_event_id, 'bilby'
-        )
-
         resultdir = os.path.join(rundir, 'result')
         uploads = [
             (resultdir, '*merge_result.json',
@@ -589,6 +583,8 @@ def dag_finished(rundir, preferred_event_id, superevent_id, pe_pipeline):
              'Bilby corner plot for intrinsic parameters',
              'Bilby.intrinsic.png')
         ]
+    else:
+        raise NotImplementedError(f'Unknown PE pipeline {pe_pipeline}.')
 
     upload_tasks = []
     for dir, name1, comment, name2 in uploads:

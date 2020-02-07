@@ -10,6 +10,8 @@ Changelog
     O3, but since it was not in the documentation, we frequently forgot to set
     it when configuring a Redis server on a new or upgraded system.
 
+-   Add the unit test for tasks/inference.py.
+
 0.11.1 (2020-02-21)
 -------------------
 
