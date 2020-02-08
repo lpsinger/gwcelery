@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.10.0 (unreleased)
+0.10.0 (2020-02-07)
 -------------------
 
 -   Decrease the number of OpenMP workers from 40 to 16, now that gstlal is
