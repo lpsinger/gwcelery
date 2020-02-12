@@ -4,7 +4,7 @@ Changelog
 0.10.1 (unreleased)
 -------------------
 
--   No changes yet.
+-   Use Online_PE condor slots for lalinference parameter estimation.
 
 0.10.0 (2020-02-07)
 -------------------
