@@ -782,9 +782,7 @@ def update_alert(filenames, superevent_id):
 
 @app.task(ignore_result=True, shared=False)
 def retraction_alert(superevent_id):
-    """Produce a retraction alert. This is currently just a stub and does
-    nothing more than create and send a VOEvent.
-    """
+    """Produce a retraction alert."""
     (
         gracedb.expose.si(superevent_id)
         |
