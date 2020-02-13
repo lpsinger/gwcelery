@@ -22,6 +22,8 @@ Changelog
 -   Switch from GraceDB REST API calls from gracedb-client to gracedb-sdk to
     gain increased transaction throughput due to HTTP connection pooling.
 
+-   Use Bayeswave PSD for online PE.
+
 0.10.0 (2020-02-07)
 -------------------
 

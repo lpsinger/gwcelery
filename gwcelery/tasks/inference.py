@@ -43,7 +43,9 @@ executables = {'datafind': 'gw_data_find',
                'mpiwrapper': 'lalinference_mpi_wrapper',
                'gracedb': 'gracedb',
                'ppanalysis': 'cbcBayesPPAnalysis',
-               'pos_to_sim_inspiral': 'cbcBayesPosToSimInspiral'}
+               'pos_to_sim_inspiral': 'cbcBayesPosToSimInspiral',
+               'bayeswave': 'BayesWave',
+               'bayeswavepost': 'BayesWavePost'}
 
 
 def _data_exists(end, frametype_dict):
@@ -174,6 +176,7 @@ def prepare_ini(frametype_dict, event, superevent_id=None):
             trigtime,
             '/home/cbc/pe/O3/calibrationenvelopes/Virgo'
         ),
+        'mc': min([sngl['mchirp'] for sngl in singleinspiraltable]),
         'q': min([sngl['mass2'] / sngl['mass1']
                   for sngl in singleinspiraltable]),
         'mpirun': find_executable('mpirun')
@@ -315,9 +318,10 @@ def _setup_dag_for_bilby(event, rundir, preferred_event_id, superevent_id):
         raise
     else:
         # Uploads bilby ini file to GraceDB
-        _upload_result(rundir, 'bilby_config.ini', superevent_id,
-                       'Automatically generated Bilby configuration file',
-                       'pe', 'online_bilby_pe.ini').delay()
+        group(upload_results_tasks(
+            rundir, 'bilby_config.ini', superevent_id,
+            'Automatically generated Bilby configuration file',
+            'pe', 'online_bilby_pe.ini')).delay()
 
     path_to_dag, = glob.glob(os.path.join(rundir, 'submit/dag*.submit'))
     print(path_to_dag)
@@ -474,26 +478,42 @@ def _upload_url(pe_results_path, graceid, pe_pipeline):
     )
 
 
-@app.task(ignore_result=True, shared=False)
-def _get_result_contents(pe_results_path, filename):
-    """Return the contents of a PE results file by reading it from the local
-    filesystem.
-    """
-    path, = _find_paths_from_name(pe_results_path, filename)
-    with open(path, 'rb') as f:
-        contents = f.read()
-    return contents
-
-
-def _upload_result(pe_results_path, filename, graceid, message, tag,
-                   uploaded_filename=None):
-    """Return a canvas to get the contents of a PE result file and upload it to
+def upload_results_tasks(pe_results_path, filename, graceid, message, tag,
+                         uploaded_filename=None):
+    """Return tasks to get the contents of PE result files and upload them to
     GraceDB.
+
+    Parameters
+    ----------
+    pe_results_path : string
+        Directory under which the target file located.
+    filename : string
+        Name of the target file
+    graceid : string
+        GraceDB ID
+    message : string
+        Message uploaded to GraceDB
+    tag : str
+        Name of tag to add the GraceDB log
+    uploaded_filename : str
+        Name of the uploaded file. If not supplied, it is the same as the
+        original file name.
+
+    Returns
+    -------
+    tasks : list of celery tasks
+
     """
-    if uploaded_filename is None:
-        uploaded_filename = filename
-    return _get_result_contents.si(pe_results_path, filename) | \
-        gracedb.upload.s(uploaded_filename, graceid, message, tag)
+    tasks = []
+    for path in _find_paths_from_name(pe_results_path, filename):
+        if uploaded_filename is None:
+            _uploaded_filename = os.path.basename(path)
+        else:
+            _uploaded_filename = uploaded_filename
+        with open(path, 'rb') as f:
+            tasks.append(gracedb.upload.si(f.read(), _uploaded_filename,
+                                           graceid, message, tag))
+    return tasks
 
 
 @app.task(ignore_result=True, shared=False)
@@ -538,6 +558,8 @@ def dag_finished(rundir, preferred_event_id, superevent_id, pe_pipeline):
         )
 
         uploads = [
+            (rundir, 'glitch_median_PSD_for*_PSD*.dat',
+             'Bayeswave PSD used for LALInference PE', None),
             (rundir, 'posterior*.hdf5',
              'LALInference posterior samples',
              'LALInference.posterior_samples.hdf5'),
@@ -546,7 +568,7 @@ def dag_finished(rundir, preferred_event_id, superevent_id, pe_pipeline):
              'LALInference.extrinsic.png'),
             (pe_results_path, 'sourceFrame.png',
              'LALInference corner plot for source frame parameters',
-             'LALInference.intrinsic.png'),
+             'LALInference.intrinsic.png')
         ]
 
     elif pe_pipeline == 'bilby':
@@ -565,14 +587,13 @@ def dag_finished(rundir, preferred_event_id, superevent_id, pe_pipeline):
              'Bilby.extrinsic.png'),
             (resultdir, '*_intrinsic_corner.png',
              'Bilby corner plot for intrinsic parameters',
-             'Bilby.intrinsic.png'),
+             'Bilby.intrinsic.png')
         ]
 
-    upload_tasks = [
-        _upload_result(
-            dir, name1, superevent_id, comment, 'pe', name2
-        ) for dir, name1, comment, name2 in uploads
-    ]
+    upload_tasks = []
+    for dir, name1, comment, name2 in uploads:
+        upload_tasks.append(upload_results_tasks(
+            dir, name1, superevent_id, comment, 'pe', name2))
 
     # FIXME: _upload_url.si has to be out of group for
     # gracedb.create_label.si to run
