@@ -17,6 +17,8 @@ Changelog
 
 -   Reduce the number of bilby runs for test events to less than once per day.
 
+-   Fix a bug in skymap generation with online PE posterior samples.
+
 0.10.0 (2020-02-07)
 -------------------
 

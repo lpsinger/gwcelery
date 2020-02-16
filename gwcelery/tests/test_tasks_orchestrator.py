@@ -358,6 +358,7 @@ def test_handle_posterior_samples(monkeypatch, alert_type, filename):
 
     download = Mock()
     em_bright_pe = Mock()
+    _remove_duplicate_meta = Mock()
     skymap_from_samples = Mock()
     fits_header = Mock()
     plot_allsky = Mock()
@@ -368,6 +369,9 @@ def test_handle_posterior_samples(monkeypatch, alert_type, filename):
     monkeypatch.setattr('gwcelery.tasks.em_bright.em_bright_posterior_'
                         'samples.run', em_bright_pe)
     monkeypatch.setattr('gwcelery.tasks.gracedb.download._orig_run', download)
+    monkeypatch.setattr(
+        'gwcelery.tasks.orchestrator._remove_duplicate_meta.run',
+        _remove_duplicate_meta)
     monkeypatch.setattr('gwcelery.tasks.skymaps.skymap_from_samples.run',
                         skymap_from_samples)
     monkeypatch.setattr('gwcelery.tasks.skymaps.fits_header.run', fits_header)
@@ -382,6 +386,7 @@ def test_handle_posterior_samples(monkeypatch, alert_type, filename):
 
     if alert['alert_type'] != 'log' or \
             not alert['data']['filename'].endswith('.posterior_samples.hdf5'):
+        _remove_duplicate_meta.assert_not_called()
         skymap_from_samples.assert_not_called()
         fits_header.assert_not_called()
         plot_allsky.assert_not_called()
@@ -389,6 +394,7 @@ def test_handle_posterior_samples(monkeypatch, alert_type, filename):
         flatten.assert_not_called()
     else:
         em_bright_pe.assert_called_once()
+        _remove_duplicate_meta.assert_called_once()
         skymap_from_samples.assert_called_once()
         fits_header.assert_called_once()
         plot_allsky.assert_called_once()
