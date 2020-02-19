@@ -1,3 +1,4 @@
+astropy < 4.0  # https://git.ligo.org/sccb/requests/issues/418
 bilby-pipe >= 0.3.8
 celery[redis] == 4.4.0
 comet
