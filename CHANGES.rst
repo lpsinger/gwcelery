@@ -15,6 +15,8 @@ Changelog
 -   Pin astropy < 4.0 to work around an issue with caching of downloaded data
     on the Caltech cluster. See https://git.ligo.org/sccb/requests/issues/418.
 
+-   Reduce the number of bilby runs for test events to less than once per day.
+
 0.10.0 (2020-02-07)
 -------------------
 

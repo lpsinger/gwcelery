@@ -578,20 +578,21 @@ def parameter_estimation(far_event, superevent_id):
                  app.conf['preliminary_alert_trials_factor']['cbc'])
     # FIXME: it will be better to start parameter estimation for 'burst'
     # events.
-    if event['group'] == 'CBC' and not (
-        app.conf['gracedb_host'] == 'gracedb.ligo.org'
-        and event['search'] == 'MDC'
-    ):
+    is_production = (app.conf['gracedb_host'] == 'gracedb.ligo.org')
+    is_mdc = (event['search'] == 'MDC')
+    if event['group'] == 'CBC' and not (is_production and is_mdc):
         canvas = inference.pre_pe_tasks(event, superevent_id)
         if far <= threshold:
+            pipelines = ['lalinference']
+            # FIXME: The second condition guarantees that the bilby for
+            # playground or test events are started less than once per day to
+            # save computational resources. Once bilby becomes quick enough, we
+            # should drop that condition.
+            if is_production or (is_mdc and superevent_id[8:] == 'a'):
+                pipelines.append('bilby')
             canvas |= group(
-                inference.start_pe.s(
-                    preferred_event_id, superevent_id, 'lalinference'
-                ),
-                inference.start_pe.s(
-                    preferred_event_id, superevent_id, 'bilby'
-                )
-            )
+                inference.start_pe.s(preferred_event_id, superevent_id, p)
+                for p in pipelines)
         else:
             canvas |= gracedb.upload.si(
                           filecontents=None, filename=None,
