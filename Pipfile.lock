@@ -197,6 +197,13 @@
             ],
             "version": "==1.14.0"
         },
+        "chardet": {
+            "hashes": [
+                "sha256:84ab92ed1c4d4f16916e05906b6b75a6c0fb5db821cc65e70cbd64a3e2a5eaae",
+                "sha256:fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691"
+            ],
+            "version": "==3.0.4"
+        },
         "click": {
             "hashes": [
                 "sha256:2335065e6395b9e67ca716de5f7526736bfa6ceead690adf616d925bdc622b13",
@@ -340,6 +347,13 @@
                 "sha256:b1bead90b70cf6ec3f0710ae53a525360fa360d306a86583adc6bf83a4db537d"
             ],
             "version": "==0.18.2"
+        },
+        "gracedb-sdk": {
+            "hashes": [
+                "sha256:7c10b9cc28b6db5955cf4e2c726ac66b84d43a809eb05dd8d8130ce630173948",
+                "sha256:888659cc58b638c68847910e08f8faad234d8e2963a44cd21d61d3ee483f3044"
+            ],
+            "version": "==0.1.1"
         },
         "gwcelery": {
             "editable": true,
@@ -1102,6 +1116,20 @@
                 "sha256:eb53e3b192f39b45c1d966640f830bb2024f22ef42a75f94bbcc51be7db9cb80"
             ],
             "version": "==0.6"
+        },
+        "requests": {
+            "hashes": [
+                "sha256:43999036bfa82904b6af1d99e4882b560e5e2c68e5c4b0aa03b655f3d7d73fee",
+                "sha256:b3f43d496c6daba4493e7c431722aeb7dbc6288f52a6e04e7b6023b0247817e6"
+            ],
+            "version": "==2.23.0"
+        },
+        "requests-gracedb": {
+            "hashes": [
+                "sha256:87d930cb3f4de298fc4e40c009faaeb55004de3da29c82512c3d28e253765bee",
+                "sha256:ac24e5a14b08eb56f5be4e3aeb5e5080ec58b0b7eb64f1a4aff580833700f415"
+            ],
+            "version": "==0.1.2"
         },
         "retrying": {
             "hashes": [
