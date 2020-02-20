@@ -24,7 +24,9 @@ Changelog
 
 -   Use Bayeswave PSD for online PE.
 
--   Add corrections to generated Fermi sky maps.
+-   Add systematic error contributions to Fermi-GBM sky maps.
+
+-   Convert Swift-BAT error radii from 90% C.L. to 1-sigma.
 
 -   Remove ``vetted=True`` keyword argument for GraceDB API calls to produce
     VOEvents, because that argument was removed from the GraceDB server and
