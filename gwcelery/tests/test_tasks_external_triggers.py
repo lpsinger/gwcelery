@@ -22,7 +22,7 @@ from . import resource_json
     'extra_attributes': {'GRB': {'trigger_duration': 1, 'trigger_id': 123,
                                  'ra': 0., 'dec': 0., 'error_radius': 10.}},
     'links': {'self': 'https://gracedb.ligo.org/events/E356793/'}})
-@patch('gwcelery.tasks.gracedb.create_event')
+@patch('gwcelery.tasks.gracedb.create_event', return_value='E356793')
 def test_handle_create_grb_event(mock_create_event, mock_get_event,
                                  mock_upload, mock_json,
                                  mock_get_upload_external_skymap,
@@ -87,9 +87,9 @@ def test_handle_create_grb_event(mock_create_event, mock_get_event,
     'extra_attributes': {'GRB': {'trigger_duration': 1, 'trigger_id': 123,
                                  'ra': 0., 'dec': 0., 'error_radius': 10.}},
     'links': {'self': 'https://gracedb.ligo.org/events/E356793/'}})
-@patch('gwcelery.tasks.gracedb.create_event')
+@patch('gwcelery.tasks.gracedb.create_event', return_value='E356793')
 @patch('gwcelery.tasks.detchar.check_vectors')
-@patch('gwcelery.tasks.external_skymaps.get_upload_external_skymap')
+@patch('gwcelery.tasks.external_skymaps.get_upload_external_skymap.run')
 def test_handle_create_subthreshold_grb_event(mock_get_upload_ext_skymap,
                                               mock_check_vectors,
                                               mock_create_event,
@@ -114,14 +114,14 @@ def test_handle_create_subthreshold_grb_event(mock_get_upload_ext_skymap,
     mock_check_vectors.assert_called_once()
 
 
-@patch('gwcelery.tasks.external_skymaps.get_upload_external_skymap')
+@patch('gwcelery.tasks.external_skymaps.get_upload_external_skymap.run')
 @patch('gwcelery.tasks.gracedb.get_events', return_value=[])
 @patch('gwcelery.tasks.gracedb.get_event', return_value={
     'graceid': 'E1', 'gpstime': 1, 'instruments': '', 'pipeline': 'Fermi',
     'extra_attributes': {'GRB': {'trigger_duration': 1, 'trigger_id': 123,
                                  'ra': 0., 'dec': 0., 'error_radius': 10.}},
     'links': {'self': 'https://gracedb.ligo.org/events/E356793/'}})
-@patch('gwcelery.tasks.gracedb.create_event')
+@patch('gwcelery.tasks.gracedb.create_event', return_value='E356793')
 @patch('gwcelery.tasks.detchar.check_vectors')
 def test_handle_noise_fermi_event(mock_check_vectors,
                                   mock_create_event,
@@ -147,7 +147,7 @@ def test_handle_noise_fermi_event(mock_check_vectors,
 @pytest.mark.parametrize('filename',
                          ['data/fermi_grb_gcn.xml',
                           'data/fermi_noise_gcn.xml'])
-@patch('gwcelery.tasks.external_skymaps.get_upload_external_skymap')
+@patch('gwcelery.tasks.external_skymaps.get_upload_external_skymap.run')
 @patch('gwcelery.tasks.gracedb.create_label')
 @patch('gwcelery.tasks.gracedb.remove_label')
 @patch('gwcelery.tasks.gracedb.replace_event')
