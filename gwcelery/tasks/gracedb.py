@@ -333,5 +333,5 @@ def add_event_to_superevent(superevent_id, graceid):
     except HTTPError as e:
         error_msg = b'is already assigned to a Superevent'
         if not (e.response.status_code == 400
-                and e.response.content in error_msg):
+                and error_msg in e.response.content):
             raise
