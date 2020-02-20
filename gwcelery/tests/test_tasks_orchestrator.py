@@ -264,7 +264,7 @@ def test_handle_superevent_initial_alert(mock_create_initial_circular,
     mock_create_voevent.assert_called_once_with(
         'S1234', 'initial', BBH=0.02, BNS=0.94, NSBH=0.03, ProbHasNS=0.0,
         ProbHasRemnant=0.0, Terrestrial=0.01, internal=False, open_alert=True,
-        skymap_filename='foobar.fits.gz,0', skymap_type='foobar', vetted=True,
+        skymap_filename='foobar.fits.gz,0', skymap_type='foobar',
         raven_coinc='RAVEN_ALERT' in labels)
     mock_send.assert_called_once_with('contents of S1234-Initial-1.xml')
     if 'RAVEN_ALERT' in labels:
@@ -310,7 +310,7 @@ def test_handle_superevent_retraction_alert(mock_create_retraction_circular,
     orchestrator.handle_superevent(alert)
 
     mock_create_voevent.assert_called_once_with(
-        'S1234', 'retraction', internal=False, open_alert=True, vetted=True)
+        'S1234', 'retraction', internal=False, open_alert=True)
     mock_send.assert_called_once_with('contents of S1234-Retraction-2.xml')
     mock_create_retraction_circular.assert_called_once_with('S1234')
     mock_create_tag.assert_called_once_with(

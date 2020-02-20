@@ -26,6 +26,10 @@ Changelog
 
 -   Add corrections to generated Fermi sky maps.
 
+-   Remove ``vetted=True`` keyword argument for GraceDB API calls to produce
+    VOEvents, because that argument was removed from the GraceDB server and
+    client over a year ago.
+
 0.10.0 (2020-02-07)
 -------------------
 

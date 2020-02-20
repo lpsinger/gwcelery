@@ -732,7 +732,6 @@ def preliminary_initial_update_alert(filenames, superevent_id, alert_type,
             skymap_filename=skymap_filename,
             internal=False,
             open_alert=True,
-            vetted=True,
             raven_coinc=('RAVEN_ALERT' in labels)
         )
         |
@@ -817,8 +816,7 @@ def retraction_alert(superevent_id):
         _create_voevent.si(
             None, superevent_id, 'retraction',
             internal=False,
-            open_alert=True,
-            vetted=True
+            open_alert=True
         )
         |
         group(
