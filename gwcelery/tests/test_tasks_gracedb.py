@@ -130,8 +130,9 @@ def test_get_event(mock_gracedb):
 
 @patch('gwcelery.tasks.gracedb.client')
 def test_get_group(mock_gracedb):
-    gracedb.get_group('G123456')
-    mock_gracedb.event.assert_called_once_with('G123456')
+    result = gracedb.get_group('G123456')
+    mock_gracedb.events['G123456'].get.assert_called_once_with()
+    assert result == mock_gracedb.events['G123456'].get.return_value['group']
 
 
 @patch('gwcelery.tasks.gracedb.client')

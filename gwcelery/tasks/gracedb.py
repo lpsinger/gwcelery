@@ -190,7 +190,7 @@ def get_event(graceid):
 @catch_retryable_http_errors
 def get_group(graceid):
     """Retrieve the search field of an event from GraceDB."""
-    return client.event(graceid).json()['group']
+    return client.events[graceid].get()['group']
 
 
 @task(shared=False)
