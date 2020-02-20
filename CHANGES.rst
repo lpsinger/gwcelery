@@ -13,7 +13,7 @@ Changelog
     values by means of a bar chart.
 
 -   Pin astropy < 4.0 to work around an issue with caching of downloaded data
-    on the Caltech cluster. See https://git.ligo.org/sccb/requests/issues/418.
+    on the Caltech cluster. See https://github.com/astropy/astropy/issues/9970.
 
 -   Reduce the number of bilby runs for test events to less than once per day.
 
