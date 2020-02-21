@@ -340,7 +340,7 @@
         },
         "flower": {
             "git": "https://github.com/lpsinger/flower",
-            "ref": "6a186c7bf7bb7dafc65ed3ce809d1ce072581577"
+            "ref": "d3bdabbdf34ba191d221359dcb4015f9384f544a"
         },
         "future": {
             "hashes": [
