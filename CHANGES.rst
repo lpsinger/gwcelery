@@ -4,7 +4,7 @@ Changelog
 0.11.1 (unreleased)
 -------------------
 
--   No changes yet.
+-   Un-pin LALSuite and use the latest stable version (at this time, 6.68).
 
 0.11.0 (2020-02-21)
 -------------------

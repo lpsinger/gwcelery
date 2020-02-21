@@ -13,7 +13,7 @@ healpy
 humanize == 0.5.1  # pinned by Flower, not respected by pipenv for some reason
 imapclient
 jinja2
-lalsuite == 6.64
+lalsuite
 ligo-followup-advocate >= 1.1.3
 ligo-gracedb >= 2.3.0
 ligo-raven >= 1.17
