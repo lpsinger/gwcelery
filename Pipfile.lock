@@ -350,10 +350,10 @@
         },
         "gracedb-sdk": {
             "hashes": [
-                "sha256:7c10b9cc28b6db5955cf4e2c726ac66b84d43a809eb05dd8d8130ce630173948",
-                "sha256:888659cc58b638c68847910e08f8faad234d8e2963a44cd21d61d3ee483f3044"
+                "sha256:c4f3012a7c943ef0ad7cf770523729b5f94ad9f125f19166c9add90b953cad82",
+                "sha256:d2bffead5e80e16d3af36e6e8812b02f7e6b5282cd9bec6d39275aac84037061"
             ],
-            "version": "==0.1.1"
+            "version": "==0.1.2"
         },
         "gwcelery": {
             "editable": true,
@@ -1126,10 +1126,10 @@
         },
         "requests-gracedb": {
             "hashes": [
-                "sha256:87d930cb3f4de298fc4e40c009faaeb55004de3da29c82512c3d28e253765bee",
-                "sha256:ac24e5a14b08eb56f5be4e3aeb5e5080ec58b0b7eb64f1a4aff580833700f415"
+                "sha256:8039368c8ac7d34d7b46c16068f1b4fc9eb4591163a7226e7af99189efc12d83",
+                "sha256:9e74f36a61a07b9240429d0fc6585a150b230913006bcb612e521265ef892133"
             ],
-            "version": "==0.1.2"
+            "version": "==0.1.3"
         },
         "retrying": {
             "hashes": [
