@@ -10,6 +10,7 @@ gracedb-sdk >= 0.0.2
 gwdatafind
 gwpy
 healpy
+humanize == 0.5.1  # pinned by Flower, not respected by pipenv for some reason
 imapclient
 jinja2
 lalsuite == 6.64
