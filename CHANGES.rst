@@ -6,8 +6,22 @@ Changelog
 
 -   Use Online_PE condor slots for lalinference parameter estimation.
 
--   Ignore Fermi triggers that are likely noise as possible RAVEN coincidence
-    candidates by applying the label `NOT_GRB`.
+-   Use Bayeswave PSD for online PE.
+
+-   Fix a bug in skymap generation with online PE posterior samples.
+
+-   Reduce the number of bilby runs for test events to less than once per day.
+
+-   Add systematic error contributions to Fermi-GBM sky maps.
+
+-   Convert Swift-BAT error radii from 90% C.L. to 1-sigma.
+
+-   Add INTEGRAL and AGILE MCAL to GRB pipelines.
+
+-   Apply label ``NOT_GRB`` to external Fermi candidates that do not meet
+    required threshold of a GRB. This is determined by ``Most_Likely_Index``
+    and ``Most_Likely_Prob`` quantities supplied with Fermi notices.
+    RAVEN will not consider external events labeled ``NOT_GRB``.
 
 -   Automatically generate and upload a graphic showing the source property
     values by means of a bar chart.
@@ -15,24 +29,12 @@ Changelog
 -   Pin astropy < 4.0 to work around an issue with caching of downloaded data
     on the Caltech cluster. See https://github.com/astropy/astropy/issues/9970.
 
--   Reduce the number of bilby runs for test events to less than once per day.
-
--   Fix a bug in skymap generation with online PE posterior samples.
-
 -   Switch from GraceDB REST API calls from gracedb-client to gracedb-sdk to
     gain increased transaction throughput due to HTTP connection pooling.
-
--   Use Bayeswave PSD for online PE.
-
--   Add systematic error contributions to Fermi-GBM sky maps.
-
--   Convert Swift-BAT error radii from 90% C.L. to 1-sigma.
 
 -   Remove ``vetted=True`` keyword argument for GraceDB API calls to produce
     VOEvents, because that argument was removed from the GraceDB server and
     client over a year ago.
-
--   Add INTEGRAL and AGILE MCAL to GRB pipelines.
 
 0.10.0 (2020-02-07)
 -------------------
