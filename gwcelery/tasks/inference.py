@@ -592,8 +592,8 @@ def dag_finished(rundir, preferred_event_id, superevent_id, pe_pipeline):
 
     upload_tasks = []
     for dir, name1, comment, name2 in uploads:
-        upload_tasks.append(upload_results_tasks(
-            dir, name1, superevent_id, comment, 'pe', name2))
+        upload_tasks += upload_results_tasks(
+            dir, name1, superevent_id, comment, 'pe', name2)
 
     # FIXME: _upload_url.si has to be out of group for
     # gracedb.create_label.si to run
