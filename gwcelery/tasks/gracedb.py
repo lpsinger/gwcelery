@@ -63,11 +63,11 @@ def _parse_versioned_filename(versioned_filename):
 
 @task(shared=False)
 @catch_retryable_http_errors
-def create_event(filecontents, search, pipeline, group):
+def create_event(filecontents, search, pipeline, group, labels=()):
     """Create an event in GraceDB."""
     response = client.events.create(group=group, pipeline=pipeline,
                                     filename='initial.data', search=search,
-                                    filecontents=filecontents)
+                                    filecontents=filecontents, labels=labels)
     return response['graceid']
 
 
