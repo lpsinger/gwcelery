@@ -1205,7 +1205,8 @@
         },
         "sentry-sdk": {
             "extras": [
-                "flask"
+                "flask",
+                "tornado"
             ],
             "hashes": [
                 "sha256:b06dd27391fd11fb32f84fe054e6a64736c469514a718a99fb5ce1dff95d6b28",
