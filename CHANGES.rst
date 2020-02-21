@@ -1,15 +1,17 @@
 Changelog
 =========
 
-0.11.1 (unreleased)
+0.11.1 (2020-02-21)
 -------------------
 
 -   Un-pin LALSuite and use the latest stable version (at this time, 6.68).
 
+-   Do not use Online_PE condor slots for lalinference parameter estimation.
+
 0.11.0 (2020-02-21)
 -------------------
 
--   No changes yet.
+-   Use Online_PE condor slots for lalinference parameter estimation.
 
 -   Use Bayeswave PSD for online PE.
 
