@@ -9,7 +9,7 @@ Changelog
 0.11.0 (2020-02-21)
 -------------------
 
--   Use Online_PE condor slots for lalinference parameter estimation.
+-   No changes yet.
 
 -   Use Bayeswave PSD for online PE.
 
