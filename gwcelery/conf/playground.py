@@ -4,7 +4,7 @@ from . import *  # noqa: F401, F403
 
 sentry_environment = 'playground'
 """Record this `environment tag
-<https://docs.sentry.io/enriching-error-data/environments/>`)` in Sentry log
+<https://docs.sentry.io/enriching-error-data/environments/>`_ in Sentry log
 messages."""
 
 mock_events_simulate_multiple_uploads = True

@@ -10,5 +10,5 @@ gracedb_host = 'gracedb-dev1.ligo.org'
 
 sentry_environment = 'development'
 """Record this `environment tag
-<https://docs.sentry.io/enriching-error-data/environments/>`)` in Sentry log
+<https://docs.sentry.io/enriching-error-data/environments/>`_ in Sentry log
 messages."""

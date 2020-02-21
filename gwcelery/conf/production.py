@@ -59,5 +59,5 @@ strain_channel_names = {'H1': 'H1:GDS-CALIB_STRAIN_CLEAN',
 
 sentry_environment = 'production'
 """Record this `environment tag
-<https://docs.sentry.io/enriching-error-data/environments/>`)` in Sentry log
+<https://docs.sentry.io/enriching-error-data/environments/>`_ in Sentry log
 messages."""
