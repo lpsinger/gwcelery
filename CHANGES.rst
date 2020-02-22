@@ -12,6 +12,9 @@ Changelog
 
 -   Add the unit test for tasks/inference.py.
 
+-   Upload LALInference DAG files to save the exact commands run for the
+    parameter estimation.
+
 0.11.1 (2020-02-21)
 -------------------
 

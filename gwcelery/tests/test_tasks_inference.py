@@ -353,7 +353,9 @@ def test_dag_finished(monkeypatch, tmp_path, pipeline):
 
     if pipeline in ['lalinference', 'bilby']:
         if pipeline == 'lalinference':
-            paths = [os.path.join(rundir, 'posterior_samples.hdf5'),
+            paths = [os.path.join(rundir,
+                                  'lalinference_1187008756-1187008882.dag'),
+                     os.path.join(rundir, 'posterior_samples.hdf5'),
                      os.path.join(pe_results_path, 'extrinsic.png'),
                      os.path.join(pe_results_path, 'sourceFrame.png')]
         else:

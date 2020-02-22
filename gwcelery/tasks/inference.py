@@ -560,6 +560,7 @@ def dag_finished(rundir, preferred_event_id, superevent_id, pe_pipeline):
         uploads = [
             (rundir, 'glitch_median_PSD_for*_PSD*.dat',
              'Bayeswave PSD used for LALInference PE', None),
+            (rundir, 'lalinference*.dag', 'LALInference DAG', None),
             (rundir, 'posterior*.hdf5',
              'LALInference posterior samples',
              'LALInference.posterior_samples.hdf5'),
