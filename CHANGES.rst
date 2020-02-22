@@ -27,6 +27,8 @@ Changelog
 
 -   Update gracedb-sdk to 0.1.4.
 
+-   Fix the file names of Bayeswave PSDs.
+
 0.11.1 (2020-02-21)
 -------------------
 
