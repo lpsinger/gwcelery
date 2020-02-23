@@ -64,6 +64,12 @@ We recommend that you make the following settings in your Redis server
 configuration file (which is located at :file:`/etc/redis.conf` on most
 systems)::
 
+    # Some GWCelery tasks transfer large payloads through Redis.
+    # The default Redis client bandwidth limits are too small.
+    client-output-buffer-limit normal 0 0 0
+    client-output-buffer-limit slave 256mb 64mb 60
+    client-output-buffer-limit pubsub 256mb 64mb 60
+
     # If worker nodes are only reachable on a specific network interface,
     # then make sure to bind any additional IP addresses here.
     bind 127.0.0.1 10.0.0.1  # replace 10.0.0.1 with address on cluster network

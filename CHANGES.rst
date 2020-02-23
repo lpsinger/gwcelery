@@ -4,7 +4,11 @@ Changelog
 0.11.2 (unreleased)
 -------------------
 
--   No changes yet.
+-   Document recommended value for the Redis server setting
+    ``client-output-buffer-limit`` in order to prevent disconnection of Celery
+    workers returning large task results. This value was established early in
+    O3, but since it was not in the documentation, we frequently forgot to set
+    it when configuring a Redis server on a new or upgraded system.
 
 0.11.1 (2020-02-21)
 -------------------
