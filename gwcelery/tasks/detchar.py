@@ -70,27 +70,30 @@ def create_cache(ifo, start, end):
     pattern = app.conf['llhoft_glob'].format(detector=ifo)
     filenames = glob.glob(pattern)
     cache = Cache.from_urls(filenames)
+
     try:
         cache_starttime = int(
             list(cache.to_segmentlistdict().values())[0][0][0])
     except IndexError:
         log.exception('Files do not exist in llhoft_glob')
         return cache  # returns empty cache
-    if start < cache_starttime:  # required data has left llhoft
-        high_latency = app.conf['high_latency_frame_types'][ifo]
-        urls = find_urls(ifo[0], high_latency, start, end)
-        if len(urls) != 0:
-            return Cache.from_urls(urls)
-        else:  # required data not in high latency frames
-            low_latency = app.conf['low_latency_frame_types'][ifo]
-            urls = find_urls(ifo[0], low_latency, start, end)
-            if len(urls) != 0:
-                return Cache.from_urls(urls)
-            else:  # required data not in low latency frames
-                error_msg = "This data cannot be found, or does not exist."
-                log.exception(error_msg)
-    else:
+
+    if start >= cache_starttime:  # required data is in llhoft
         return cache
+
+    # otherwise, required data has left llhoft
+    high_latency = app.conf['high_latency_frame_types'][ifo]
+    urls = find_urls(ifo[0], high_latency, start, end)
+    if urls:
+        return Cache.from_urls(urls)
+
+    # required data not in high latency frames
+    low_latency = app.conf['low_latency_frame_types'][ifo]
+    urls = find_urls(ifo[0], low_latency, start, end)
+    if not urls:  # required data not in low latency frames
+        log.error('This data cannot be found, or does not exist.')
+
+    return Cache.from_urls(urls)
 
 
 @app.task(shared=False)
