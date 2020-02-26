@@ -22,6 +22,10 @@ Changelog
     to use different time windows. This enables the joint LVK-Fermi and
     LVK-Swift targeted searches to b integrated with RAVEN.
 
+-   Grab subGRB Fermi sky maps from GCN.
+
+-   Create external sky maps for offline subGRBTargeted Swift uploads.
+
 0.11.2 (2020-02-28)
 -------------------
 

@@ -209,11 +209,17 @@ def handle_grb_lvalert(alert):
 
     if alert['alert_type'] == 'new':
         if alert['object'].get('group') == 'External':
+            # Create and upload Swift sky map for the joint targeted
+            # sub-threshold search as agreed on in the MOU
+            if alert['object']['search'] == 'SubGRBTargeted' and \
+                    alert['object']['pipeline'] == 'Swift':
+                external_skymaps.create_upload_external_skymap(
+                    alert['object'], None, alert['object']['created'])
+
             # launch standard Burst-GRB search
             subthresh_search = \
                 (alert['object']['search'] in ['SubGRB', 'SubGRBTargeted'])
-            raven.coincidence_search(graceid, alert['object'], group='Burst',
-                                     searches=['GRB'])
+            raven.coincidence_search(graceid, alert['object'], group='Burst')
             if not subthresh_search:
                 # if threshold GRB, launch standard CBC-GRB search
                 raven.coincidence_search(graceid, alert['object'],

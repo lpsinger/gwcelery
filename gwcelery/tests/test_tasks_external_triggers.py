@@ -324,7 +324,7 @@ def test_handle_grb_exttrig_creation(mock_raven_coincidence_search):
 
     # Check that the correct tasks were dispatched.
     mock_raven_coincidence_search.assert_has_calls([
-        call('E1234', alert['object'], group='Burst', searches=['GRB']),
+        call('E1234', alert['object'], group='Burst'),
         call('E1234', alert['object'], group='CBC', searches=['GRB'])])
 
 
@@ -343,6 +343,33 @@ def test_handle_subgrb_exttrig_creation(mock_raven_coincidence_search):
              searches=['SubGRB', 'SubGRBTargeted'], pipelines=['Fermi']),
         call('E1234', alert['object'], group='CBC',
              searches=['SubGRB', 'SubGRBTargeted'], pipelines=['Swift'])])
+
+
+@patch('gwcelery.tasks.external_skymaps.create_upload_external_skymap')
+@patch('gwcelery.tasks.raven.coincidence_search')
+def test_handle_subgrb_targeted_creation(mock_raven_coincidence_search,
+                                         mock_create_upload_external_skymap):
+    """Test dispatch of an LVAlert message for an exttrig creation."""
+    # Test LVAlert payload.
+    alert = resource_json(__name__,
+                          'data/lvalert_exttrig_subgrb_targeted_creation.json')
+
+    # Run function under test
+    external_triggers.handle_grb_lvalert(alert)
+
+    # Check that sky map is uploaded
+    mock_create_upload_external_skymap.assert_called_once_with(
+        alert['object'], None, alert['object']['created'])
+
+    # Check that the correct tasks were dispatched.
+    mock_raven_coincidence_search.assert_has_calls([
+        call('E1234', alert['object'], group='Burst'),
+        call('E1234', alert['object'], group='CBC',
+             searches=['SubGRB', 'SubGRBTargeted'],
+             pipelines=['Fermi']),
+        call('E1234', alert['object'], group='CBC',
+             searches=['SubGRB', 'SubGRBTargeted'],
+             pipelines=['Swift'])])
 
 
 @pytest.mark.parametrize('calls, path',

@@ -318,6 +318,11 @@ def write_to_fits(skymap, event, notice_type, notice_date):
         '115': 'FERMI_GBM_FINAL_POS',
         '131': 'FERMI_GBM_SUBTHRESHOLD'}
 
+    if notice_type is None:
+        msgtype = event['pipeline'] + '_LVK_TARGETED_SEARCH'
+    else:
+        msgtype = notice_type_dict[str(notice_type)]
+
     gcn_id = event['extra_attributes']['GRB']['trigger_id']
     with NamedTemporaryFile(suffix='.fits.gz') as f:
         fits.write_sky_map(f.name, skymap,
@@ -325,7 +330,7 @@ def write_to_fits(skymap, event, notice_type, notice_date):
                            url=event['links']['self'],
                            instruments=event['pipeline'],
                            gps_time=event['gpstime'],
-                           msgtype=notice_type_dict[str(notice_type)],
+                           msgtype=msgtype,
                            msgdate=notice_date,
                            creator='gwcelery',
                            origin='LIGO-VIRGO-KAGRA',
