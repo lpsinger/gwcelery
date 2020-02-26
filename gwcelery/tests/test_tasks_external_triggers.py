@@ -84,7 +84,7 @@ def test_handle_create_grb_event(mock_create_event, mock_get_event,
 @patch('gwcelery.tasks.gracedb.get_events', return_value=[])
 @patch('gwcelery.tasks.gracedb.get_event', return_value={
     'graceid': 'E1', 'gpstime': 1, 'instruments': '', 'pipeline': 'Fermi',
-    'extra_attributes': {'GRB': {'trigger_duration': 1, 'trigger_id': 123,
+    'extra_attributes': {'GRB': {'trigger_duration': None, 'trigger_id': 123,
                                  'ra': 0., 'dec': 0., 'error_radius': 10.}},
     'links': {'self': 'https://gracedb.ligo.org/events/E356793/'}})
 @patch('gwcelery.tasks.gracedb.create_event', return_value='E356793')

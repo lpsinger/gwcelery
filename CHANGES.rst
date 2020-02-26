@@ -18,6 +18,9 @@ Changelog
 -   Capture an exception that is produced when attempting to make an omega scan
     of data that contains NaNs.
 
+-   Catch missing trigger_duration when launching check vectors for external
+    events.
+
 0.11.1 (2020-02-21)
 -------------------
 

@@ -159,7 +159,11 @@ def handle_grb_gcn(payload):
                                        labels=labels)
         event = gracedb.get_event(graceid)
         start = event['gpstime']
-        end = start + event['extra_attributes']['GRB']['trigger_duration']
+        integration_time = event['extra_attributes']['GRB']['trigger_duration']
+        # if None, pick a wide window to check data
+        if integration_time is None:
+            integration_time = 4.
+        end = start + integration_time
         detchar.check_vectors(event, event['graceid'], start, end)
 
     if search == 'GRB':
