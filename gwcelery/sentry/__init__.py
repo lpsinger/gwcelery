@@ -8,7 +8,7 @@ from sentry_sdk.integrations import celery, flask, redis, tornado
 
 from .. import _version
 from ..util import SPHINX
-from .integrations import condor, subprocess
+from .integrations import condor, requests, subprocess
 
 log = get_logger(__name__)
 
@@ -61,5 +61,6 @@ def configure():
                                   condor.CondorIntegration(),
                                   flask.FlaskIntegration(),
                                   redis.RedisIntegration(),
+                                  requests.RequestsIntegration(),
                                   subprocess.SubprocessIntegration(),
                                   tornado.TornadoIntegration()])
