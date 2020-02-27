@@ -21,6 +21,8 @@ Changelog
 -   Catch missing trigger_duration when launching check vectors for external
     events.
 
+-   Run unit tests for Python 3.8.
+
 0.11.1 (2020-02-21)
 -------------------
 

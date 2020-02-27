@@ -29,7 +29,7 @@ stages:
 
 # Build source distribution
 sdist:
-  image: python:3.7-slim
+  image: python:slim
   stage: dist
   variables:
     GIT_STRATEGY: fetch
@@ -46,7 +46,7 @@ sdist:
 
 # Build binary distribution
 bdist:
-  image: python:3.7-slim
+  image: python:slim
   stage: test
   <<: *in-tmpdir
   script:
@@ -81,6 +81,8 @@ bdist:
       - requirements.txt
 dependencies/python3.7:
   <<: *dependencies
+dependencies/python3.8:
+  <<: *dependencies
 
 # Run unit tests and coverage measurement
 .test: &test
@@ -102,9 +104,12 @@ dependencies/python3.7:
 test/python3.7:
   image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
   <<: *test
+test/python3.8:
+  image: $CI_REGISTRY_IMAGE/dependencies/python3.8:$CI_COMMIT_REF_NAME
+  <<: *test
 
 lint:
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
+  image: $CI_REGISTRY_IMAGE/dependencies/python3.8:$CI_COMMIT_REF_NAME
   stage: test
   variables:
     GIT_STRATEGY: fetch
@@ -151,10 +156,12 @@ associate commits in Sentry:
     - bdist
 docker/python3.7:
   <<: *docker
+docker/python3.8:
+  <<: *docker
 
 # Generate documentation
 doc:
-  image: python:3.7-slim
+  image: python:slim
   stage: test
   <<: *in-tmpdir
   script:
@@ -186,7 +193,7 @@ pages:
 # Upload package to PyPI
 pypi:
   stage: deploy
-  image: python:3.7-slim
+  image: python:slim
   script:
     - pip install twine
     - twine upload *.tar.* *.whl
