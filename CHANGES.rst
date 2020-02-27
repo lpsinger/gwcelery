@@ -23,6 +23,8 @@ Changelog
 
 -   Run unit tests for Python 3.8.
 
+-   Update ligo-followup-advocate to 1.1.6.
+
 -   Update gracedb-sdk to 0.1.4.
 
 0.11.1 (2020-02-21)
