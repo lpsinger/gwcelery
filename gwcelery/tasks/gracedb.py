@@ -108,7 +108,15 @@ def remove_label(label, graceid):
 @catch_retryable_http_errors
 def create_signoff(status, comment, signoff_type, graceid):
     """Create a label in GraceDB."""
-    client.superevents[graceid].signoff(signoff_type, status, comment)
+    try:
+        client.superevents[graceid].signoff(signoff_type, status, comment)
+    except HTTPError as e:
+        # If we got a 400 error because the signoff was already applied,
+        # then ignore the exception and return successfully to preserve
+        # idempotency.
+        message = b'The fields superevent, instrument must make a unique set'
+        if message not in e.response.content:
+            raise
 
 
 @task(ignore_result=True, shared=False)
