@@ -28,7 +28,7 @@
                 "sha256:5b26757dc6f79a3b7dc9fab95359328d5747fcb2409d331ea66d0272b90ab2a0",
                 "sha256:8b995ffe925347a2138d7ac0fe77155e4311a0ea6d6da4f5128fe4b3cbe5ed71"
             ],
-            "markers": "sys_platform == 'darwin'",
+            "markers": "platform_system == 'Darwin'",
             "version": "==0.1.0"
         },
         "astroplan": {
@@ -129,10 +129,10 @@
         },
         "billiard": {
             "hashes": [
-                "sha256:26fd494dc3251f8ce1f5559744f18aeed427fdaf29a75d7baae26752a5d3816f",
-                "sha256:f4e09366653aa3cb3ae8ed16423f9ba1665ff426f087bcdbbed86bf3664fe02c"
+                "sha256:bff575450859a6e0fbc2f9877d9b715b0bbc07c3565bb7ed2280526a0cdf5ede",
+                "sha256:d91725ce6425f33a97dfa72fb6bfef0e47d4652acd98a032bd1a7fbf06d5fa6a"
             ],
-            "version": "==3.6.2.0"
+            "version": "==3.6.3.0"
         },
         "blinker": {
             "hashes": [
@@ -343,10 +343,10 @@
         },
         "gracedb-sdk": {
             "hashes": [
-                "sha256:c4f3012a7c943ef0ad7cf770523729b5f94ad9f125f19166c9add90b953cad82",
-                "sha256:d2bffead5e80e16d3af36e6e8812b02f7e6b5282cd9bec6d39275aac84037061"
+                "sha256:cecec557eb19336d877f74e4f9ffb1121cadfad2a674a922d617b8d705c74a5e",
+                "sha256:de619d8fce2ad732b479877cbc134e816ba31548f8a6b084b848a22fd285835b"
             ],
-            "version": "==0.1.2"
+            "version": "==0.1.4"
         },
         "gwcelery": {
             "editable": true,
@@ -596,10 +596,10 @@
         },
         "ligo-followup-advocate": {
             "hashes": [
-                "sha256:4c597181d07efffbb73c76cbff2dc726e28883c16b9ddd2420c1fafffb816e39",
-                "sha256:f7ee403ffdde1436e6838ab1248b58acb150e64be0e28dcc9e371ed2b39e4161"
+                "sha256:9443147bbb7294d9ee72ff638a76892c39c06196a7be28542b8db83affb16ea3",
+                "sha256:a505bed9cd1f4e4631ae8b2af215c1c6481ae2a12b9d3fc0f8d6ac86de2f5a8e"
             ],
-            "version": "==1.1.5"
+            "version": "==1.1.6"
         },
         "ligo-gracedb": {
             "hashes": [
@@ -840,10 +840,10 @@
         },
         "parso": {
             "hashes": [
-                "sha256:56b2105a80e9c4df49de85e125feb6be69f49920e121406f15e7acde6c9dfc57",
-                "sha256:951af01f61e6dccd04159042a0706a31ad437864ec6e25d0d7a96a9fbb9b0095"
+                "sha256:0c5659e0c6eba20636f99a04f469798dca8da279645ce5c387315b2c23912157",
+                "sha256:8515fc12cfca6ee3aa59138741fc5624d62340c97e401c74875769948d4f2995"
             ],
-            "version": "==0.6.1"
+            "version": "==0.6.2"
         },
         "patsy": {
             "hashes": [
