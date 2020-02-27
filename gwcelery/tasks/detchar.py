@@ -274,7 +274,9 @@ def check_idq(cache, channel, start, end):
                 cache, channel, start=start, end=end)
             return (channel, float(idq_prob.max().value))
         except RuntimeError:
-            log.exception('Failed to read from low-latency iDQ frame files')
+            # FIXME: Change from log.exception to log.warning until this fixed,
+            # because it's saturating Sentry.
+            log.warning('Failed to read from low-latency iDQ frame files')
     # FIXME: figure out how to get access to low-latency frames outside
     # of the cluster. Until we figure that out, actual I/O errors have
     # to be non-fatal.
