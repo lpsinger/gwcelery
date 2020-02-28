@@ -15,6 +15,8 @@ Changelog
 -   Upload LALInference DAG files to save the exact commands run for the
     parameter estimation.
 
+-   Fix the file names of Bayeswave PSDs.
+
 -   Capture an exception that is produced when attempting to make an omega scan
     of data that contains NaNs.
 
@@ -26,8 +28,6 @@ Changelog
 -   Update ligo-followup-advocate to 1.1.6.
 
 -   Update gracedb-sdk to 0.1.4.
-
--   Fix the file names of Bayeswave PSDs.
 
 0.11.1 (2020-02-21)
 -------------------
