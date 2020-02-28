@@ -29,6 +29,11 @@ Changelog
 
 -   Update gracedb-sdk to 0.1.4.
 
+-   When a GRB or SNEWS GCN is received, upload it to GraceDB with the correct
+    group depending on the value of the VOEvent ``role`` attribute: if
+    ``role="test"``, then upload to the ``Test`` group; if
+    ``role="observation"``, then upload to the ``External`` group.
+
 0.11.1 (2020-02-21)
 -------------------
 

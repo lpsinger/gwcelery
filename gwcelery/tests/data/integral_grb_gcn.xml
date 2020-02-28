@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <voe:VOEvent
       ivorn="ivo://nasa.gsfc.gcn/INTEGRAL#Wakeup_Pos_000000-0-640"
-      role="test" version="2.0"
+      role="observation" version="2.0"
       xmlns:voe="http://www.ivoa.net/xml/VOEvent/v2.0"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.ivoa.net/xml/VOEvent/v2.0  http://www.ivoa.net/xml/VOEvent/VOEvent-v2.0.xsd" >

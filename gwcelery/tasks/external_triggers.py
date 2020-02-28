@@ -43,8 +43,7 @@ def handle_snews_gcn(payload):
 
     #  Get TrigID and Test Event Boolean
     trig_id = root.find("./What/Param[@name='TrigID']").attrib['value']
-    test_event = root.find("./What/Group[@name='Trigger_ID']" +
-                           "/Param[@name='Test']").attrib['value']
+    group = 'Test' if root.attrib['role'] == 'test' else 'External'
 
     event_observatory = 'SNEWS'
     query = 'group: External pipeline: {} grbevent.trigger_id = "{}"'.format(
@@ -58,16 +57,10 @@ def handle_snews_gcn(payload):
         gracedb.replace_event(graceid, payload)
         return
 
-    elif test_event == 'true':
-        graceid = gracedb.create_event(filecontents=payload,
-                                       search='Supernova',
-                                       group='Test',
-                                       pipeline=event_observatory)
-
     else:
         graceid = gracedb.create_event(filecontents=payload,
                                        search='Supernova',
-                                       group='External',
+                                       group=group,
                                        pipeline=event_observatory)
     event = gracedb.get_event(graceid)
     start, end = event['gpstime'], event['gpstime']
@@ -100,6 +93,7 @@ def handle_grb_gcn(payload):
         trig_id = root.find("./What/Param[@name='TrigID']").attrib['value']
     except AttributeError:
         trig_id = root.find("./What/Param[@name='Trans_Num']").attrib['value']
+    group = 'Test' if root.attrib['role'] == 'test' else 'External'
 
     stream_obsv_dict = {'/SWIFT': 'Swift',
                         '/Fermi': 'Fermi',
@@ -154,7 +148,7 @@ def handle_grb_gcn(payload):
     else:
         graceid = gracedb.create_event(filecontents=payload,
                                        search=search,
-                                       group='External',
+                                       group=group,
                                        pipeline=event_observatory,
                                        labels=labels)
         event = gracedb.get_event(graceid)
