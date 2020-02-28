@@ -273,7 +273,7 @@ def check_idq(cache, channel, start, end):
             idq_prob = TimeSeries.read(
                 cache, channel, start=start, end=end)
             return (channel, float(idq_prob.max().value))
-        except RuntimeError:
+        except (IndexError, RuntimeError):
             # FIXME: Change from log.exception to log.warning until this fixed,
             # because it's saturating Sentry.
             log.warning('Failed to read from low-latency iDQ frame files')
