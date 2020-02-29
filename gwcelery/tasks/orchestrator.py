@@ -409,7 +409,7 @@ def _create_voevent(classification, *args, **kwargs):
 
 @gracedb.task(shared=False)
 def _create_label_and_return_filename(filename, label, graceid):
-    gracedb.create_label(label, graceid)
+    gracedb.create_label.delay(label, graceid)
     return filename
 
 
@@ -419,7 +419,7 @@ def _leave_log_message_and_return_event_dict(event, superevent_id,
     """Wrapper around :meth:`gracedb.update_superevent`
     that returns the event dictionary.
     """
-    gracedb.upload(None, None, superevent_id, message, **kwargs)
+    gracedb.upload.delay(None, None, superevent_id, message, **kwargs)
     return event
 
 
@@ -442,14 +442,14 @@ def _proceed_if_no_advocate_action(filenames, superevent_id):
     blocking_labels = {'ADVOK', 'ADVNO'}.intersection(
         superevent_labels)
     if blocking_labels:
-        gracedb.upload(
+        gracedb.upload.delay(
             None, None, superevent_id,
             f"Blocking automated notice due to labels {blocking_labels}"
         )
         return None
     else:
-        gracedb.upload(None, None, superevent_id,
-                       "Sending preliminary notice")
+        gracedb.upload.delay(None, None, superevent_id,
+                             "Sending preliminary notice")
         return filenames
 
 
