@@ -444,7 +444,7 @@ def _proceed_if_no_advocate_action(filenames, superevent_id):
     if blocking_labels:
         gracedb.upload(
             None, None, superevent_id,
-            "Blocking automated notice due to labels %s" % (blocking_labels)
+            f"Blocking automated notice due to labels {blocking_labels}"
         )
         return None
     else:
