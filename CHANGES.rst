@@ -4,7 +4,11 @@ Changelog
 0.11.3 (unreleased)
 -------------------
 
--   No changes yet.
+-   Add the ``GCN_PRELIM_SENT`` label after the GCN notice has been sent.
+    Previously, the ``GCN_PRELIM_SENT`` label was added after the GCN notice
+    had been sent *and* after the GCN Circular template had been created. Since
+    it takes many tens of seconds to create the GCN Circular template, this was
+    distorting latency statistics.
 
 0.11.2 (2020-02-28)
 -------------------

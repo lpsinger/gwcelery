@@ -738,16 +738,18 @@ def preliminary_initial_update_alert(filenames, superevent_id, alert_type,
         group(
             gracedb.download.s(superevent_id)
             |
-            gcn.send.s(),
+            gcn.send.s()
+            |
+            (
+                gracedb.create_label.si('GCN_PRELIM_SENT', superevent_id)
+                if alert_type == 'preliminary' else identity.si()
+            ),
 
             circular_canvas,
 
             gracedb.create_tag.s('public', superevent_id)
         )
     )
-
-    if alert_type == 'preliminary':
-        canvas |= gracedb.create_label.si('GCN_PRELIM_SENT', superevent_id)
 
     canvas.apply_async()
 
