@@ -10,7 +10,7 @@ log = get_logger(__name__)
 
 
 @app.task(shared=False)
-def identity(arg):
+def identity(arg=None):
     """Identity task (returns its input)."""
     return arg
 
