@@ -56,7 +56,7 @@ def resubmit(app):
     """Remove any running GWCelery jobs and resubmit to HTCondor."""
     if running():
         subprocess.check_call(('condor_rm', *get_constraints()))
-    timeout = 60
+    timeout = 120
     start = time.monotonic()
     while time.monotonic() - start < timeout:
         if not running():
