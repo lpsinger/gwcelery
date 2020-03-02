@@ -5,15 +5,26 @@ See Kapadia et al (2019), :doi:`10.1088/1361-6382/ab5f2d`, for details.
 import io
 import json
 
-from matplotlib import pyplot as plt
-import numpy as np
-import pkg_resources
-
 from celery.utils.log import get_task_logger
 from ligo import p_astro_computation as pastrocomp
+from matplotlib import pyplot as plt
+import numpy as np
 
 from . import gracedb, lvalert
 from .. import app
+from ..util import PromiseProxy, resource_json
+
+MEAN_VALUES_DICT = PromiseProxy(
+    resource_json, ('ligo.data',
+                    'H1L1V1-mean_counts-1126051217-61603201.json'))
+
+THRESHOLDS_DICT = PromiseProxy(
+    resource_json, ('ligo.data',
+                    'H1L1V1-pipeline-far_snr-thresholds.json'))
+
+P_ASTRO_LIVETIME = PromiseProxy(
+    resource_json, ('ligo.data', 'p_astro_livetime.json'))
+
 
 log = get_task_logger(__name__)
 
@@ -48,28 +59,13 @@ def compute_p_astro(snr, far, mass1, mass2, pipeline, instruments):
     {'BNS': 0.999, 'BBH': 0.0, 'NSBH': 0.0, 'Terrestrial': 0.001}
 
     """
-    # Read mean values from file
-    with open(pkg_resources.resource_filename(
-            'ligo.data', 'H1L1V1-mean_counts-1126051217-61603201.json')) as f:
-        mean_values_dict = json.load(f)
-
-    # Read thresholds on FAR and SNR from file
-    with open(pkg_resources.resource_filename(
-            'ligo.data', 'H1L1V1-pipeline-far_snr-thresholds.json')) as f:
-        thresholds_dict = json.load(f)
-
-    # Read livetime corresponding to mean values from file
-    with open(pkg_resources.resource_filename(
-            'ligo.data', 'p_astro_livetime.json')) as f:
-        p_astro_livetime = json.load(f)['p_astro_livetime']
-
     # Ensure SNR does not increase indefinitely beyond limiting FAR
     # for MBTA and PyCBC events
     snr_choice = pastrocomp.choose_snr(far,
                                        snr,
                                        pipeline,
                                        instruments,
-                                       thresholds_dict)
+                                       THRESHOLDS_DICT)
 
     # Define constants to compute bayesfactors
     snr_star = 8.5
@@ -82,7 +78,8 @@ def compute_p_astro(snr, far, mass1, mass2, pipeline, instruments):
     astro_bayesfac = fground / bground
 
     # Update terrestrial count based on far threshold
-    lam_0 = far_star * p_astro_livetime
+    lam_0 = far_star * P_ASTRO_LIVETIME['p_astro_livetime']
+    mean_values_dict = dict(MEAN_VALUES_DICT)
     mean_values_dict["counts_Terrestrial"] = lam_0
 
     # Compute categorical p_astro values
