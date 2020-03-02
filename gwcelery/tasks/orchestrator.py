@@ -197,7 +197,7 @@ def handle_cbc_event(alert):
             else em_bright.classifier_other
 
         (
-            em_bright_task.si((mass1, mass2, chi1, chi2, snr), graceid)
+            em_bright_task.si((mass1, mass2, chi1, chi2, snr))
             |
             gracedb.upload.s(
                 'em_bright.json', graceid,

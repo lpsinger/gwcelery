@@ -129,7 +129,7 @@ def _em_bright(m1, m2, c1, c2, threshold=3.0):
 
 
 @app.task(shared=False)
-def classifier_other(args, graceid):
+def classifier_other(mass1, mass2, spin1z, spin2z, snr):
     """Returns the boolean probability of having a NS component and the
     probability of having non-zero disk mass. This method is used for pipelines
     that do not provide the data products necessary for computation of the
@@ -137,10 +137,16 @@ def classifier_other(args, graceid):
 
     Parameters
     ----------
-    args : tuple
-        Tuple containing (m1, m2, spin1z, spin2z, snr)
-    graceid : str
-        The graceid of the event
+    mass1 : float
+        Primary mass in solar masses
+    mass2 : float
+        Secondary mass in solar masses
+    spin1z : float
+         Dimensionless primary aligned spin component
+    spin2z : float
+         Dimensionless secondary aligned spin component
+    snr : float
+        Signal to noise ratio
 
     Returns
     -------
@@ -150,12 +156,11 @@ def classifier_other(args, graceid):
 
     Example
     -------
-    >>> em_bright.classifier_other((2.0, 1.0, 0.0, 0.0, 10.), 'S123456')
+    >>> em_bright.classifier_other((2.0, 1.0, 0.0, 0.0, 10.))
     '{"HasNS": 1.0, "HasRemnant": 1.0}'
 
     """
-    mass1, mass2, chi1, chi2, snr = args
-    p_ns, p_em = _em_bright(mass1, mass2, chi1, chi2)
+    p_ns, p_em = _em_bright(mass1, mass2, spin1z, spin2z)
 
     data = json.dumps({
         'HasNS': p_ns,
@@ -165,7 +170,7 @@ def classifier_other(args, graceid):
 
 
 @app.task(shared=False)
-def classifier_gstlal(args, graceid):
+def classifier_gstlal(mass1, mass2, spin1z, spin2z, snr):
     """Returns the probability of having a NS component and the probability of
     having non-zero disk mass in the detected event. This method will be using
     the data products obtained from the weekly supervised learning runs for
@@ -176,10 +181,16 @@ def classifier_gstlal(args, graceid):
 
     Parameters
     ----------
-    args : tuple
-        Tuple containing (m1, m2, spin1z, spin2z, snr)
-    graceid : str
-        The graceid of the event
+    mass1 : float
+        Primary mass in solar masses
+    mass2 : float
+        Secondary mass in solar masses
+    spin1z : float
+         Dimensionless primary aligned spin component
+    spin2z : float
+         Dimensionless secondary aligned spin component
+    snr : float
+        Signal to noise ratio
 
     Returns
     -------
@@ -193,7 +204,9 @@ def classifier_gstlal(args, graceid):
 
     """
     p_ns, p_em = em_bright.source_classification(
-        *args, ns_classifier=NS_CLASSIFIER, emb_classifier=EM_CLASSIFIER)
+        mass1, mass2, spin1z, spin2z, snr,
+        ns_classifier=NS_CLASSIFIER,
+        emb_classifier=EM_CLASSIFIER)
 
     data = json.dumps({
         'HasNS': p_ns,
