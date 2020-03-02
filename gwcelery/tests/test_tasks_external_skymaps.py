@@ -101,23 +101,41 @@ def test_external_trigger_heasarc(mock_download):
 @patch('urllib.request.urlopen')
 def test_get_external_skymap(mock_urlopen):
     """Assert that the correct call to astropy.get_file_contents is used"""
-    external_skymaps.get_external_skymap(true_heasarc_link)
+    external_skymaps.get_external_skymap(true_heasarc_link, 'GRB')
 
     mock_urlopen.assert_called_once()
 
 
-@patch('gwcelery.tasks.external_skymaps.external_trigger_heasarc.run')
-@patch('gwcelery.tasks.external_skymaps.get_external_skymap.run')
 @patch('gwcelery.tasks.gracedb.upload.run')
+@patch('gwcelery.tasks.skymaps.plot_allsky.run')
+@patch('gwcelery.tasks.external_skymaps.get_external_skymap.run')
+@patch('gwcelery.tasks.external_skymaps.external_trigger_heasarc.run')
 def test_get_upload_external_skymap(mock_external_trigger_heasarc,
                                     mock_get_external_skymap,
+                                    mock_plot_allsky,
                                     mock_upload):
     """Test that an external sky map is grabbed and uploaded."""
     graceid = 'E12345'
-    external_skymaps.get_upload_external_skymap(graceid)
+    external_skymaps.get_upload_external_skymap(graceid, 'GRB')
     mock_external_trigger_heasarc.assert_called_once()
     mock_get_external_skymap.assert_called_once()
-    mock_upload.assert_called_once()
+    mock_upload.assert_called()
+
+
+@patch('gwcelery.tasks.gracedb.upload.run')
+@patch('gwcelery.tasks.skymaps.plot_allsky.run')
+@patch('gwcelery.tasks.external_skymaps.get_external_skymap.run')
+def test_get_upload_external_skymap_subgrb(mock_get_external_skymap,
+                                           mock_plot_allsky,
+                                           mock_upload):
+    """Test that an external sky map is grabbed and uploaded."""
+    graceid = 'E12345'
+    external_skymaps.get_upload_external_skymap(
+        graceid, 'SubGRB',
+        ('https://gcn.gsfc.nasa.gov/notices_gbm_sub/' +
+         'gbm_subthresh_604671025.728000_healpix.fits'))
+    mock_get_external_skymap.assert_called_once()
+    mock_upload.assert_called()
 
 
 @pytest.mark.parametrize('ra,dec,error,pix',

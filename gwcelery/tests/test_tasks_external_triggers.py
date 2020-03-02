@@ -19,6 +19,7 @@ from ..util import resource_json
 @patch('gwcelery.tasks.gracedb.upload.run')
 @patch('gwcelery.tasks.gracedb.get_event', return_value={
     'graceid': 'E1', 'gpstime': 1, 'instruments': '', 'pipeline': 'Fermi',
+    'search': 'GRB',
     'extra_attributes': {'GRB': {'trigger_duration': 1, 'trigger_id': 123,
                                  'ra': 0., 'dec': 0., 'error_radius': 10.}},
     'links': {'self': 'https://gracedb.ligo.org/events/E356793/'}})
@@ -65,6 +66,7 @@ def test_handle_create_grb_event(mock_create_event, mock_get_event,
          'gpstime': 1,
          'instruments': '',
          'pipeline': 'Fermi',
+         'search': 'GRB',
          'extra_attributes': {
              'GRB': {
                  'trigger_duration': 1,
@@ -84,6 +86,7 @@ def test_handle_create_grb_event(mock_create_event, mock_get_event,
 @patch('gwcelery.tasks.gracedb.get_events', return_value=[])
 @patch('gwcelery.tasks.gracedb.get_event', return_value={
     'graceid': 'E1', 'gpstime': 1, 'instruments': '', 'pipeline': 'Fermi',
+    'search': 'SubGRB',
     'extra_attributes': {'GRB': {'trigger_duration': None, 'trigger_id': 123,
                                  'ra': 0., 'dec': 0., 'error_radius': 10.}},
     'links': {'self': 'https://gracedb.ligo.org/events/E356793/'}})
@@ -112,12 +115,17 @@ def test_handle_create_subthreshold_grb_event(mock_get_upload_ext_skymap,
                                               group='External',
                                               labels=None)
     mock_check_vectors.assert_called_once()
+    mock_get_upload_ext_skymap.assert_called_with(
+        'E356793', 'SubGRB',
+        ('https://gcn.gsfc.nasa.gov/notices_gbm_sub/' +
+         'gbm_subthresh_578679393.215999_healpix.fits'))
 
 
 @patch('gwcelery.tasks.external_skymaps.get_upload_external_skymap.run')
 @patch('gwcelery.tasks.gracedb.get_events', return_value=[])
 @patch('gwcelery.tasks.gracedb.get_event', return_value={
     'graceid': 'E1', 'gpstime': 1, 'instruments': '', 'pipeline': 'Fermi',
+    'search': 'GRB',
     'extra_attributes': {'GRB': {'trigger_duration': 1, 'trigger_id': 123,
                                  'ra': 0., 'dec': 0., 'error_radius': 10.}},
     'links': {'self': 'https://gracedb.ligo.org/events/E356793/'}})
@@ -153,11 +161,13 @@ def test_handle_noise_fermi_event(mock_check_vectors,
 @patch('gwcelery.tasks.gracedb.replace_event')
 @patch('gwcelery.tasks.gracedb.get_events', return_value=[{
     'graceid': 'E1', 'gpstime': 1, 'instruments': '', 'pipeline': 'Fermi',
+    'search': 'GRB',
     'extra_attributes': {'GRB': {'trigger_duration': 1, 'trigger_id': 123,
                                  'ra': 0., 'dec': 0., 'error_radius': 10.}},
     'links': {'self': 'https://gracedb.ligo.org/events/E356793/'}}])
 @patch('gwcelery.tasks.gracedb.get_event', return_value={
     'graceid': 'E2', 'gpstime': 1, 'instruments': '', 'pipeline': 'Fermi',
+    'search': 'GRB',
     'extra_attributes': {'GRB': {'trigger_duration': 1, 'trigger_id': 123,
                                  'ra': 10., 'dec': 0., 'error_radius': 10.}},
     'links': {'self': 'https://gracedb.ligo.org/events/E356793/'}})

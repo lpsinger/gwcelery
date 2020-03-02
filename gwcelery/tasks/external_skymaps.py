@@ -125,16 +125,21 @@ def external_trigger_heasarc(external_id):
 
 @app.task(autoretry_for=(urllib.error.HTTPError,), retry_backoff=10,
           retry_backoff_max=600)
-def get_external_skymap(heasarc_link):
+def get_external_skymap(link, search):
     """Download the Fermi sky map fits file and return the contents as a byte
-    array.
+    array. If GRB, will construct a HEASARC url, while if SubGRB, will use the
+    link directly.
 
     If not available, will try again 10 seconds later, then 20, then 40, etc.
     until up to 10 minutes after initial attempt.
     """
-    trigger_id = re.sub(r'.*\/(\D+?)(\d+)(\D+)\/.*', r'\2', heasarc_link)
-    skymap_name = 'glg_healpix_all_bn{0}_v00.fit'.format(trigger_id)
-    skymap_link = heasarc_link + skymap_name
+    if search == 'GRB':
+        # if Fermi GRB, determine final HEASARC link
+        trigger_id = re.sub(r'.*\/(\D+?)(\d+)(\D+)\/.*', r'\2', link)
+        skymap_name = 'glg_healpix_all_bn{0}_v00.fit'.format(trigger_id)
+        skymap_link = link + skymap_name
+    elif search == 'SubGRB':
+        skymap_link = link
     #  FIXME: Under Anaconda on the LIGO Caltech computing cluster, Python
     #  (and curl, for that matter) fail to negotiate TLSv1.2 with
     #  heasarc.gsfc.nasa.gov
@@ -147,10 +152,11 @@ def get_external_skymap(heasarc_link):
 
 @app.task(autoretry_for=(urllib.error.HTTPError, urllib.error.URLError,
           ValueError,), retry_backoff=10, retry_backoff_max=1200)
-def get_upload_external_skymap(graceid):
+def get_upload_external_skymap(graceid, search, skymap_link=None):
     """If a Fermi sky map is not uploaded yet, tries to download one and upload
     to external event. If sky map is not available, passes so that this can be
-    re-run the next time an update GCN notice is received.
+    re-run the next time an update GCN notice is received. If GRB, will
+    construct a HEASARC url, while if SubGRB, will use the link directly.
     """
     try:
         filename = get_skymap_filename(graceid)
@@ -159,16 +165,39 @@ def get_upload_external_skymap(graceid):
     except ValueError:
         pass
 
+    if search == 'GRB':
+        external_skymap_canvas = (
+            external_trigger_heasarc.si(graceid)
+            |
+            get_external_skymap.s(search)
+        )
+    elif search == 'SubGRB':
+        external_skymap_canvas = get_external_skymap.si(skymap_link, search)
+
+    skymap_filename = 'glg_healpix_all_bn_v00'
+
+    message = (
+        'Mollweide projection of <a href="/api/events/{graceid}/files/'
+        '{filename}">{filename}</a>').format(
+            graceid=graceid, filename=skymap_filename + '.fits')
+
     (
-        external_trigger_heasarc.si(graceid)
+        external_skymap_canvas
         |
-        get_external_skymap.s()
-        |
-        gracedb.upload.s(
-            'glg_healpix_all_bn_v00.fit',
-            graceid,
-            'Sky map from HEASARC.',
-            ['sky_loc'])
+        group(
+            gracedb.upload.s(
+                skymap_filename + '.fits',
+                graceid,
+                'Official sky map from Fermi analysis.',
+                ['sky_loc']),
+
+            skymaps.plot_allsky.s()
+            |
+            gracedb.upload.s(skymap_filename + '.png',
+                             graceid,
+                             message,
+                             ['sky_loc'])
+        )
         |
         gracedb.create_label.si('EXT_SKYMAP_READY', graceid)
     ).delay()
