@@ -9,8 +9,8 @@ from .. import app
 from ..tasks import inference
 from ..tasks import orchestrator
 from ..tasks import superevents
+from ..util import resource_json
 from .test_tasks_skymaps import toy_3d_fits_filecontents  # noqa: F401
-from . import resource_json
 
 
 @pytest.mark.parametrize(  # noqa: F811

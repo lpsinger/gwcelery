@@ -6,7 +6,7 @@ from requests.exceptions import HTTPError
 from requests.models import Response
 
 from ..tasks import gracedb, superevents
-from . import resource_json
+from ..util import resource_json
 
 lvalert_content = {
     'object': {

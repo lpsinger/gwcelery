@@ -3,7 +3,7 @@ from unittest.mock import patch
 import pkg_resources
 import pytest
 
-from . import resource_json
+from ..util import resource_json
 from .test_tasks_skymaps import toy_fits_filecontents  # noqa: F401
 from .test_tasks_skymaps import toy_3d_fits_filecontents  # noqa: F401
 from ..tasks import external_skymaps

@@ -6,7 +6,7 @@ from pkg_resources import resource_string
 
 from ..tasks import external_triggers
 from ..tasks import detchar
-from . import resource_json
+from ..util import resource_json
 
 
 @pytest.mark.parametrize('pipeline, path',
