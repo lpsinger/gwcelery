@@ -10,7 +10,12 @@ from celery.utils.log import get_task_logger
 from ..import app
 from . import gracedb, lvalert
 from .p_astro import _format_prob
-from ..util.tempfile import NamedTemporaryFile
+from ..util import NamedTemporaryFile, PromiseProxy, resource_pickle
+
+NS_CLASSIFIER = PromiseProxy(
+    resource_pickle, ('ligo.data', 'knn_ns_classifier.pkl'))
+EM_CLASSIFIER = PromiseProxy(
+    resource_pickle, ('ligo.data', 'knn_em_classifier.pkl'))
 
 log = get_task_logger(__name__)
 
@@ -187,7 +192,8 @@ def classifier_gstlal(args, graceid):
     This task would only work from within the CIT cluster.
 
     """
-    p_ns, p_em = em_bright.source_classification(*args)
+    p_ns, p_em = em_bright.source_classification(
+        *args, ns_classifier=NS_CLASSIFIER, emb_classifier=EM_CLASSIFIER)
 
     data = json.dumps({
         'HasNS': p_ns,
