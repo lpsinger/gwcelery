@@ -1,6 +1,6 @@
 """Computation of ``p_astro`` by source category and utilities
 related to ``p_astro.json`` source classification files.
-See Kapadia et al (2019), arXiv:1903.06881, for details.
+See Kapadia et al (2019), :doi:`10.1088/1361-6382/ab5f2d`, for details.
 """
 import io
 import json
