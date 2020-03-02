@@ -121,7 +121,7 @@ def handle_grb_gcn(payload):
     lost_lock = \
         root.find("./What/Group[@name='Solution_Status']" +
                   "/Param[@name='StarTrack_Lost_Lock']")
-    if lost_lock is not None and lost_lock.attrib['value']:
+    if lost_lock is not None and lost_lock.attrib['value'] == 'true':
         labels = ['NOT_GRB']
 
     ivorn = root.attrib['ivorn']
