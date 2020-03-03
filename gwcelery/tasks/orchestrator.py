@@ -710,23 +710,8 @@ def preliminary_initial_update_alert(filenames, superevent_id, alert_type,
         circular_canvas = identity.s()
 
     canvas = (
-        ordered_group_first(
-            group(
-                gracedb.download.si(em_bright_filename, superevent_id),
-                gracedb.download.si(p_astro_filename, superevent_id),
-            )
-            |
-            _create_voevent.s(
-                superevent_id,
-                alert_type,
-                skymap_filename=skymap_filename,
-                internal=False,
-                open_alert=True,
-                raven_coinc=('RAVEN_ALERT' in labels)
-            ),
-
+        group(
             gracedb.expose.s(superevent_id),
-
             *(
                 gracedb.create_tag.s(filename, 'public', superevent_id)
                 for filename in [
@@ -734,6 +719,20 @@ def preliminary_initial_update_alert(filenames, superevent_id, alert_type,
                 ]
                 if filename is not None
             )
+        )
+        |
+        group(
+            gracedb.download.si(em_bright_filename, superevent_id),
+            gracedb.download.si(p_astro_filename, superevent_id),
+        )
+        |
+        _create_voevent.s(
+            superevent_id,
+            alert_type,
+            skymap_filename=skymap_filename,
+            internal=False,
+            open_alert=True,
+            raven_coinc=('RAVEN_ALERT' in labels)
         )
         |
         group(
