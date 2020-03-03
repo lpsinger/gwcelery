@@ -336,7 +336,7 @@ def _update_if_dqok(superevent_id, event_id):
     if 'DQOK' in gracedb.get_labels(superevent_id):
         gracedb.update_superevent(superevent_id, preferred_event=event_id)
         gracedb.create_log.delay(
-            "DQOK applied based on new event %s" % (event_id), superevent_id)
+            f'DQOK applied based on new event {event_id}', superevent_id)
 
 
 @gracedb.task(shared=False)
