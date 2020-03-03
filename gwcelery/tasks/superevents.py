@@ -152,13 +152,13 @@ def process(payload):
                 # extend the time window of the superevent
                 new_superevent = superevent | event_segment
                 if new_superevent != superevent:
-                    log.info("%s not completely contained in %s, "
-                             "extending superevent window",
+                    log.info('%s not completely contained in %s, '
+                             'extending superevent window',
                              event_segment.gid, sid)
                     new_t_start, new_t_end = new_superevent
 
                 else:  # new_superevent == superevent
-                    log.info("%s is completely contained in %s",
+                    log.info('%s is completely contained in %s',
                              event_segment.gid, sid)
                     new_t_start = new_t_end = None
                 _update_superevent(superevent,
