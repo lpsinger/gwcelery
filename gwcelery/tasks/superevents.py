@@ -64,7 +64,7 @@ def handle(payload):
             return
         elif not is_complete(payload['object']):
             log.info("Ignoring since %s has %s labels. "
-                     "It is not complete" % (gid, payload['object']['labels']))
+                     "It is not complete", gid, payload['object']['labels'])
             return
     elif alert_type != 'new':
         return
@@ -121,7 +121,7 @@ def process(payload):
                 elif payload['alert_type'] == 'new':
                     log.info('New type LVAlert for %s with '
                              'existing superevent %s. '
-                             'No action required' % (gid, sid))
+                             'No action required', gid, sid)
                     return
                 superevent = _SuperEvent(s['t_start'],
                                          s['t_end'],
