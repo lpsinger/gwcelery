@@ -15,6 +15,9 @@ Changelog
     inteded to act as a failsafe if superevent creation failed for ``new`` type,
     but may be used to our advantage.
 
+-   Append to, and do not overwrite, log files, when starting GWCelery via
+    Condor.
+
 0.11.2 (2020-02-28)
 -------------------
 
