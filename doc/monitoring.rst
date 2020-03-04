@@ -21,8 +21,7 @@ Sentry
 
 All warnings, errors, exceptions, and tasks failures are both logged to disk
 and uploaded instantly to Sentry_, an error monitoring and reporting platform.
-The Sentry instance is installed `on premise`_ at Caltech. Sentry notifies
-GWCelery contributors by email when a new bug occurs.
+Sentry notifies GWCelery contributors by email when a new bug occurs.
 
 For details about the Sentry logging configuration, see the
 :mod:`gwcelery.sentry` module or the `Celery integration module`_ in the Sentry
