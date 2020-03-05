@@ -10,6 +10,11 @@ Changelog
     it takes many tens of seconds to create the GCN Circular template, this was
     distorting latency statistics.
 
+-   Prioritize the ``label_added`` LVAlerts over the ``new`` type. Current logic
+    in superevent manager creates superevents out of ``label_added``. This was
+    inteded to act as a failsafe if superevent creation failed for ``new`` type,
+    but may be used to our advantage.
+
 0.11.2 (2020-02-28)
 -------------------
 

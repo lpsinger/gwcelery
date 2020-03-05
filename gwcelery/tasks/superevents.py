@@ -55,7 +55,9 @@ def handle(payload):
         log.info("Skipping processing of %s because of high FAR", gid)
         return
 
+    priority = 1
     if alert_type == 'label_added':
+        priority = 0
         label = payload['data']['name']
         group = payload['object']['group'].lower()
         if label == 'RAVEN_ALERT':
@@ -69,7 +71,7 @@ def handle(payload):
     elif alert_type != 'new':
         return
 
-    process.delay(payload)
+    process.si(payload).apply_async(priority=priority)
 
 
 @gracedb.task(queue='superevent', shared=False)
