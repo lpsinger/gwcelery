@@ -15,7 +15,7 @@ arguments = "gwcelery flask -l info -f gwcelery-flask.log run --with-threads --h
 description = gwcelery-flask
 queue
 
-arguments = "gwcelery flower --address=127.0.0.1 --log-file-prefix gwcelery-flower.log"
+arguments = "gwcelery flower --address=127.0.0.1 --log-file-prefix=gwcelery-flower.log"
 description = gwcelery-flower
 queue
 
