@@ -100,8 +100,8 @@ def em_bright_posterior_samples(posterior_file_content):
         JSON formatted string storing ``HasNS`` and ``HasRemnant``
         probabilities
 
-    Example
-    ---------
+    Examples
+    --------
     >>> em_bright_posterior_samples(GraceDb().files('S190930s',
     ... 'LALInference.posterior_samples.hdf5').read())
     {"HasNS": 0.014904901243599122, "HasRemnant": 0.0}
@@ -154,11 +154,10 @@ def classifier_other(mass1, mass2, spin1z, spin2z, snr):
         JSON formatted string storing ``HasNS`` and ``HasRemnant``
         probabilities
 
-    Example
-    -------
-    >>> em_bright.classifier_other((2.0, 1.0, 0.0, 0.0, 10.))
+    Examples
+    --------
+    >>> em_bright.classifier_other(2.0, 1.0, 0.0, 0.0, 10.)
     '{"HasNS": 1.0, "HasRemnant": 1.0}'
-
     """
     p_ns, p_em = _em_bright(mass1, mass2, spin1z, spin2z)
 
@@ -198,10 +197,10 @@ def classifier_gstlal(mass1, mass2, spin1z, spin2z, snr):
         JSON formatted string storing ``HasNS`` and ``HasRemnant``
         probabilities
 
-    Notes
-    -----
-    This task would only work from within the CIT cluster.
-
+    Examples
+    --------
+    >>> em_bright.classifier_gstlal(2.0, 1.0, 0.0, 0.0, 10.)
+    '{"HasNS": 1.0, "HasRemnant": 1.0}'
     """
     p_ns, p_em = em_bright.source_classification(
         mass1, mass2, spin1z, spin2z, snr,
