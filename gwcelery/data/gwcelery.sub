@@ -30,7 +30,7 @@ arguments = "gwcelery worker -l info -n gwcelery-exttrig-worker@%h -f %n.log -Q 
 description = gwcelery-exttrig-worker
 queue
 
-arguments = "gwcelery worker -l info -n gwcelery-superevent-worker@%h -f %n.log -Q superevent -c 1"
+arguments = "gwcelery worker -l info -n gwcelery-superevent-worker@%h -f %n.log -Q superevent -c 1 --prefetch-multiplier 1"
 description = gwcelery-superevent-worker
 queue
 

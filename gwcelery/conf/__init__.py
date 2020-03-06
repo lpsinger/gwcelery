@@ -34,7 +34,9 @@ task_serializer = 'pickle'
 task_inherit_parent_priority = True
 task_default_priority = 0
 task_queue_max_priority = 1
-priority_steps = list(range(task_queue_max_priority + 1))
+broker_transport_options = {
+    'priority_steps': list(range(task_queue_max_priority + 1))
+}
 
 # GWCelery-specific settings.
 

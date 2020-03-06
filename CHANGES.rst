@@ -9,6 +9,9 @@ Changelog
 -   Produce GCN notices of type ``LVC_EARLY_WARNING`` for events that have the
     ``EarlyWarning`` search tag.
 
+-   Adjust broker transport and worker settings so that the superevent worker
+    respects task priorities.
+
 0.12.0 (2020-03-05)
 -------------------
 
