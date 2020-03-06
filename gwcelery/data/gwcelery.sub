@@ -49,6 +49,6 @@ universe = vanilla
 executable = /bin/env
 
 
-arguments = "--unset OMP_NUM_THREADS gwcelery-condor-submit-helper gwcelery worker -l info -n gwcelery-openmp-worker-$(Process)@%h -f %n.log -Q openmp -c 1"
+arguments = "--unset OMP_NUM_THREADS gwcelery-condor-submit-helper gwcelery worker -l info -n gwcelery-openmp-worker-$(Process)@%h -f %n.log -Q openmp -c 1 --prefetch-multiplier 1"
 description = gwcelery-openmp-worker-$(Process)
 queue 16
