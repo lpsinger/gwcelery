@@ -9,6 +9,7 @@ __pycache__
 .cache
 .coverage*
 .pytest_cache
+celerybeat-schedule.*
 build
 dist
 htmlcov
@@ -39,5 +40,6 @@ public_html
 .python_history
 .rediscli_history
 .rnd
+.vim
 .viminfo
 .Xauthority
