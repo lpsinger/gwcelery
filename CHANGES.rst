@@ -4,7 +4,7 @@ Changelog
 0.12.1 (unreleased)
 -------------------
 
--   No changes yet.
+-   Set delay to produce preliminary alert to 0 seconds.
 
 0.12.0 (2020-03-05)
 -------------------
