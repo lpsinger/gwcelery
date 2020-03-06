@@ -16,6 +16,9 @@ Changelog
     send a public alert, so processing ``label_added`` messages with higher
     priority may speed up preliminary alerts.
 
+-   Increase the minimum concurrency of the main GWCelery worker pool from 4 to
+    8 subprocesses in order to decrease latency.
+
 -   Append to, and do not overwrite, log files, when starting GWCelery via
     Condor.
 
