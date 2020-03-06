@@ -10,10 +10,11 @@ Changelog
     it takes many tens of seconds to create the GCN Circular template, this was
     distorting latency statistics.
 
--   Prioritize the ``label_added`` LVAlerts over the ``new`` type. Current logic
-    in superevent manager creates superevents out of ``label_added``. This was
-    inteded to act as a failsafe if superevent creation failed for ``new`` type,
-    but may be used to our advantage.
+-   Prioritize processing of ``label_added`` LVAlert messages over the ``new``
+    LVAlert messages in the superevent manager. The labels ``SKYMAP_READY``,
+    ``EMBRIGHT_READY``, and ``PASTRO_READY`` must all be present before we can
+    send a public alert, so processing ``label_added`` messages with higher
+    priority may speed up preliminary alerts.
 
 -   Append to, and do not overwrite, log files, when starting GWCelery via
     Condor.
