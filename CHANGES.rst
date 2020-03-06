@@ -10,7 +10,7 @@ Changelog
     it takes many tens of seconds to create the GCN Circular template, this was
     distorting latency statistics.
 
--   Prioritize processing of ``label_added`` LVAlert messages over the ``new``
+-   Prioritize processing of ``label_added`` LVAlert messages over ``new``
     LVAlert messages in the superevent manager. The labels ``SKYMAP_READY``,
     ``EMBRIGHT_READY``, and ``PASTRO_READY`` must all be present before we can
     send a public alert, so processing ``label_added`` messages with higher
