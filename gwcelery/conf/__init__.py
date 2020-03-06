@@ -316,3 +316,6 @@ within time window of each other."""
 mock_events_simulate_multiple_uploads = False
 """If True, then upload each mock event several times in rapid succession with
 random jitter in order to simulate multiple pipeline uploads."""
+
+# Delete imported modules so that they do not pollute the config object
+del os, getpass
