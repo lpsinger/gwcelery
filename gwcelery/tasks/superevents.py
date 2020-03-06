@@ -177,10 +177,13 @@ def process(payload):
     if should_publish(event_info):
         gracedb.create_label.delay('ADVREQ', sid)
         if is_complete(event_info):
-            gracedb.create_label.s(FROZEN_LABEL, sid).set(
-                queue='superevent',
-                countdown=app.conf['preliminary_alert_timeout']
-            ).delay()
+            if app.conf['preliminary_alert_timeout']:
+                gracedb.create_label.s(FROZEN_LABEL, sid).set(
+                    queue='superevent',
+                    countdown=app.conf['preliminary_alert_timeout']
+                ).delay()
+            else:  # fast path if no countdown
+                gracedb.create_label(FROZEN_LABEL, sid)
 
 
 def get_category(event):
