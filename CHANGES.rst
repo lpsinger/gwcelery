@@ -6,6 +6,9 @@ Changelog
 
 -   Set delay to produce preliminary alert to 0 seconds.
 
+-   Produce GCN notices of type ``LVC_EARLY_WARNING`` for events that have the
+    ``EarlyWarning`` search tag.
+
 0.12.0 (2020-03-05)
 -------------------
 

@@ -570,7 +570,10 @@ def preliminary_alert(event, superevent_id, annotation_prefix='',
             _proceed_if_no_advocate_action.s(superevent_id)
             |
             preliminary_initial_update_alert.s(
-                superevent_id, 'preliminary', labels=event['labels'])
+                superevent_id,
+                ('earlywarning' if event['search'] == 'earlywarning'
+                 else 'preliminary'),
+                labels=event['labels'])
         )
 
     canvas.apply_async(priority=priority)
@@ -645,7 +648,7 @@ def preliminary_initial_update_alert(filenames, superevent_id, alert_type,
         A list of the sky map, em_bright, and p_astro filenames.
     superevent_id : str
         The superevent ID.
-    alert_type : {'preliminary', 'initial', 'update'}
+    alert_type : {'earlywarning', 'preliminary', 'initial', 'update'}
         The alert type.
     labels : list
         A list of labels applied to superevent.
@@ -686,7 +689,7 @@ def preliminary_initial_update_alert(filenames, superevent_id, alert_type,
                     and f.endswith('.json'):
                 p_astro_filename = fv
 
-    if alert_type in ['preliminary', 'initial']:
+    if alert_type in {'earlywarning', 'preliminary', 'initial'}:
         if 'RAVEN_ALERT' in labels:
             circular_task = circulars.create_emcoinc_circular.si(superevent_id)
             circular_filename = '{}-emcoinc-circular.txt'.format(alert_type)
@@ -742,7 +745,8 @@ def preliminary_initial_update_alert(filenames, superevent_id, alert_type,
             |
             (
                 gracedb.create_label.si('GCN_PRELIM_SENT', superevent_id)
-                if alert_type == 'preliminary' else identity.si()
+                if alert_type in {'earlywarning', 'preliminary'}
+                else identity.si()
             ),
 
             circular_canvas,
