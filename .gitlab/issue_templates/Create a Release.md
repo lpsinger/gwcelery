@@ -33,6 +33,7 @@
     - [ ] `p_astro.json`
     - [ ] `p_astro.png`
     - [ ] `em_bright.json`
+    - [ ] `em_bright.png`
     - [ ] `LALInference.posterior_samples.hdf5`
     - [ ] `LALInference.multiorder.fits`
     - [ ] `LALInference.fits.gz`
