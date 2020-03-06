@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.11.3 (unreleased)
+0.12.0 (2020-03-05)
 -------------------
 
 -   Add the ``GCN_PRELIM_SENT`` label after the GCN notice has been sent.
