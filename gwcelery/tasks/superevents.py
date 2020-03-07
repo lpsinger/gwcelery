@@ -416,8 +416,10 @@ def _should_publish(event):
     far_threshold = app.conf['preliminary_alert_far_threshold'][group]
     far = trials_factor * event['far']
     raven_coincidence = ('RAVEN_ALERT' in event['labels'])
+    early_warning = (event['search'] == 'EarlyWarning')
 
-    return not event['offline'], (far <= far_threshold or raven_coincidence)
+    return not event['offline'], (
+        far <= far_threshold or raven_coincidence or early_warning)
 
 
 def keyfunc(event):

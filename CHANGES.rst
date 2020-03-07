@@ -21,6 +21,12 @@ Changelog
 -   Produce GCN notices of type ``LVC_EARLY_WARNING`` for events that have the
     ``EarlyWarning`` search tag.
 
+-   Modify the public alert criterion to make early warning events exempt from
+    the preliminary alert false alarm rate threshold. Since the threshold for
+    ingestion of events into superevents is 1/hour, early warning alerts GCNs
+    will be generated at an average rate of once an hour.
+    (FIXME: adjust rate before releasing)
+
 0.12.0 (2020-03-05)
 -------------------
 
