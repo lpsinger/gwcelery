@@ -6,7 +6,7 @@ corner
 dnspython  # silence "DNS: dnspython not found. Can not use SRV lookup." warning from SleekXMPP
 flask
 flask-caching
-gracedb-sdk >= 0.1.4
+gracedb-sdk >= 0.1.5
 gwdatafind
 gwpy
 healpy
