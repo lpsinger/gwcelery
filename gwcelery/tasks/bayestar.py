@@ -4,6 +4,8 @@ import logging
 import urllib.parse
 
 from celery.exceptions import Ignore
+from glue.ligolw.utils import load_fileobj
+from glue.ligolw.utils.ligolw_add import merge_ligolws
 from ligo.skymap import bayestar as _bayestar
 from ligo.skymap.io import events
 from ligo.skymap.io import fits
@@ -56,11 +58,15 @@ def localize(coinc_psd, graceid, filename='bayestar.fits.gz',
         # A little bit of Cylon humor
         log.info('by your command...')
 
+        # Combine coinc.xml and psd.xml.gz into one XML document
+        doc = None
+        for filecontents in coinc_psd:
+            doc, _ = load_fileobj(io.BytesIO(filecontents), xmldoc=doc,
+                                  contenthandler=events.ligolw.ContentHandler)
+        merge_ligolws(doc)
+
         # Parse event
-        coinc, psd = coinc_psd
-        coinc = io.BytesIO(coinc)
-        psd = io.BytesIO(psd)
-        event_source = events.ligolw.open(coinc, psd_file=psd, coinc_def=None)
+        event_source = events.ligolw.open(doc, psd_file=doc, coinc_def=None)
         if disabled_detectors:
             event_source = events.detector_disabled.open(
                 event_source, disabled_detectors)

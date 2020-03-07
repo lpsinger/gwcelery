@@ -232,7 +232,7 @@ def handle_cbc_event(alert):
 
     if filename == 'psd.xml.gz':
         (
-            ordered_group(
+            group(
                 gracedb.download.s('coinc.xml', graceid),
                 gracedb.download.s('psd.xml.gz', graceid)
             )
