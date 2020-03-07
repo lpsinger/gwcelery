@@ -10,6 +10,14 @@ Changelog
     respects task priorities. This is seen to reduce the latency of preliminary
     alerts by about 10 seconds.
 
+-   The ``gwcelery.tasks.bayestar.localize`` task no longer cares about the
+    order in which the ``coinc.xml`` and ``psd.xml.gz`` file contents arguments
+    are passed to it because the task now combines the XML documents using
+    ``ligolw_add``. This allows us to change the immediately upstream task in
+    the localization canvas from an ``ordered_group`` to a ``group``. This
+    avoids extra trips of the large file contents blobs into and out of Redis.
+    This is seen to reduce the latency of the localization by about a second.
+
 -   Produce GCN notices of type ``LVC_EARLY_WARNING`` for events that have the
     ``EarlyWarning`` search tag.
 
