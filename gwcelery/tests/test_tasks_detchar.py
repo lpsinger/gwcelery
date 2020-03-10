@@ -2,6 +2,7 @@ from io import BytesIO
 import logging
 from unittest.mock import call, patch
 
+from astropy.time import Time
 from gwpy.timeseries import Bits
 import matplotlib.pyplot as plt
 import numpy as np
@@ -120,6 +121,14 @@ def test_omegascan(mock_upload, mock_fig):
     )
 
 
+def test_omegascan_skips_ew(caplog):
+    """Test that omegascans are skipped for events in the future."""
+    caplog.set_level(logging.INFO)
+    detchar.omegascan(Time.now().gps + 999, 'S1234')
+    messages = [record.message for record in caplog.records]
+    assert 'Skipping omegascan because S1234 is in the future' in messages  # noqa: E501
+
+
 def test_check_idq(llhoft_glob_pass):
     channel = 'H1:IDQ-PGLITCH_OVL_32_2048'
     start, end = 1216577976, 1216577980
@@ -191,11 +200,20 @@ def test_check_vector_fails_on_empty(mock_statevector, llhoft_glob_pass):
 
 
 def test_check_vectors_skips_mdc(caplog):
-    """Test that state vector checks are skipped for MDC events."""
+    """Test that detchar checks are skipped for MDC events."""
     caplog.set_level(logging.INFO)
     detchar.check_vectors({'search': 'MDC', 'graceid': 'M1234'}, 'S123', 0, 1)
     messages = [record.message for record in caplog.records]
-    assert 'Skipping state vector checks because M1234 is an MDC' in messages
+    assert 'Skipping detchar checks because M1234 is an MDC' in messages
+
+
+def test_check_vectors_skips_ew(caplog):
+    """Test that detchar checks are skipped for events in the future."""
+    caplog.set_level(logging.INFO)
+    detchar.check_vectors({'pipeline': 'gstlal', 'graceid': 'S1234'},
+                          'S123', 99999999999999999, 99999999999999999.5)
+    messages = [record.message for record in caplog.records]
+    assert 'Skipping detchar checks because S1234 is in the future' in messages  # noqa: E501
 
 
 @patch('gwcelery.tasks.detchar.dqr_json', return_value='dqrjson')

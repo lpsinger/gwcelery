@@ -21,6 +21,7 @@ import json
 import socket
 import time
 
+from astropy.time import Time
 from celery import group
 from celery.utils.log import get_task_logger
 from glue.lal import Cache
@@ -152,7 +153,7 @@ def make_omegascan(ifo, t0, durs):
 
 @app.task(shared=False)
 def omegascan(t0, graceid):
-    """Create omegascan for a certain event.
+    """Create omegascan for a certain event. Skips EarlyWarning events.
 
     Parameters
     ----------
@@ -163,6 +164,12 @@ def omegascan(t0, graceid):
 
     """
     durs = app.conf['omegascan_durations']
+
+    # Skip early warning events (ie queries for times before now)
+    if t0 + max(durs) > Time.now().gps:
+        log.info("Skipping omegascan because %s is in the future",
+                 graceid)
+        return
 
     group(
         make_omegascan.s(ifo, t0, durs)
@@ -395,9 +402,15 @@ def check_vectors(event, graceid, start, end):
         Details of the event, reflecting any labels that were added.
 
     """
+    # Skip early warning events (ie queries for times before now)
+    if start > Time.now().gps:
+        log.info("Skipping detchar checks because %s is in the future",
+                 event['graceid'])
+        return event
+
     # Skip MDC events.
     if event.get('search') == 'MDC':
-        log.info('Skipping state vector checks because %s is an MDC',
+        log.info("Skipping detchar checks because %s is an MDC",
                  event['graceid'])
         return event
 
