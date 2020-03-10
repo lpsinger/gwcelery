@@ -16,6 +16,10 @@ Changelog
 -   Reduce calls in external_triggers.py by getting data from new field
     'preferred_event_data'.
 
+-   If available, use spatial coincidence FAR to determine when to publish a
+    coincident event. Update both time and spatial FAR within superevent
+    when publishable.
+
 0.12.1 (2020-03-12)
 -------------------
 

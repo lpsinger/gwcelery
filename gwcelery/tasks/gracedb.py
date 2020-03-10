@@ -271,7 +271,8 @@ def get_superevents(query, **kwargs):
 @catch_retryable_http_errors
 def update_superevent(superevent_id, t_start=None,
                       t_end=None, t_0=None, preferred_event=None,
-                      em_type=None, coinc_far=None):
+                      em_type=None, time_coinc_far=None,
+                      space_coinc_far=None):
     """
     Update superevent information. Wrapper around
     :meth:`updateSuperevent`
@@ -294,7 +295,7 @@ def update_superevent(superevent_id, t_start=None,
         client.superevents.update(
             superevent_id, t_start=t_start, t_end=t_end, t_0=t_0,
             preferred_event=preferred_event, em_type=em_type,
-            coinc_far=coinc_far)
+            time_coinc_far=time_coinc_far, space_coinc_far=space_coinc_far)
     except HTTPError as e:
         # If we got a 400 error because no change was made, then ignore
         # the exception and return successfully to preserve idempotency.

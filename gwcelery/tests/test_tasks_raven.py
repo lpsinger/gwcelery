@@ -131,8 +131,9 @@ def mock_get_labels(superevent_id):
         return {}
 
 
-def mock_download_json(superevent_id):
-    return {'temporal_coincidence_far': 1e-7}
+def mock_coinc_far(*args):
+    return {'temporal_coincidence_far': 1e-7,
+            'spatiotemporal_coinc_far': None}
 
 
 @pytest.mark.parametrize(
@@ -148,14 +149,12 @@ def mock_download_json(superevent_id):
      [[], 'S13', -1, 5, 'CBC'],
      [[{'graceid': 'E4', 'pipeline': 'GRB'}], 'S14', -1, 5, 'CBC']])
 @patch('gwcelery.tasks.raven.trigger_raven_alert.run')
-@patch('gwcelery.tasks.gracedb.download.run')
-@patch('json.loads', mock_download_json)
 @patch('gwcelery.tasks.gracedb.get_labels', mock_get_labels)
-@patch('gwcelery.tasks.raven.calculate_coincidence_far.run')
+@patch('gwcelery.tasks.raven.calculate_coincidence_far.run',
+       return_value=mock_coinc_far())
 @patch('gwcelery.tasks.gracedb.create_label.run')
 def test_raven_pipeline(mock_create_label,
                         mock_calculate_coincidence_far,
-                        mock_download,
                         mock_trigger_raven_alert,
                         raven_search_results, graceid, tl, th, group):
     """This function tests that the RAVEN pipeline runs correctly for scenarios
@@ -191,11 +190,11 @@ def test_raven_pipeline(mock_create_label,
     alert_calls = []
     if graceid.startswith('E'):
         alert_calls.append(call(
-            mock_download_json(result['superevent_id']),
+            mock_coinc_far(),
             result, graceid, alert_object, group))
     else:
         for result in raven_search_results:
-            alert_calls.append(call(mock_download_json(graceid),
+            alert_calls.append(call(mock_coinc_far(),
                                     alert_object, graceid, result, group))
     mock_trigger_raven_alert.assert_has_calls(alert_calls, any_order=True)
 
@@ -247,6 +246,10 @@ def _mock_get_event(graceid):
         return {"superevent_id": "S8642",
                 "preferred_event": "G000003",
                 "far": 1e-3}
+    elif graceid == "S9876":
+        return {"superevent_id": "S9876",
+                "preferred_event": "G000003",
+                "far": 1e-6}
     elif graceid == 'E1':
         return {"graceid": "E1",
                 "pipeline": 'Swift',
@@ -273,8 +276,8 @@ def _mock_get_event(graceid):
 
 def _mock_get_coinc_far(graceid):
     if graceid == "S1234":
-        return {"temporal_coinc_far": 1e-05,
-                "spatiotemporal_coinc_far": None}
+        return {"temporal_coinc_far": 1e-12,
+                "spatiotemporal_coinc_far": 1e-05}
     elif graceid == "S2468":
         return {"temporal_coinc_far": 1e-09,
                 "spatiotemporal_coinc_far": None}
@@ -284,6 +287,9 @@ def _mock_get_coinc_far(graceid):
     elif graceid == "S8642":
         return {"temporal_coinc_far": 1e-03,
                 "spatiotemporal_coinc_far": None}
+    elif graceid == "S9876":
+        return {"temporal_coinc_far": 1e-07,
+                "spatiotemporal_coinc_far": 1e-13}
     else:
         return {}
 
@@ -291,13 +297,15 @@ def _mock_get_coinc_far(graceid):
 @pytest.mark.parametrize(
     'graceid,result_id,group,expected_result',
     [['S1234', 'E1', 'Burst', False],
-     ['S2468', 'E1', 'CBC', True],
+     ['S2468', 'E1', 'CBC', False],
+     ['S2468', 'E4', 'CBC', False],
      ['S2468', 'E2', 'CBC', False],
      ['S2345', 'E3', 'Burst', True],
-     ['E1', 'S2468', 'CBC', True],
+     ['E1', 'S9876', 'CBC', True],
+     ['E1', 'S2468', 'CBC', False],
      ['E2', 'S5678', 'CBC', False],
      ['E3', 'S8642', 'Burst', False],
-     ['E1', 'S5678', 'CBC', True],
+     ['E3', 'S9876', 'Burst', True],
      ['E4', 'S5678', 'CBC', False]])
 @patch('gwcelery.tasks.gracedb.get_labels', return_value={})
 @patch('gwcelery.tasks.gracedb.update_superevent')
@@ -323,13 +331,15 @@ def test_trigger_raven_alert(mock_create_label, mock_update_superevent,
                        call('RAVEN_ALERT', ext_id),
                        call('RAVEN_ALERT', preferred_id)]
         if ext_event['pipeline'] == 'SNEWS':
-            coinc_far = None
+            time_coinc_far = space_coinc_far = None
         else:
-            coinc_far = coinc_far_json['temporal_coinc_far']
+            time_coinc_far = coinc_far_json['temporal_coinc_far']
+            space_coinc_far = coinc_far_json['spatiotemporal_coinc_far']
         mock_update_superevent.assert_called_once_with(
             superevent_id,
             em_type=ext_id,
-            coinc_far=coinc_far)
+            time_coinc_far=time_coinc_far,
+            space_coinc_far=space_coinc_far)
         mock_create_label.assert_has_calls(label_calls)
     else:
         mock_create_label.assert_not_called()

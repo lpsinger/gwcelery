@@ -1,6 +1,5 @@
 """Search for GRB-GW coincidences with ligo-raven."""
 import ligo.raven.search
-import json
 from celery import group
 from celery.utils.log import get_task_logger
 from ligo.raven import gracedb_events
@@ -214,12 +213,9 @@ def raven_pipeline(raven_search_results, gracedb_id, alert_object, tl, th,
             calculate_coincidence_far.si(superevent, ext_event, tl, th)
             |
             group(gracedb.create_label.si('EM_COINC', superevent_id),
-                  gracedb.create_label.si('EM_COINC', exttrig_id))
-            |
-            _get_coinc_far_try_raven_alert.si(superevent, ext_event,
-                                              gracedb_id,
-                                              superevent_id, exttrig_id,
-                                              gw_group)
+                  gracedb.create_label.si('EM_COINC', exttrig_id),
+                  trigger_raven_alert.s(superevent, gracedb_id,
+                                        ext_event, gw_group))
         )
         canvas.delay()
 
@@ -242,24 +238,7 @@ def preferred_superevent(raven_search_results):
 
 
 @app.task(shared=False)
-def _get_coinc_far_try_raven_alert(superevent, ext_event, gracedb_id,
-                                   superevent_id, exttrig_id, gw_group):
-    #  FIXME: Reduce RAVEN latency to avoid this additional poll
-    #  FIXME: change to return coincidence_far in ligo-raven
-
-    if ext_event['pipeline'] != 'SNEWS':
-        coinc_far_bytes = gracedb.download('coincidence_far.json',
-                                           exttrig_id)
-        coinc_far_dict = json.loads(coinc_far_bytes)
-    else:
-        coinc_far_dict = {}
-
-    trigger_raven_alert(coinc_far_dict, superevent, gracedb_id,
-                        ext_event, gw_group)
-
-
-@app.task(shared=False)
-def trigger_raven_alert(coinc_far_json, superevent, gracedb_id,
+def trigger_raven_alert(coinc_far_dict, superevent, gracedb_id,
                         ext_event, gw_group):
     """Determine whether an event should be published as a public alert.
     If yes, then launches an alert by applying `RAVEN_ALERT` to the preferred
@@ -278,7 +257,7 @@ def trigger_raven_alert(coinc_far_json, superevent, gracedb_id,
 
     Parameters
     ----------
-    coinc_far_json : dict
+    coinc_far_dict : dict
         Dictionary containing coincidence false alarm rate results from
         RAVEN
     superevent : dict
@@ -295,11 +274,13 @@ def trigger_raven_alert(coinc_far_json, superevent, gracedb_id,
     superevent_id = superevent['superevent_id']
     ext_id = ext_event['graceid']
     gw_group = gw_group.lower()
+    pipeline = ext_event['pipeline']
     trials_factor = app.conf['preliminary_alert_trials_factor'][gw_group]
+    missing_skymap = 'Swift' == pipeline
+    messages = []
 
     #  Since the significance of SNEWS triggers is so high, we will publish
     #  any trigger coincident with a decently significant GW candidate
-    pipeline = ext_event['pipeline']
     if 'SNEWS' == pipeline:
         gw_far = superevent['far']
         far_type = 'gw'
@@ -307,7 +288,7 @@ def trigger_raven_alert(coinc_far_json, superevent, gracedb_id,
         pass_far_threshold = gw_far * trials_factor < far_threshold
         is_ext_subthreshold = False
         #  Set coinc FAR to gw FAR only for the sake of a message below
-        coinc_far = None
+        time_coinc_far = space_coinc_far = coinc_far = None
         coinc_far_f = gw_far
 
     #  The GBM team requested we not send automatic alerts from subthreshold
@@ -317,8 +298,14 @@ def trigger_raven_alert(coinc_far_json, superevent, gracedb_id,
         # check whether the GRB is threshold or sub-thresholds
         is_ext_subthreshold = 'SubGRB' == ext_event['search']
 
-        # Use only temporal FAR at the moment
-        coinc_far = coinc_far_json['temporal_coinc_far']
+        # Use spatial FAR if available, otherwise use temporal
+        time_coinc_far = coinc_far_dict['temporal_coinc_far']
+        space_coinc_far = coinc_far_dict['spatiotemporal_coinc_far']
+        if space_coinc_far is not None:
+            coinc_far = space_coinc_far
+            missing_skymap = False
+        else:
+            coinc_far = time_coinc_far
 
         far_type = 'joint'
         far_threshold = app.conf['preliminary_alert_far_threshold'][gw_group]
@@ -331,14 +318,14 @@ def trigger_raven_alert(coinc_far_json, superevent, gracedb_id,
 
     #  If publishable, trigger an alert by applying `RAVEN_ALERT` label to
     #  preferred event
-    messages = []
     if pass_far_threshold and not is_ext_subthreshold and \
-            likely_real_ext_event:
+            likely_real_ext_event and not missing_skymap:
         messages.append('RAVEN: publishing criteria met for %s' % (
             preferred_gwevent_id))
         if no_previous_alert:
             gracedb.update_superevent(superevent_id, em_type=ext_id,
-                                      coinc_far=coinc_far)
+                                      time_coinc_far=time_coinc_far,
+                                      space_coinc_far=space_coinc_far)
             messages.append('Triggering RAVEN alert for %s' % (
                 preferred_gwevent_id))
             (
@@ -363,6 +350,11 @@ def trigger_raven_alert(coinc_far_json, superevent, gracedb_id,
     if not no_previous_alert:
         messages.append(('RAVEN: Alert already triggered for  %s'
                          % (superevent_id)))
+    if missing_skymap:
+        messages.append('RAVEN: Will only publish Swift coincidence '
+                        'event if spatial-temporal FAR is present. '
+                        'Waiting for both sky maps to be available '
+                        'first.')
     for message in messages:
         gracedb.upload(None, None, superevent_id,
                        message,
