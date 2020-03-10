@@ -339,10 +339,9 @@ def test_handle_subgrb_exttrig_creation(mock_raven_coincidence_search):
 
     # Check that the correct tasks were dispatched.
     mock_raven_coincidence_search.assert_has_calls([
+        call('E1234', alert['object'], group='Burst'),
         call('E1234', alert['object'], group='CBC',
-             searches=['SubGRB', 'SubGRBTargeted'], pipelines=['Fermi']),
-        call('E1234', alert['object'], group='CBC',
-             searches=['SubGRB', 'SubGRBTargeted'], pipelines=['Swift'])])
+             searches=['SubGRB', 'SubGRBTargeted'], pipelines=['Fermi'])])
 
 
 @patch('gwcelery.tasks.external_skymaps.create_upload_external_skymap')
@@ -364,9 +363,6 @@ def test_handle_subgrb_targeted_creation(mock_raven_coincidence_search,
     # Check that the correct tasks were dispatched.
     mock_raven_coincidence_search.assert_has_calls([
         call('E1234', alert['object'], group='Burst'),
-        call('E1234', alert['object'], group='CBC',
-             searches=['SubGRB', 'SubGRBTargeted'],
-             pipelines=['Fermi']),
         call('E1234', alert['object'], group='CBC',
              searches=['SubGRB', 'SubGRBTargeted'],
              pipelines=['Swift'])])

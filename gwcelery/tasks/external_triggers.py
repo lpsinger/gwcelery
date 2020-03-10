@@ -217,10 +217,15 @@ def handle_grb_lvalert(alert):
                     alert['object'], None, alert['object']['created'])
 
             # launch standard Burst-GRB search
-            subthresh_search = \
-                (alert['object']['search'] in ['SubGRB', 'SubGRBTargeted'])
             raven.coincidence_search(graceid, alert['object'], group='Burst')
-            if not subthresh_search:
+
+            if alert['object']['search'] in ['SubGRB', 'SubGRBTargeted']:
+                # if sub-threshold GRB, launch search with that pipeline
+                raven.coincidence_search(
+                    graceid, alert['object'], group='CBC',
+                    searches=['SubGRB', 'SubGRBTargeted'],
+                    pipelines=[alert['object']['pipeline']])
+            else:
                 # if threshold GRB, launch standard CBC-GRB search
                 raven.coincidence_search(graceid, alert['object'],
                                          group='CBC', searches=['GRB'])
@@ -230,15 +235,15 @@ def handle_grb_lvalert(alert):
             gw_group = gracedb.get_group(preferred_event_id)
             raven.coincidence_search(graceid, alert['object'],
                                      group=gw_group, searches=['GRB'])
-            subthresh_search = gw_group == 'CBC'
-        if subthresh_search:
-            # launch subthreshold searches if CBC or subthreshold GRB
-            # for Fermi and Swift separately to use different time windows
-            for pipeline in ['Fermi', 'Swift']:
-                raven.coincidence_search(
-                    graceid, alert['object'], group='CBC',
-                    searches=['SubGRB', 'SubGRBTargeted'],
-                    pipelines=[pipeline])
+            if gw_group == 'CBC':
+                # launch subthreshold searches if CBC
+                # for Fermi and Swift separately to use different time windows
+                for pipeline in ['Fermi', 'Swift']:
+                    raven.coincidence_search(
+                        graceid, alert['object'], group='CBC',
+                        searches=['SubGRB', 'SubGRBTargeted'],
+                        pipelines=[pipeline])
+
     elif alert['alert_type'] == 'label_added' and \
             alert['object'].get('group') == 'External':
         if _skymaps_are_ready(alert['object'], alert['data']['name'],

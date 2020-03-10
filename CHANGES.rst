@@ -29,6 +29,9 @@ Changelog
     events. In the playground environment, its value is infinity, to generate
     alerts for all early warning events.
 
+-   Fix bug where a SubGRBTargeted event would trigger a search in both Fermi
+    and Swift.
+
 0.12.0 (2020-03-05)
 -------------------
 
