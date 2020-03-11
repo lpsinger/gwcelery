@@ -413,13 +413,14 @@ def _should_publish(event):
     """
     group = event['group'].lower()
     trials_factor = app.conf['preliminary_alert_trials_factor'][group]
-    far_threshold = app.conf['preliminary_alert_far_threshold'][group]
+    if event.get('search') == 'EarlyWarning':
+        far_threshold = app.conf['early_warning_alert_far_threshold']
+    else:
+        far_threshold = app.conf['preliminary_alert_far_threshold'][group]
     far = trials_factor * event['far']
     raven_coincidence = ('RAVEN_ALERT' in event['labels'])
-    early_warning = (event.get('search') == 'EarlyWarning')
 
-    return not event['offline'], (
-        far <= far_threshold or raven_coincidence or early_warning)
+    return not event['offline'], (far <= far_threshold or raven_coincidence)
 
 
 def keyfunc(event):

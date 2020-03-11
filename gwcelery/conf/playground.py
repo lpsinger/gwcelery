@@ -11,6 +11,9 @@ preliminary_alert_timeout = 0.0
 """Wait this many seconds for the preferred event to stabilize before issuing a
 preliminary alert."""
 
+early_warning_alert_far_threshold = float('inf')
+"""False alarm rate threshold for early warning alerts."""
+
 mock_events_simulate_multiple_uploads = True
 """If True, then upload each mock event several times in rapid succession with
 random jitter in order to simulate multiple pipeline uploads."""
