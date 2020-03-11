@@ -30,6 +30,6 @@ safe-netrc
 seaborn
 sentry-sdk[flask,tornado]
 service_identity  # We don't actually use this package, but it silences some annoying warnings from twistd.
-sleek-lvalert >= 0.0.4
+sleek-lvalert < 2.0.0
 voeventlib >= 1.2
 werkzeug >= 0.15.0  # for werkzeug.middleware.proxy_fix.ProxyFix
