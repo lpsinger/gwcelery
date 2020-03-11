@@ -7,6 +7,10 @@ sentry_environment = 'playground'
 <https://docs.sentry.io/enriching-error-data/environments/>`_ in Sentry log
 messages."""
 
+preliminary_alert_timeout = 0.0
+"""Wait this many seconds for the preferred event to stabilize before issuing a
+preliminary alert."""
+
 mock_events_simulate_multiple_uploads = True
 """If True, then upload each mock event several times in rapid succession with
 random jitter in order to simulate multiple pipeline uploads."""

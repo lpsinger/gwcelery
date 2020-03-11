@@ -4,7 +4,9 @@ Changelog
 0.12.1 (unreleased)
 -------------------
 
--   Set delay to produce preliminary alert to 0 seconds.
+-   Set delay to produce preliminary alert to 0 seconds in the playground
+    configuration. In the production configuration, the delay is still 30
+    seconds.
 
 -   Adjust broker transport and worker settings so that the superevent worker
     respects task priorities. This is seen to reduce the latency of preliminary
