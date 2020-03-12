@@ -4,7 +4,8 @@ Changelog
 0.12.4 (unreleased)
 -------------------
 
--   No changes yet.
+-   Set FAR threshold for early warning alerts to once per day. With the trials
+    factor of 5, the effective false alarm rate threshold is once per 5 days.
 
 0.12.3 (2020-03-24)
 -------------------

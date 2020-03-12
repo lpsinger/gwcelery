@@ -118,7 +118,7 @@ preliminary_alert_trials_factor = dict(cbc=5.0, burst=4.0)
 factor is the number of pipelines. CBC pipelines are gstlal, pycbc, mbtaonline
 and spiir. Burst searches are cwb.allsky, cwb.bbh and cwb.imbh."""
 
-early_warning_alert_far_threshold = preliminary_alert_far_threshold['cbc']
+early_warning_alert_far_threshold = 1 / (3600 * 24)
 """False alarm rate threshold for early warning alerts."""
 
 snews_gw_far_threshold = 1 / (3600 * 24)
