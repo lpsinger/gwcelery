@@ -73,11 +73,11 @@ def localize(coinc_psd, graceid, filename='bayestar.fits.gz',
         event, = event_source.values()
 
         # Run BAYESTAR
-        log.info("starting sky localization")
+        log.info('starting sky localization')
         skymap = _bayestar.localize(event)
         skymap.meta['objid'] = str(graceid)
         skymap.meta['url'] = '{}/{}'.format(base_url, graceid)
-        log.info("sky localization complete")
+        log.info('sky localization complete')
 
         with io.BytesIO() as f:
             fits.write_sky_map(f, skymap, moc=True)
