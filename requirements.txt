@@ -3,7 +3,6 @@ bilby-pipe >= 0.3.8
 celery[redis] >= 4.4.0
 comet
 corner
-dnspython  # silence "DNS: dnspython not found. Can not use SRV lookup." warning from SleekXMPP
 flask
 flask-caching
 gracedb-sdk >= 0.1.5
@@ -30,7 +29,7 @@ safe-netrc
 seaborn
 sentry-sdk[flask,tornado]
 service_identity  # We don't actually use this package, but it silences some annoying warnings from twistd.
-sleek-lvalert < 2.0.0
+sleek-lvalert >= 2.0.0
 voeventlib >= 1.2
 werkzeug >= 0.15.0  # for werkzeug.middleware.proxy_fix.ProxyFix
 zstandard  # for task compression

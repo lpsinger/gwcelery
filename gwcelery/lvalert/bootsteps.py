@@ -1,3 +1,6 @@
+import asyncio
+from threading import Thread
+
 from celery import bootsteps
 from celery.utils.log import get_logger
 
@@ -41,16 +44,24 @@ class Receiver(LVAlertBootStep):
         self._client = client.LVAlertClient(
             server=consumer.app.conf['lvalert_host'],
             nodes=consumer.app.conf['lvalert_nodes'])
+        self._client.listen(_send_lvalert_received)
+        self._thread = Thread(target=self._run)
+
+    def _run(self):
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        self._client.disconnected = loop.create_future()
+        self._client.loop = loop
+        self._client.start()
 
     def start(self, consumer):
         super().start(consumer)
-        self._client.connect()
-        self._client.process()
-        self._client.listen(_send_lvalert_received)
+        self._thread.start()
 
     def stop(self, consumer):
         super().stop(consumer)
-        self._client.disconnect()
+        self._client.stop()
+        self._thread.join()
 
     def info(self, consumer):
-        return {'lvalert-nodes': self._client.get_subscriptions()}
+        return {'lvalert-nodes': list(self._client.subscriptions)}
