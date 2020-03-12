@@ -17,3 +17,4 @@ def _import_all_submodules(module=vars()):
 
 
 _import_all_submodules()
+del _import_all_submodules
