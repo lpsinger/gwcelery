@@ -16,5 +16,4 @@ def _import_all_submodules(module=vars()):
         _import_all_submodules(vars(submodule))
 
 
-# Recursively import all submodules.
 _import_all_submodules()
