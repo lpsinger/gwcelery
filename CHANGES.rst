@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.12.1 (unreleased)
+0.12.1 (2020-03-12)
 -------------------
 
 -   Set delay to produce preliminary alert to 0 seconds in the playground
