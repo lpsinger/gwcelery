@@ -122,11 +122,11 @@ def test_omegascan(mock_upload, mock_fig):
 
 
 def test_omegascan_skips_ew(caplog):
-    """Test that omegascans are skipped for events in the future."""
+    """Test that omegascans are delayed for events in the future."""
     caplog.set_level(logging.INFO)
-    detchar.omegascan(Time.now().gps + 999, 'S1234')
+    detchar.omegascan(Time.now().gps + 99, 'S1234')
     messages = [record.message for record in caplog.records]
-    assert 'Skipping omegascan because S1234 is in the future' in messages  # noqa: E501
+    assert 'Delaying omegascan because S1234 is in the future' in messages  # noqa: E501
 
 
 def test_check_idq(llhoft_glob_pass):

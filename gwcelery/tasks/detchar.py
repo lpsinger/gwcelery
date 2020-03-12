@@ -153,7 +153,7 @@ def make_omegascan(ifo, t0, durs):
 
 @app.task(shared=False)
 def omegascan(t0, graceid):
-    """Create omegascan for a certain event. Skips EarlyWarning events.
+    """Create omegascan for a certain event.
 
     Parameters
     ----------
@@ -167,12 +167,14 @@ def omegascan(t0, graceid):
 
     # Skip early warning events (ie queries for times before now)
     if t0 + max(durs) > Time.now().gps:
-        log.info("Skipping omegascan because %s is in the future",
+        log.info("Delaying omegascan because %s is in the future",
                  graceid)
-        return
+        waittime = t0 - Time.now().gps + max(durs)
+    else:
+        waittime = max(durs)
 
     group(
-        make_omegascan.s(ifo, t0, durs)
+        make_omegascan.s(ifo, t0, durs).set(countdown=waittime)
         |
         gracedb.upload.s(f"{ifo}_omegascan.png", graceid,
                          f"{ifo} omegascan", tags=['data_quality'])

@@ -57,10 +57,7 @@ def handle_superevent(alert):
 
         # run check_vectors. Create and upload omegascans
         group(
-            detchar.omegascan.si(
-                alert['object']['t_0'],
-                superevent_id
-            ).set(countdown=10),
+            detchar.omegascan.si(alert['object']['t_0'], superevent_id),
 
             gracedb.get_event.si(alert['object']['preferred_event'])
             |
