@@ -28,6 +28,9 @@ result_expires = 7200
 accept_content = ['json', 'pickle']
 event_serializer = result_serializer = task_serializer = 'pickle'
 
+# Compress tasks to reduce bandwidth in and out of Redis.
+result_compression = task_compression = 'zstandard'
+
 # Task priority settings.
 task_inherit_parent_priority = True
 task_default_priority = 0

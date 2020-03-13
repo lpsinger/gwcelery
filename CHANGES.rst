@@ -4,7 +4,8 @@ Changelog
 0.12.2 (unreleased)
 -------------------
 
--   No changes yet.
+-   Enable Zstandard compression of tasks and results to reduce bandwidth into
+    and out of Redis.
 
 0.12.1 (2020-03-12)
 -------------------

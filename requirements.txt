@@ -33,3 +33,4 @@ service_identity  # We don't actually use this package, but it silences some ann
 sleek-lvalert < 2.0.0
 voeventlib >= 1.2
 werkzeug >= 0.15.0  # for werkzeug.middleware.proxy_fix.ProxyFix
+zstandard  # for task compression
