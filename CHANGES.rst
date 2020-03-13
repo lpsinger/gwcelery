@@ -4,6 +4,10 @@ Changelog
 0.12.2 (unreleased)
 -------------------
 
+-   Skip detchar checks for events which occur in the future.
+
+-   Delay omegascans until data are available for events in the future. 
+
 -   Enable Zstandard compression of tasks and results to reduce bandwidth into
     and out of Redis.
 
