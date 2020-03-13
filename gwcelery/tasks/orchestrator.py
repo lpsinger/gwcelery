@@ -714,6 +714,8 @@ def preliminary_initial_update_alert(filenames, superevent_id, alert_type,
 
     canvas = (
         group(
+            gracedb.download.si(em_bright_filename, superevent_id),
+            gracedb.download.si(p_astro_filename, superevent_id),
             gracedb.expose.s(superevent_id),
             *(
                 gracedb.create_tag.s(filename, 'public', superevent_id)
@@ -722,11 +724,6 @@ def preliminary_initial_update_alert(filenames, superevent_id, alert_type,
                 ]
                 if filename is not None
             )
-        )
-        |
-        group(
-            gracedb.download.si(em_bright_filename, superevent_id),
-            gracedb.download.si(p_astro_filename, superevent_id),
         )
         |
         _create_voevent.s(
