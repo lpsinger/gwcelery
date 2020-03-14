@@ -231,8 +231,7 @@ def handle_grb_lvalert(alert):
                                          group='CBC', searches=['GRB'])
         elif 'S' in graceid:
             # launch standard GRB search based on group
-            preferred_event_id = alert['object']['preferred_event']
-            gw_group = gracedb.get_group(preferred_event_id)
+            gw_group = alert['object']['preferred_event_data']['group']
             raven.coincidence_search(graceid, alert['object'],
                                      group=gw_group, searches=['GRB'])
             if gw_group == 'CBC':
@@ -252,8 +251,7 @@ def handle_grb_lvalert(alert):
             se_id, ext_ids = _get_superevent_ext_ids(graceid, alert['object'],
                                                      'compare')
             superevent = gracedb.get_superevent(se_id)
-            preferred_event_id = superevent['preferred_event']
-            gw_group = gracedb.get_group(preferred_event_id)
+            gw_group = alert['object']['preferred_event_data']['group']
             raven.raven_pipeline([alert['object']], se_id, superevent,
                                  gw_group)
         if _skymaps_are_ready(alert['object'], alert['data']['name'],
@@ -307,9 +305,8 @@ def handle_snews_lvalert(alert):
         raven.coincidence_search(graceid, alert['object'],
                                  group='Burst', pipelines=['SNEWS'])
     elif 'S' in graceid:
-        preferred_event_id = gracedb.get_superevent(graceid)['preferred_event']
-        group = gracedb.get_event(preferred_event_id)['group']
-        if alert['alert_type'] == 'new' and group == 'Burst':
+        gw_group = alert['object']['preferred_event_data']['group']
+        if alert['alert_type'] == 'new' and gw_group == 'Burst':
             raven.coincidence_search(graceid, alert['object'],
                                      group=group, pipelines=['SNEWS'])
 

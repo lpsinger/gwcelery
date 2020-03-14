@@ -15,6 +15,9 @@
         "gw_events": ["M4634"],
         "em_events": [],
         "labels": [],
+        "preferred_event_data": {
+            "group": "Burst"
+        },
         "links": {
             "files": "https://gracedb-dev1.ligo.org/api/superevents/S180616h/files/",
             "logs": "https://gracedb-dev1.ligo.org/api/superevents/S180616h/logs/",

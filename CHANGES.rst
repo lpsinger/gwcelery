@@ -13,6 +13,9 @@ Changelog
 
 -   Enable receipt confirmation of early warning GCN notices.
 
+-   Reduce calls in external_triggers.py by getting data from new field
+    'preferred_event_data'.
+
 0.12.1 (2020-03-12)
 -------------------
 
