@@ -26,7 +26,9 @@ result_expires = 7200
 
 # Use pickle serializer, because it supports byte values.
 accept_content = ['json', 'pickle']
-event_serializer = result_serializer = task_serializer = 'pickle'
+event_serializer = 'json'
+result_serializer = 'pickle'
+task_serializer = 'pickle'
 
 # Compress tasks to reduce bandwidth in and out of Redis.
 result_compression = task_compression = 'zstandard'
