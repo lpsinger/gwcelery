@@ -11,6 +11,8 @@ Changelog
 -   Enable Zstandard compression of tasks and results to reduce bandwidth into
     and out of Redis.
 
+-   Enable receipt confirmation of early warning GCN notices.
+
 0.12.1 (2020-03-12)
 -------------------
 

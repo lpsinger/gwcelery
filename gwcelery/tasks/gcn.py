@@ -99,7 +99,8 @@ def send(self, message):
                            'subscribers connected to the GCN broker.')
 
 
-@handler(gcn.NoticeType.LVC_PRELIMINARY,
+@handler(gcn.NoticeType.LVC_EARLY_WARNING,
+         gcn.NoticeType.LVC_PRELIMINARY,
          gcn.NoticeType.LVC_INITIAL,
          gcn.NoticeType.LVC_UPDATE,
          gcn.NoticeType.LVC_RETRACTION,
