@@ -18,7 +18,7 @@
 5.  [ ] The playground deployment has run for at least 10 minutes.
 6.  [ ] The [Flower monitor](https://emfollow-playground.ligo.caltech.edu/flower) is reachable and shows no unexpected task failures.
 7.  [ ] The [Flask dashboard](https://emfollow-playground.ligo.caltech.edu/gwcelery) is reachable.
-8.  [ ] The playground deployment is connected to LVAlert.
+8.  [ ] The playground deployment is connected to LVAlert (in Flower, find the main gwcelery-worker, click Other, and look at the list of subscribed LVAlert nodes).
 9.  [ ] The playground deployment is connected to GCN (receiving only).
 
 ## Mock events

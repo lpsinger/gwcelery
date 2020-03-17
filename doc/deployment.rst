@@ -84,7 +84,9 @@ change log.
     with the checklist. Submit the issue.
 
     Complete the items in the checklist and check them off one by one on the
-    release issue before proceeding to the next step.
+    release issue before proceeding to the next step. On occasion, an external
+    service like GCN might not be available. If so, cross out the checklist
+    item and note the reason.
 
     .. image:: _static/acceptance-tests-checklist.png
        :alt: Screen shot of a release issue
@@ -110,6 +112,9 @@ change log.
     change log:
 
         ``git push && git push --tags``
+
+    You will need the appropriate permission to push the new tag. If required,
+    contact one of the maintainers.
 
 7.  Wait a couple minutes, and then verify that the new release has been
     published on our PyPI project page, https://pypi.org/project/gwcelery/.
