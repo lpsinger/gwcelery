@@ -254,8 +254,11 @@ def handle_grb_lvalert(alert):
             superevent = gracedb.get_superevent(se_id)
             preferred_event_id = superevent['preferred_event']
             gw_group = gracedb.get_group(preferred_event_id)
+            tl, th = raven._time_window(graceid, gw_group,
+                                        [alert['object']['pipeline']],
+                                        [alert['object']['search']])
             raven.raven_pipeline([alert['object']], se_id, superevent,
-                                 gw_group)
+                                 tl, th, gw_group)
         if _skymaps_are_ready(alert['object'], alert['data']['name'],
                               'combine'):
             #  if both sky maps present and a raven alert, create combined

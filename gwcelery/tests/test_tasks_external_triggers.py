@@ -243,14 +243,16 @@ def test_handle_skymap_comparison(mock_get_event, mock_get_superevent,
                  "graceid": "E1212",
                  "group": "External",
                  "labels": ["EM_COINC", "EXT_SKYMAP_READY", "SKYMAP_READY"],
-                 "superevent": "S1234"
+                 "superevent": "S1234",
+                 "pipeline": "Fermi",
+                 "search": "GRB"
                        }
              }
     external_triggers.handle_grb_lvalert(alert)
     mock_raven_pipeline.assert_called_once_with([alert['object']], 'S1234',
                                                 {'superevent_id': 'S1234',
                                                  'preferred_event': 'G1234'},
-                                                'CBC')
+                                                -5, 1, 'CBC')
 
 
 @patch('gwcelery.tasks.external_skymaps.create_combined_skymap')
