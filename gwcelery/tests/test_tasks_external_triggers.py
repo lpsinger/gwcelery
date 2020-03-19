@@ -184,11 +184,13 @@ def test_handle_replace_grb_event(mock_get_event, mock_get_events,
         mock_create_label.assert_called_once_with('NOT_GRB', 'E1')
 
 
+@patch('gwcelery.tasks.gracedb.get_group', return_value='CBC')
 @patch('gwcelery.tasks.gracedb.create_label.run')
 @patch('gwcelery.tasks.gracedb.get_labels',
        return_value=['SKYMAP_READY'])
 def test_handle_create_skymap_label_from_ext_event(mock_get_labels,
-                                                   mock_create_label):
+                                                   mock_create_label,
+                                                   mock_get_group):
     alert = {"uid": "E1212",
              "alert_type": "label_added",
              "data": {"name": "EM_COINC"},
@@ -202,8 +204,10 @@ def test_handle_create_skymap_label_from_ext_event(mock_get_labels,
     mock_create_label.assert_called_once_with('SKYMAP_READY', 'E1212')
 
 
+@patch('gwcelery.tasks.gracedb.get_group', return_value='CBC')
 @patch('gwcelery.tasks.gracedb.create_label.run')
-def test_handle_create_skymap_label_from_superevent(mock_create_label):
+def test_handle_create_skymap_label_from_superevent(mock_create_label,
+                                                    mock_get_group):
     alert = {"uid": "S1234",
              "alert_type": "label_added",
              "data": {"name": "SKYMAP_READY"},
@@ -218,6 +222,7 @@ def test_handle_create_skymap_label_from_superevent(mock_create_label):
     mock_create_label.assert_called_once_with('SKYMAP_READY', 'E1212')
 
 
+@patch('gwcelery.tasks.gracedb.get_group', return_value='CBC')
 @patch('gwcelery.tasks.raven.raven_pipeline')
 @patch('gwcelery.tasks.gracedb.get_superevent',
        return_value={
@@ -230,7 +235,7 @@ def test_handle_create_skymap_label_from_superevent(mock_create_label):
            'group': 'CBC'
                     })
 def test_handle_skymap_comparison(mock_get_event, mock_get_superevent,
-                                  mock_raven_pipeline):
+                                  mock_raven_pipeline, mock_get_group):
     alert = {"uid": "E1212",
              "alert_type": "label_added",
              "data": {"name": "SKYMAP_READY"},
@@ -238,10 +243,7 @@ def test_handle_skymap_comparison(mock_get_event, mock_get_superevent,
                  "graceid": "E1212",
                  "group": "External",
                  "labels": ["EM_COINC", "EXT_SKYMAP_READY", "SKYMAP_READY"],
-                 "superevent": "S1234",
-                 "preferred_event_data": {
-                     "group": "CBC"
-                                         }
+                 "superevent": "S1234"
                        }
              }
     external_triggers.handle_grb_lvalert(alert)
@@ -388,13 +390,14 @@ def test_handle_sntrig_creation(mock_raven_coincidence_search, calls, path):
 
 @patch('gwcelery.tasks.gracedb.get_superevent',
        return_value={'preferred_event': 'M4634'})
+@patch('gwcelery.tasks.gracedb.get_group', return_value='CBC')
 @patch('gwcelery.tasks.raven.coincidence_search')
 def test_handle_superevent_cbc_creation(mock_raven_coincidence_search,
+                                        mock_get_group,
                                         mock_get_superevent):
     """Test dispatch of an LVAlert message for a CBC superevent creation."""
     # Test LVAlert payload.
-    alert = \
-        resource_json(__name__, 'data/lvalert_cbc_superevent_creation.json')
+    alert = resource_json(__name__, 'data/lvalert_superevent_creation.json')
 
     # Run function under test
     external_triggers.handle_grb_lvalert(alert)
@@ -411,13 +414,14 @@ def test_handle_superevent_cbc_creation(mock_raven_coincidence_search,
 
 @patch('gwcelery.tasks.gracedb.get_superevent',
        return_value={'preferred_event': 'M4634'})
+@patch('gwcelery.tasks.gracedb.get_group', return_value='Burst')
 @patch('gwcelery.tasks.raven.coincidence_search')
 def test_handle_superevent_burst_creation(mock_raven_coincidence_search,
+                                          mock_get_group,
                                           mock_get_superevent):
     """Test dispatch of an LVAlert message for a burst superevent creation."""
     # Test LVAlert payload.
-    alert = \
-        resource_json(__name__, 'data/lvalert_burst_superevent_creation.json')
+    alert = resource_json(__name__, 'data/lvalert_superevent_creation.json')
 
     # Run function under test
     external_triggers.handle_grb_lvalert(alert)
