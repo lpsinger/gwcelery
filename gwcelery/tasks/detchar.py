@@ -165,13 +165,13 @@ def omegascan(t0, graceid):
     """
     durs = app.conf['omegascan_durations']
 
-    # Skip early warning events (ie queries for times before now)
+    # Delay for early warning events (ie queries for times before now)
     if t0 + max(durs) > Time.now().gps:
         log.info("Delaying omegascan because %s is in the future",
                  graceid)
-        waittime = t0 - Time.now().gps + max(durs)
+        waittime = t0 - Time.now().gps + max(durs) + 10
     else:
-        waittime = max(durs)
+        waittime = max(durs) + 10
 
     group(
         make_omegascan.s(ifo, t0, durs).set(countdown=waittime)
