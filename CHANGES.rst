@@ -17,6 +17,8 @@ Changelog
     coincident event. Update both time and spatial FAR within superevent
     when publishable.
 
+-   Fix bug where the superevent handler can trigger on external events.
+
 0.12.1 (2020-03-12)
 -------------------
 
