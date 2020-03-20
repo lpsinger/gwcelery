@@ -6,6 +6,8 @@ superevents.
 *   Primary logic to respond to low latency triggers contained in
     :meth:`process` function.
 """
+from itertools import filterfalse
+
 from celery.utils.log import get_task_logger
 from ligo.segments import segment, segmentlist
 
@@ -355,7 +357,9 @@ def select_preferred_event(events):
         list of event dictionaries
 
     """
-    g_events = list(filter(lambda x: x['graceid'].startswith('G'), events))
+    # FIXME: Requires robust determination of an External event
+    g_events = list(
+        filterfalse(lambda x: x['graceid'].startswith('E'), events))
     return max(g_events, key=keyfunc)
 
 
