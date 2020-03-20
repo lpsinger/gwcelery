@@ -346,8 +346,8 @@ def get_instruments_in_ranking_statistic(event):
 
 @app.task(shared=False)
 def select_preferred_event(events):
-    """Select the preferred event out of a list of events, typically contents
-    of a superevent, based on :meth:`keyfunc`.
+    """Select the preferred event out of a list of G events, typically
+    contents of a superevent, based on :meth:`keyfunc`.
 
     Parameters
     ----------
@@ -355,7 +355,8 @@ def select_preferred_event(events):
         list of event dictionaries
 
     """
-    return max(events, key=keyfunc)
+    g_events = list(filter(lambda x: x['graceid'].startswith('G'), events))
+    return max(g_events, key=keyfunc)
 
 
 def is_complete(event):
