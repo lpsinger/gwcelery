@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.12.2 (unreleased)
+0.12.2 (2020-03-20)
 -------------------
 
 -   Skip detchar checks for events which occur in the future.
