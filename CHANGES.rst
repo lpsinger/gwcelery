@@ -1,6 +1,23 @@
 Changelog
 =========
 
+0.12.1.1 (unreleased)
+---------------------
+
+-   Fix a bug that was introduced in GWCelery 0.12.1 that broke BAYESTAR
+    localizations for PyCBC events. In 0.12.1, the BAYESTAR data handling
+    was changed to merge together the contents of the coinc.xml and psd.xml.gz
+    files into a single XML document so that BAYESTAR was not sensitive to the
+    order in which the two files were passed to it. PyCBC includes the PSD data
+    in its initial upload, and so its psd.xml.gz file is just a copy of
+    coinc.xml. Merging the two documents together resulted in a single file
+    with two copies of every LIGO-LW table, which broke subsequent parsing.
+
+    Fix this by adding a special case for PyCBC to download the coinc.xml file
+    only. This has the nice side effect of reducing the latency for PyCBC
+    events because it is no longer necessary to wait for the additional GraceDB
+    REST API calls involved in uploading and download the additional file.
+
 0.12.1 (2020-03-12)
 -------------------
 
