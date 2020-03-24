@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.12.3 (unreleased)
+0.12.3 (2020-03-24)
 -------------------
 
 -   Fix a bug that was introduced in GWCelery 0.12.1 that broke BAYESTAR
