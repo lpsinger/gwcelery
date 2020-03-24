@@ -13,10 +13,10 @@ Changelog
     coinc.xml. Merging the two documents together resulted in a single file
     with two copies of every LIGO-LW table, which broke subsequent parsing.
 
-    Fix this by adding a special case for PyCBC to download the coinc.xml only.
-    This has the nice side effect of reducing the latency for PyCBC events
-    because it is no longer necessary to wait for the additional GraceDB REST
-    API calls involved in uploading and download the additional file.
+    Fix this by adding a special case for PyCBC to download the coinc.xml file
+    only. This has the nice side effect of reducing the latency for PyCBC
+    events because it is no longer necessary to wait for the additional GraceDB
+    REST API calls involved in uploading and download the additional file.
 
 0.12.2 (2020-03-20)
 -------------------
