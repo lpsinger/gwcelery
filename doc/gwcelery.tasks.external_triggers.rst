@@ -59,6 +59,15 @@ Flow Chart
         href = "../gwcelery.tasks.external_triggers.html#gwcelery.tasks.external_triggers.handle_gcn"
         label = <<B><FONT face="monospace">handle_gcn</FONT></B>>
 
+        Ignore_gcn [
+            label="Ignore"
+        ]
+
+        Likely_noise [
+            shape=diamond
+            label="Is the event\nlikely non-astrophysical?"
+        ]
+
         Event_exists_in_Gracedb [
             shape=diamond
             label="Does the event already\nexist in gracedb"
@@ -71,18 +80,26 @@ Flow Chart
         Create_new_event_in_gracedb [
             label="Create a new event\nin gracedb"
         ]
+  
+        Grab_create_skymap [
+            label="Grab and/or\ncreate external sky map"
+        ]
     }
 
-    SNEWS_GCN -> Event_exists_in_Gracedb [
+    SNEWS_GCN -> Likely_noise [
         lhead = cluster_gcn_handle
     ]
 
-    GRB_GCN -> Event_exists_in_Gracedb [
+    GRB_GCN -> Likely_noise [
         lhead = cluster_gcn_handle
     ]
 
+    Likely_noise -> Event_exists_in_Gracedb[label="no"]
+    Likely_noise -> Ignore_gcn[label="yes"]
     Event_exists_in_Gracedb -> Update_existing_event_in_gracedb[label="yes"]
     Event_exists_in_Gracedb -> Create_new_event_in_gracedb[label="no"]
+    Update_existing_event_in_gracedb -> Grab_create_skymap
+    Create_new_event_in_gracedb -> Grab_create_skymap
 
     GRB_External_Trigger_or_Superevent_LVAlert [
         style="rounded"
@@ -97,56 +114,64 @@ Flow Chart
             label="Ignore"
         ]
 
-        Is_New_ExtTrig_LVAlert [
+        Is_New_LVAlert [
             shape=diamond
-            label="Is this a new type GRB\nexternal trigger LVAlert?"
+            label="Is this a\nnew type LVAlert?"
         ]
 
-        Is_New_Superevent_LVAlert [
+        Is_Swift_Subthresh_LVAlert [
             shape=diamond
-            label="Is this a new type\nsuperevent LVAlert?"
+            label="Is this a\nSwift Targeted Subthreshold\nLVAlert?"
         ]
 
-        Is_Label_Superevent_LVAlert [
-           shape=diamond
-           label="Is this a label type\nsuperevent LVAlert?"
+        Create_Swift_Skymap [
+            label="Create Swift sky map"
         ]
 
-        Is_Label_EM_COINC [
+        Is_Label_Exttrig_LVAlert [
             shape=diamond
-            label="Is it an EM_COINC\nlabel?"
+            label="Is this a label type\nexternal event LVAlert?"
         ]
 
         Perform_Raven_Search [
             label="Perform Raven\ncoincidence search(es)"
         ]
 
+        Does_Label_Launch_Pipeline [
+            shape=diamond
+            label="Does label complete the\nset indicating a coincidence and both\nsky maps are available?"
+        ]
+ 
+        Launch_Raven_Pipeline [
+            label="Launch Raven\nPipeline"
+        ]
+
+        Does_Label_Launch_Combined_Skymaps [
+            shape=diamond
+            label="Does label complete the\nset indicating RAVEN alert and both\nsky maps are available?"
+        ]
+
         Create_Combined_Skymap [
-            label="Create combined LVC-Fermi\nsky map"
+            label="Create combined GW-GRB\nsky map"
         ]
 
-        Calculate_Combined_FAR [
-            label="Calculate FAR\n of GRB external\ntrigger-GW temporal\ncoincidence"
-        ]
-
-        Calculate_Combined_Spacetime_FAR [
-            label="Calculate FAR\n of GRB external\ntrigger-GW space-time\ncoincidence"
-        ]
     }
 
-    GRB_External_Trigger_or_Superevent_LVAlert -> Is_New_ExtTrig_LVAlert [
+    GRB_External_Trigger_or_Superevent_LVAlert -> Is_New_LVAlert [
         lhead = cluster_grb_lvalert_handle
     ]
-    Is_New_ExtTrig_LVAlert -> Perform_Raven_Search[label="yes"]
-    Is_New_ExtTrig_LVAlert -> Is_New_Superevent_LVAlert[label="no"]
-    Is_New_Superevent_LVAlert -> Perform_Raven_Search[label="yes"]
-    Is_New_Superevent_LVAlert -> Is_Label_Superevent_LVAlert[label="no"];
-    Is_Label_Superevent_LVAlert -> Is_Label_EM_COINC[label="yes"];
-    Is_Label_Superevent_LVAlert -> Ignore[label="no"];
-    Is_Label_EM_COINC -> Create_Combined_Skymap[label="yes"];
-    Create_Combined_Skymap -> Calculate_Combined_FAR
-    Calculate_Combined_FAR -> Calculate_Combined_Spacetime_FAR
-    Is_Label_EM_COINC -> Ignore[label="no"]
+    Is_New_LVAlert -> Is_Swift_Subthresh_LVAlert[label="yes"]
+    Is_Swift_Subthresh_LVAlert -> Create_Swift_Skymap[label="yes"]
+    Create_Swift_Skymap -> Perform_Raven_Search
+    Is_Swift_Subthresh_LVAlert -> Perform_Raven_Search[label="no"]
+    Is_New_LVAlert -> Is_Label_Exttrig_LVAlert[label="no"]
+    Is_Label_Exttrig_LVAlert -> Does_Label_Launch_Pipeline[label="yes"]
+    Is_Label_Exttrig_LVAlert -> Ignore[label="no"]
+    Does_Label_Launch_Pipeline -> Launch_Raven_Pipeline[label="yes"]
+    Does_Label_Launch_Pipeline -> Does_Label_Launch_Combined_Skymaps[label="no"]
+    Launch_Raven_Pipeline -> Does_Label_Launch_Combined_Skymaps
+    Does_Label_Launch_Combined_Skymaps -> Create_Combined_Skymap[label="yes"]
+    Does_Label_Launch_Combined_Skymaps -> Ignore[label="no"]
 
     SNEWS_External_Trigger_or_Superevent_LVAlert [
         style="rounded"

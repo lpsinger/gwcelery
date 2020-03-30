@@ -80,9 +80,12 @@ def handle_snews_gcn(payload):
              queue='exttrig',
              shared=False)
 def handle_grb_gcn(payload):
-    """Handles the payload from Fermi and Swift alerts.
+    """Handles the payload from Fermi, Swift, INTEGRAL, and AGILE MCAL
+    GCN notices.
 
-    Prepares the alert to be sent to graceDB as 'E' events.
+    Filters out candidates likely to be noise. Creates external events
+    from the notice if new notice, otherwise updates existing event. Then
+    creates and/or grabs external sky map to be uploaded to the external event.
     """
     root = etree.fromstring(payload)
     u = urlparse(root.attrib['ivorn'])
@@ -191,8 +194,8 @@ def handle_grb_lvalert(alert):
     Notes
     -----
     This LVAlert message handler is triggered by creating a new superevent or
-    GRB external trigger event, or applying the ``EM_COINC`` label to any
-    superevent:
+    GRB external trigger event, or a label associated with completeness of sky
+    maps:
 
     * Any new event triggers a coincidence search with
       :meth:`gwcelery.tasks.raven.coincidence_search`.
@@ -207,6 +210,7 @@ def handle_grb_lvalert(alert):
     # Determine GraceDB ID
     graceid = alert['uid']
 
+    # launch searches
     if alert['alert_type'] == 'new':
         if alert['object'].get('group') == 'External':
             # Create and upload Swift sky map for the joint targeted
@@ -244,11 +248,13 @@ def handle_grb_lvalert(alert):
                         searches=['SubGRB', 'SubGRBTargeted'],
                         pipelines=[pipeline])
 
+    # rerun raven pipeline or created combined sky map when sky maps are
+    # available
     elif alert['alert_type'] == 'label_added' and \
             alert['object'].get('group') == 'External':
         if _skymaps_are_ready(alert['object'], alert['data']['name'],
                               'compare'):
-            #  if both sky maps present and a coincidence, compare sky maps
+            # if both sky maps present and a coincidence, compare sky maps
             se_id, ext_ids = _get_superevent_ext_ids(graceid, alert['object'],
                                                      'compare')
             superevent = gracedb.get_superevent(se_id)
@@ -261,21 +267,21 @@ def handle_grb_lvalert(alert):
                                  tl, th, gw_group)
         if _skymaps_are_ready(alert['object'], alert['data']['name'],
                               'combine'):
-            #  if both sky maps present and a raven alert, create combined
-            #  skymap
+            # if both sky maps present and a raven alert, create combined
+            # skymap
             se_id, ext_id = _get_superevent_ext_ids(graceid, alert['object'],
                                                     'combine')
             external_skymaps.create_combined_skymap(se_id, ext_id)
         elif 'EM_COINC' in alert['object']['labels']:
-            #  if not complete, check if GW sky map; apply label to external
-            #  event if GW sky map
+            # if not complete, check if GW sky map; apply label to external
+            # event if GW sky map
             se_labels = gracedb.get_labels(alert['object']['superevent'])
             if 'SKYMAP_READY' in se_labels:
                 gracedb.create_label.si('SKYMAP_READY', graceid).delay()
     elif alert['alert_type'] == 'label_added' and 'S' in graceid and \
             'SKYMAP_READY' in alert['object']['labels']:
-        #  if sky map in superevent, apply label to all external events
-        #  at the time
+        # if sky map in superevent, apply label to all external events
+        # at the time
         group(
             gracedb.create_label.si('SKYMAP_READY', ext_id)
             for ext_id in alert['object']['em_events']
@@ -293,8 +299,7 @@ def handle_snews_lvalert(alert):
     Notes
     -----
     This LVAlert message handler is triggered by creating a new superevent or
-    SN external trigger event, or applying the ``EM_COINC`` label to any
-    superevent:
+    SN external trigger event:
 
     * Any new event triggers a coincidence search with
       :meth:`gwcelery.tasks.raven.coincidence_search`.

@@ -14,8 +14,9 @@ log = get_task_logger(__name__)
 
 @app.task(shared=False)
 def calculate_coincidence_far(superevent, exttrig, tl, th):
-    """Compute temporal coincidence FAR for external trigger and superevent
-    coincidence by calling ligo.raven.search.calc_signif_gracedb.
+    """Compute coincidence FAR for external trigger and superevent
+    coincidence by calling ligo.raven.search.calc_signif_gracedb,
+    using sky map info if available.
 
     Parameters
     ----------
@@ -60,8 +61,8 @@ def calculate_coincidence_far(superevent, exttrig, tl, th):
 @app.task(shared=False)
 def coincidence_search(gracedb_id, alert_object, group=None, pipelines=[],
                        searches=None):
-    """Perform ligo-raven search for coincidences.
-    The ligo.raven.search.search method applies EM_COINC label on its own.
+    """Perform ligo-raven search for coincidences. Determines time window to
+    use. If events found, launches raven pipeline.
 
     Parameters
     ----------
@@ -86,7 +87,7 @@ def coincidence_search(gracedb_id, alert_object, group=None, pipelines=[],
 
 
 def _time_window(gracedb_id, group, pipelines, searches):
-    """Determine the correct time window given the parameters of the search.
+    """Determine the time window to use given the parameters of the search.
 
     Parameters
     ----------
@@ -134,7 +135,6 @@ def _time_window(gracedb_id, group, pipelines, searches):
 def search(gracedb_id, alert_object, tl=-5, th=5, group=None,
            pipelines=[], searches=[]):
     """Perform ligo-raven search for coincidences.
-    The ligo.raven.search.search method applies EM_COINC label on its own.
 
     Parameters
     ----------
@@ -240,11 +240,11 @@ def preferred_superevent(raven_search_results):
 @app.task(shared=False)
 def trigger_raven_alert(coinc_far_dict, superevent, gracedb_id,
                         ext_event, gw_group):
-    """Determine whether an event should be published as a public alert.
-    If yes, then launches an alert by applying `RAVEN_ALERT` to the preferred
+    """Determine whether an event should be published as a preliminary alert.
+    If yes, then triggers an alert by applying `RAVEN_ALERT` to the preferred
     event.
 
-    All of the following conditions must be true for a public alert:
+    All of the following conditions must be true for a preliminary alert:
 
     *   The external event must be a threshold GRB or SNEWS event.
     *   If triggered on a SNEW event, the GW false alarm rate must pass
@@ -254,6 +254,7 @@ def trigger_raven_alert(coinc_far_dict, superevent, gracedb_id,
         :obj:`~gwcelery.conf.preliminary_alert_trials_factor` configuration
         setting, is less than or equal to
         :obj:`~gwcelery.conf.preliminary_alert_far_threshold`.
+    *   If the external event is from Swift, both sky maps must be present.
 
     Parameters
     ----------

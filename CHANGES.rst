@@ -17,6 +17,9 @@ Changelog
 
 -   Skip the preliminary alert timeout for early warning events.
 
+-   Update the documentation on RAVEN functions and external triggers flow
+    chart.
+
 0.12.3 (2020-03-24)
 -------------------
 
