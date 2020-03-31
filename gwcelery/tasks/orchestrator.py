@@ -595,7 +595,7 @@ def preliminary_alert(event, superevent_id, annotation_prefix='',
             |
             preliminary_initial_update_alert.s(
                 superevent_id,
-                ('earlywarning' if event['search'] == 'EarlyWarning'
+                ('earlywarning' if 'EARLY_WARNING' in event['labels']
                  else 'preliminary'),
                 labels=event['labels'])
         )

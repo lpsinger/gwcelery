@@ -7,6 +7,9 @@ Changelog
 -   Set FAR threshold for early warning alerts to once per day. With the trials
     factor of 5, the effective false alarm rate threshold is once per 5 days.
 
+-   Change to identify early warning events by the label `EARLY_WARNING`
+    instead of the search.
+
 0.12.3 (2020-03-24)
 -------------------
 

@@ -418,7 +418,7 @@ def _should_publish(event):
     """
     group = event['group'].lower()
     trials_factor = app.conf['preliminary_alert_trials_factor'][group]
-    if event.get('search') == 'EarlyWarning':
+    if 'EARLY_WARNING' in event['labels']:
         far_threshold = app.conf['early_warning_alert_far_threshold']
     else:
         far_threshold = app.conf['preliminary_alert_far_threshold'][group]
