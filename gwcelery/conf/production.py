@@ -61,3 +61,7 @@ sentry_environment = 'production'
 """Record this `environment tag
 <https://docs.sentry.io/enriching-error-data/environments/>`_ in Sentry log
 messages."""
+
+only_alert_for_mdc = True
+"""If True, then only sends alerts for MDC events. Useful for times outside
+of observing runs."""

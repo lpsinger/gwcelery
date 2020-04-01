@@ -12,6 +12,9 @@ Changelog
 
 -   Inhibit GCNs for superevents with the INJ label.
 
+-   Add configuration variable to disable all but MDC alerts from GCN, and 
+    set that variable to True on the production instance.
+
 0.12.3 (2020-03-24)
 -------------------
 

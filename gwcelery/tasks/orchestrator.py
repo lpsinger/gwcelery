@@ -588,6 +588,16 @@ def preliminary_alert(event, superevent_id, annotation_prefix='',
         ) if event['group'] == 'CBC' else identity.s(None)
     )
 
+    # Switch for disabling all but MDC alerts.
+    if app.conf['only_alert_for_mdc']:
+        if event.get('search') != 'MDC':
+            canvas |= gracedb.upload.s(
+                None, None, superevent_id,
+                ("Skipping alert because gwcelery has been configured to only"
+                 " send alerts for MDC events."))
+            canvas.apply_async(priority=priority)
+            return
+
     # Send GCN notice and upload GCN circular draft for online events.
     if is_publishable and initiate_voevent:
         canvas |= (

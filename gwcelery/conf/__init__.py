@@ -323,5 +323,9 @@ mock_events_simulate_multiple_uploads = False
 """If True, then upload each mock event several times in rapid succession with
 random jitter in order to simulate multiple pipeline uploads."""
 
+only_alert_for_mdc = False
+"""If True, then only sends alerts for MDC events. Useful for times outside
+of observing runs."""
+
 # Delete imported modules so that they do not pollute the config object
 del os, getpass

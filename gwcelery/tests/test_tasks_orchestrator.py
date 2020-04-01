@@ -464,3 +464,35 @@ def test_alerts_skip_inj(mock_gcn_send):
         'preliminary',
         labels=['INJ'])
     mock_gcn_send.assert_not_called()
+
+
+@pytest.fixture
+def only_mdc_alerts():
+    old = app.conf['only_alert_for_mdc']
+    app.conf['only_alert_for_mdc'] = True
+    yield
+    app.conf['only_alert_for_mdc'] = old
+
+
+@patch('gwcelery.tasks.skymaps.flatten')
+@patch('gwcelery.tasks.gracedb.download')
+@patch('gwcelery.tasks.gracedb.upload')
+@patch('gwcelery.tasks.orchestrator.preliminary_initial_update_alert')
+def test_only_mdc_alerts_switch(mock_alert, mock_upload, mock_download,
+                                mock_flatten, only_mdc_alerts):
+    """Test to ensure that if the `only_alert_for_mdc` configuration variable
+    is True, only events with search type "MDC" can result in alerts.
+    """
+    for search in ['AllSky', 'GRB', 'BBH']:
+        event_dictionary = {'graceid': 'G2',
+                            'gpstime': 1239917954.40918,
+                            'far': 5.57979637960671e-06,
+                            'group': 'CBC',
+                            'search': search,
+                            'instruments': 'H1,L1',
+                            'pipeline': 'spiir',
+                            'offline': False,
+                            'labels': []}
+        superevent_id = 'S1234'
+        orchestrator.preliminary_alert(event_dictionary, superevent_id)
+        mock_alert.assert_not_called()
