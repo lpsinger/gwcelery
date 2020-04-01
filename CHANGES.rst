@@ -10,6 +10,8 @@ Changelog
 -   Change to identify early warning events by the label `EARLY_WARNING`
     instead of the search.
 
+-   Inhibit GCNs for superevents with the INJ label.
+
 0.12.3 (2020-03-24)
 -------------------
 

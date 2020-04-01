@@ -688,6 +688,9 @@ def preliminary_initial_update_alert(filenames, superevent_id, alert_type,
     if filenames is None:
         return
 
+    if 'INJ' in labels:
+        return
+
     skymap_filename, em_bright_filename, p_astro_filename = filenames
     skymap_needed = (skymap_filename is None)
     em_bright_needed = (em_bright_filename is None)

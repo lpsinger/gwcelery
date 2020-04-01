@@ -454,3 +454,13 @@ def test_handle_cbc_event_ignored(mock_localize,
     orchestrator.handle_cbc_event(alert)
     mock_localize.assert_not_called()
     mock_classifier.assert_not_called()
+
+
+@patch('gwcelery.tasks.gcn.send')
+def test_alerts_skip_inj(mock_gcn_send):
+    orchestrator.preliminary_initial_update_alert(
+        ('bayestar.fits.gz', 'em_bright.json', 'p_astro.json'),
+        'S1234',
+        'preliminary',
+        labels=['INJ'])
+    mock_gcn_send.assert_not_called()
