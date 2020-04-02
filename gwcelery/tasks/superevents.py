@@ -425,7 +425,8 @@ def _should_publish(event):
     far = trials_factor * event['far']
     raven_coincidence = ('RAVEN_ALERT' in event['labels'])
 
-    return not event['offline'], (far <= far_threshold or raven_coincidence)
+    return (not event['offline'] and 'INJ' not in event['labels'],
+            far <= far_threshold or raven_coincidence)
 
 
 def keyfunc(event):

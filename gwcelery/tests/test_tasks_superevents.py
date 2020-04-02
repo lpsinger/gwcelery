@@ -859,3 +859,20 @@ def test_S190421ar_spiir_scenario(mock_db):    # noqa: N802
         superevents.handle(payload)
         p1.assert_called_once()
         p2.assert_not_called()
+
+
+def test_inj_means_should_not_publish():
+    event_dictionary = {'graceid': 'G1234',
+                        'gpstime': 1239917954.40918,
+                        'far': 5.57979637960671e-06,
+                        'group': 'CBC',
+                        'instruments': 'H1,L1',
+                        'pipeline': 'spiir',
+                        'offline': False,
+                        'labels': ['INJ'],
+                        'extra_attributes': {
+                            'CoincInspiral': {
+                                'snr': 10.5107507705688},
+                            'SingleInspiral': [
+                                {"ifo": ifo} for ifo in ["H1", "L1"]]}}
+    assert superevents.should_publish(event_dictionary) is False
