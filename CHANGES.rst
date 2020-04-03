@@ -15,6 +15,8 @@ Changelog
 -   Add configuration variable to disable all but MDC alerts from GCN, and 
     set that variable to True on the production instance.
 
+-   Skip the preliminary alert timeout for early warning events.
+
 0.12.3 (2020-03-24)
 -------------------
 

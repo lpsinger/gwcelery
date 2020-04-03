@@ -179,7 +179,8 @@ def process(payload):
     if should_publish(event_info):
         gracedb.create_label.delay('ADVREQ', sid)
         if is_complete(event_info):
-            if app.conf['preliminary_alert_timeout']:
+            if app.conf['preliminary_alert_timeout'] \
+                    and 'EARLY_WARNING' not in event_info['labels']:
                 gracedb.create_label.s(FROZEN_LABEL, sid).set(
                     queue='superevent',
                     countdown=app.conf['preliminary_alert_timeout']
