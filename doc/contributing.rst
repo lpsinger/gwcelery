@@ -115,6 +115,7 @@ Documentation strings should be written in the `Numpydoc style`_.
 To build the documentation, run the following command in the top of your source
 directory::
 
+    $ pip install -r docs-requirements.txt
     $ python setup.py build_sphinx
 
 Then to view the documentation, open the file ``build/sphinx/html/index.html``
