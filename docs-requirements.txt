@@ -1,4 +1,4 @@
 celery[redis]>=4.4.0
 matplotlib
 seaborn
-sphinx>=1.8.0b1
+sphinx>=1.8.0b1,<3.0.0  # https://github.com/sphinx-doc/sphinx/issues/7422
