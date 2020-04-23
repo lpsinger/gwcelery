@@ -74,7 +74,9 @@ def localize(coinc_psd, graceid, filename='bayestar.fits.gz',
 
         # Run BAYESTAR
         log.info('starting sky localization')
-        skymap = _bayestar.localize(event)
+        # FIXME: the low frequency cutoff should not be hardcoded.
+        # It should be provided in the coinc.xml file.
+        skymap = _bayestar.localize(event, f_low=15.0)
         skymap.meta['objid'] = str(graceid)
         skymap.meta['url'] = '{}/{}'.format(base_url, graceid)
         log.info('sky localization complete')

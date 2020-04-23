@@ -20,6 +20,9 @@ Changelog
 -   Update the documentation on RAVEN functions and external triggers flow
     chart.
 
+-   Change BAYESTAR low frequency cutoff from 30 Hz (the default value) to
+    15 Hz.
+
 0.12.3 (2020-03-24)
 -------------------
 
