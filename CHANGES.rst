@@ -23,6 +23,8 @@ Changelog
 -   Change BAYESTAR low frequency cutoff from 30 Hz (the default value) to
     15 Hz.
 
+-   Change playground configuration to read O3 replay data from O2 replay data.
+
 0.12.3 (2020-03-24)
 -------------------
 

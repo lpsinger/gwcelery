@@ -173,9 +173,9 @@ uses_gatedhoft = {'gstlal': True,
 """Whether or not a pipeline uses gated h(t). Determines whether or not
 the DMT-DQ_VECTOR will be analyzed for data quality."""
 
-llhoft_glob = '/dev/shm/kafka/{detector}_O2/*.gwf'
+llhoft_glob = '/dev/shm/kafka/{detector}_O3/*.gwf'
 """File glob for playground low-latency h(t) frames. Currently points
-to O2 replay data."""
+to O3 replay data."""
 
 llhoft_channels = {
     'H1:DMT-DQ_VECTOR': 'dmt_dq_vector_bits',
@@ -188,7 +188,7 @@ of a channel and its bitmask, as defined in :mod:`gwcelery.tasks.detchar`."""
 
 idq_channels = ['H1:IDQ-PGLITCH_OVL_32_2048',
                 'L1:IDQ-PGLITCH_OVL_32_2048']
-"""Low-latency iDQ p(glitch) channel names from O2 replay."""
+"""Low-latency iDQ p(glitch) channel names from O3 replay."""
 
 idq_pglitch_thresh = 0.95
 """If P(Glitch) is above this threshold, and
@@ -214,9 +214,9 @@ idq_veto = {'gstlal': False,
 Currently all False, pending iDQ review (should be done before O3).
 """
 
-low_latency_frame_types = {'H1': 'H1_O2_llhoft',
-                           'L1': 'L1_O2_llhoft',
-                           'V1': 'V1_O2_llhoft'}
+low_latency_frame_types = {'H1': 'H1_O3_llhoft',
+                           'L1': 'L1_O3_llhoft',
+                           'V1': 'V1_O3_llhoft'}
 """Types of low latency frames used in Parameter Estimation (see
 :mod:`gwcelery.tasks.inference`) and in cache creation for detchar
 checks (see :mod:`gwcelery.tasks.detchar`).
@@ -226,13 +226,13 @@ high_latency_frame_types = {'H1': None,
                             'L1': None,
                             'V1': None}
 """Types of high latency frames used in Parameter Estimation and in cache
-creation for detchar checks. They do not exist for O2Replay data. (see
+creation for detchar checks. They do not exist for O3Replay data. (see
 :mod:`gwcelery.tasks.inference` and :mod:`gwcelery.tasks.detchar`)
 """
 
-strain_channel_names = {'H1': 'H1:GDS-CALIB_STRAIN_O2Replay',
-                        'L1': 'L1:GDS-CALIB_STRAIN_O2Replay',
-                        'V1': 'V1:Hrec_hoft_16384Hz_O2Replay'}
+strain_channel_names = {'H1': 'H1:GDS-CALIB_STRAIN_O3Replay',
+                        'L1': 'L1:GDS-CALIB_STRAIN_O3Replay',
+                        'V1': 'V1:Hrec_hoft_16384Hz_O3Replay'}
 """Names of h(t) channels used in Parameter Estimation (see
 :mod:`gwcelery.tasks.inference`) and in detchar omegascan creation
 (see :mod:`gwcelery.tasks.detchar`)."""
