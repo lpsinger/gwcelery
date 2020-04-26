@@ -3,6 +3,7 @@ from threading import Thread
 from celery import bootsteps
 from celery.utils.log import get_logger
 from imapclient import IMAPClient
+from imapclient.exceptions import IMAPClientAbortError
 from safe_netrc import netrc
 
 from .signals import email_received
@@ -36,19 +37,24 @@ class Receiver(EmailBootStep):
 
     def _runloop(self):
         username, _, password = netrc().authenticators(self._host)
-        with IMAPClient(self._host, use_uid=True) as conn:
-            conn.login(username, password)
-            conn.select_folder('inbox')
-            while self._running:
-                messages = conn.search()
-                for msgid, data in conn.fetch(messages, ['RFC822']).items():
-                    email_received.send(None, rfc822=data[b'RFC822'])
-                    conn.delete_messages(msgid)
-                conn.idle()
-                responses = []
-                while self._running and not responses:
-                    responses = conn.idle_check(timeout=5)
-                conn.idle_done()
+        while self._running:
+            try:
+                with IMAPClient(self._host, use_uid=True) as conn:
+                    conn.login(username, password)
+                    conn.select_folder('inbox')
+                    while self._running:
+                        messages = conn.search()
+                        for msgid, data in conn.fetch(
+                                messages, ['RFC822']).items():
+                            email_received.send(None, rfc822=data[b'RFC822'])
+                            conn.delete_messages(msgid)
+                        conn.idle()
+                        responses = []
+                        while self._running and not responses:
+                            responses = conn.idle_check(timeout=5)
+                        conn.idle_done()
+            except IMAPClientAbortError:
+                log.exception('IMAP connection aborted')
 
     def create(self, consumer):
         super().create(consumer)
