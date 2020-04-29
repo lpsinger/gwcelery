@@ -27,6 +27,10 @@ Changelog
 
 -   Drop dependency on seaborn.
 
+-   Defer sleekxmpp imports until the VOEvent client starts. This way,
+    sleekxmpp is only imported in the thread that actually uses it. This
+    should speed up worker startup by about 0.1 seconds.
+
 0.12.3 (2020-03-24)
 -------------------
 

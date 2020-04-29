@@ -1,7 +1,6 @@
 from celery import bootsteps
 from celery.utils.log import get_logger
 
-from . import client
 from .signals import lvalert_received
 
 __all__ = ('Receiver',)
@@ -38,7 +37,8 @@ class Receiver(LVAlertBootStep):
 
     def create(self, consumer):
         super().create(consumer)
-        self._client = client.LVAlertClient(
+        from .client import LVAlertClient
+        self._client = LVAlertClient(
             server=consumer.app.conf['lvalert_host'],
             nodes=consumer.app.conf['lvalert_nodes'])
 
