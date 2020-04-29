@@ -13,7 +13,6 @@ from ligo.skymap.tool import ligo_skymap_plot
 from ligo.skymap.tool import ligo_skymap_plot_volume
 from matplotlib import pyplot as plt
 import numpy as np
-import seaborn
 
 from . import gracedb
 from . import lvalert
@@ -187,7 +186,7 @@ def plot_bayes_factor(logb,
         plot_bayes_factor(6.3, title='GWCelery is awesome')
 
     """
-    with seaborn.axes_style('ticks', seaborn.plotting_context('notebook')):
+    with plt.style.context('seaborn-notebook'):
         fig, ax = plt.subplots(figsize=(6, 1.7), tight_layout=True)
         ax.set_xlim(-xlim, xlim)
         ax.set_ylim(-0.5, 0.5)
@@ -215,13 +214,19 @@ def plot_bayes_factor(logb,
         ax2.set_xticks(ticks)
         ax2.xaxis.set_major_formatter(fmt)
         levels = (-xlim, *ticks, xlim)
-        colors = seaborn.color_palette(palette, len(levels) - 1)
-        ax.barh(0, np.diff(levels), 1, levels[:-1], color=colors)
+        colors = plt.get_cmap(palette)(np.arange(1, len(levels)) / len(levels))
+        ax.barh(0, np.diff(levels), 1, levels[:-1],
+                linewidth=plt.rcParams['xtick.major.width'],
+                color=colors, edgecolor='white')
 
         # Plot bar for log Bayes factor value
-        ax.barh(0, logb, 0.5, color='black')
+        ax.barh(0, logb, 0.5, color='black',
+                linewidth=plt.rcParams['xtick.major.width'],
+                edgecolor='white')
 
-        seaborn.despine(fig, ax, top=True, right=True, bottom=True, left=True)
+        for ax_ in fig.axes:
+            for spine in ax_.spines.values():
+                spine.set_visible(False)
 
     return fig, ax
 

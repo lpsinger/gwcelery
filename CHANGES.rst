@@ -25,6 +25,8 @@ Changelog
 
 -   Change playground configuration to read O3 replay data from O2 replay data.
 
+-   Drop dependency on seaborn.
+
 0.12.3 (2020-03-24)
 -------------------
 
