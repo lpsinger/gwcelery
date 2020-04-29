@@ -1,8 +1,9 @@
 from collections import defaultdict
+from importlib import resources
 from unittest import mock
-from pkg_resources import resource_string
 
 from ..tasks import gracedb
+from . import data
 
 
 class DictMock(mock.MagicMock):
@@ -156,7 +157,7 @@ def test_get_labels(mock_gracedb):
 
 @patch('gwcelery.tasks.gracedb.client')
 def test_replace_event(mock_gracedb):
-    text = resource_string(__name__, 'data/fermi_grb_gcn.xml')
+    text = resources.read_binary(data, 'fermi_grb_gcn.xml')
     gracedb.replace_event(graceid='G123456', payload=text)
     mock_gracedb.events.update.assert_called_once_with('G123456',
                                                        filecontents=text)

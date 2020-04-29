@@ -1,3 +1,4 @@
+from importlib import resources
 from io import BytesIO
 import logging
 from unittest.mock import call, patch
@@ -6,29 +7,29 @@ from astropy.time import Time
 from gwpy.timeseries import Bits
 import matplotlib.pyplot as plt
 import numpy as np
-from pkg_resources import resource_filename
 import pytest
 
 from ..import app
 from ..import _version
 from ..tasks import detchar
+from . import data
 
 
 @pytest.fixture
 def llhoft_glob_pass():
     old = app.conf['llhoft_glob']
-    app.conf['llhoft_glob'] = resource_filename(
-        __name__, 'data/llhoft/pass/{detector}/*.gwf')
-    yield
+    with resources.path(data, '') as path:
+        app.conf['llhoft_glob'] = str(path / 'llhoft/pass/{detector}/*.gwf')
+        yield
     app.conf['llhoft_glob'] = old
 
 
 @pytest.fixture
 def llhoft_glob_fail():
     old = app.conf['llhoft_glob']
-    app.conf['llhoft_glob'] = resource_filename(
-        __name__, 'data/llhoft/fail/{detector}/*.gwf')
-    yield
+    with resources.path(data, '') as path:
+        app.conf['llhoft_glob'] = str(path / 'llhoft/fail/{detector}/*.gwf')
+        yield
     app.conf['llhoft_glob'] = old
 
 
@@ -86,8 +87,11 @@ def test_create_cache_old_data(mock_find, llhoft_glob_fail):
     mock_find.assert_called()
 
 
-@patch('gwcelery.tasks.detchar.create_cache', return_value=[resource_filename(
-    __name__, 'data/llhoft/omegascan/scanme.gwf')])
+with resources.path(data, '') as expected_path:
+    expected_path = str(expected_path / 'llhoft/omegascan/scanme.gwf')
+
+
+@patch('gwcelery.tasks.detchar.create_cache', return_value=[expected_path])
 def test_make_omegascan_worked(mock_create_cache, scan_strainname):
     durs = [1, 1, 1]
     t0 = 1126259463

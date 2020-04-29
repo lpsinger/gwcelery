@@ -4,6 +4,7 @@ Data Grid clusters.
 These commands apply to the GWCelery instance that is
 running in the current working directory.
 """
+from importlib import resources
 import json
 import os
 import shlex
@@ -13,9 +14,11 @@ import time
 
 from celery.bin.base import Command
 import lxml.etree
-import pkg_resources
 
-SUBMIT_FILE = pkg_resources.resource_filename(__name__, '../data/gwcelery.sub')
+from .. import data
+
+with resources.path(data, 'gwcelery.sub') as p:
+    SUBMIT_FILE = str(p)
 
 
 def get_constraints():

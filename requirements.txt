@@ -12,6 +12,8 @@ gwpy
 healpy
 humanize == 0.5.1  # pinned by Flower, not respected by pipenv for some reason
 imapclient
+importlib-metadata; python_version<'3.8'
+importlib-resources; python_version<'3.7'
 jinja2
 lalsuite
 ligo-followup-advocate >= 1.1.6

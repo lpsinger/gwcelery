@@ -1,13 +1,14 @@
+from importlib import resources
 import io
 from unittest.mock import call, patch
 
 from glue.ligolw import utils
 from glue.ligolw import lsctables
 from ligo.skymap.io.events.ligolw import ContentHandler
-import pkg_resources
 import pytest
 
 from ..tasks.first2years import pick_coinc, upload_event
+from ..data import first2years as data_first2years
 
 pytest.importorskip('lal')
 
@@ -39,8 +40,7 @@ def test_pick_coinc():
 def test_upload_event(mock_create_signoff, mock_get_superevents,
                       mock_upload, mock_create_event):
     coinc = pick_coinc()
-    psd = pkg_resources.resource_string(
-        __name__, '../data/first2years/2016/psd.xml.gz')
+    psd = resources.read_binary(data_first2years, 'psd.xml.gz')
 
     upload_event()
 

@@ -1,20 +1,20 @@
+from importlib import resources
 import logging
 from unittest.mock import patch
 
 from comet.utility.xml import xml_document
 import lxml.etree
-import pkg_resources
 import pytest
 
 from ..tasks import gcn
+from . import data
 
 logging.basicConfig(level=logging.INFO)
 
 
 def fake_gcn(notice_type):
     # Check the real GCN notice, which is valid.
-    payload = pkg_resources.resource_string(
-        __name__, 'data/G298048-1-Initial.xml')
+    payload = resources.read_binary(data, 'G298048-1-Initial.xml')
     root = lxml.etree.fromstring(payload)
     notice_type = str(int(notice_type))
     root.find(".//Param[@name='Packet_Type']").attrib['value'] = notice_type

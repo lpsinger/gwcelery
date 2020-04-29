@@ -1,10 +1,11 @@
-import json
+from importlib import resources
 from unittest.mock import patch
 
-import pkg_resources
 import pytest
 
 from ..tasks.gcn import validate
+from ..util import read_json
+from . import data
 
 
 @pytest.fixture
@@ -13,12 +14,11 @@ def fake_gcn(celeryconf, monkeypatch):
     def mock_download(filename, graceid):
         assert filename == 'G298048-1-Initial.xml'
         assert graceid == 'G298048'
-        return pkg_resources.resource_string(__name__, 'data/' + filename)
+        return resources.read_binary(data, filename)
 
     def mock_get_log(graceid):
         assert graceid == 'G298048'
-        return json.loads(
-            pkg_resources.resource_string(__name__, 'data/G298048_log.json'))
+        return read_json(data, 'G298048_log.json')
 
     monkeypatch.setattr(
         'gwcelery.tasks.gracedb.download', mock_download)
@@ -26,8 +26,7 @@ def fake_gcn(celeryconf, monkeypatch):
         'gwcelery.tasks.gracedb.get_log', mock_get_log)
 
     # Get the VOEvent.
-    yield pkg_resources.resource_string(
-        __name__, 'data/G298048-1-Initial.xml')
+    yield resources.read_binary(data, 'G298048-1-Initial.xml')
 
 
 @patch('gwcelery.tasks.gracedb.create_tag.run')

@@ -1,3 +1,4 @@
+from importlib import resources
 import json
 import logging
 import os
@@ -5,10 +6,10 @@ import stat
 from unittest.mock import patch
 
 import lxml
-import pkg_resources
 import pytest
 
 from ..tasks import lvalert
+from . import data
 
 
 @pytest.fixture
@@ -25,7 +26,7 @@ def netrc_lvalert(tmpdir):
 
 @pytest.fixture
 def fake_lvalert():
-    with pkg_resources.resource_stream(__name__, 'data/lvalert_xmpp.xml') as f:
+    with resources.open_binary(data, 'lvalert_xmpp.xml') as f:
         root = lxml.etree.parse(f)
     node = root.find('.//{*}items').attrib['node']
     payload = root.find('.//{*}entry').text

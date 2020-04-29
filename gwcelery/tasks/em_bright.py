@@ -10,12 +10,12 @@ from celery.utils.log import get_task_logger
 from ..import app
 from . import gracedb, lvalert
 from .p_astro import _format_prob
-from ..util import NamedTemporaryFile, PromiseProxy, resource_pickle
+from ..util import NamedTemporaryFile, PromiseProxy, read_pickle
 
 NS_CLASSIFIER = PromiseProxy(
-    resource_pickle, ('ligo.data', 'knn_ns_classifier.pkl'))
+    read_pickle, ('ligo.data', 'knn_ns_classifier.pkl'))
 EM_CLASSIFIER = PromiseProxy(
-    resource_pickle, ('ligo.data', 'knn_em_classifier.pkl'))
+    read_pickle, ('ligo.data', 'knn_em_classifier.pkl'))
 
 log = get_task_logger(__name__)
 

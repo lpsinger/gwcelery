@@ -1,16 +1,16 @@
-import os
+from importlib import resources
 import json
 from unittest.mock import call, Mock, patch
 
-import pkg_resources
 import pytest
 
 from .. import app
 from ..tasks import inference
 from ..tasks import orchestrator
 from ..tasks import superevents
-from ..util import resource_json
+from ..util import read_json
 from .test_tasks_skymaps import toy_3d_fits_filecontents  # noqa: F401
+from . import data
 
 
 @pytest.mark.parametrize(  # noqa: F811
@@ -85,7 +85,8 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
         elif filename == 'em_bright.json' and group == 'CBC':
             return json.dumps({'HasNS': 0.0, 'HasRemnant': 0.0})
         elif filename == 'psd.xml.gz':
-            return pkg_resources.resource_filename(__name__, 'data/psd.xml.gz')
+            with resources.path('psd.xml.gz') as p:
+                return str(p)
         elif filename == 'S1234-1-Preliminary.xml':
             return b'fake VOEvent file contents'
         elif filename == 'p_astro.json':
@@ -323,8 +324,7 @@ def mock_download(filename, graceid, *args, **kwargs):
     filenames = {'coinc.xml': 'coinc.xml',
                  'psd.xml.gz': 'psd.xml.gz',
                  'ranking_data.xml.gz': 'ranking_data_G322589.xml.gz'}
-    return pkg_resources.resource_string(
-        __name__, os.path.join('data', filenames[filename]))
+    return resources.read_binary(data, filenames[filename])
 
 
 @patch(
@@ -340,7 +340,7 @@ def test_handle_cbc_event(mock_localize, mock_get_event):
     """Test that an LVAlert message for a newly uploaded PSD file triggers
     BAYESTAR.
     """
-    alert = resource_json(__name__, 'data/lvalert_psd.json')
+    alert = read_json(data, 'lvalert_psd.json')
     orchestrator.handle_cbc_event(alert)
     mock_localize.assert_called_once()
 
@@ -450,7 +450,7 @@ def test_handle_cbc_event_ignored(mock_localize,
                                   mock_classifier,
                                   mock_get_event):
     """Test that unrelated LVAlert messages do not trigger BAYESTAR."""
-    alert = resource_json(__name__, 'data/lvalert_detchar.json')
+    alert = read_json(data, 'lvalert_detchar.json')
     orchestrator.handle_cbc_event(alert)
     mock_localize.assert_not_called()
     mock_classifier.assert_not_called()

@@ -294,8 +294,8 @@
         </div>
         <div class=card-body>
             <ul>
-                {% for package in packages %}
-                <li><a href="https://pypi.org/project/{{package.project_name}}/">{{package.project_name}}</a> {{package.version}}</li>
+                {% for distribution in distributions %}
+                <li><a href="https://pypi.org/project/{{distribution.metadata['Name']}}/">{{distribution.metadata['Name']}}</a> {{distribution.version}}</li>
                 {% endfor %}
             </ul>
         </div>

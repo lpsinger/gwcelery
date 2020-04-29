@@ -6,7 +6,8 @@ from requests.exceptions import HTTPError
 from requests.models import Response
 
 from ..tasks import gracedb, superevents
-from ..util import resource_json
+from ..util import read_json
+from . import data
 
 lvalert_content = {
     'object': {
@@ -163,15 +164,15 @@ def s100response(sid):
 def mock_db(monkeypatch):
 
     def get_superevents(*args, **kwargs):
-        return resource_json(__name__, 'data/superevents.json')['superevents']
+        return read_json(data, 'superevents.json')['superevents']
 
     def get_event(gid):
         if gid == "T0212":
-            return resource_json(__name__, 'data/T0212_S0039_preferred.json')
+            return read_json(data, 'T0212_S0039_preferred.json')
         elif gid == "G000003":
             return G000003_RESPONSE
         elif gid == "G000012":
-            return resource_json(__name__, 'data/G000012_S0040_preferred.json')
+            return read_json(data, 'G000012_S0040_preferred.json')
         elif gid == "G330308":
             return G330308_RESPONSE
         elif gid == "G330298":
@@ -190,7 +191,7 @@ def mock_db(monkeypatch):
 
 def test_select_preferred_event():
     """Provide the list of trigger information of a sample event."""
-    events = resource_json(__name__, 'data/sample_events.json')
+    events = read_json(data, 'sample_events.json')
     r = superevents.select_preferred_event(events)
     assert r['graceid'] == 'G3'
 
@@ -225,8 +226,7 @@ def test_update_preferred_event(superevent_labels, new_event_labels,
     T1234. The new event T1234 passes FAR threshold and has higher
     SNR compared to the preferred event.
     """
-    preferred_event_dictionary = resource_json(
-        __name__, 'data/T0212_S0039_preferred.json')
+    preferred_event_dictionary = read_json(data, 'T0212_S0039_preferred.json')
     preferred_event_dictionary['labels'] = preferred_event_labels
     if new_event_id == 'T1234':
         new_event_dictionary = dict(

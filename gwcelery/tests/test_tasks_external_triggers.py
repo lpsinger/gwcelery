@@ -1,18 +1,18 @@
+from importlib.resources import read_binary
 from unittest.mock import patch, call
 
 import pytest
 
-from pkg_resources import resource_string
-
+from . import data
 from ..tasks import external_triggers
 from ..tasks import detchar
-from ..util import resource_json
+from ..util import read_json
 
 
 @pytest.mark.parametrize('pipeline, path',
-                         [['Fermi', 'data/fermi_grb_gcn.xml'],
-                          ['INTEGRAL', 'data/integral_grb_gcn.xml'],
-                          ['AGILE', 'data/agile_grb_gcn.xml']])
+                         [['Fermi', 'fermi_grb_gcn.xml'],
+                          ['INTEGRAL', 'integral_grb_gcn.xml'],
+                          ['AGILE', 'agile_grb_gcn.xml']])
 @patch('gwcelery.tasks.external_skymaps.create_upload_external_skymap')
 @patch('gwcelery.tasks.external_skymaps.get_upload_external_skymap.run')
 @patch('gwcelery.tasks.detchar.dqr_json', return_value='dqrjson')
@@ -29,7 +29,7 @@ def test_handle_create_grb_event(mock_create_event, mock_get_event,
                                  mock_get_upload_external_skymap,
                                  mock_create_upload_external_skymap,
                                  pipeline, path):
-    text = resource_string(__name__, path)
+    text = read_binary(data, path)
     external_triggers.handle_grb_gcn(payload=text)
     mock_create_event.assert_called_once_with(filecontents=text,
                                               search='GRB',
@@ -98,11 +98,10 @@ def test_handle_create_subthreshold_grb_event(mock_get_upload_ext_skymap,
                                               mock_create_event,
                                               mock_get_event,
                                               mock_get_events):
-    text = resource_string(__name__,
-                           'data/fermi_subthresh_grb_lowconfidence.xml')
+    text = read_binary(data, 'fermi_subthresh_grb_lowconfidence.xml')
     external_triggers.handle_grb_gcn(payload=text)
     mock_create_event.assert_not_called()
-    text = resource_string(__name__, 'data/fermi_subthresh_grb_gcn.xml')
+    text = read_binary(data, 'fermi_subthresh_grb_gcn.xml')
     external_triggers.handle_grb_gcn(payload=text)
     mock_get_events.assert_called_once_with(query=(
                                             'group: External pipeline: '
@@ -136,7 +135,7 @@ def test_handle_noise_fermi_event(mock_check_vectors,
                                   mock_get_event,
                                   mock_get_events,
                                   mock_get_upload_external_skymap):
-    text = resource_string(__name__, 'data/fermi_noise_gcn.xml')
+    text = read_binary(data, 'fermi_noise_gcn.xml')
     external_triggers.handle_grb_gcn(payload=text)
     mock_get_events.assert_called_once_with(query=(
                                             'group: External pipeline: '
@@ -153,8 +152,8 @@ def test_handle_noise_fermi_event(mock_check_vectors,
 
 
 @pytest.mark.parametrize('filename',
-                         ['data/fermi_grb_gcn.xml',
-                          'data/fermi_noise_gcn.xml'])
+                         ['fermi_grb_gcn.xml',
+                          'fermi_noise_gcn.xml'])
 @patch('gwcelery.tasks.external_skymaps.get_upload_external_skymap.run')
 @patch('gwcelery.tasks.gracedb.create_label')
 @patch('gwcelery.tasks.gracedb.remove_label')
@@ -175,7 +174,7 @@ def test_handle_replace_grb_event(mock_get_event, mock_get_events,
                                   mock_replace_event, mock_remove_label,
                                   mock_create_label,
                                   mock_get_upload_external_skymap, filename):
-    text = resource_string(__name__, filename)
+    text = read_binary(data, filename)
     external_triggers.handle_grb_gcn(payload=text)
     mock_replace_event.assert_called_once_with('E1', text)
     if 'grb' in filename:
@@ -278,7 +277,7 @@ def test_handle_skymap_combine(mock_create_combined_skymap):
 @patch('gwcelery.tasks.gracedb.create_event')
 def test_handle_create_snews_event(mock_create_event, mock_get_event,
                                    mock_upload, mock_json):
-    text = resource_string(__name__, 'data/snews_gcn.xml')
+    text = read_binary(data, 'snews_gcn.xml')
     external_triggers.handle_snews_gcn(payload=text)
     mock_create_event.assert_called_once_with(filecontents=text,
                                               search='Supernova',
@@ -310,7 +309,7 @@ def test_handle_create_snews_event(mock_create_event, mock_get_event,
 @patch('gwcelery.tasks.gracedb.replace_event')
 @patch('gwcelery.tasks.gracedb.get_events', return_value=[{'graceid': 'E1'}])
 def test_handle_replace_snews_event(mock_get_events, mock_replace_event):
-    text = resource_string(__name__, 'data/snews_gcn.xml')
+    text = read_binary(data, 'snews_gcn.xml')
     external_triggers.handle_snews_gcn(payload=text)
     mock_replace_event.assert_called_once_with('E1', text)
 
@@ -319,7 +318,7 @@ def test_handle_replace_snews_event(mock_get_events, mock_replace_event):
 def test_handle_grb_exttrig_creation(mock_raven_coincidence_search):
     """Test dispatch of an LVAlert message for an exttrig creation."""
     # Test LVAlert payload.
-    alert = resource_json(__name__, 'data/lvalert_exttrig_creation.json')
+    alert = read_json(data, 'lvalert_exttrig_creation.json')
 
     # Run function under test
     external_triggers.handle_grb_lvalert(alert)
@@ -334,7 +333,7 @@ def test_handle_grb_exttrig_creation(mock_raven_coincidence_search):
 def test_handle_subgrb_exttrig_creation(mock_raven_coincidence_search):
     """Test dispatch of an LVAlert message for an exttrig creation."""
     # Test LVAlert payload.
-    alert = resource_json(__name__, 'data/lvalert_subgrb_creation.json')
+    alert = read_json(data, 'lvalert_subgrb_creation.json')
 
     # Run function under test
     external_triggers.handle_grb_lvalert(alert)
@@ -352,8 +351,7 @@ def test_handle_subgrb_targeted_creation(mock_raven_coincidence_search,
                                          mock_create_upload_external_skymap):
     """Test dispatch of an LVAlert message for an exttrig creation."""
     # Test LVAlert payload.
-    alert = resource_json(__name__,
-                          'data/lvalert_exttrig_subgrb_targeted_creation.json')
+    alert = read_json(data, 'lvalert_exttrig_subgrb_targeted_creation.json')
 
     # Run function under test
     external_triggers.handle_grb_lvalert(alert)
@@ -371,13 +369,13 @@ def test_handle_subgrb_targeted_creation(mock_raven_coincidence_search,
 
 
 @pytest.mark.parametrize('calls, path',
-                         [[False, 'data/lvalert_snews_test_creation.json'],
-                          [True, 'data/lvalert_snews_creation.json']])
+                         [[False, 'lvalert_snews_test_creation.json'],
+                          [True, 'lvalert_snews_creation.json']])
 @patch('gwcelery.tasks.raven.coincidence_search')
 def test_handle_sntrig_creation(mock_raven_coincidence_search, calls, path):
     """Test dispatch of an LVAlert message for SNEWS alerts."""
     # Test LVAlert payload.
-    alert = resource_json(__name__, path)
+    alert = read_json(data, path)
 
     # Run function under test
     external_triggers.handle_snews_lvalert(alert)
@@ -399,7 +397,7 @@ def test_handle_superevent_cbc_creation(mock_raven_coincidence_search,
                                         mock_get_superevent):
     """Test dispatch of an LVAlert message for a CBC superevent creation."""
     # Test LVAlert payload.
-    alert = resource_json(__name__, 'data/lvalert_superevent_creation.json')
+    alert = read_json(data, 'lvalert_superevent_creation.json')
 
     # Run function under test
     external_triggers.handle_grb_lvalert(alert)
@@ -423,7 +421,7 @@ def test_handle_superevent_burst_creation(mock_raven_coincidence_search,
                                           mock_get_superevent):
     """Test dispatch of an LVAlert message for a burst superevent creation."""
     # Test LVAlert payload.
-    alert = resource_json(__name__, 'data/lvalert_superevent_creation.json')
+    alert = read_json(data, 'lvalert_superevent_creation.json')
 
     # Run function under test
     external_triggers.handle_grb_lvalert(alert)

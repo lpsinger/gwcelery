@@ -1,3 +1,4 @@
+from importlib import resources
 from unittest.mock import patch
 from xml.sax import SAXParseException
 
@@ -5,9 +6,9 @@ from astropy import table
 from astropy.io import fits
 from celery.exceptions import Ignore
 import numpy as np
-import pkg_resources
 import pytest
 
+from . import data
 from ..tasks.bayestar import localize
 from ..util.tempfile import NamedTemporaryFile
 
@@ -15,7 +16,7 @@ from ..util.tempfile import NamedTemporaryFile
 def test_localize_bad_psd():
     """Test running BAYESTAR with a pad PSD file"""
     # Test data
-    coinc = pkg_resources.resource_string(__name__, 'data/coinc.xml')
+    coinc = resources.read_binary(data, 'coinc.xml')
     psd = b''
 
     # Run function under test
@@ -37,8 +38,8 @@ def mock_bayestar(event, *args, **kwargs):
 
 @pytest.fixture
 def coinc_psd():
-    return (pkg_resources.resource_string(__name__, 'data/coinc.xml'),
-            pkg_resources.resource_string(__name__, 'data/psd.xml.gz'))
+    return (resources.read_binary(data, 'coinc.xml'),
+            resources.read_binary(data, 'psd.xml.gz'))
 
 
 @patch('ligo.skymap.bayestar.localize', mock_bayestar)

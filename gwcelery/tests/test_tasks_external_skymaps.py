@@ -1,9 +1,10 @@
+from importlib import resources
 from unittest.mock import patch
 
-import pkg_resources
 import pytest
 
-from ..util import resource_json
+from . import data
+from ..util import read_json
 from .test_tasks_skymaps import toy_fits_filecontents  # noqa: F401
 from .test_tasks_skymaps import toy_3d_fits_filecontents  # noqa: F401
 from ..tasks import external_skymaps
@@ -19,14 +20,14 @@ def mock_get_event(exttrig):
 
 
 def mock_get_superevent(graceid):
-    return resource_json(__name__, 'data/mock_superevent_object.json')
+    return read_json(data, 'mock_superevent_object.json')
 
 
 def mock_get_log(graceid):
     if graceid == 'S12345':
-        return resource_json(__name__, 'data/gracedb_setrigger_log.json')
+        return read_json(data, 'gracedb_setrigger_log.json')
     elif graceid == 'E12345':
-        return resource_json(__name__, 'data/gracedb_externaltrigger_log.json')
+        return read_json(data, 'gracedb_externaltrigger_log.json')
     else:
         raise ValueError
 
@@ -41,9 +42,8 @@ def mock_download(monkeypatch, toy_3d_fits_filecontents):  # noqa: F811
         elif (graceid == 'E12345' and
               filename == ('nasa.gsfc.gcn_Fermi%23GBM_Gnd_Pos_2017-08-17'
                            + 'T12%3A41%3A06.47_524666471_57-431.xml')):
-            return pkg_resources.resource_string(
-                       __name__, 'data/externaltrigger_original_data.xml'
-                   )
+            return resources.read_binary(
+                data, 'externaltrigger_original_data.xml')
         else:
             raise ValueError
 

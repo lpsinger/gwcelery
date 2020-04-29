@@ -12,18 +12,16 @@ import numpy as np
 
 from . import gracedb, lvalert
 from .. import app
-from ..util import PromiseProxy, resource_json
+from ..util import PromiseProxy, read_json
 
 MEAN_VALUES_DICT = PromiseProxy(
-    resource_json, ('ligo.data',
-                    'H1L1V1-mean_counts-1126051217-61603201.json'))
+    read_json, ('ligo.data', 'H1L1V1-mean_counts-1126051217-61603201.json'))
 
 THRESHOLDS_DICT = PromiseProxy(
-    resource_json, ('ligo.data',
-                    'H1L1V1-pipeline-far_snr-thresholds.json'))
+    read_json, ('ligo.data', 'H1L1V1-pipeline-far_snr-thresholds.json'))
 
 P_ASTRO_LIVETIME = PromiseProxy(
-    resource_json, ('ligo.data', 'p_astro_livetime.json'))
+    read_json, ('ligo.data', 'p_astro_livetime.json'))
 
 
 log = get_task_logger(__name__)

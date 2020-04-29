@@ -1,4 +1,5 @@
 """Create mock events from the "First Two Years" paper."""
+from importlib import resources
 import io
 import random
 
@@ -9,8 +10,8 @@ from glue.ligolw import lsctables
 import lal
 from ligo.skymap.io.events.ligolw import ContentHandler
 import numpy as np
-import pkg_resources
 
+from ..data import first2years as data_first2years
 from ..import app
 from . import gracedb
 
@@ -19,9 +20,8 @@ log = get_task_logger(__name__)
 
 def pick_coinc():
     """Pick a coincidence from the "First Two Years" paper."""
-    filename = pkg_resources.resource_filename(
-        __name__, '../data/first2years/2016/gstlal.xml.gz')
-    xmldoc = utils.load_filename(filename, contenthandler=ContentHandler)
+    with resources.open_binary(data_first2years, 'gstlal.xml.gz') as f:
+        xmldoc, _ = utils.load_fileobj(f, contenthandler=ContentHandler)
     root, = xmldoc.childNodes
 
     # Remove unneeded tables
@@ -139,8 +139,7 @@ def _vet_event(superevents):
 
 @gracedb.task(ignore_result=True, shared=False)
 def _upload_psd(graceid):
-    psd = pkg_resources.resource_string(
-        __name__, '../data/first2years/2016/psd.xml.gz')
+    psd = resources.read_binary(data_first2years, 'psd.xml.gz')
     gracedb.upload(psd, 'psd.xml.gz', graceid, 'Noise PSD', ['psd'])
 
 

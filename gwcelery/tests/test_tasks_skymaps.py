@@ -1,20 +1,16 @@
 import argparse
 import gzip
+from importlib import resources
 import io
 import os
 from unittest.mock import patch
 
 from astropy.table import Table
 import numpy as np
-import pkg_resources
 import pytest
 
 from ..tasks import skymaps
-
-
-def resource_unicode(*args, **kwargs):
-    with open(pkg_resources.resource_filename(*args, **kwargs), 'r') as f:
-        return f.read()
+from . import data
 
 
 def get_toy_fits_filecontents():
@@ -78,7 +74,7 @@ def test_fits_header(toy_fits_filecontents):
     html = skymaps.fits_header(toy_fits_filecontents, 'test.fits')
 
     # Check output
-    assert html == resource_unicode(__name__, 'data/fits_header_result.html')
+    assert html == resources.read_text(data, 'fits_header_result.html')
 
 
 @patch('ligo.skymap.tool.ligo_skymap_plot.main')
@@ -136,7 +132,7 @@ def test_skymap_from_samples(toy_3d_fits_filecontents):
         with open(os.path.join(args.outdir, args.fitsoutname), 'wb') as f:
             f.write(toy_3d_fits_filecontents)
 
-    inbytes = pkg_resources.resource_string(__name__, 'data/samples.hdf5')
+    inbytes = resources.read_binary(data, 'samples.hdf5')
 
     with patch('ligo.skymap.tool.ligo_skymap_from_samples.main',
                mock_skymap_from_samples):

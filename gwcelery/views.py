@@ -2,16 +2,24 @@
 import datetime
 import re
 
+try:
+    from importlib import metadata
+except ImportError:
+    # FIXME Remove when we drop support for Python < 3.7
+    import importlib_metadata as metadata
+
 from astropy.time import Time
 from flask import flash, jsonify, redirect, render_template, request, url_for
 from flask import make_response
 from requests.exceptions import HTTPError
-import pkg_resources
 
 from . import app as celery_app
 from ._version import get_versions
 from .flask import app, cache
 from .tasks import first2years, gracedb, orchestrator, circulars, superevents
+from .util import PromiseProxy
+
+distributions = PromiseProxy(metadata.distributions)
 
 
 @app.route('/')
@@ -20,7 +28,7 @@ def index():
     return render_template(
         'index.jinja2',
         conf=celery_app.conf,
-        packages=pkg_resources.working_set,
+        packages=distributions,
         versions=get_versions())
 
 
