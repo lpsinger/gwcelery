@@ -2,17 +2,10 @@ import threading
 
 from celery import bootsteps
 from celery.concurrency import solo
-from comet.icomet import IHandler
-from comet.protocol.broadcaster import VOEventBroadcasterFactory
-from comet.utility import WhitelistingFactory
-from twisted.application.internet import TCPClient, TCPServer
-from twisted.internet import reactor
-from zope.interface import implementer
 
 from .util import get_host_port, get_local_ivo, get_network
 from .logging import log
 from .signals import voevent_received
-from .subscriber import VOEventSubscriberFactory
 
 __all__ = ('Broadcaster', 'Reactor', 'Receiver')
 
@@ -54,6 +47,8 @@ class Reactor(VOEventBootStep):
         self._thread = None
 
     def create(self, consumer):
+        from twisted.internet import reactor
+
         super().create(consumer)
         self._thread = threading.Thread(target=reactor.run, args=(False,))
 
@@ -62,6 +57,8 @@ class Reactor(VOEventBootStep):
         self._thread.start()
 
     def stop(self, consumer):
+        from twisted.internet import reactor
+
         super().stop(consumer)
         reactor.callFromThread(reactor.stop)
         self._thread.join()
@@ -83,10 +80,14 @@ class TwistedService(VOEventBootStep):
         raise NotImplementedError
 
     def start(self, consumer):
+        from twisted.internet import reactor
+
         super().start(consumer)
         reactor.callFromThread(self._service.startService)
 
     def stop(self, consumer):
+        from twisted.internet import reactor
+
         super().stop(consumer)
         reactor.callFromThread(self._service.stopService)
 
@@ -113,6 +114,10 @@ class Broadcaster(TwistedService):
     name = 'VOEvent broadcaster'
 
     def create_service(self, consumer):
+        from comet.protocol.broadcaster import VOEventBroadcasterFactory
+        from comet.utility import WhitelistingFactory
+        from twisted.application.internet import TCPServer
+
         conf = consumer.app.conf
         local_ivo = get_local_ivo(consumer.app)
         host, port = get_host_port(conf['voevent_broadcaster_address'])
@@ -126,15 +131,6 @@ class Broadcaster(TwistedService):
     def info(self, consumer):
         return {'voevent-broker-peers': [
             b.transport.getPeer().host for b in self._factory.broadcasters]}
-
-
-@implementer(IHandler)
-class Handler:
-    """Comet VOEvent handler that forwards the event to a Celery signal."""
-
-    def __call__(self, event):
-        reactor.callInThread(
-            voevent_received.send, sender=None, xml_document=event)
 
 
 class Receiver(TwistedService):
@@ -160,6 +156,19 @@ class Receiver(TwistedService):
         'celery.worker.consumer.tasks:Tasks',)
 
     def create_service(self, consumer):
+        from comet.icomet import IHandler
+        from twisted.application.internet import TCPClient
+        from zope.interface import implementer
+        from .subscriber import VOEventSubscriberFactory
+
+        @implementer(IHandler)
+        class Handler:
+
+            def __call__(self, event):
+                from twisted.internet import reactor
+                reactor.callInThread(
+                    voevent_received.send, sender=None, xml_document=event)
+
         conf = consumer.app.conf
         local_ivo = get_local_ivo(consumer.app)
         host, port = get_host_port(conf['voevent_receiver_address'])

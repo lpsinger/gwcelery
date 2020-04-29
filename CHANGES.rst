@@ -31,6 +31,9 @@ Changelog
     sleekxmpp is only imported in the thread that actually uses it. This
     should speed up worker startup by about 0.1 seconds.
 
+-   Defer Comet and Twisted imports until they are actually needed by the
+    VOEvent broker. This should speed up worker startup by about 0.2 seconds.
+
 0.12.3 (2020-03-24)
 -------------------
 
