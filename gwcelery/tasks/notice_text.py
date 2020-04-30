@@ -7,7 +7,6 @@ References
 """
 import email
 import email.policy
-import json
 from math import isclose
 
 from celery.utils.log import get_task_logger
@@ -20,7 +19,7 @@ from . import gracedb
 log = get_task_logger(__name__)
 
 
-def _trigger_datatime(gcn_notice_mail):
+def _trigger_datetime(gcn_notice_mail):
     """Get trigger data and time from a GCN email notice."""
     trigger_date = gcn_notice_mail[
         "TRIGGER_DATE"].split()[4].replace("/", "-")
@@ -28,9 +27,9 @@ def _trigger_datatime(gcn_notice_mail):
     trigger_time = gcn_notice_mail[
         "TRIGGER_TIME"].split()[2].replace("{", "").replace("}", "")
 
-    trigger_datatime = (f'{trigger_date}T{trigger_time}')
+    trigger_datetime = (f'{trigger_date}T{trigger_time}')
 
-    return trigger_datatime
+    return trigger_datetime
 
 
 def _vo_match_notice(gcn_notice_mail, params_vo, trigger_time_vo):
@@ -38,11 +37,11 @@ def _vo_match_notice(gcn_notice_mail, params_vo, trigger_time_vo):
     dict_checks = {}
 
     # TRIGGER_DATE+TRIGGER_TIME
-    trigger_datatime_notice_mail = _trigger_datatime(gcn_notice_mail)
+    trigger_datetime_notice_mail = _trigger_datetime(gcn_notice_mail)
 
-    match_trigger_datatime = (
-        trigger_datatime_notice_mail == trigger_time_vo)
-    dict_checks['TRIGGER_DATATIME'] = match_trigger_datatime
+    match_trigger_datetime = (
+        trigger_datetime_notice_mail == trigger_time_vo)
+    dict_checks['TRIGGER_DATETIME'] = match_trigger_datetime
 
     # SEQUENCE_NUM
     match_sequence_num = (
@@ -128,19 +127,6 @@ def _vo_match_comments(gcn_notice_mail, params_vo):
     return dict_check_comments
 
 
-def _verify_values_in_dict(dict_input, filename, trigger_num, val=True):
-    """Verify the values in a dictionary and write a GraceDB report."""
-    if all(value is True for value in dict_input.values()) == val:
-        gracedb.create_tag.delay(filename, 'Email notice: OK.', trigger_num)
-    else:
-        gracedb.create_tag.delay(filename, 'Email notice: NOT OK', trigger_num)
-
-    # Write GraceDB report
-    filecontents = json.dumps(dict_input, indent=4)
-    return gracedb.upload.s(filecontents, trigger_num, 'Email notice report',
-                            tags=['em_follow'])
-
-
 @email_received.connect
 def on_email_received(rfc822, **kwargs):
     """Read the RFC822 email."""
@@ -159,13 +145,15 @@ def validate_text_notice(message):
     # Filter from address and subject
     if message['From'] != 'Bacodine <vxw@capella2.gsfc.nasa.gov>':
         log.info('Email is not from BACODINE. Subject:%s', message['Subject'])
+        log.info('Sender is: %s', message['From'])
         return
 
     # Write message log
     log.info('Validating Notice: Subject:%s', message['Subject'])
 
     # Parse body email
-    notice = email.message_from_string(message.get_payload())
+    bodymsg = message.get_payload()
+    notice = email.message_from_string(bodymsg)
 
     # Get notice type
     notice_type = notice['NOTICE_TYPE']
@@ -180,7 +168,7 @@ def validate_text_notice(message):
     sequence_num = notice['SEQUENCE_NUM']
 
     # Download VOevent
-    filename = (f'{trigger_num}-{sequence_num}-{notice_type}.xml')
+    filename = f'{trigger_num}-{sequence_num}-{notice_type}.xml'
     payload = gracedb.download(filename, trigger_num)
 
     # Parse VOevent
@@ -193,20 +181,33 @@ def validate_text_notice(message):
     trigger_time_vo = root.findtext('.//ISOTime')
 
     # Match
+    filename_email = 'email_' + filename.replace('.xml', '.txt')
+    gracedb.upload.delay(bodymsg, filename_email, trigger_num,
+                         'email notice corresponding to ' + filename,
+                         tags=['em_follow'])
+
+    error = None
     try:
         if notice_type == 'Retraction':
-            match_retraction = _vo_match_notice(notice, params_vo,
-                                                trigger_time_vo)
-            _verify_values_in_dict(match_retraction, filename, trigger_num)
-
-        elif params_vo['Group'] in ["CBC", "Burst"]:
             match = _vo_match_notice(notice, params_vo, trigger_time_vo)
-            match_comments = _vo_match_comments(notice, params_vo)
-
-            dict_notice = {**match, **match_comments}
-            _verify_values_in_dict(dict_notice, filename, trigger_num)
+        elif params_vo['Group'] in ["CBC", "Burst"]:
+            match = {**_vo_match_notice(notice, params_vo, trigger_time_vo),
+                     **_vo_match_comments(notice, params_vo)}
         else:
-            log.info('Notice does not match: Subject:%s', message['Subject'])
+            match = []
+            error = f'Email notice {filename} has unknown notice type'
+
+        mismatched = ' '.join(key for key, value in match.items() if not value)
+        if mismatched:
+            error = \
+                f'Email notice {filename} has mismatched keys: {mismatched}'
     except KeyError as err:
-        gracedb.create_tag.delay(filename, f'Email notice: missing key: {err}',
-                                 trigger_num)
+        # Since there was an exeception, the gcn was not annnotated
+        error = f'Email notice {filename} missing key: {err}'
+
+    if error:
+        gracedb.create_tag.delay(filename, 'gcn_email_notok', trigger_num)
+        gracedb.upload.delay(None, None, trigger_num,
+                             error, tags=['em_follow'])
+    else:
+        gracedb.create_tag.delay(filename, 'gcn_email_ok', trigger_num)
