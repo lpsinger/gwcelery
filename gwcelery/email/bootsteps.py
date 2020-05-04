@@ -2,8 +2,6 @@ from threading import Thread
 
 from celery import bootsteps
 from celery.utils.log import get_logger
-from imapclient import IMAPClient
-from imapclient.exceptions import IMAPClientAbortError
 from safe_netrc import netrc
 
 from .signals import email_received
@@ -36,6 +34,9 @@ class Receiver(EmailBootStep):
     name = 'email client'
 
     def _runloop(self):
+        from imapclient import IMAPClient
+        from imapclient.exceptions import IMAPClientAbortError
+
         username, _, password = netrc().authenticators(self._host)
         while self._running:
             try:
