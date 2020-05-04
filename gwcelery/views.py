@@ -1,6 +1,8 @@
 """Flask web application views."""
 import datetime
+import platform
 import re
+import socket
 
 try:
     from importlib import metadata
@@ -28,7 +30,9 @@ def index():
     return render_template(
         'index.jinja2',
         conf=celery_app.conf,
+        hostname=socket.getfqdn(),
         packages=distributions,
+        platform=platform.platform(),
         versions=get_versions())
 
 
