@@ -12,6 +12,8 @@ ipython = "*"
 ipykernel = "*"
 # Pull in flower from GitHub branch to pull in extra features.
 flower = {git = "https://github.com/lpsinger/flower",ref = "custom-stats"}
+# Pull in tqdm from GitHub branch for improved import speed.
+tqdm = {git = "https://github.com/lpsinger/tqdm",ref = "tqdm-auto-sys-modules"}
 
 [requires]
 python_version = "3.7"

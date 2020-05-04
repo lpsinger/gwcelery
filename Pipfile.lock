@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "c28f7c93e1f58c4226bda37c4616b435fd62b0759c9bdb67eda5edc449dbbc7d"
+            "sha256": "d6dfc5c076dd4f5cb994ac135c08733ccf35328a64cc64385b8fb119a71fca48"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -1293,11 +1293,8 @@
             "version": "==6.0.4"
         },
         "tqdm": {
-            "hashes": [
-                "sha256:00339634a22c10a7a22476ee946bbde2dbe48d042ded784e4d88e0236eca5d81",
-                "sha256:ea9e3fd6bd9a37e8783d75bfc4c1faf3c6813da6bd1c3e776488b41ec683af94"
-            ],
-            "version": "==4.45.0"
+            "git": "https://github.com/lpsinger/tqdm",
+            "ref": "92ec6e61e8300bb5e995140543be2a07719e71b6"
         },
         "traitlets": {
             "hashes": [
