@@ -418,11 +418,12 @@ def _should_publish(event):
     the publishability criteria as a tuple for later use.
     """
     group = event['group'].lower()
-    trials_factor = app.conf['preliminary_alert_trials_factor'][group]
     if 'EARLY_WARNING' in event['labels']:
         far_threshold = app.conf['early_warning_alert_far_threshold']
+        trials_factor = app.conf['early_warning_alert_trials_factor']
     else:
         far_threshold = app.conf['preliminary_alert_far_threshold'][group]
+        trials_factor = app.conf['preliminary_alert_trials_factor'][group]
     far = trials_factor * event['far']
     raven_coincidence = ('RAVEN_ALERT' in event['labels'])
 

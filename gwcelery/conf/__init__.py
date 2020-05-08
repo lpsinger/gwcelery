@@ -116,6 +116,10 @@ preliminary_alert_far_threshold = {'cbc': 1 / (60 * 86400),
 """Group specific maximum false alarm rate to consider
 sending preliminary alerts."""
 
+early_warning_alert_trials_factor = 2.0
+"""Trials factor for early warning alerts. There are two pipelines that are
+producing early warning events: gstlal and spiir."""
+
 preliminary_alert_trials_factor = dict(cbc=5.0, burst=4.0)
 """Trials factor corresponding to trigger categories. For CBC and Burst, trials
 factor is the number of pipelines. CBC pipelines are gstlal, pycbc, mbtaonline
