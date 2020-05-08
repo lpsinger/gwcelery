@@ -225,6 +225,7 @@ def plot_bayes_factor(logb,
                 edgecolor='white')
 
         for ax_ in fig.axes:
+            ax_.grid(False)
             for spine in ax_.spines.values():
                 spine.set_visible(False)
 
