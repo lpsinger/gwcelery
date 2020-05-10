@@ -40,7 +40,7 @@ class Receiver(EmailBootStep):
         username, _, password = netrc().authenticators(self._host)
         while self._running:
             try:
-                with IMAPClient(self._host, use_uid=True) as conn:
+                with IMAPClient(self._host, use_uid=True, timeout=30) as conn:
                     conn.login(username, password)
                     conn.select_folder('inbox')
                     while self._running:
