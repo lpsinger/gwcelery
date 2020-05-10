@@ -61,7 +61,7 @@ class Receiver(EmailBootStep):
         super().create(consumer)
         self._host = consumer.app.conf['email_host']
         self._running = True
-        self._thread = Thread(target=self._runloop)
+        self._thread = Thread(target=self._runloop, name='EmailClientThread')
 
     def start(self, consumer):
         super().start(consumer)

@@ -50,7 +50,8 @@ class Reactor(VOEventBootStep):
         from twisted.internet import reactor
 
         super().create(consumer)
-        self._thread = threading.Thread(target=reactor.run, args=(False,))
+        self._thread = threading.Thread(target=reactor.run, args=(False,),
+                                        name='TwistedReactorThread')
 
     def start(self, consumer):
         super().start(consumer)
