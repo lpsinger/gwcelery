@@ -41,6 +41,9 @@ broker_transport_options = {
     'priority_steps': list(range(task_queue_max_priority + 1))
 }
 
+worker_log_format = "[%(asctime)s: %(levelname)s/%(processName)s/%(threadName)s] %(message)s"  # noqa: E501
+"""Custom worker log format that includes the thread name."""
+
 # GWCelery-specific settings.
 
 condor_accounting_group = 'ligo.dev.o3.cbc.pe.bayestar'
