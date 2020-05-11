@@ -40,19 +40,29 @@ class Receiver(EmailBootStep):
         username, _, password = netrc().authenticators(self._host)
         while self._running:
             try:
+                log.info('Starting new connection')
                 with IMAPClient(self._host, use_uid=True, timeout=30) as conn:
+                    log.info('Logging in')
                     conn.login(username, password)
+                    log.info('Selecting inbox')
                     conn.select_folder('inbox')
                     while self._running:
+                        log.info('Searching for new messages')
                         messages = conn.search()
+                        log.info('Fetching new messages')
                         for msgid, data in conn.fetch(
                                 messages, ['RFC822']).items():
+                            log.info('Sending signal for new email')
                             email_received.send(None, rfc822=data[b'RFC822'])
+                            log.info('Deleting email')
                             conn.delete_messages(msgid)
+                        log.info('Starting idle')
                         conn.idle()
                         responses = []
                         while self._running and not responses:
+                            log.info('Checking idle')
                             responses = conn.idle_check(timeout=5)
+                        log.info('Idle done')
                         conn.idle_done()
             except IMAPClientAbortError:
                 log.exception('IMAP connection aborted')
