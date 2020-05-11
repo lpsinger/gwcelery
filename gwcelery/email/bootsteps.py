@@ -58,7 +58,15 @@ class Receiver(EmailBootStep):
                             conn.delete_messages(msgid)
                         log.info('Starting idle')
                         conn.idle()
-                        for _ in range(60):  # Stay in IDLE mode at most 5 min
+                        # Stay in IDLE mode for at most 5 minutes.
+                        # According to the imapclient documentation:
+                        #
+                        # > Note that IMAPClient does not handle low-level
+                        # > socket errors that can happen when maintaining
+                        # > long-lived TCP connections. Users are advised to
+                        # > renew the IDLE command every 10 minutes to avoid
+                        # > the connection from being abruptly closed.
+                        for _ in range(60):
                             if not self._running or conn.idle_check(timeout=5):
                                 break
                         log.info('Idle done')
