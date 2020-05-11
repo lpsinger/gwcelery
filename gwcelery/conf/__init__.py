@@ -251,57 +251,57 @@ state_vector_channel_names = {'H1': 'H1:GDS-CALIB_STATE_VECTOR',
 :mod:`gwcelery.tasks.inference`)"""
 
 detchar_bit_definitions = {
-    'dmt_dq_vector_bits':
-        {'channel': 'DMT-DQ_VECTOR',
-         'bits': {
-             1: 'NO_OMC_DCPD_ADC_OVERFLOW',
-             2: 'NO_DMT-ETMY_ESD_DAC_OVERFLOW'
-         },
-         'description': {
-             'NO_OMC_DCPD_ADC_OVERFLOW': 'OMC DCPC ADC not overflowing',
-             'NO_DMT-ETMY_ESD_DAC_OVERFLOW': 'ETMY ESD DAC not overflowing'
-         }
+    'dmt_dq_vector_bits': {
+        'channel': 'DMT-DQ_VECTOR',
+        'bits': {
+            1: 'NO_OMC_DCPD_ADC_OVERFLOW',
+            2: 'NO_DMT-ETMY_ESD_DAC_OVERFLOW'
         },
-    'ligo_state_vector_bits':
-        {'channel': 'GDS-CALIB_STATE_VECTOR',
-         'bits': {
-             0: 'HOFT_OK',
-             1: 'OBSERVATION_INTENT',
-             5: 'NO_STOCH_HW_INJ',
-             6: 'NO_CBC_HW_INJ',
-             7: 'NO_BURST_HW_INJ',
-             8: 'NO_DETCHAR_HW_INJ'
-         },
-         'description': {
-             'HOFT_OK': 'h(t) was successfully computed',
-             'OBSERVATION_INTENT': '"observation intent" button is pushed',
-             'NO_STOCH_HW_INJ': 'No stochastic HW injection',
-             'NO_CBC_HW_INJ': 'No CBC HW injection',
-             'NO_BURST_HW_INJ': 'No burst HW injection',
-             'NO_DETCHAR_HW_INJ': 'No HW injections for detector characterization'  # noqa: E501
-         }
-        },
-    'virgo_state_vector_bits':
-        {'channel': 'DQ_ANALYSIS_STATE_VECTOR',
-         'bits': {
-             0: 'HOFT_OK',
-             1: 'OBSERVATION_INTENT',
-             5: 'NO_STOCH_HW_INJ',
-             6: 'NO_CBC_HW_INJ',
-             7: 'NO_BURST_HW_INJ',
-             8: 'NO_DETCHAR_HW_INJ',
-             10: 'GOOD_DATA_QUALITY_CAT1'
-         },
-         'description': {
-             'HOFT_OK': 'h(t) was successfully computed',
-             'OBSERVATION_INTENT': '"observation intent" button is pushed',
-             'NO_STOCH_HW_INJ': 'No stochastic HW injection',
-             'NO_CBC_HW_INJ': 'No CBC HW injection',
-             'NO_BURST_HW_INJ': 'No burst HW injection',
-             'NO_DETCHAR_HW_INJ': 'No HW injections for detector characterization',  # noqa: E501
-             'GOOD_DATA_QUALITY_CAT1': 'Good data quality (CAT1 type)'
-         }
+        'description': {
+            'NO_OMC_DCPD_ADC_OVERFLOW': 'OMC DCPC ADC not overflowing',
+            'NO_DMT-ETMY_ESD_DAC_OVERFLOW': 'ETMY ESD DAC not overflowing'
         }
+    },
+    'ligo_state_vector_bits': {
+        'channel': 'GDS-CALIB_STATE_VECTOR',
+        'bits': {
+            0: 'HOFT_OK',
+            1: 'OBSERVATION_INTENT',
+            5: 'NO_STOCH_HW_INJ',
+            6: 'NO_CBC_HW_INJ',
+            7: 'NO_BURST_HW_INJ',
+            8: 'NO_DETCHAR_HW_INJ'
+        },
+        'description': {
+            'HOFT_OK': 'h(t) was successfully computed',
+            'OBSERVATION_INTENT': '"observation intent" button is pushed',
+            'NO_STOCH_HW_INJ': 'No stochastic HW injection',
+            'NO_CBC_HW_INJ': 'No CBC HW injection',
+            'NO_BURST_HW_INJ': 'No burst HW injection',
+            'NO_DETCHAR_HW_INJ': 'No HW injections for detector characterization'  # noqa: E501
+        }
+    },
+    'virgo_state_vector_bits': {
+        'channel': 'DQ_ANALYSIS_STATE_VECTOR',
+        'bits': {
+            0: 'HOFT_OK',
+            1: 'OBSERVATION_INTENT',
+            5: 'NO_STOCH_HW_INJ',
+            6: 'NO_CBC_HW_INJ',
+            7: 'NO_BURST_HW_INJ',
+            8: 'NO_DETCHAR_HW_INJ',
+            10: 'GOOD_DATA_QUALITY_CAT1'
+        },
+        'description': {
+            'HOFT_OK': 'h(t) was successfully computed',
+            'OBSERVATION_INTENT': '"observation intent" button is pushed',
+            'NO_STOCH_HW_INJ': 'No stochastic HW injection',
+            'NO_CBC_HW_INJ': 'No CBC HW injection',
+            'NO_BURST_HW_INJ': 'No burst HW injection',
+            'NO_DETCHAR_HW_INJ': 'No HW injections for detector characterization',  # noqa: E501
+            'GOOD_DATA_QUALITY_CAT1': 'Good data quality (CAT1 type)'
+        }
+    }
 }
 """Bit definitions for detchar checks"""
 
