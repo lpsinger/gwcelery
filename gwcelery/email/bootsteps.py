@@ -58,11 +58,9 @@ class Receiver(EmailBootStep):
                             conn.delete_messages(msgid)
                         log.info('Starting idle')
                         conn.idle()
-                        responses = []
-                        while self._running and not responses:
-                            log.info('Checking idle')
-                            responses = conn.idle_check(timeout=5)
-                            log.info('Idle responses: %r', responses)
+                        for _ in range(60):  # Stay in IDLE mode at most 5 min
+                            if not self._running or conn.idle_check(timeout=5):
+                                break
                         log.info('Idle done')
                         conn.idle_done()
             except IMAPClientAbortError:
