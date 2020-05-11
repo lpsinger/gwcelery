@@ -62,6 +62,7 @@ class Receiver(EmailBootStep):
                         while self._running and not responses:
                             log.info('Checking idle')
                             responses = conn.idle_check(timeout=5)
+                            log.info('Idle responses: %r', responses)
                         log.info('Idle done')
                         conn.idle_done()
             except IMAPClientAbortError:
