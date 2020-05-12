@@ -40,23 +40,23 @@ class Receiver(EmailBootStep):
         username, _, password = netrc().authenticators(self._host)
         while self._running:
             try:
-                log.info('Starting new connection')
+                log.debug('Starting new connection')
                 with IMAPClient(self._host, use_uid=True, timeout=30) as conn:
-                    log.info('Logging in')
+                    log.debug('Logging in')
                     conn.login(username, password)
-                    log.info('Selecting inbox')
+                    log.debug('Selecting inbox')
                     conn.select_folder('inbox')
                     while self._running:
-                        log.info('Searching for new messages')
+                        log.debug('Searching for new messages')
                         messages = conn.search()
-                        log.info('Fetching new messages')
+                        log.debug('Fetching new messages')
                         for msgid, data in conn.fetch(
                                 messages, ['RFC822']).items():
-                            log.info('Sending signal for new email')
+                            log.debug('Sending signal for new email')
                             email_received.send(None, rfc822=data[b'RFC822'])
-                            log.info('Deleting email')
+                            log.debug('Deleting email')
                             conn.delete_messages(msgid)
-                        log.info('Starting idle')
+                        log.debug('Starting idle')
                         conn.idle()
                         # Stay in IDLE mode for at most 5 minutes.
                         # According to the imapclient documentation:
@@ -69,7 +69,7 @@ class Receiver(EmailBootStep):
                         for _ in range(60):
                             if not self._running or conn.idle_check(timeout=5):
                                 break
-                        log.info('Idle done')
+                        log.debug('Idle done')
                         conn.idle_done()
             except IMAPClientAbortError:
                 log.exception('IMAP connection aborted')
