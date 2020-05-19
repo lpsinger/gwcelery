@@ -1,6 +1,7 @@
 from importlib import resources
 from unittest.mock import patch
 
+import numpy as np
 import pytest
 
 from . import data
@@ -150,7 +151,9 @@ def test_create_swift_skymap(ra, dec, error, pix):
 def test_create_fermi_skymap():
     """Test created single pixel sky maps for Swift localization."""
     ra, dec, error = 0, 90, 10
-    external_skymaps.create_external_skymap(ra, dec, error, 'Fermi')
+    assert (np.sum(external_skymaps.create_external_skymap(
+               ra, dec, error, 'Fermi')) ==
+           pytest.approx(1.0, 1.e-9))
 
 
 @patch('gwcelery.tasks.gracedb.upload.run')

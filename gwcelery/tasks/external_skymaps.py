@@ -285,7 +285,8 @@ def create_external_skymap(ra, dec, error, pipeline, notice_type=111):
             weight * hp.sphtfunc.smoothing(skymap, sigma=np.radians(scale))
             for weight, scale in zip(weights, scales))
 
-    return skymap
+    # Renormalize due to possible lack of precision
+    return skymap / skymap.sum()
 
 
 def write_to_fits(skymap, event, notice_type, notice_date):

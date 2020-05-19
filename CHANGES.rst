@@ -50,6 +50,8 @@ Changelog
 
 -   Add platform and hostname information to the Flask dashboard.
 
+-   Ensure external sky maps are normalized.
+
 0.12.3 (2020-03-24)
 -------------------
 
