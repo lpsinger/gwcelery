@@ -37,6 +37,9 @@ Changelog
 -   Defer imapclient imports until the email client starts. This should speed
     up worker startup by about 0.1 seconds.
 
+-   Improve robustness of the email connection by resetting IMAP IDLE mode at
+    least every 5 minutes and improving error-checking upon disconnection.
+
 -   Add platform and hostname information to the Flask dashboard.
 
 0.12.3 (2020-03-24)
