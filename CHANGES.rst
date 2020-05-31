@@ -37,6 +37,8 @@ Changelog
 -   Defer imapclient imports until the email client starts. This should speed
     up worker startup by about 0.1 seconds.
 
+-   Add platform and hostname information to the Flask dashboard.
+
 0.12.3 (2020-03-24)
 -------------------
 
