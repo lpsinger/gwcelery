@@ -22,7 +22,7 @@ from .flask import app, cache
 from .tasks import first2years, gracedb, orchestrator, circulars, superevents
 from .util import PromiseProxy
 
-distributions = PromiseProxy(metadata.distributions)
+distributions = PromiseProxy(lambda: tuple(metadata.distributions()))
 
 
 @app.route('/')
