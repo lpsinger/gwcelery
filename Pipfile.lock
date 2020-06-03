@@ -599,15 +599,15 @@
         },
         "ligo.skymap": {
             "hashes": [
-                "sha256:0f70769c7a410d8f7e2197d4a0c2c7f0dff4aa0072729d70b94b302350d92edf",
-                "sha256:28fe47a459e664847642a9017cca071f48c287d3567f4278bb32af5a2fe72a3e",
-                "sha256:2e6203e1a1327062e634988fa65ffe260ac72904c5e6ef616c45aab15f3d1600",
-                "sha256:92adff86336a493b2420db6efe6d996afe7b40d7f95370a88fc050831ef7ce86",
-                "sha256:b5538a702d95d0bd203b9f620085374f1ab173e3eb3e95100c0180a703a182b4",
-                "sha256:c13c9c05ad63d72b76a70341495822dd0103ad5a6a540b18bc5b5e34a9ffa488",
-                "sha256:ca386813c63f67d746b17704ccd5450f7297eaad84b8ff13ebca556af33d77ea"
+                "sha256:3ea9219a8987625dacaf3a928fdc9dc39ebff002b34fb784c444347fc86c493f",
+                "sha256:505de9cb4ced5b61c31824ec721a1ebb6c5528b1dc4a87c4949dc0583b791dca",
+                "sha256:8c515f14a5ed446ee5d2763b85363bcd5767c1bf50e93668c2e369d3969c1933",
+                "sha256:8f94828c5401cf8a517a4685721b1492f719b6689d3de120be0804410a6015fb",
+                "sha256:b8305fb893ce80faf8197688aef028fe07ec0c498304652dbfc142d02f9d871b",
+                "sha256:fb624fa14b08136428944c1124705faada73478b0cac1811cb0ac3759bb74cf3",
+                "sha256:ff747ba5b4da62dc6cede59024eca8d322787fdc22cb4496e13b78864120b596"
             ],
-            "version": "==0.3.0"
+            "version": "==0.3.1"
         },
         "ligotimegps": {
             "hashes": [
