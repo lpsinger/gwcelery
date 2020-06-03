@@ -53,6 +53,12 @@
                         <input id=gracedb-host class=form-control readonly value="{{ conf.lvalert_host }}">
                     </div>
                 </div>
+                <div class="form-group col-md">
+                    <label for=gracedb-host>GWCelery Host</label>
+                    <div class="input-group">
+                        <input id=gracedb-host class=form-control readonly value="{{ hostname }}">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -290,27 +296,23 @@
     </div>
     <div class="card mb-3">
         <div class=card-header>
-            Platform information
+            Platform Information
         </div>
         <div class=card-body>
-            <p>
-                GWCelery host: <code>{{ hostname }}</code>
-            </p>
-            <p>
-                Platform: <code>{{ platform }}</code>
-            </p>
-        </div>
-    </div>
-    <div class="card mb-3">
-        <div class=card-header>
-            Installed Packages
-        </div>
-        <div class=card-body>
-            <ul>
-                {% for distribution in distributions %}
-                <li><a href="https://pypi.org/project/{{distribution.metadata['Name']}}/">{{distribution.metadata['Name']}}</a> {{distribution.version}}</li>
-                {% endfor %}
-            </ul>
+            <dl class=row>
+                <dt class=col-sm-3>Platform</dt>
+                <dd class=col-sm-9>{{platform}}</dd>
+                <dt class=col-sm-3>Python Version</dt>
+                <dd class=col-sm-9 style="white-space: pre-line">{{python_version}}</dd>
+                <dt class=col-sm-3>Python Packages</dt>
+                <dd class=col-sm-9>
+                    <ul class=list-unstyled>
+                        {% for distribution in distributions %}
+                        <li><a href="https://pypi.org/project/{{distribution.metadata['Name']}}/">{{distribution.metadata['Name']}}</a> {{distribution.version}}</li>
+                        {% endfor %}
+                    </ul>
+                </dd>
+            </dl>
         </div>
     </div>
 </div>

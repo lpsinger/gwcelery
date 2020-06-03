@@ -3,6 +3,7 @@ import datetime
 import platform
 import re
 import socket
+import sys
 
 try:
     from importlib import metadata
@@ -33,7 +34,8 @@ def index():
         hostname=socket.getfqdn(),
         distributions=distributions,
         platform=platform.platform(),
-        versions=get_versions())
+        versions=get_versions(),
+        python_version=sys.version)
 
 
 def take_n(n, iterable):
