@@ -274,7 +274,7 @@ release:
       gsissh -T $REMOTE_HOST bash <<EOF
       . .bashrc
       set -e
-      python -m pip install --upgrade pipenv pip setuptools==46.4.0
+      python -m pip install --upgrade pipenv==2018.11.26 pip setuptools==46.4.0
       pipenv install --system --deploy
       # FIXME: remove pip uninstall temporary directories left behind due to
       # bug with pip on NFS. See https://github.com/pypa/pip/issues/6327
