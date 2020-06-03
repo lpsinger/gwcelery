@@ -7,8 +7,10 @@ Changelog
 -   Set FAR threshold for early warning alerts to once per day. With the trials
     factor of 5, the effective false alarm rate threshold is once per 5 days.
 
--   Change to identify early warning events by the label `EARLY_WARNING`
-    instead of the search.
+-   Identify early-warning events using the ``EARLY_WARNING`` label rather than
+    the ``EarlyWarning`` search type. The search type is already used to
+    distinguish mock (``MDC``) events, so it cannot also be used to indicate
+    early-warning events.
 
 -   Inhibit GCNs for superevents with the INJ label.
 
@@ -23,7 +25,8 @@ Changelog
 -   Change BAYESTAR low frequency cutoff from 30 Hz (the default value) to
     15 Hz.
 
--   Change playground configuration to read O3 replay data from O2 replay data.
+-   Change playground configuration to read O3 replay data rather than O2
+    replay data.
 
 -   Drop dependency on seaborn.
 
