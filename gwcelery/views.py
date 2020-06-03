@@ -31,7 +31,7 @@ def index():
         'index.jinja2',
         conf=celery_app.conf,
         hostname=socket.getfqdn(),
-        packages=distributions,
+        distributions=distributions,
         platform=platform.platform(),
         versions=get_versions())
 
