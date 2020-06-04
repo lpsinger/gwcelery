@@ -266,8 +266,8 @@ texinfo_documents = [
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
-    'celery': ('https://celery.readthedocs.io/en/latest/', None),
-    'comet': ('https://comet.readthedocs.io/en/stable/', None),
+    'celery': ('https://docs.celeryproject.org/en/latest/', None),
+    'comet': ('https://comet.transientskp.org/en/stable/', None),
     'data-quality-report': (
         'https://docs.ligo.org/detchar/data-quality-report/', None),
     'htcondor': ('https://htcondor.readthedocs.io/en/stable/', None),
