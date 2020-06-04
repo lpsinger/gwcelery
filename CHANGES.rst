@@ -4,7 +4,8 @@ Changelog
 0.13.1 (unreleased)
 -------------------
 
--   No changes yet.
+-   Pin celery to version 4.4.2 because version 4.4.4 breaks the GWCelery unit
+    tests. (See https://git.ligo.org/emfollow/gwcelery/-/issues/348)
 
 0.13.0 (2020-06-03)
 -------------------
