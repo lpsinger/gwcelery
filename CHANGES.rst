@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.13.0 (unreleased)
+0.13.0 (2020-06-03)
 -------------------
 
 -   Set FAR threshold for early warning alerts to once per day.
