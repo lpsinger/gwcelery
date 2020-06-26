@@ -10,8 +10,8 @@ gwcelery = {editable = true,path = "."}
 ipython = "*"
 # Include IPython kernel for Jupyter Lab support.
 ipykernel = "*"
-# Pull in flower from GitHub branch to pull in extra features.
-flower = {git = "https://github.com/lpsinger/flower",ref = "custom-stats"}
+# Pull in flower from GitHub to get https://github.com/mher/flower/pull/880.
+flower = {git = "https://github.com/mher/flower",ref = "510d7882ba392e7bc2fa094d49ce01c96be9a39f"}
 # Pull in tqdm from GitHub branch for improved import speed.
 tqdm = {git = "https://github.com/lpsinger/tqdm",ref = "tqdm-auto-sys-modules"}
 
