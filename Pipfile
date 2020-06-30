@@ -12,8 +12,6 @@ ipython = "*"
 ipykernel = "*"
 # Pull in flower from GitHub to get https://github.com/mher/flower/pull/880.
 flower = {git = "https://github.com/mher/flower",ref = "510d7882ba392e7bc2fa094d49ce01c96be9a39f"}
-# Pull in tqdm from GitHub branch for improved import speed.
-tqdm = {git = "https://github.com/lpsinger/tqdm",ref = "tqdm-auto-sys-modules"}
 
 [requires]
 python_version = "3.7"
