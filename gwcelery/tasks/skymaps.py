@@ -19,6 +19,7 @@ from . import lvalert
 from ..import app
 from ..jinja import env
 from ..util.cmdline import handling_system_exit
+from ..util.matplotlib import closing_figures
 from ..util.tempfile import NamedTemporaryFile
 
 
@@ -84,6 +85,7 @@ def fits_header(filecontents, filename):
 
 
 @app.task(shared=False)
+@closing_figures()
 def plot_allsky(filecontents, ra=None, dec=None):
     """Plot a Mollweide projection of a sky map using the command-line tool
     :doc:`ligo-skymap-plot <ligo/skymap/tool/ligo_skymap_plot>`.
@@ -104,6 +106,7 @@ def plot_allsky(filecontents, ra=None, dec=None):
 
 
 @app.task(priority=1, queue='openmp', shared=False)
+@closing_figures()
 def plot_volume(filecontents):
     """Plot a 3D volume rendering of a sky map using the command-line tool
     :doc:`ligo-skymap-plot-volume <ligo/skymap/tool/ligo_skymap_plot_volume>`.
@@ -233,6 +236,7 @@ def plot_bayes_factor(logb,
 
 
 @app.task(shared=False)
+@closing_figures()
 def plot_coherence(filecontents):
     """LVAlert handler to plot the coherence Bayes factor.
 

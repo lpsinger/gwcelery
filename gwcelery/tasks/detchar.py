@@ -35,6 +35,7 @@ from . import gracedb
 from ..import app
 from ..import _version
 from ..jinja import env
+from ..util import closing_figures
 
 
 __author__ = 'Geoffrey Mo <geoffrey.mo@ligo.org>'
@@ -98,6 +99,7 @@ def create_cache(ifo, start, end):
 
 
 @app.task(shared=False)
+@closing_figures()
 def make_omegascan(ifo, t0, durs):
     """Helper function to create a single omegascan image, with
     multiple durations.

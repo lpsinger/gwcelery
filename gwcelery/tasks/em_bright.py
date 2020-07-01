@@ -10,7 +10,8 @@ from celery.utils.log import get_task_logger
 from ..import app
 from . import gracedb, lvalert
 from .p_astro import _format_prob
-from ..util import NamedTemporaryFile, PromiseProxy, read_pickle
+from ..util import (closing_figures, NamedTemporaryFile, PromiseProxy,
+                    read_pickle)
 
 NS_CLASSIFIER = PromiseProxy(
     read_pickle, ('ligo.data', 'knn_ns_classifier.pkl'))
@@ -49,6 +50,7 @@ def handle(alert):
 
 
 @app.task(shared=False)
+@closing_figures()
 def plot(contents):
     """Make a visualization of the source properties.
 

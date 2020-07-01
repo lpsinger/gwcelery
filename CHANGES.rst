@@ -7,6 +7,9 @@ Changelog
 -   Pin celery to version 4.4.2 because version 4.4.4 breaks the GWCelery unit
     tests. (See https://git.ligo.org/emfollow/gwcelery/-/issues/348)
 
+-   Close Matplotlib figures that are created during tasks to avoid leaking
+    references and memory.
+
 0.13.0 (2020-06-03)
 -------------------
 

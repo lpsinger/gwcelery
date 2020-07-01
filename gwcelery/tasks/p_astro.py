@@ -12,7 +12,7 @@ import numpy as np
 
 from . import gracedb, lvalert
 from .. import app
-from ..util import PromiseProxy, read_json
+from ..util import closing_figures, PromiseProxy, read_json
 
 MEAN_VALUES_DICT = PromiseProxy(
     read_json, ('ligo.data', 'H1L1V1-mean_counts-1126051217-61603201.json'))
@@ -104,6 +104,7 @@ def _format_prob(prob):
 
 
 @app.task(shared=False)
+@closing_figures()
 def plot(contents):
     """Make a visualization of the source classification.
 
