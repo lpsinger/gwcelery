@@ -28,7 +28,7 @@ def test_pick_coinc():
 
     assert len(coinc_inspiral_table) == 1
     coinc_inspiral, = coinc_inspiral_table
-    assert coinc_inspiral.get_end() <= mock_now()
+    assert coinc_inspiral.end <= mock_now()
 
 
 @patch('lal.GPSTimeNow', mock_now)

@@ -7,6 +7,7 @@ from celery.task import PeriodicTask
 from celery.utils.log import get_task_logger
 from ligo.lw import utils
 from ligo.lw import lsctables
+import ligo.lw.table
 import lal
 from ligo.skymap.io.events.ligolw import ContentHandler
 import numpy as np
@@ -25,14 +26,14 @@ def pick_coinc():
     root, = xmldoc.childNodes
 
     # Remove unneeded tables
-    for lsctable in (
-            lsctables.FilterTable,
-            lsctables.SegmentTable,
-            lsctables.SegmentDefTable,
-            lsctables.SimInspiralTable,
-            lsctables.SummValueTable,
-            lsctables.SearchSummVarsTable):
-        root.removeChild(lsctable.get_table(xmldoc))
+    for name in (
+            'filter',  # lsctables.FilterTable removed from ligo.lw
+            lsctables.SegmentTable.tableName,
+            lsctables.SegmentDefTable.tableName,
+            lsctables.SimInspiralTable.tableName,
+            lsctables.SummValueTable.tableName,
+            lsctables.SearchSummVarsTable.tableName):
+        root.removeChild(ligo.lw.table.get_table(xmldoc, name))
 
     coinc_inspiral_table = table = lsctables.CoincInspiralTable.get_table(
         xmldoc)
@@ -55,7 +56,7 @@ def pick_coinc():
     # Remove unneeded rows
     table[:] = [row for row in table
                 if int(row.coinc_event_id) == target_coinc_event_id]
-    target_end_time = table[0].get_end()
+    target_end_time = table[0].end
 
     coinc_table = table = lsctables.CoincTable.get_table(xmldoc)
     table[:] = [row for row in table
@@ -74,7 +75,7 @@ def pick_coinc():
     target_process_ids = frozenset(row.process_id for row in table)
 
     table = lsctables.SearchSummaryTable.get_table(xmldoc)
-    table[:] = [row for row in table if target_end_time in row.get_out()
+    table[:] = [row for row in table if target_end_time in row.out_segment
                 and row.process_id in target_process_ids]
     target_process_ids = frozenset(row.process_id for row in table)
 
