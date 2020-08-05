@@ -5,8 +5,8 @@ import random
 
 from celery.task import PeriodicTask
 from celery.utils.log import get_task_logger
-from glue.ligolw import utils
-from glue.ligolw import lsctables
+from ligo.lw import utils
+from ligo.lw import lsctables
 import lal
 from ligo.skymap.io.events.ligolw import ContentHandler
 import numpy as np
@@ -21,7 +21,7 @@ log = get_task_logger(__name__)
 def pick_coinc():
     """Pick a coincidence from the "First Two Years" paper."""
     with resources.open_binary(data_first2years, 'gstlal.xml.gz') as f:
-        xmldoc, _ = utils.load_fileobj(f, contenthandler=ContentHandler)
+        xmldoc = utils.load_fileobj(f, contenthandler=ContentHandler)
     root, = xmldoc.childNodes
 
     # Remove unneeded tables
@@ -111,7 +111,7 @@ def pick_coinc():
 
 def _jitter_snr(coinc_bytes):
     coinc_xml = io.BytesIO(coinc_bytes)
-    xmldoc, _ = utils.load_fileobj(coinc_xml, contenthandler=ContentHandler)
+    xmldoc = utils.load_fileobj(coinc_xml, contenthandler=ContentHandler)
 
     coinc_inspiral_table = lsctables.CoincInspiralTable.get_table(xmldoc)
 

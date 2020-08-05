@@ -2,8 +2,8 @@ from importlib import resources
 import io
 from unittest.mock import call, patch
 
-from glue.ligolw import utils
-from glue.ligolw import lsctables
+from ligo.lw import utils
+from ligo.lw import lsctables
 from ligo.skymap.io.events.ligolw import ContentHandler
 import pytest
 
@@ -21,8 +21,8 @@ def mock_now():
 @patch('lal.GPSTimeNow', mock_now)
 def test_pick_coinc():
     coinc = pick_coinc()
-    xmldoc, _ = utils.load_fileobj(io.BytesIO(coinc),
-                                   contenthandler=ContentHandler)
+    xmldoc = utils.load_fileobj(io.BytesIO(coinc),
+                                contenthandler=ContentHandler)
 
     coinc_inspiral_table = lsctables.CoincInspiralTable.get_table(xmldoc)
 
