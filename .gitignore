@@ -1,3 +1,7 @@
+# Project files for various editors
+.idea
+.vscode
+
 # Files created by editing, developing, running tests
 .DS_Store
 .*.swp
