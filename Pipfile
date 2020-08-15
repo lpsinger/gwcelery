@@ -12,6 +12,9 @@ ipython = "*"
 ipykernel = "*"
 # Pull in flower from GitHub to get https://github.com/mher/flower/pull/880.
 flower = {git = "https://github.com/mher/flower",ref = "510d7882ba392e7bc2fa094d49ce01c96be9a39f"}
+# Dependencies needed for running unit tests
+pytest-socket = "*"
+pytest-flask = "*"
 
 [requires]
 python_version = "3.7"
