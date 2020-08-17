@@ -63,7 +63,7 @@ bdist:
   stage: dist
   variables:
     GIT_STRATEGY: fetch
-    IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_JOB_NAME:$CI_COMMIT_REF_NAME
+    IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_JOB_NAME:$CI_COMMIT_REF_SLUG
   script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - |
@@ -102,14 +102,14 @@ dependencies/python3.8:
     reports:
       junit: junit.xml
 test/python3.7:
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_NAME
+  image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_SLUG
   <<: *test
 test/python3.8:
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.8:$CI_COMMIT_REF_NAME
+  image: $CI_REGISTRY_IMAGE/dependencies/python3.8:$CI_COMMIT_REF_SLUG
   <<: *test
 
 lint:
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.8:$CI_COMMIT_REF_NAME
+  image: $CI_REGISTRY_IMAGE/dependencies/python3.8:$CI_COMMIT_REF_SLUG
   stage: test
   variables:
     GIT_STRATEGY: fetch
@@ -137,11 +137,11 @@ associate commits in Sentry:
 .docker: &docker
   stage: deploy
   script:
-    - IMAGE_TAG=$CI_REGISTRY_IMAGE/${CI_JOB_NAME#*/}:$CI_COMMIT_REF_NAME
+    - IMAGE_TAG=$CI_REGISTRY_IMAGE/${CI_JOB_NAME#*/}:$CI_COMMIT_REF_SLUG
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - |
       cat <<EOF > Dockerfile
-      FROM $CI_REGISTRY_IMAGE/dependencies/${CI_JOB_NAME#*/}:$CI_COMMIT_REF_NAME
+      FROM $CI_REGISTRY_IMAGE/dependencies/${CI_JOB_NAME#*/}:$CI_COMMIT_REF_SLUG
       COPY *.whl .
       RUN pip install *.whl
       RUN rm -f *.whl
