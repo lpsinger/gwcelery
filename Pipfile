@@ -10,8 +10,8 @@ gwcelery = {editable = true,path = "."}
 ipython = "*"
 # Include IPython kernel for Jupyter Lab support.
 ipykernel = "*"
-# Pull in flower from GitHub to get https://github.com/mher/flower/pull/880.
-flower = {git = "https://github.com/mher/flower",ref = "510d7882ba392e7bc2fa094d49ce01c96be9a39f"}
+# https://github.com/mher/flower/pull/880
+flower = ">= 0.9.5"
 # Dependencies needed for running unit tests
 pytest-socket = "*"
 pytest-flask = "*"

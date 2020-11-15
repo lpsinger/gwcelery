@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "56e4e12457ccb8dd84215b88ebb947c3f8f6a53e6437e06b9ae8d2e96628f383"
+            "sha256": "fa933e9f7c7a8e79fcae8fb3810b1f155ccbfa54b34cd35fdc392604920c2127"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -147,6 +147,7 @@
                 "sha256:a92e1d56e650781fb747032a3997d16236d037c8199eacd5217d1a72893bca45",
                 "sha256:d220b13a8ed57c78149acf82c006785356071844afe0b27012a4991d44026f9f"
             ],
+            "markers": "python_version >= '3.7'",
             "version": "==4.4.7"
         },
         "certifi": {
@@ -342,8 +343,12 @@
             "version": "==1.9.0"
         },
         "flower": {
-            "git": "https://github.com/mher/flower",
-            "ref": "510d7882ba392e7bc2fa094d49ce01c96be9a39f"
+            "hashes": [
+                "sha256:56916d1d2892e25453d6023437427fc04706a1308e0bd4822321da34e1643f9c",
+                "sha256:71be02bff7b2f56b0a07bd947fb3c748acba7f44f80ae88125d8954ce1a89697"
+            ],
+            "index": "pypi",
+            "version": "==0.9.5"
         },
         "future": {
             "hashes": [
@@ -942,6 +947,13 @@
             ],
             "version": "==0.13.1"
         },
+        "prometheus-client": {
+            "hashes": [
+                "sha256:983c7ac4b47478720db338f1491ef67a100b474e3bc7dafcbaefb7d0b8f9b01c",
+                "sha256:c6e6b706833a6bd1fd51711299edee907857be10ece535126a158f911ee80915"
+            ],
+            "version": "==0.8.0"
+        },
         "prompt-toolkit": {
             "hashes": [
                 "sha256:25c95d2ac813909f813c93fde734b6e44406d1477a9faef7c915ff37d39c0a8c",
@@ -1397,6 +1409,7 @@
                 "sha256:fa2ba70284fa42c2a5ecb35e322e68823288a4251f9ba9cc77be04ae15eada68",
                 "sha256:fba85b6cd9c39be262fcd23865652920832b61583de2a2ca907dbd8e8a8c81e5"
             ],
+            "markers": "python_version >= '3.5.2'",
             "version": "==6.1"
         },
         "tqdm": {
