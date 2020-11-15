@@ -5,7 +5,7 @@ verify_ssl = true
 
 [packages]
 # Our package and all of its dependencies.
-gwcelery = {editable = true,path = "."}
+gwcelery = {editable = true, path = "."}
 # Include IPython for a nicer ``gwcelery shell`` experience.
 ipython = "*"
 # Include IPython kernel for Jupyter Lab support.
