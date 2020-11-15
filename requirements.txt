@@ -12,7 +12,6 @@ gwpy
 healpy
 imapclient
 importlib-metadata; python_version<'3.8'
-importlib-resources; python_version<'3.7'
 jinja2
 lalsuite
 ligo-followup-advocate >= 1.1.6
