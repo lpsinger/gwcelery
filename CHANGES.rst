@@ -7,6 +7,10 @@ Changelog
 -   Pin celery to version 4.4.2 because version 4.4.4 breaks the GWCelery unit
     tests. (See https://git.ligo.org/emfollow/gwcelery/-/issues/348)
 
+-   Pin ligo-gracedb to < 2.7.0 due to a certificate renewal bug that was
+    introduced in that version. (See
+    https://git.ligo.org/lscsoft/gracedb-client/-/issues/24)
+
 -   Close Matplotlib figures that are created during tasks to avoid leaking
     references and memory.
 

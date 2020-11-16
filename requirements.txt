@@ -15,7 +15,7 @@ importlib-metadata; python_version<'3.8'
 jinja2
 lalsuite
 ligo-followup-advocate >= 1.1.6
-ligo-gracedb >= 2.3.0
+ligo-gracedb >= 2.3.0, < 2.7.0  # regression in 2.7.0: https://git.ligo.org/lscsoft/gracedb-client/-/issues/24
 ligo-raven >= 1.17
 ligo-segments
 ligo.skymap >= 0.4.0

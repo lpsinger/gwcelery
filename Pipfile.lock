@@ -596,10 +596,9 @@
         },
         "ligo-gracedb": {
             "hashes": [
-                "sha256:b02744265db555b8add168458eac666ab2768c61450ca67ac9fbf676ee9bc73c",
-                "sha256:f4e481c86426b34d1128323914aa0ca58b4e49300bf583d6ea8f882ad40a1eed"
+                "sha256:2fd205680585753b0215309a4f6a591630720a8c15a9bb0111635c77a533b1e5"
             ],
-            "version": "==2.7.1"
+            "version": "==2.6.1"
         },
         "ligo-raven": {
             "hashes": [
