@@ -7,9 +7,11 @@ Changelog
 -   Pin celery to version 4.4.2 because version 4.4.4 breaks the GWCelery unit
     tests. (See https://git.ligo.org/emfollow/gwcelery/-/issues/348)
 
--   Update ligo-gracedb to >= 2.7.2 to take advantage of connection pooling and
-    pick up a bug fix for certificate reloading (see
-    https://git.ligo.org/lscsoft/gracedb-client/-/issues/24).
+-   Require ligo-gracedb >= 2.7.3 to take advantage of connection pooling and
+    pick up a bug fix for certificate reloading (fixed in version 2.7.2, see
+    https://git.ligo.org/lscsoft/gracedb-client/-/issues/24) and revert an
+    uninentional API change (fixed in version 2.7.3, see
+    https://git.ligo.org/lscsoft/gracedb-client/-/issues/25).
 
 -   Require gwpy >= 2.0.2 to work around a Matplotlib compatibility bug that
     was fixed in that version (see https://github.com/gwpy/gwpy/issues/1277).
