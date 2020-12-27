@@ -11,6 +11,9 @@ Changelog
     pick up a bug fix for certificate reloading (see
     https://git.ligo.org/lscsoft/gracedb-client/-/issues/24).
 
+-   Require gwpy >= 2.0.2 to work around a Matplotlib compatibility bug that
+    was fixed in that version (see https://github.com/gwpy/gwpy/issues/1277).
+
 -   Close Matplotlib figures that are created during tasks to avoid leaking
     references and memory.
 
