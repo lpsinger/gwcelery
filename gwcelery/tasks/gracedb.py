@@ -84,7 +84,7 @@ def create_label(label, graceid):
             b'"The \'ADVREQ\' label cannot be applied to request a signoff '
             b'because a related signoff already exists."',
 
-            b'"The fields superevent, label must make a unique set."'
+            b'"The fields superevent, name must make a unique set."'
         }
         if e.response.content not in messages:
             raise
