@@ -19,6 +19,9 @@ Changelog
 -   Close Matplotlib figures that are created during tasks to avoid leaking
     references and memory.
 
+-   Adapt to a change in the GraceDB server's API response for a request to
+    create a label that already exists.
+
 0.13.0 (2020-06-03)
 -------------------
 
