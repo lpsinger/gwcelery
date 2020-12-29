@@ -8,5 +8,6 @@ KERBEROS_KEYTAB="${HOME}/.globus/krb5.keytab"
 KERBEROS_PRINCIPAL="$(klist -k "${KERBEROS_KEYTAB}" | tail -n 1 | sed 's/.*\s//')"
 kinit "${KERBEROS_PRINCIPAL}" -k -t "${KERBEROS_KEYTAB}"
 ligo-proxy-init -k > /dev/null
-cp "${X509_USER_PROXY}" "${X509_USER_CERT}"
-cp "${X509_USER_PROXY}" "${X509_USER_KEY}"
+GRID_PROXY_PATH="$(grid-proxy-info -path)"
+cp "${GRID_PROXY_PATH}" "${X509_USER_CERT}"
+cp "${GRID_PROXY_PATH}" "${X509_USER_KEY}"
