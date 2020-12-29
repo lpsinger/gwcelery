@@ -30,6 +30,7 @@ module load mpi/mpich-3.0-x86_64
 # is `no`. That's obviously incorrect!
 export X509_USER_CERT="$HOME/.globus/usercert.pem"
 export X509_USER_KEY="$HOME/.globus/userkey.pem"
+export X509_USER_PROXY="$HOME/.globus/userproxy.pem"
 
 # Configuration for GWCelery web applications.
 export FLASK_PORT=5556

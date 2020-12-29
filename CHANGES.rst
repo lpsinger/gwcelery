@@ -22,6 +22,12 @@ Changelog
 -   Adapt to a change in the GraceDB server's API response for a request to
     create a label that already exists.
 
+-   Update the bash profile script to set the ``X509_USER_PROXY`` variable in
+    order to work around upstream changes in the order of precedence with which
+    ligo-gracedb treats environment variables. ``X509_USER_PROXY`` used to be
+    checked after ``X509_USER_CERT``/``X509_USER_KEY``, but is now checked
+    before.
+
 0.13.0 (2020-06-03)
 -------------------
 
