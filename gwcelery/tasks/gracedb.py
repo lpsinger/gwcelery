@@ -93,7 +93,7 @@ def create_label(label, graceid):
 @task(ignore_result=True, shared=False)
 @catch_retryable_http_errors
 def remove_label(label, graceid):
-    """Create a label in GraceDB."""
+    """Remove a label in GraceDB."""
     try:
         client.events[graceid].labels.delete(label)
     except HTTPError as e:
@@ -107,7 +107,7 @@ def remove_label(label, graceid):
 @task(ignore_result=True, shared=False)
 @catch_retryable_http_errors
 def create_signoff(status, comment, signoff_type, graceid):
-    """Create a label in GraceDB."""
+    """Create a signoff in GraceDB."""
     try:
         client.superevents[graceid].signoff(signoff_type, status, comment)
     except HTTPError as e:
