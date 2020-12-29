@@ -11,4 +11,3 @@ ligo-proxy-init -k > /dev/null
 GRID_PROXY_PATH="$(grid-proxy-info -path)"
 cp "${GRID_PROXY_PATH}" "${X509_USER_CERT}"
 cp "${GRID_PROXY_PATH}" "${X509_USER_KEY}"
-cp "${GRID_PROXY_PATH}" "${X509_USER_PROXY}"
