@@ -8,7 +8,7 @@ Changelog
     tests. (See https://git.ligo.org/emfollow/gwcelery/-/issues/348)
 
 -   Require ligo-gracedb >= 2.7.5 to take advantage of connection pooling and
-    pick up several bug fixes and regressions:
+    pick up several bug fixes and regression fixes:
 
     -   https://git.ligo.org/lscsoft/gracedb-client/-/issues/24
     -   https://git.ligo.org/lscsoft/gracedb-client/-/issues/25
