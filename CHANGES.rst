@@ -23,6 +23,10 @@ Changelog
 -   Adapt to a change in the GraceDB server's API response for a request to
     create a label that already exists.
 
+-   Set the matplotlib backend to ``agg`` in order to fix plot layout glitches
+    that started with matplotlib 3.3.0 when ``plt.tight_layout`` became backend
+    dependent (see https://github.com/matplotlib/matplotlib/pull/15221).
+
 0.13.0 (2020-06-03)
 -------------------
 

@@ -90,6 +90,9 @@ def plot_allsky(filecontents, ra=None, dec=None):
     """Plot a Mollweide projection of a sky map using the command-line tool
     :doc:`ligo-skymap-plot <ligo/skymap/tool/ligo_skymap_plot>`.
     """
+    # Explicitly use a non-interactive Matplotlib backend.
+    plt.switch_backend('agg')
+
     # Note: plt.style.context added as workaround for
     # https://github.com/astropy/astropy/issues/8004.
     with NamedTemporaryFile(mode='rb', suffix='.png') as pngfile, \
@@ -111,6 +114,9 @@ def plot_volume(filecontents):
     """Plot a 3D volume rendering of a sky map using the command-line tool
     :doc:`ligo-skymap-plot-volume <ligo/skymap/tool/ligo_skymap_plot_volume>`.
     """
+    # Explicitly use a non-interactive Matplotlib backend.
+    plt.switch_backend('agg')
+
     # Note: plt.style.context added as workaround for
     # https://github.com/astropy/astropy/issues/8004.
     with NamedTemporaryFile(mode='rb', suffix='.png') as pngfile, \
@@ -255,6 +261,9 @@ def plot_coherence(filecontents):
     Under the hood, this just calls :meth:`plot_bayes_factor`.
 
     """
+    # Explicitly use a non-interactive Matplotlib backend.
+    plt.switch_backend('agg')
+
     with NamedTemporaryFile(content=filecontents) as fitsfile:
         header = fits.getheader(fitsfile, 1)
     try:

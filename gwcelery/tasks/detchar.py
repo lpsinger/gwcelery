@@ -120,6 +120,9 @@ def make_omegascan(ifo, t0, durs):
         bytes of png of the omegascan, or None if no omegascan created.
 
     """
+    # Explicitly use a non-interactive Matplotlib backend.
+    plt.switch_backend('agg')
+
     # Collect data
     longest = max(durs)
     long_start, long_end = t0 - longest, t0 + longest

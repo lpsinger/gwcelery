@@ -63,6 +63,9 @@ def plot(contents):
         >>> contents = '{"HasNS": 0.9137, "HasRemnant": 0.0}'
         >>> em_bright.plot(contents)
     """
+    # Explicitly use a non-interactive Matplotlib backend.
+    plt.switch_backend('agg')
+
     properties = json.loads(contents)
     outfile = io.BytesIO()
 

@@ -136,6 +136,9 @@ def plot(contents):
        >>> p_astro.plot(contents)
 
     """
+    # Explicitly use a non-interactive Matplotlib backend.
+    plt.switch_backend('agg')
+
     classification = json.loads(contents)
     outfile = io.BytesIO()
 
