@@ -8,7 +8,7 @@ import sys
 try:
     from importlib import metadata
 except ImportError:
-    # FIXME Remove when we drop support for Python < 3.7
+    # FIXME Remove when we drop support for Python < 3.8
     import importlib_metadata as metadata
 
 from astropy.time import Time
