@@ -93,11 +93,8 @@ def plot_allsky(filecontents, ra=None, dec=None):
     # Explicitly use a non-interactive Matplotlib backend.
     plt.switch_backend('agg')
 
-    # Note: plt.style.context added as workaround for
-    # https://github.com/astropy/astropy/issues/8004.
     with NamedTemporaryFile(mode='rb', suffix='.png') as pngfile, \
             NamedTemporaryFile(content=filecontents) as fitsfile, \
-            plt.style.context({'text.usetex': False}, after_reset=True), \
             handling_system_exit():
         if ra is not None and dec is not None:
             ligo_skymap_plot.main([fitsfile.name, '-o', pngfile.name,
@@ -117,11 +114,8 @@ def plot_volume(filecontents):
     # Explicitly use a non-interactive Matplotlib backend.
     plt.switch_backend('agg')
 
-    # Note: plt.style.context added as workaround for
-    # https://github.com/astropy/astropy/issues/8004.
     with NamedTemporaryFile(mode='rb', suffix='.png') as pngfile, \
             NamedTemporaryFile(content=filecontents) as fitsfile, \
-            plt.style.context({'text.usetex': False}, after_reset=True), \
             handling_system_exit():
         ligo_skymap_plot_volume.main([fitsfile.name, '-o',
                                       pngfile.name, '--annotate'])
