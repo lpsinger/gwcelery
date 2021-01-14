@@ -4,12 +4,10 @@ The orchestrator is responsible for the vetting and annotation workflow to
 produce preliminary, initial, and update alerts for gravitational-wave event
 candidates.
 """
-import io
 import json
 import re
 
 from celery import group
-import h5py
 
 from ..import app
 from . import bayestar
@@ -272,27 +270,6 @@ def handle_cbc_event(alert):
         ).apply_async(priority=priority)
 
 
-@app.task(shared=False)
-def _remove_duplicate_meta(hdf5):
-    """Remove 'nLocalTemps' and 'randomSeed', which are duplicated in the
-    metadata and column names of a posterior sample file and cause failure in
-    the skymap generation.
-
-    FIXME: See https://git.ligo.org/lscsoft/lalsuite/issues/250.
-    """
-    bio = io.BytesIO(hdf5)
-    with h5py.File(bio, "r+") as f:
-        try:
-            tmp = f['lalinference']['lalinference_mcmc']
-        except KeyError:
-            pass
-        else:
-            meta = tmp['posterior_samples'].attrs
-            meta.pop('nLocalTemps', None)
-            meta.pop('randomSeed', None)
-    return bio.getvalue()
-
-
 @lvalert.handler('superevent',
                  'mdc_superevent',
                  shared=False)
@@ -308,12 +285,8 @@ def handle_posterior_samples(alert):
     info = '{} {}'.format(alert['data']['comment'], filename)
     prefix, _ = filename.rsplit('.posterior_samples.')
 
-    # FIXME: _remove_duplicate_meta should be omitted as soon as
-    # https://git.ligo.org/lscsoft/lalsuite/issues/250 is fixed.
     (
         gracedb.download.si(filename, superevent_id)
-        |
-        _remove_duplicate_meta.s()
         |
         skymaps.skymap_from_samples.s()
         |
