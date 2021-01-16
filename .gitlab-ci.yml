@@ -1,10 +1,10 @@
 include:
-  - project: emfollow/gitlab-ci-templates
-    file: lint.yml
-  - project: emfollow/gitlab-ci-templates
-    file: sccb.yml
-  - project: emfollow/gitlab-ci-templates
-    file: ssh.yml
+  - project: computing/gitlab-ci-templates
+    file: python/lint.yml
+  - project: computing/gitlab-ci-templates
+    file: workflow/sccb.yml
+  - project: computing/gitlab-ci-templates
+    file: cluster/ssh.yml
 
 variables:
   # Allow Celery to run as root, because everything runs as root under Docker.
@@ -300,7 +300,7 @@ deploy to production at CIT:
     on_stop: stop deployment on production at CIT
     url: https://emfollow.ligo.caltech.edu/flower
   variables:
-    REMOTE_HOST: emfollow.ligo.caltech.edu
+    REMOTE_HOST: emfollow@emfollow.ligo.caltech.edu
 
 deploy to production at LHO:
   <<: *deploy-start
@@ -310,7 +310,7 @@ deploy to production at LHO:
     on_stop: stop deployment on production at LHO
     url: https://emfollow.ligo-wa.caltech.edu/flower
   variables:
-    REMOTE_HOST: emfollow.ligo-wa.caltech.edu
+    REMOTE_HOST: emfollow@emfollow.ligo-wa.caltech.edu
 
 deploy to playground at CIT:
   <<: *deploy-start
@@ -319,7 +319,7 @@ deploy to playground at CIT:
     on_stop: stop deployment on playground at CIT
     url: https://emfollow-playground.ligo.caltech.edu/flower
   variables:
-    REMOTE_HOST: emfollow-playground.ligo.caltech.edu
+    REMOTE_HOST: emfollow-playground@emfollow-playground.ligo.caltech.edu
 
 deploy to playground at LHO:
   <<: *deploy-start
@@ -329,7 +329,7 @@ deploy to playground at LHO:
     on_stop: stop deployment on playground at LHO
     url: https://emfollow-playground.ligo-wa.caltech.edu/flower
   variables:
-    REMOTE_HOST: emfollow-playground.ligo-wa.caltech.edu
+    REMOTE_HOST: emfollow-playground@emfollow-playground.ligo-wa.caltech.edu
 
 deploy to test at CIT:
   <<: *deploy-start
@@ -339,7 +339,7 @@ deploy to test at CIT:
     on_stop: stop deployment on test at CIT
     url: https://emfollow-test.ligo.caltech.edu/flower
   variables:
-    REMOTE_HOST: emfollow-test.ligo.caltech.edu
+    REMOTE_HOST: emfollow-test@emfollow-test.ligo.caltech.edu
 
 deploy to test at LHO:
   <<: *deploy-start
@@ -349,7 +349,7 @@ deploy to test at LHO:
     on_stop: stop deployment on test at LHO
     url: https://emfollow-test.ligo-wa.caltech.edu/flower
   variables:
-    REMOTE_HOST: emfollow-test.ligo-wa.caltech.edu
+    REMOTE_HOST: emfollow-test@emfollow-test.ligo-wa.caltech.edu
 
 stop deployment on production at CIT:
   <<: *deploy-stop
