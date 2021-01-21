@@ -109,6 +109,8 @@ test/python3.8:
   <<: *test
 
 lint:
+  extends:
+    - .python:flake8
   image: $CI_REGISTRY_IMAGE/dependencies/python3.8:$CI_COMMIT_REF_SLUG
   stage: test
   variables:
