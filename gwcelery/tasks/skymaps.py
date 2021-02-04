@@ -88,7 +88,7 @@ def fits_header(filecontents, filename):
 @closing_figures()
 def plot_allsky(filecontents, ra=None, dec=None):
     """Plot a Mollweide projection of a sky map using the command-line tool
-    :doc:`ligo-skymap-plot <ligo/skymap/tool/ligo_skymap_plot>`.
+    :doc:`ligo-skymap-plot <ligo.skymap:tool/ligo_skymap_plot>`.
     """
     # Explicitly use a non-interactive Matplotlib backend.
     plt.switch_backend('agg')
@@ -109,7 +109,7 @@ def plot_allsky(filecontents, ra=None, dec=None):
 @closing_figures()
 def plot_volume(filecontents):
     """Plot a 3D volume rendering of a sky map using the command-line tool
-    :doc:`ligo-skymap-plot-volume <ligo/skymap/tool/ligo_skymap_plot_volume>`.
+    :doc:`ligo-skymap-plot-volume <ligo.skymap:tool/ligo_skymap_plot_volume>`.
     """
     # Explicitly use a non-interactive Matplotlib backend.
     plt.switch_backend('agg')
@@ -126,7 +126,7 @@ def plot_volume(filecontents):
 def flatten(filecontents, filename):
     """Convert a HEALPix FITS file from multi-resolution UNIQ indexing to the
     more common IMPLICIT indexing using the command-line tool
-    :doc:`ligo-skymap-flatten <ligo/skymap/tool/ligo_skymap_flatten>`.
+    :doc:`ligo-skymap-flatten <ligo.skymap:tool/ligo_skymap_flatten>`.
     """
     with NamedTemporaryFile(content=filecontents) as infile, \
             tempfile.TemporaryDirectory() as tmpdir, \
