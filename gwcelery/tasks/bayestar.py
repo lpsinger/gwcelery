@@ -44,7 +44,7 @@ def localize(coinc_psd, graceid, filename='bayestar.fits.gz',
     -----
     This task is adapted from the command-line tool
     :doc:`bayestar-localize-lvalert
-    <ligo/skymap/tool/bayestar_localize_lvalert>`.
+    <ligo.skymap:tool/bayestar_localize_lvalert>`.
 
     It should execute in a special queue for computationally intensive,
     multithreaded, OpenMP tasks.
