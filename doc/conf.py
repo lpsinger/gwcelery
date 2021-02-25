@@ -70,7 +70,8 @@ description = setup_cfg['metadata']['description']
 # built documents.
 
 spec = importlib.util.spec_from_file_location(
-    '_version', os.path.join(os.path.dirname(__file__, 'gwcelery/_version.py'))
+    '_version',
+    os.path.join(os.path.dirname(__file__, 'gwcelery/_version.py')))
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
 parsed_version = pkg_resources.parse_version(module.get_versions()['version'])
