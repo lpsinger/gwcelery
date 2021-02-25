@@ -23,7 +23,7 @@ import os
 import pkg_resources
 import sys
 
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.dirname(__file__))
 
 
 # -- General configuration ------------------------------------------------
@@ -60,7 +60,7 @@ master_doc = 'index'
 
 # General information about the project.
 setup_cfg = configparser.ConfigParser()
-setup_cfg.read('../setup.cfg')
+setup_cfg.read(os.path.join(os.path.dirname(__file__), 'setup.cfg'))
 project = setup_cfg['metadata']['name']
 author = setup_cfg['metadata']['author']
 description = setup_cfg['metadata']['description']
@@ -70,7 +70,7 @@ description = setup_cfg['metadata']['description']
 # built documents.
 
 spec = importlib.util.spec_from_file_location(
-    '_version', '../gwcelery/_version.py')
+    '_version', os.path.join(os.path.dirname(__file__, 'gwcelery/_version.py'))
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
 parsed_version = pkg_resources.parse_version(module.get_versions()['version'])
