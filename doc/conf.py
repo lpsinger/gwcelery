@@ -23,7 +23,7 @@ from pathlib import Path
 import pkg_resources
 import sys
 
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parents[1]))
 
 
 # -- General configuration ------------------------------------------------
