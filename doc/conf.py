@@ -17,11 +17,17 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+import builtins
 import configparser
 import importlib
 from pathlib import Path
 import pkg_resources
 import sys
+
+# Make it possible for our code to tell that it is running under Sphinx.
+# See https://stackoverflow.com/a/65147676/167694
+builtins.__sphinx_build__ = True
+
 
 sys.path.insert(0, str(Path(__file__).parents[1]))
 
