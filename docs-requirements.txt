@@ -1,4 +1,3 @@
 celery[redis]==4.4.2
 matplotlib
-safe_netrc
 sphinx>=2.0
