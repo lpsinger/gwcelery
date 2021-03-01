@@ -4,6 +4,8 @@ Changelog
 0.13.1 (unreleased)
 -------------------
 
+This release primarily updates versions of dependencies.
+
 -   Pin celery to version 4.4.2 because version 4.4.4 breaks the GWCelery unit
     tests. (See https://git.ligo.org/emfollow/gwcelery/-/issues/348)
 
@@ -16,6 +18,16 @@ Changelog
 
 -   Require gwpy >= 2.0.2 to work around a Matplotlib compatibility bug that
     was fixed in that version (see https://github.com/gwpy/gwpy/issues/1277).
+
+-   Require LALSuite >= 6.82 to work around a segmentation fault that occurred
+    with earlier versions of LALSuite and with versions of Numpy >= 1.20
+    (see https://git.ligo.org/lscsoft/lalsuite/-/issues/414).
+
+-   Update p_astro to version 0.8.2 and ligo.skymap to version 0.5.1.
+
+-   Improve the robustness of detecting whether modules are being imported by
+    Sphinx in order to work around some minor changes in the Readthedocs build
+    process (see https://github.com/readthedocs/readthedocs.org/pull/7846).
 
 -   Close Matplotlib figures that are created during tasks to avoid leaking
     references and memory.
