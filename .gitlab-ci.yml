@@ -192,13 +192,14 @@ pages:
   dependencies:
     - test/python3.7
 
-# Upload package to PyPI
+# Upload package to PyPI.
+# Place your PyPI API token in the repository's GitLab CI secrets.
 pypi:
   stage: deploy
   image: python:slim
   script:
     - pip install twine
-    - twine upload *.tar.* *.whl
+    - twine upload --username __token__ --password $PYPI_API_TOKEN *.tar.* *.whl
   dependencies:
     - sdist
     - bdist
