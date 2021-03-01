@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.13.1 (unreleased)
+0.13.1 (2021-03-01)
 -------------------
 
 This release primarily updates versions of dependencies.
