@@ -22,7 +22,7 @@ ligo.skymap >= 0.4.0
 lscsoft-glue
 lxml
 numpy
-p_astro == 0.8.1
+p_astro >= 0.8.1
 pygcn >= 1.0.1
 pytest >= 3.0
 python-ligo-lw
