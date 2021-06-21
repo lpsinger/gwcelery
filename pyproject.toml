@@ -65,7 +65,7 @@ jinja2 = ">=2.11.2"  # https://github.com/pallets/jinja/issues/1168
 lalsuite = ">=6.82"  # https://git.ligo.org/lscsoft/lalsuite/-/issues/414
 ligo-followup-advocate = ">=1.1.6"
 ligo-gracedb = ">=2.7.5"  # https://git.ligo.org/lscsoft/gracedb-client/-/issues/28
-ligo-raven = ">=1.17"
+ligo-raven = ">=2.0"
 ligo-segments = "*"
 "ligo.skymap" = ">=0.4.0"
 lscsoft-glue = "*"

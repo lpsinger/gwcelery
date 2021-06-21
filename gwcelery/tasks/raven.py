@@ -2,7 +2,6 @@
 import ligo.raven.search
 from celery import group
 from celery.utils.log import get_task_logger
-from ligo.raven import gracedb_events
 
 from ..import app
 from . import external_skymaps
@@ -46,6 +45,7 @@ def calculate_coincidence_far(superevent, exttrig, tl, th):
 
         return ligo.raven.search.calc_signif_gracedb(
                    superevent_id, exttrig_id, tl, th,
+                   se_dict=superevent, ext_dict=exttrig,
                    grb_search=exttrig['search'],
                    se_fitsfile=se_skymap, ext_fitsfile=ext_skymap,
                    incl_sky=True, gracedb=legacy_gracedb.client,
@@ -53,6 +53,7 @@ def calculate_coincidence_far(superevent, exttrig, tl, th):
     else:
         return ligo.raven.search.calc_signif_gracedb(
                    superevent_id, exttrig_id, tl, th,
+                   se_dict=superevent, ext_dict=exttrig,
                    grb_search=exttrig['search'],
                    incl_sky=False, gracedb=legacy_gracedb.client,
                    far_grb=exttrig['far'])
@@ -157,14 +158,8 @@ def search(gracedb_id, alert_object, tl=-5, th=5, group=None,
         list with the dictionaries of related gracedb events
 
     """
-    if alert_object.get('superevent_id'):
-        event = gracedb_events.SE(gracedb_id, gracedb=legacy_gracedb.client)
-        group = None
-    else:
-        event = gracedb_events.ExtTrig(gracedb_id,
-                                       gracedb=legacy_gracedb.client)
-        pipelines = []
-    return ligo.raven.search.search(event, tl, th,
+    return ligo.raven.search.search(gracedb_id, tl, th,
+                                    event_dict=alert_object,
                                     gracedb=legacy_gracedb.client,
                                     group=group, pipelines=pipelines,
                                     searches=searches)

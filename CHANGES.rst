@@ -38,6 +38,8 @@ Changelog
 
 -   Fix a bug in configuration of the Jinja template directory.
 
+-   Reduce queries to gracedb by RAVEN by passing event dictionaries directly.
+
 0.13.1 (2021-03-01)
 -------------------
 
