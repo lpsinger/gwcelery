@@ -12,7 +12,7 @@ gwpy >= 2.0.2  # https://github.com/gwpy/gwpy/issues/1277
 healpy
 imapclient
 importlib-metadata; python_version<'3.8'
-jinja2 == 2.11.2
+jinja2 == 2.11.2 #  https://github.com/pallets/jinja/issues/1168
 lalsuite >= 6.82  # https://git.ligo.org/lscsoft/lalsuite/-/issues/414
 ligo-followup-advocate >= 1.1.6
 ligo-gracedb >= 2.7.5  # https://git.ligo.org/lscsoft/gracedb-client/-/issues/28
