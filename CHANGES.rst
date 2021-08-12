@@ -7,6 +7,8 @@ Changelog
 -   Require astropy >= 4.3.1 due to an upstream bug
     (https://github.com/astropy/astropy/issues/11879).
 
+-   Fix a bug in configuration of the Jinja template directory.
+
 0.13.1 (2021-03-01)
 -------------------
 
