@@ -280,7 +280,7 @@ intersphinx_mapping = {
     'comet': ('https://comet.transientskp.org/en/stable/', None),
     'data-quality-report': (
         'https://docs.ligo.org/detchar/data-quality-report/', None),
-    'htcondor': ('https://htcondor.readthedocs.io/en/stable/', None),
+    'htcondor': ('https://htcondor.readthedocs.io/en/latest/', None),
     'gwpy': ('https://gwpy.github.io/docs/stable/', None),
     'ligo.skymap': ('https://lscsoft.docs.ligo.org/ligo.skymap/', None),
     'requests': ('https://requests.readthedocs.io/en/master/', None),
