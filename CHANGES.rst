@@ -9,6 +9,9 @@ Changelog
 
 -   Fix a bug in configuration of the Jinja template directory.
 
+-   Restrict documentation build to sphinx < 4 due to an API change
+    in that version that impacts Celery 4.x.
+
 0.13.1 (2021-03-01)
 -------------------
 

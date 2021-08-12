@@ -1,3 +1,3 @@
 celery[redis]==4.4.2
 matplotlib
-sphinx>=2.0
+sphinx>=2.0, <4  # FIXME: Sphinx 4 removed the symbol sphinx.domains.python.PyModulelevel, which is reference by Celery 4. Revisit this version constraint after we upgrade to Celery 5.
