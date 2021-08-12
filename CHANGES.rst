@@ -4,7 +4,8 @@ Changelog
 0.13.2 (unreleased)
 -------------------
 
--   No changes yet.
+-   Require astropy >= 4.3.1 due to an upstream bug
+    (https://github.com/astropy/astropy/issues/11879).
 
 0.13.1 (2021-03-01)
 -------------------
