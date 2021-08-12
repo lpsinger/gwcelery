@@ -273,7 +273,10 @@ texinfo_documents = [
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
-    'celery': ('https://docs.celeryproject.org/en/latest/', None),
+    # FIXME: Import sphinx refs from the old version of Celery that we are
+    # currently using. Change to 'latest' once we complete the upgrade to
+    # Celery 5.
+    'celery': ('https://docs.celeryproject.org/en/4.4.2/', None),
     'comet': ('https://comet.transientskp.org/en/stable/', None),
     'data-quality-report': (
         'https://docs.ligo.org/detchar/data-quality-report/', None),
