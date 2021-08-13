@@ -10,8 +10,9 @@ gwcelery = {editable = true, path = "."}
 ipython = "*"
 # Include IPython kernel for Jupyter Lab support.
 ipykernel = "*"
-# https://github.com/mher/flower/pull/880
-flower = ">= 0.9.5"
+# flower >= 0.9.5: https://github.com/mher/flower/pull/880
+# flower < 1: flower >= 1 requires Celery 5. FIXME: remove constraint after upgrade to Celery 5.
+flower = ">= 0.9.5, <1"
 # Dependencies needed for running unit tests
 pytest-socket = "*"
 pytest-flask = "*"
