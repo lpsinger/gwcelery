@@ -3,7 +3,7 @@ from importlib import resources
 import io
 import random
 
-from celery.task import PeriodicTask
+from celery.schedules import crontab
 from celery.utils.log import get_task_logger
 from ligo.lw import utils
 from ligo.lw import lsctables
@@ -144,7 +144,12 @@ def _upload_psd(graceid):
     gracedb.upload(psd, 'psd.xml.gz', graceid, 'Noise PSD', ['psd'])
 
 
-@app.task(base=PeriodicTask, shared=False, run_every=3600)
+@app.on_after_configure.connect
+def setup_periodic_tasks(sender, **kwargs):
+    sender.add_periodic_task(3600.0, upload_event)
+
+
+@app.task(ignore_result=True, shared=False)
 def upload_event():
     """Upload a random event from the "First Two Years" paper.
 
