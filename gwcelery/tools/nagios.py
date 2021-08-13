@@ -1,11 +1,12 @@
-"""A `Nagios plugin <https://nagios-plugins.org/doc/guidelines.html>`_
-for monitoring GWCelery.
+"""A Nagios plugin for monitoring GWCelery.
+
+See https://nagios-plugins.org/doc/guidelines.html.
 """
 from enum import IntEnum
 from sys import exit
 from traceback import format_exc, format_exception
 
-from celery.bin.base import Command
+import click
 import kombu.exceptions
 
 # Make sure that all tasks are registered
@@ -98,28 +99,25 @@ def check_status(app):
                     app.conf['voevent_receiver_address']))
 
 
-class NagiosCommand(Command):
-
-    def run(self, **kwargs):
-        try:
-            check_status(self.app)
-        except NagiosCriticalError as e:
-            status = NagiosPluginStatus.CRITICAL
-            output, = e.args
-            e = e.__cause__
-            detail = ''.join(format_exception(type(e), e, e.__traceback__))
-        except:  # noqa: E722
-            status = NagiosPluginStatus.UNKNOWN
-            output = 'Unexpected error'
-            detail = format_exc()
-        else:
-            status = NagiosPluginStatus.OK
-            output = 'Running normally'
-            detail = None
-        print('{}: {}'.format(status.name, output))
-        if detail:
-            print(detail)
-        exit(status)
-
-
-NagiosCommand.__doc__ = __doc__
+@click.command(help=__doc__)
+@click.pass_context
+def nagios(ctx, **kwargs):
+    try:
+        check_status(ctx.obj.app)
+    except NagiosCriticalError as e:
+        status = NagiosPluginStatus.CRITICAL
+        output, = e.args
+        e = e.__cause__
+        detail = ''.join(format_exception(type(e), e, e.__traceback__))
+    except:  # noqa: E722
+        status = NagiosPluginStatus.UNKNOWN
+        output = 'Unexpected error'
+        detail = format_exc()
+    else:
+        status = NagiosPluginStatus.OK
+        output = 'Running normally'
+        detail = None
+    print('{}: {}'.format(status.name, output))
+    if detail:
+        print(detail)
+    exit(status)
