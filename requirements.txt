@@ -1,6 +1,6 @@
 astropy >= 4.3.1  # https://github.com/astropy/astropy/issues/11879
 bilby-pipe >= 0.3.8
-celery[redis] == 4.4.2  # https://git.ligo.org/emfollow/gwcelery/-/issues/348
+celery[redis] >= 5.1
 comet
 corner
 dnspython  # silence "DNS: dnspython not found. Can not use SRV lookup." warning from SleekXMPP
