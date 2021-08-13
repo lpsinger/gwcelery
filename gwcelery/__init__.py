@@ -1,5 +1,7 @@
 """Celery application initialization."""
 
+import sys
+
 from celery import Celery
 
 from ._version import get_versions
@@ -37,3 +39,10 @@ app.config_from_envvar('CELERY_CONFIG_MODULE', silent=True)
 app.conf['result_backend'] = app.conf.broker_url
 
 sentry.configure()
+
+
+def main(argv=None):
+    if argv is None:
+        argv = sys.argv
+    argv = argv[1:]  # Strip off the script name; click doesn't want it.
+    app.start(argv)  # The application can take it from here!
