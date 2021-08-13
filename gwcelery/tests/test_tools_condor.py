@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from .. import app
+from .. import app, main
 from ..tools import condor
 
 
@@ -14,7 +14,7 @@ from ..tools import condor
 def test_condor_subcommand(mock_execvp, subcommand, extra_args):
     """Test all trivial Condor subcommands."""
     try:
-        app.start(['gwcelery', 'condor', subcommand])
+        main(['gwcelery', 'condor', subcommand])
     except SystemExit as e:
         assert e.code == 0
 
@@ -28,7 +28,7 @@ def test_condor_subcommand(mock_execvp, subcommand, extra_args):
 def test_condor_submit_not_yet_running(mock_execvp, mock_check_output):
     """Test starting the Condor job."""
     try:
-        app.start(['gwcelery', 'condor', 'submit'])
+        main(['gwcelery', 'condor', 'submit'])
     except SystemExit as e:
         assert e.code == 0
 
@@ -46,7 +46,7 @@ def test_condor_submit_not_yet_running(mock_execvp, mock_check_output):
 def test_condor_submit_already_running(mock_execvp, mock_check_output):
     """Test that we don't start the condor jobs if they are already running."""
     try:
-        app.start(['gwcelery', 'condor', 'submit'])
+        main(['gwcelery', 'condor', 'submit'])
     except SystemExit as e:
         assert e.code == 1
 
@@ -76,7 +76,7 @@ def test_condor_resubmit_fail(mock_check_call, _, __, ___):
     ``condor_rm`` the jobs.
     """
     try:
-        app.start(['gwcelery', 'condor', 'resubmit'])
+        main(['gwcelery', 'condor', 'resubmit'])
     except SystemExit as e:
         assert e.code == 1
     mock_check_call.assert_called_with(
@@ -92,7 +92,7 @@ def test_condor_resubmit_succeeds(mock_execvp, mock_check_call, _):
     ``condor_rm`` the jobs.
     """
     try:
-        app.start(['gwcelery', 'condor', 'resubmit'])
+        main(['gwcelery', 'condor', 'resubmit'])
     except SystemExit as e:
         assert e.code == 0
     mock_check_call.assert_not_called()
