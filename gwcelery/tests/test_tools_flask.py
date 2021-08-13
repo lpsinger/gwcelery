@@ -2,9 +2,8 @@ from unittest.mock import Mock
 
 import pytest
 
-from .. import app as celery_app
+from .. import main, app as celery_app
 from ..tools import flask
-
 
 def test_flask_run(monkeypatch):
     """Test starting the Flask server from the command line."""
@@ -14,7 +13,7 @@ def test_flask_run(monkeypatch):
     monkeypatch.setattr(celery_app.log, 'setup', Mock())
 
     with pytest.raises(SystemExit) as excinfo:
-        celery_app.start(['gwcelery', 'flask', 'run', '--eager-loading'])
+        main(['gwcelery', 'flask', 'run', '--eager-loading'])
 
     assert excinfo.value.code == 0
     mock_run_simple.assert_called_once()
