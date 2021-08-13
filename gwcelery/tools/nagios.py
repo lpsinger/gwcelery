@@ -101,7 +101,7 @@ def check_status(app):
 
 @click.command(help=__doc__)
 @click.pass_context
-def nagios(ctx, **kwargs):
+def nagios(ctx):
     try:
         check_status(ctx.obj.app)
     except NagiosCriticalError as e:
