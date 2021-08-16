@@ -3,7 +3,6 @@ from importlib import resources
 import io
 import random
 
-from celery.schedules import crontab
 from celery.utils.log import get_task_logger
 from ligo.lw import utils
 from ligo.lw import lsctables
