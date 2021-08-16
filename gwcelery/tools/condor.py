@@ -20,6 +20,7 @@ from .. import data
 with resources.path(data, 'gwcelery.sub') as p:
     SUBMIT_FILE = str(p)
 
+
 @click.group(help=__doc__)
 def condor():
     pass
