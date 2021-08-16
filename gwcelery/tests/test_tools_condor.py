@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from .. import app, main
+from .. import main
 from ..tools import condor
 
 
