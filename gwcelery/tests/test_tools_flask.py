@@ -5,6 +5,7 @@ import pytest
 from .. import main, app as celery_app
 from ..tools import flask
 
+
 def test_flask_run(monkeypatch):
     """Test starting the Flask server from the command line."""
     mock_run_simple = Mock()
