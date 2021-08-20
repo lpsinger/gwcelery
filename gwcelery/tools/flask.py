@@ -1,56 +1,55 @@
 """Flask web application for manually triggering certain tasks."""
+from contextlib import ExitStack, nullcontext
 
-import argparse
-import os
-
-from celery.bin.base import Command, daemon_options
-from celery.platforms import detached, maybe_drop_privileges
+from celery.bin.base import CeleryDaemonCommand, CeleryOption, LOG_LEVEL
+from celery.platforms import detached
 import click
-import click.testing
-from flask.cli import FlaskGroup
+from flask.cli import FlaskGroup, ScriptInfo
 
 from ..flask import app
 from .. import views as _  # noqa: F401
 
 
-@click.group(cls=FlaskGroup, create_app=lambda *args, **kwargs: app)
-def main():
-    pass
+class CeleryDaemonFlaskGroup(FlaskGroup):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(self, *args, **kwargs)
+        self.params.extend(CeleryDaemonCommand(name='flask').params)
 
 
-class FlaskCommand(Command):
-
-    def add_arguments(self, parser):
-        daemon_options(parser)
-        parser.add_argument('-l', '--loglevel', default='WARN')
-
-        # Capture command line help from Flask
-        runner = click.testing.CliRunner()
-        result = runner.invoke(main, ['--help'])
-        flask_help = result.output.replace('main', 'gwcelery flask')
-
-        group = parser.add_argument_group(
-            'Flask Options', description=flask_help)
-        group.add_argument(
-            'flask_args', nargs=argparse.REMAINDER, help=argparse.SUPPRESS)
-
-    def run(self, *args, flask_args=(), detach=False, logfile=None,
-            loglevel=None, pidfile=None, uid=None, gid=None, umask=None,
-            workdir=None, no_color=None, **kwargs):
-        # Allow port number to be specified from an environment variable.
-        port = os.environ.get('FLASK_PORT')
-        colorize = not no_color if no_color is not None else no_color
-        if port:
-            flask_args += ['--port', port]
-        if not detach:
-            maybe_drop_privileges(uid=uid, gid=gid)
-        if detach:
-            with detached(logfile, pidfile, uid, gid, umask, workdir):
-                self.app.log.setup(loglevel, logfile, colorize=colorize)
-                main(flask_args)
-        else:
-            self.app.log.setup(loglevel, logfile, colorize=colorize)
-            main(flask_args)
+def maybe_detached(*, detach, **kwargs):
+    return detached(**kwargs) if detach else nullcontext()
 
 
-main.__doc__ = FlaskCommand.__doc__ = __doc__
+@click.group(cls=CeleryDaemonFlaskGroup, help=__doc__)
+@click.option('-D',
+              '--detach',
+              cls=CeleryOption,
+              is_flag=True,
+              default=False,
+              help="Start as a background process.")
+@click.option('-l',
+              '--loglevel',
+              default='WARNING',
+              cls=CeleryOption,
+              type=LOG_LEVEL,
+              help="Logging level.")
+@click.pass_context
+def flask(ctx, detach=None, loglevel=None, logfile=None,
+          pidfile=None, uid=None, gid=None, umask=None, **kwargs):
+    # Look up Celery app
+    celery_app = ctx.obj.app
+
+    # Prepare to pass Flask app to Flask CLI
+    ctx.obj = ScriptInfo(create_app=lambda *args, **kwargs: app)
+
+    # Detach from the tty if requested.
+    # FIXME: After we update to click >= 8, replace the elaborate construction
+    # below with ctx.with_resource(maybe_detached(...))
+    exit_stack = ExitStack()
+    ctx.call_on_close(exit_stack.close)
+    exit_stack.enter_context(maybe_detached(detach=detach,
+                                            logfile=logfile, pidfile=pidfile,
+                                            uid=uid, gid=gid, umask=umask))
+
+    celery_app.log.setup(loglevel, logfile)
