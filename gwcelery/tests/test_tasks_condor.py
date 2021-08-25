@@ -82,7 +82,7 @@ def mock_condor_submit(monkeypatch):
     monkeypatch.setattr('subprocess.run', mock_run)
 
 
-def test_check_output_error_on_submit(monkeypatch):
+def test_check_output_error_on_submit(celery_worker, monkeypatch):
     """Test capturing an error from condor_submit."""
     accounting_group = 'foo.bar'
     cmd = ('sleep', '1')
@@ -93,22 +93,25 @@ def test_check_output_error_on_submit(monkeypatch):
 
     monkeypatch.setattr('subprocess.run', mock_run)
 
+    result = condor.check_output.delay(cmd, accounting_group=accounting_group)
     with pytest.raises(subprocess.CalledProcessError) as exc_info:
-        condor.check_output.delay(cmd, accounting_group=accounting_group)
+        result.get()
     assert 'accounting_group=' + accounting_group in exc_info.value.cmd
     assert exc_info.value.output == msg
 
 
-def test_check_output_aborted(mock_condor_submit_aborted):
+def test_check_output_aborted(celery_worker, mock_condor_submit_aborted):
     """Test a job that is aborted."""
+    result = condor.check_output.delay(['sleep', '1'])
     with pytest.raises(condor.JobAborted):
-        condor.check_output.delay(['sleep', '1'])
+        result.get()
 
 
-def test_check_output_fails(mock_condor_submit):
+def test_check_output_fails(celery_worker, mock_condor_submit):
     """Test a job that immediately fails."""
+    result = condor.check_output.delay(['sleep', '--foo="bar bat"', '1'])
     with pytest.raises(condor.JobFailed) as exc_info:
-        condor.check_output.delay(['sleep', '--foo="bar bat"', '1'])
+        result.get()
     assert exc_info.value.returncode == 1
 
 

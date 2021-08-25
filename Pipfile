@@ -12,5 +12,6 @@ ipython = "*"
 ipykernel = "*"
 flower = ">= 1"
 # Dependencies needed for running unit tests
+pytest-celery = "*"
 pytest-flask = "*"
 pytest-socket = "*"
