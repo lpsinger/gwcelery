@@ -14,8 +14,8 @@ ipykernel = "*"
 # flower < 1: flower >= 1 requires Celery 5. FIXME: remove constraint after upgrade to Celery 5.
 flower = ">= 0.9.5, <1"
 # Dependencies needed for running unit tests
-pytest-socket = "*"
 pytest-flask = "*"
+pytest-socket = "*"
 
 [requires]
 python_version = "3.7"
