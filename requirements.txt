@@ -23,6 +23,7 @@ lscsoft-glue
 lxml
 numpy
 p_astro >= 0.8.1
+pesummary < 0.13  # https://git.ligo.org/lscsoft/pesummary/-/issues/269. FIXME: remove this requirement entirely once resolved.
 pygcn >= 1.0.1
 pytest >= 3.0
 python-ligo-lw
