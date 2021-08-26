@@ -115,16 +115,14 @@ def test_check_output_fails(celery_worker, mock_condor_submit):
     assert exc_info.value.returncode == 1
 
 
-# FIXME: this test doesn't work in eager mode.
-# def test_check_output_running(mock_condor_submit_running):
-#
-#     with pytest.raises(condor.JobRunning):
-#         condor.check_output.delay(['sleep', '1'])
+@pytest.mark.skip("This test isn't working yet.")
+def test_check_output_running(celery_worker, mock_condor_submit_running):
+    result = condor.check_output.delay(['sleep', '1'])
+    with pytest.raises(condor.JobRunning):
+        result.get(2)
 
 
-# FIXME: this test doesn't work in eager mode.
-# See https://github.com/celery/celery/issues/4661.
-# def test_check_output_succeeds(mock_condor_submit):
-#     """Test a job that immediately succeeds."""
-#
-#     condor.check_output.delay(['sleep', '1'])
+def test_check_output_succeeds(celery_worker, mock_condor_submit):
+    """Test a job that immediately succeeds."""
+    result = condor.check_output.delay(['sleep', '1'])
+    result.get()
