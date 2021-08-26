@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 from unittest import mock
 
 from celery.contrib.testing.app import UnitLogging
@@ -28,11 +29,22 @@ def reset_celery_backend():
     nuke_celery_backend()
 
 
-@pytest.fixture(scope='session', autouse=True)
-def noop_celery_config():
+@pytest.fixture
+def update_celery_config():
+    tmp = {}
+
+    def update(new_conf):
+        tmp.update({key: app.conf[key] for key in new_conf.keys()})
+        app.conf.update(new_conf)
+
+    yield update
+    app.conf.update(tmp)
+
+
+@pytest.fixture(autouse=True)
+def noop_celery_config(reset_celery_backend, update_celery_config):
     """Ensure that the Celery app is disconnected from live services."""
-    nuke_celery_backend()
-    new_conf = dict(
+    update_celery_config(dict(
         broker_url='redis://redis.invalid',
         result_backend='redis://redis.invalid',
         voevent_broadcaster_address='127.0.0.1:53410',
@@ -43,11 +55,7 @@ def noop_celery_config():
         lvalert_host='lvalert.invalid',
         gracedb_host='gracedb.invalid',
         expose_to_public=True
-    )
-    tmp = {key: app.conf[key] for key in new_conf.keys()}
-    app.conf.update(new_conf)
-    yield
-    app.conf.update(tmp)
+    ))
 
 
 @pytest.fixture
@@ -68,14 +76,11 @@ def celery_worker_parameters():
 
 @pytest.fixture
 def celery_app(celery_config, celery_enable_logging, reset_celery_backend,
-               monkeypatch):
-    new_conf = celery_config
-    tmp = {key: app.conf[key] for key in new_conf.keys()}
-    app.conf.update(new_conf)
+               update_celery_config, monkeypatch):
+    update_celery_config(celery_config)
     if not celery_enable_logging:
         monkeypatch.setattr(app, 'log', UnitLogging(app))
     yield app
-    app.conf.update(tmp)
 
 
 @pytest.fixture(autouse=True)
