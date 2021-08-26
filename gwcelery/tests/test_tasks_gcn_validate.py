@@ -9,7 +9,7 @@ from . import data
 
 
 @pytest.fixture
-def fake_gcn(celeryconf, monkeypatch):
+def fake_gcn(monkeypatch):
 
     def mock_download(filename, graceid):
         assert filename == 'G298048-1-Initial.xml'
