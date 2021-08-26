@@ -8,9 +8,30 @@ from .. import app
 from .process import starter  # noqa: F401
 
 
+def nuke_celery_backend():
+    """Clear the cached Celery backend.
+
+    Some of our tests switch backend URLs. In order for the switch to take
+    effect, we need to make sure that the cached backed object has been reset.
+
+    """
+    try:
+        del app._local.backend
+    except AttributeError:
+        pass
+
+
+@pytest.fixture
+def reset_celery_backend():
+    nuke_celery_backend()
+    yield
+    nuke_celery_backend()
+
+
 @pytest.fixture(scope='session', autouse=True)
 def noop_celery_config():
     """Ensure that the Celery app is disconnected from live services."""
+    nuke_celery_backend()
     new_conf = dict(
         broker_url='redis://redis.invalid',
         result_backend='redis://redis.invalid',
@@ -46,7 +67,8 @@ def celery_worker_parameters():
 
 
 @pytest.fixture
-def celery_app(celery_config, celery_enable_logging, monkeypatch):
+def celery_app(celery_config, celery_enable_logging, reset_celery_backend,
+               monkeypatch):
     new_conf = celery_config
     tmp = {key: app.conf[key] for key in new_conf.keys()}
     app.conf.update(new_conf)
@@ -71,12 +93,4 @@ def fake_legacy_gracedb_client(monkeypatch):
 
 
 def pytest_runtest_setup():
-    # Celery caches the backend instance.
-    # Since we switch backends between unit tests, make sure that the cached
-    # backend is cleared.
-    try:
-        del app._local.backend
-    except AttributeError:
-        pass
-
     disable_socket()
