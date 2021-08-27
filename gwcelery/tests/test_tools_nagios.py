@@ -21,11 +21,11 @@ def test_nagios_unknown_error(monkeypatch, capsys):
     assert 'UNKNOWN: Unexpected error' in out
 
 
-def test_nagios(capsys, monkeypatch, socket_enabled, starter):
+def test_nagios(capsys, monkeypatch, socket_enabled, starter, tmp_path):
     mock_lvalert_client = Mock()
     monkeypatch.setattr(
         'gwcelery.lvalert.client.LVAlertClient', mock_lvalert_client)
-    unix_socket = app.conf['broker_url'].replace('redis+socket://', '')
+    unix_socket = app.conf['broker_url'].replace('redis+socket://', f'redis+socket://{tmp_path.as_posix()}')
 
     # no broker
 
