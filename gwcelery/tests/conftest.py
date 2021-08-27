@@ -1,7 +1,7 @@
-from contextlib import contextmanager
 from unittest import mock
 
 from celery.contrib.testing.app import UnitLogging
+import celery.backends.cache
 import pytest
 from pytest_socket import disable_socket
 
@@ -12,14 +12,26 @@ from .process import starter  # noqa: F401
 def nuke_celery_backend():
     """Clear the cached Celery backend.
 
-    Some of our tests switch backend URLs. In order for the switch to take
-    effect, we need to make sure that the cached backed object has been reset.
+    The Celery application object caches a lot of instance members that are
+    affected by the application configuration. Since we are changing the
+    configuration between tests, we need to make sure that all of the cached
+    application state is reset.
+
+    FIXME: The pytest celery plugin does not seem like it is really designed
+    to use a pre-existing application object; it seems like it is designed to
+    create a test application.
 
     """
-    try:
-        del app._local.backend
-    except AttributeError:
-        pass
+    app._pool = None
+    for key in ['Worker', 'WorkController', 'Beat', 'Task', 'annotation',
+                'AsyncResult', 'ResultSet', 'GroupResult', 'oid', 'amqp',
+                'control', 'events', 'loader', 'log']:
+        try:
+            del app.__dict__[key]
+        except KeyError:
+            pass
+    celery.backends.cache._DUMMY_CLIENT_CACHE.clear()
+    app._local.__dict__.clear()
 
 
 @pytest.fixture
@@ -41,7 +53,7 @@ def update_celery_config():
     app.conf.update(tmp)
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def noop_celery_config(reset_celery_backend, update_celery_config):
     """Ensure that the Celery app is disconnected from live services."""
     update_celery_config(dict(
@@ -97,5 +109,29 @@ def fake_legacy_gracedb_client(monkeypatch):
     monkeypatch.setattr('gwcelery.tasks.legacy_gracedb.client', mock_client)
 
 
-def pytest_runtest_setup():
+def pytest_configure(config):
+    config.addinivalue_line(
+        'markers', 'live_worker: run test using a live Celery worker')
+
+
+def pytest_collection_modifyitems(session, config, items):
+    # FIXME: We are reordering the tests so that the ones that use a live
+    # celery worker run last. Otherwise, they cause problems with other
+    # tests that use the 'caplog' fixture. We don't understand why this is.
+    # Remove this hack if and when we figure it out.
+    items[:] = sorted(
+        items,
+        key=lambda item: item.get_closest_marker('live_worker') is not None)
+
+
+def pytest_runtest_setup(item):
     disable_socket()
+
+
+@pytest.fixture(autouse=True)
+def maybe_celery_worker(request):
+    if request.node.get_closest_marker('live_worker') is None:
+        fixture = 'noop_celery_config'
+    else:
+        fixture = 'celery_worker'
+    request.getfixturevalue(fixture)
