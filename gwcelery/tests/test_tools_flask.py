@@ -13,10 +13,8 @@ def test_flask_run(monkeypatch):
     monkeypatch.setenv('FLASK_RUN_PORT', '5556')
     monkeypatch.setattr(celery_app.log, 'setup', Mock())
 
-    with pytest.raises(SystemExit) as excinfo:
-        main(['gwcelery', 'flask', 'run', '--eager-loading'])
+    main(['gwcelery', 'flask', 'run', '--eager-loading'])
 
-    assert excinfo.value.code == 0
     mock_run_simple.assert_called_once()
     args, kwargs = mock_run_simple.call_args
     host, port, loader = args
