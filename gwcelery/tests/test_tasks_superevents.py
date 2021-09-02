@@ -566,9 +566,9 @@ def test_raising_http_error(failing_create_superevent):
             "labels": []
         }
     }
-    with pytest.raises(gracedb.RetryableHTTPError):
-        with pytest.raises(exceptions.Retry):
-            superevents.handle.delay(payload)
+    with pytest.raises(
+            exceptions.Retry), pytest.raises(gracedb.RetryableHTTPError):
+        superevents.handle.delay(payload)
 
 
 def test_parse_trigger_cbc_1(mock_db):
