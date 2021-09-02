@@ -21,7 +21,8 @@ def maybe_detached(*, detach, **kwargs):
     return detached(**kwargs) if detach else nullcontext()
 
 
-@click.group(cls=CeleryDaemonFlaskGroup, help=__doc__)
+@click.group(cls=CeleryDaemonFlaskGroup, help=__doc__,
+             context_settings={'auto_envvar_prefix': 'FLASK'})
 @click.option('-D',
               '--detach',
               cls=CeleryOption,

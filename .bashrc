@@ -32,7 +32,7 @@ export X509_USER_CERT="$HOME/.globus/usercert.pem"
 export X509_USER_KEY="$HOME/.globus/userkey.pem"
 
 # Configuration for GWCelery web applications.
-export FLASK_PORT=5556
+export FLASK_RUN_PORT=5556
 export FLASK_URL_PREFIX=/gwcelery
 export FLOWER_PORT=5555
 export FLOWER_URL_PREFIX=/flower

@@ -10,7 +10,7 @@ def test_flask_run(monkeypatch):
     """Test starting the Flask server from the command line."""
     mock_run_simple = Mock()
     monkeypatch.setattr('werkzeug.serving.run_simple', mock_run_simple)
-    monkeypatch.setenv('FLASK_PORT', '5556')
+    monkeypatch.setenv('FLASK_RUN_PORT', '5556')
     monkeypatch.setattr(celery_app.log, 'setup', Mock())
 
     with pytest.raises(SystemExit) as excinfo:
