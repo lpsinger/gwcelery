@@ -461,11 +461,8 @@ def test_alerts_skip_inj(mock_gcn_send):
 
 
 @pytest.fixture
-def only_mdc_alerts():
-    old = app.conf['only_alert_for_mdc']
-    app.conf['only_alert_for_mdc'] = True
-    yield
-    app.conf['only_alert_for_mdc'] = old
+def only_mdc_alerts(monkeypatch):
+    monkeypatch.setitem(app.conf, 'only_alert_for_mdc', True)
 
 
 @patch('gwcelery.tasks.skymaps.flatten')

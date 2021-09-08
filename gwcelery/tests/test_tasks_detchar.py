@@ -16,64 +16,47 @@ from . import data
 
 
 @pytest.fixture
-def llhoft_glob_pass():
-    old = app.conf['llhoft_glob']
+def llhoft_glob_pass(monkeypatch):
     with resources.path(data, '') as path:
-        app.conf['llhoft_glob'] = str(path / 'llhoft/pass/{detector}/*.gwf')
-        yield
-    app.conf['llhoft_glob'] = old
+        path = str(path / 'llhoft/pass/{detector}/*.gwf')
+    yield monkeypatch.setitem(app.conf, 'llhoft_glob', path)
 
 
 @pytest.fixture
-def llhoft_glob_fail():
-    old = app.conf['llhoft_glob']
+def llhoft_glob_fail(monkeypatch):
     with resources.path(data, '') as path:
-        app.conf['llhoft_glob'] = str(path / 'llhoft/fail/{detector}/*.gwf')
-        yield
-    app.conf['llhoft_glob'] = old
+        path = str(path / 'llhoft/fail/{detector}/*.gwf')
+    yield monkeypatch.setitem(app.conf, 'llhoft_glob', path)
 
 
 @pytest.fixture
-def ifo_h1():
-    old = app.conf['llhoft_channels']
-    app.conf['llhoft_channels'] = {
+def ifo_h1(monkeypatch):
+    monkeypatch.setitem(app.conf, 'llhoft_channels', {
         'H1:DMT-DQ_VECTOR': 'dmt_dq_vector_bits',
-        'H1:GDS-CALIB_STATE_VECTOR': 'ligo_state_vector_bits'}
-    yield
-    app.conf['llhoft_channels'] = old
+        'H1:GDS-CALIB_STATE_VECTOR': 'ligo_state_vector_bits'})
 
 
 @pytest.fixture
-def ifo_h1_idq():
-    old = app.conf['idq_channels']
-    app.conf['idq_channels'] = [
-        'H1:IDQ-PGLITCH_OVL_32_2048']
-    yield
-    app.conf['idq_channels'] = old
+def ifo_h1_idq(monkeypatch):
+    monkeypatch.setitem(
+        app.conf, 'idq_channels', ['H1:IDQ-PGLITCH_OVL_32_2048'])
 
 
 @pytest.fixture
-def gatedpipe():
-    old = app.conf['uses_gatedhoft']
-    app.conf['uses_gatedhoft'] = {'gatepipe': True}
-    yield
-    app.conf['uses_gatedhoft'] = old
+def gatedpipe(monkeypatch):
+    monkeypatch.setitem(app.conf, 'uses_gatedhoft', {'gatepipe': True})
 
 
 @pytest.fixture
-def gatedpipe_prepost():
-    old = app.conf['check_vector_prepost']
-    app.conf['check_vector_prepost'] = {'gatepipe': [0.5, 0.5]}
-    yield
-    app.conf['check_vector_prepost'] = old
+def gatedpipe_prepost(monkeypatch):
+    monkeypatch.setitem(
+        app.conf, 'check_vector_prepost', {'gatepipe': [0.5, 0.5]})
 
 
 @pytest.fixture
-def scan_strainname():
-    old = app.conf['strain_channel_names']
-    app.conf['strain_channel_names'] = {'H1': 'H1:GWOSC-16KHZ_R1_STRAIN'}
-    yield
-    app.conf['strain_channel_names'] = old
+def scan_strainname(monkeypatch):
+    monkeypatch.setitem(
+        app.conf, 'strain_channel_names', {'H1': 'H1:GWOSC-16KHZ_R1_STRAIN'})
 
 
 def test_create_cache(llhoft_glob_fail):
