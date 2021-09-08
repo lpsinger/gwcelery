@@ -10,5 +10,5 @@ def install(app):
     """Register the LVAlert subsystem in the application boot steps."""
     app.steps['consumer'] |= {Receiver}
     app.user_options['worker'].add(Option(('--lvalert',),
-                                   is_flag=True,
-                                   help='Enable LVAlert receiver'))
+                                          is_flag=True,
+                                          help='Enable LVAlert receiver'))
