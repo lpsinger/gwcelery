@@ -10,5 +10,5 @@ def install(app):
     """Register the email client subsystem in the application boot steps."""
     app.steps['consumer'] |= {Receiver}
     app.user_options['worker'].add(Option(('--email',),
-                                   is_flag=True,
-                                   help='Enable email client'))
+                                          is_flag=True,
+                                          help='Enable email client'))
