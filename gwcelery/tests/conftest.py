@@ -2,7 +2,6 @@ from unittest import mock
 
 from kombu.utils import cached_property
 from celery.contrib.testing.app import UnitLogging
-import celery.backends.cache
 import pytest
 from pytest_socket import disable_socket
 
@@ -30,7 +29,6 @@ def nuke_celery_backend():
                 del app.__dict__[key]
             except KeyError:
                 pass
-    celery.backends.cache._DUMMY_CLIENT_CACHE.clear()
     app._local.__dict__.clear()
 
 
