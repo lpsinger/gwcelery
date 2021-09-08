@@ -34,7 +34,6 @@ def fake_gracedb_client(monkeypatch):
     mock_client = unittest.mock.MagicMock()
     mock_client.url = 'https://gracedb.invalid/api/'
     monkeypatch.setattr('gwcelery.tasks.gracedb.client', mock_client)
-    yield
 
 
 @pytest.fixture(autouse=True)
@@ -42,7 +41,6 @@ def fake_legacy_gracedb_client(monkeypatch):
     mock_client = unittest.mock.MagicMock()
     mock_client.url = 'https://gracedb.invalid/api/'
     monkeypatch.setattr('gwcelery.tasks.legacy_gracedb.client', mock_client)
-    yield
 
 
 def pytest_runtest_setup():
