@@ -251,7 +251,7 @@ release:
       fi
 
 .deploy-common: &deploy-common
-  extends: .ssh
+  image: containers.ligo.org/emfollow/ssh-kerberos
   stage: deploy
   only:
     - branches@emfollow/gwcelery
@@ -266,7 +266,7 @@ release:
   script:
     # Update the repository.
     - |
-      gsissh -T $REMOTE_HOST bash <<EOF
+      ssh -T $REMOTE_HOST bash <<EOF
       set -e
       if [ ! -d .git ]; then git init; fi
       git fetch --tags ${CI_REPOSITORY_URL} $CI_COMMIT_SHA
@@ -274,7 +274,7 @@ release:
       EOF
     # Reinstall and start (new session to reload bashrc).
     - |
-      gsissh -T $REMOTE_HOST bash <<EOF
+      ssh -T $REMOTE_HOST bash <<EOF
       . .bashrc
       set -e
       python -m pip install --upgrade pipenv==2018.11.26 pip setuptools
@@ -289,7 +289,7 @@ release:
 .deploy-stop: &deploy-stop
   <<: *deploy-common
   script: |
-    gsissh -T $REMOTE_HOST bash <<EOF
+    ssh -T $REMOTE_HOST bash <<EOF
     . .bashrc
     set -e
     gwcelery condor rm
