@@ -43,6 +43,7 @@ def reset_celery_backend():
 
 @pytest.fixture
 def update_celery_config():
+    """Monkey patch the Celery application configuration."""
     tmp = {}
 
     def update(new_conf):
