@@ -36,6 +36,7 @@ def nuke_celery_backend():
 
 @pytest.fixture
 def reset_celery_backend():
+    """Nuke the celery backend before and after the test."""
     nuke_celery_backend()
     yield
     nuke_celery_backend()
