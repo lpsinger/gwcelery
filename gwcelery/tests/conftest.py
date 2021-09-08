@@ -1,5 +1,6 @@
 from unittest import mock
 
+from kombu.utils import cached_property
 from celery.contrib.testing.app import UnitLogging
 import celery.backends.cache
 import pytest
@@ -23,13 +24,12 @@ def nuke_celery_backend():
 
     """
     app._pool = None
-    for key in ['Worker', 'WorkController', 'Beat', 'Task', 'annotation',
-                'AsyncResult', 'ResultSet', 'GroupResult', 'oid', 'amqp',
-                'control', 'events', 'loader', 'log']:
-        try:
-            del app.__dict__[key]
-        except KeyError:
-            pass
+    for key, value in app.__class__.__dict__.items():
+        if isinstance(value, cached_property):
+            try:
+                del app.__dict__[key]
+            except KeyError:
+                pass
     celery.backends.cache._DUMMY_CLIENT_CACHE.clear()
     app._local.__dict__.clear()
 
