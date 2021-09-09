@@ -16,6 +16,3 @@ flower = ">= 0.9.5, <1"
 # Dependencies needed for running unit tests
 pytest-flask = "*"
 pytest-socket = "*"
-
-[requires]
-python_version = "3.7"
