@@ -21,12 +21,23 @@ def test_nagios_unknown_error(monkeypatch, capsys):
     assert 'UNKNOWN: Unexpected error' in out
 
 
-def test_nagios(capsys, monkeypatch, socket_enabled, starter, tmp_path):
+@pytest.fixture
+def celery_worker_parameters():
+    return dict(
+        perform_ping_check=False,
+        queues=['celery', 'exttrig', 'openmp', 'superevent', 'voevent']
+    )
+
+
+def test_nagios(capsys, monkeypatch, request, socket_enabled, starter,
+                tmp_path):
     mock_lvalert_client = Mock()
     monkeypatch.setattr(
         'gwcelery.lvalert.client.LVAlertClient', mock_lvalert_client)
     unix_socket = str(tmp_path / 'redis.sock')
-    app.conf['broker_url'] = f'redis+socket://{unix_socket}'
+    broker_url = f'redis+socket://{unix_socket}'
+    monkeypatch.setitem(app.conf, 'broker_url', broker_url)
+    monkeypatch.setitem(app.conf, 'result_backend', broker_url)
 
     # no broker
 
@@ -54,10 +65,7 @@ def test_nagios(capsys, monkeypatch, socket_enabled, starter, tmp_path):
 
     # worker, no LVAlert nodes
 
-    starter.python_process(
-        args=(['gwcelery', 'worker', '-l', 'info', '--pool', 'solo',
-               '-Q', 'celery,exttrig,openmp,superevent,voevent'],),
-        target=main, timeout=10, magic_words=b'ready.')
+    request.getfixturevalue('celery_worker')
 
     mock_lvalert_client.configure_mock(**{
         'return_value.get_subscriptions.return_value': {}})

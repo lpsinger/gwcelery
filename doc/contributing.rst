@@ -95,6 +95,29 @@ top directory of your local source checkout::
 This will save a coverage report that you can view in a web browser as
 ``htmlcov/index.html``.
 
+.. admonition:: Eager mode
+
+    Most of GWCelery's unit tests use :ref:`eager mode <celery:testing>`, which
+    causes all tasks to execute immediately and synchronously, even if they are
+    invoked via :meth:`~celery.app.task.Task.apply_async` or
+    :meth:`~celery.app.task.Task.delay`. This simplifies writing unit tests,
+    but sacrifices realism: it may mask concurrency bugs that may only occur
+    when the tasks are executed asynchronously.
+
+    It is preferable to write unit tests that use a live worker so that they
+    are subject to realistic, asynchronous task execution. To opt in to using a
+    live worker, simply decorate your test with the `live_worker` marker, like
+    this:
+
+    .. code-block:: python
+
+        @pytest.mark.live_worker
+        def test_some_task():
+            async_result = some_task.delay()
+            result = async_result.get()
+            assert result == 'foobar'
+            # etc.
+
 Code style
 ----------
 
