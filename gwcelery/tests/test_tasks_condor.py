@@ -1,5 +1,6 @@
 import subprocess
 
+import celery.exceptions
 import pytest
 
 from ..tasks import condor
@@ -119,10 +120,9 @@ def test_check_output_fails(mock_condor_submit):
 
 
 @pytest.mark.live_worker
-@pytest.mark.skip("This test isn't working yet.")
 def test_check_output_running(mock_condor_submit_running):
     result = condor.check_output.delay(['sleep', '1'])
-    with pytest.raises(condor.JobRunning):
+    with pytest.raises(celery.exceptions.TimeoutError):
         result.get(2)
 
 
