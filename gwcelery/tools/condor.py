@@ -23,6 +23,8 @@ with resources.path(data, 'gwcelery.sub') as p:
 
 @click.group(help=__doc__)
 def condor():
+    # Just register the condor command group;
+    # no need to do anything here.
     pass
 
 
