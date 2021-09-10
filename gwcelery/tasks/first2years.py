@@ -145,6 +145,9 @@ def _upload_psd(graceid):
 
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
+    """See https://docs.celeryproject.org/en/stable/userguide/periodic-tasks.html#entries.
+    Schedule a periodic task every 3600 seconds.
+    """
     sender.add_periodic_task(3600.0, upload_event)
 
 
