@@ -1,6 +1,6 @@
 include:
   - project: computing/gitlab-ci-templates
-    file: python/lint.yml
+    file: python.yml
   - project: computing/gitlab-ci-templates
     file: workflow/sccb.yml
 
