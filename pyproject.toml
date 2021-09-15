@@ -1,0 +1,126 @@
+[tool.poetry]
+name = "gwcelery"
+version = "0.0.0"
+description = "Hipster pipeline for annotating LIGO events"
+readme = "README.rst"
+authors = ["Leo Singer <leo.singer@ligo.org>"]
+license = "GPL-2.0+"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
+    "Operating System :: POSIX",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Topic :: Internet",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "Topic :: Scientific/Engineering :: Physics"
+]
+homepage = "https://git.ligo.org/emfollow/gwcelery"
+repository = "https://git.ligo.org/emfollow/gwcelery"
+documentation = "https://gwcelery.readthedocs.io/"
+include = [
+    "CHANGES.rst",
+    "CONTRIBUTING.rst",
+    "doc",
+    "docs-requirements.txt",
+    "gwcelery/static/*.css",
+    "gwcelery/static/vega/*.html",
+    "gwcelery/templates/*.jinja2",
+    "gwcelery/data/*.sub",
+    "gwcelery/data/first2years/*.xml.gz",
+    "gwcelery/tests/data/*.html",
+    "gwcelery/tests/data/*.json",
+    "gwcelery/tests/data/*.xml",
+    "gwcelery/tests/data/*.xml.gz",
+    "gwcelery/tests/data/llhoft/*/*.gwf",
+    "gwcelery/tests/data/llhoft/*/*/*.gwf",
+    "gwcelery/tests/data/*.pickle",
+    "gwcelery/tests/data/*.hdf5"
+]
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://git.ligo.org/emfollow/gwcelery/issues"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+astropy = ">=4.3.1"  # https://github.com/astropy/astropy/issues/11879
+bilby-pipe = ">=0.3.8"
+celery = {version = ">=5.1", extras = ["redis"]}
+click = "^7"
+comet = "*"
+corner = "*"
+dnspython = "*"  # silence "DNS: dnspython not found. Can not use SRV lookup." warning from SleekXMPP
+flask = "*"
+flask-caching = "*"
+gracedb-sdk = ">=0.1.5"
+gwdatafind = "*"
+gwpy = ">=2.0.1"  # https://github.com/gwpy/gwpy/issues/1277
+healpy = "*"
+imapclient = "*"
+importlib-metadata = { version = "*", python = "<3.8" }
+jinja2 = ">=2.11.2"  # https://github.com/pallets/jinja/issues/1168
+lalsuite = ">=6.82"  # https://git.ligo.org/lscsoft/lalsuite/-/issues/414
+ligo-followup-advocate = ">=1.1.6"
+ligo-gracedb = ">=2.7.5"  # https://git.ligo.org/lscsoft/gracedb-client/-/issues/28
+ligo-raven = ">=1.17"
+ligo-segments = "*"
+"ligo.skymap" = ">=0.4.0"
+lscsoft-glue = "*"
+lxml = "*"
+numpy = "*"
+p_astro = ">=0.8.1"
+pesummary = "<0.13"  # https://git.ligo.org/lscsoft/pesummary/-/issues/269. FIXME: remove this requirement entirely once resolved.
+pygcn = ">=1.0.1"
+python-ligo-lw = "*"
+safe-netrc = "*"
+sentry-sdk = {version = "*", extras = ["flask", "tornado"]}
+service-identity = "*"  # We don't actually use this package, but it silences some annoying warnings from twistd.
+sleek-lvalert = "<2.0.0"
+voeventlib = ">=1.2"
+werkzeug = ">=0.15.0"  # for werkzeug.middleware.proxy_fix.ProxyFix
+zstandard = "*"  # for task compression
+
+[tool.poetry.dev-dependencies]
+ipython = "*"  # Include IPython for a nicer ``gwcelery shell`` experience.
+ipykernel = "*"  # Include IPython kernel for Jupyter Lab support.
+flower = ">=1"
+matplotlib = "*"
+pep517 = "^0.11.0"
+packaging = "<21"  # for pep517 + poetry compability
+pytest = "*"
+pytest-celery = "*"
+pytest-flask = "*"
+pytest-socket = "*"
+sphinx = ">=2.0"
+
+[tool.poetry.scripts]
+gwcelery = "gwcelery:main"
+gwcelery-condor-submit-helper = "gwcelery.tools.condor_submit_helper:main"
+
+[tool.poetry.plugins."celery.commands"]
+condor = "gwcelery.tools.condor:condor"
+flask = "gwcelery.tools.flask:flask"
+nagios = "gwcelery.tools.nagios:nagios"
+
+[tool.poetry-dynamic-versioning]
+enable = true
+bump = true
+
+[tool.coverage.run]
+source = ["gwcelery"]
+omit = [
+    "gwcelery/tests/*",
+    "gwcelery/conf/development.py",
+    "gwcelery/conf/playground.py",
+    "gwcelery/conf/production.py",
+    "gwcelery/conf/test.py"
+]
+parallel = true
+concurrency = ["thread", "multiprocessing"]
+
+[build-system]
+requires = ["poetry_core>=1.0.0", "poetry-dynamic-versioning"]
+build-backend = "poetry.core.masonry.api"

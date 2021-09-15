@@ -70,15 +70,15 @@ Guidelines for tasks
        that are imported from that package to the ``autodoc_mock_imports`` list
        in the Sphinx configuration file, `doc/conf.py`_.
 
-   2.  We use `pipenv`_ to make the precise versions of packages reproducible
+   2.  We use `poetry`_ to make the precise versions of packages reproducible
        in our deployment. If you make changes to requirements.txt, then run
-       ``pipenv update`` and commit the changes to `Pipfile.lock`_.
+       ``poetry update`` and commit the changes to `poetry.lock`_.
 
 .. _`requirements.txt`: https://git.ligo.org/emfollow/gwcelery/blob/master/requirements.txt
 .. _`doc/conf.py`: https://git.ligo.org/emfollow/gwcelery/blob/master/doc/conf.py
-.. _`Pipfile.lock`: https://git.ligo.org/emfollow/gwcelery/blob/master/Pipfile.lock
+.. _`poetry.lock`: https://git.ligo.org/emfollow/gwcelery/blob/master/poetry.lock
 .. _`pip`: https://pip.pypa.io/
-.. _`pipenv`: https://pipenv.readthedocs.io/
+.. _`poetry`: https://python-poetry.org/
 
 Unit tests
 ----------
