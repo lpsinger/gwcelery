@@ -1,5 +1,7 @@
 include:
   - project: computing/gitlab-ci-templates
+    file: debian.yml
+  - project: computing/gitlab-ci-templates
     file: python.yml
   - project: computing/gitlab-ci-templates
     file: workflow/sccb.yml
@@ -7,156 +9,87 @@ include:
 variables:
   # Allow Celery to run as root, because everything runs as root under Docker.
   C_FORCE_ROOT: 'true'
-  # Checking out the source is the exception rather than the rule because
-  # most of our CI jobs run from tarballs or wheels or don't require the source
-  # at all.
-  GIT_STRATEGY: none
-
-.in-tmpdir: &in-tmpdir
-  before_script:
-    - WORKING_DIRECTORY="$(mktemp -d)"
-    - cd "${WORKING_DIRECTORY}"
-  after_script:
-    - cd "${CI_PROJECT_DIR}"
-    - rm -rf "${WORKING_DIRECTORY}"
 
 stages:
-  - dist
+  - build
   - test
   - deploy
 
 # Build source distribution
-sdist:
-  image: python:slim
-  stage: dist
-  variables:
-    GIT_STRATEGY: fetch
-  before_script:
-    # poetry-dynamic-versioning will need access to the git tool.
-    - apt-get -q update
-    - apt-get -yq install --no-install-recommends git
-  script:
-    - python -m pip install --upgrade pip poetry poetry-dynamic-versioning
-    - poetry build -f sdist
-    - mv dist/* .
-  artifacts:
-    paths:
-      - '*.tar.gz'
+build:
+  stage: build
+  extends: .python:build
 
-# Build binary distribution
-bdist:
-  image: python:slim
-  stage: dist
-  <<: *in-tmpdir
-  script:
-    - python -m pip install --upgrade pip poetry poetry-dynamic-versioning
-    - tar --strip-components 1 -xf ${CI_PROJECT_DIR}/*.tar.*
-    - poetry build -f wheel
-    - mv dist/* ${CI_PROJECT_DIR}
-  needs:
-    - sdist
-  artifacts:
-    paths:
-      - '*.whl'
+# Install redis
+.install-redis: &install-redis
+  apt-get install -y -qq redis-server
 
-# Generate requirements file
-requirements:
-  image: python:slim
-  stage: dist
-  variables:
-    GIT_STRATEGY: fetch
-  before_script:
-    # poetry-dynamic-versioning will need access to the git tool.
-    - apt-get -q update
-    - apt-get -yq install --no-install-recommends git
-  script:
-    - python -m pip install --upgrade pip poetry poetry-dynamic-versioning
-    - poetry export -f requirements.txt --without-hashes -o requirements.txt
-    - poetry export -f requirements.txt --dev --without-hashes -o requirements-dev.txt
-  artifacts:
-    paths:
-      - 'requirements.txt'
-      - 'requirements-dev.txt'
+# Install cython.
+# FIXME: This is needed to build ancient version of scikit-learn that p-astro
+# depends on. Remove once https://git.ligo.org/lscsoft/p-astro/-/issues/11
+# is fixed.
+.install-cython: &install-cython
+  ${PYTHON} -m pip install cython
 
-# Build Docker container for dependencies
-.dependencies: &dependencies
-  stage: dist
-  variables:
-    GIT_STRATEGY: fetch
-    IMAGE_TAG: $CI_REGISTRY_IMAGE/$CI_JOB_NAME:$CI_COMMIT_REF_SLUG
-  script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - |
-      cat <<EOF > Dockerfile
-      FROM python:${CI_JOB_NAME#*python}
-      COPY requirements.txt .
-      RUN pip --no-cache-dir install -r requirements.txt
-      RUN rm -f requirements.txt
-      EOF
-    - docker build -t $IMAGE_TAG .
-    - docker push $IMAGE_TAG
-    - if [ "${CI_COMMIT_TAG:0:1}" = "v" ]; then docker tag $IMAGE_TAG ${IMAGE_TAG%:*}:latest; docker push ${IMAGE_TAG%:*}:latest; fi
-  needs:
-    - requirements
-  only:
-    changes:
-      - pyproject.toml
-dependencies/python3.7:
-  <<: *dependencies
-dependencies/python3.8:
-  <<: *dependencies
-
-# Run unit tests and coverage measurement
-.test: &test
+.test-common:
   stage: test
-  coverage: '/^TOTAL\s+.*\s+(\d+\.?\d*)%/'
-  <<: *in-tmpdir
-  script:
-    - apt-get update -qq && apt-get install -y -qq redis-server
-    - tar --strip-components 1 -xf ${CI_PROJECT_DIR}/*.tar.*
-    - pip install -r ${CI_PROJECT_DIR}/requirements-dev.txt
-    - pip install pytest-cov
-    - pip install .
-    - pytest -vv --cov --cov-report=html:${CI_PROJECT_DIR}/htmlcov --cov-report=term --junit-xml=${CI_PROJECT_DIR}/junit.xml
-  needs: &test-needs
-    - requirements
-    - sdist
+  extends:
+    - .debian:base
+    - .python:pytest
+  variables:
+    PYTEST_OPTIONS: "--cov-report=html"
   artifacts:
     paths:
       - htmlcov/
-    reports:
-      junit: junit.xml
-test/python3.7:
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.7:$CI_COMMIT_REF_SLUG
+
+# Run test suite using poetry environment and locked dependencies
+.test-poetry:
+  extends: .test-common
+  variables:
+    INSTALL_TARGET: poetry
+  before_script:
+    - !reference [".debian:base", before_script]
+    - !reference [".python:pytest", before_script]
+    - *install-redis
+    - poetry config virtualenvs.create false
+    - poetry install -E test
+  needs: []
+test/poetry/python3.7:
+  extends: .test-poetry
+  image: python:3.7
+test/poetry/python3.8:
+  extends: .test-poetry
+  image: python:3.8
+
+# Run test suite using wheel and bleeding-edge dependencies
+.test-wheel:
+  extends: .test-common
+  variables:
+    PYTEST_OPTIONS: "--pyargs $CI_PROJECT_NAME"
+  before_script:
+    - INSTALL_TARGET=$(echo *.whl)[test]
+    - *install-cython
+    - !reference [".debian:base", before_script]
+    - !reference [".python:pytest", before_script]
+    - *install-redis
   needs:
-    - *test-needs
-    - job: dependencies/python3.7
-      optional: true
-  <<: *test
-test/python3.8:
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.8:$CI_COMMIT_REF_SLUG
-  needs:
-    - *test-needs
-    - job: dependencies/python3.8
-      optional: true
-  <<: *test
+    - build
+test/wheel/python3.7:
+  extends: .test-wheel
+  image: python:3.7
+test/wheel/python3.8:
+  extends: .test-wheel
+  image: python:3.8
 
 lint:
-  extends:
-    - .python:flake8
-  image: $CI_REGISTRY_IMAGE/dependencies/python3.8:$CI_COMMIT_REF_SLUG
   stage: test
-  variables:
-    GIT_STRATEGY: fetch
-  needs:
-    - sdist
+  extends: .python:flake8
+  needs: []
 
 associate commits in Sentry:
   stage: test
   needs:
-    - sdist
-  variables:
-    GIT_STRATEGY: fetch
+    - build
   only:
     - master@emfollow/gwcelery
     - tags@emfollow/gwcelery
@@ -168,54 +101,21 @@ associate commits in Sentry:
     - sentry-cli releases new ${SENTRY_VERSION}
     - sentry-cli releases set-commits --auto ${SENTRY_VERSION}
 
-# Build docker container for application itself
-.docker: &docker
-  stage: deploy
-  needs: &docker-needs
-    - bdist
-  script:
-    - IMAGE_TAG=$CI_REGISTRY_IMAGE/${CI_JOB_NAME#*/}:$CI_COMMIT_REF_SLUG
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-    - |
-      cat <<EOF > Dockerfile
-      FROM $CI_REGISTRY_IMAGE/dependencies/${CI_JOB_NAME#*/}:$CI_COMMIT_REF_SLUG
-      COPY *.whl .
-      RUN pip install *.whl
-      RUN rm -f *.whl
-      USER nobody
-      WORKDIR /tmp
-      ENTRYPOINT ["gwcelery"]
-      EOF
-    - docker build -t $IMAGE_TAG .
-    - docker push $IMAGE_TAG
-    - if [ "${CI_COMMIT_TAG:0:1}" = "v" ]; then docker tag $IMAGE_TAG ${IMAGE_TAG%:*}:latest; docker push ${IMAGE_TAG%:*}:latest; fi
-  needs:
-    - bdist
-docker/python3.7:
-  needs:
-    - *docker-needs
-    - job: dependencies/python3.7
-      optional: true
-  <<: *docker
-docker/python3.8:
-  needs:
-    - *docker-needs
-    - job: dependencies/python3.8
-      optional: true
-  <<: *docker
-
 # Generate documentation
 doc:
-  image: python:slim
   stage: test
-  <<: *in-tmpdir
-  script:
-    - apt-get update -qq && apt-get install -y -qq graphviz
-    - tar --strip-components 1 -xf ${CI_PROJECT_DIR}/*.tar.*
-    - pip install -r docs-requirements.txt
-    - sphinx-build -b html doc pages
-  dependencies:
-    - sdist
+  extends:
+    - .debian:base
+    - .python:sphinx
+  variables:
+    SOURCEDIR: doc
+    REQUIREMENTS: .[doc]
+  before_script:
+    - *install-cython
+    - !reference [".debian:base", before_script]
+    - !reference [".python:sphinx", before_script]
+    - apt-get install -y -qq graphviz
+  needs: []
 
 # SCCB request
 sccb:
@@ -224,11 +124,7 @@ sccb:
     # poetry-dynamic-versioning needs to be installed to properly
     # update the version information in pyproject.toml
     - python -m pip install --upgrade pip poetry poetry-dynamic-versioning
-  needs:
-    - doc
-    - lint
-    - test/python3.7
-    - test/python3.8
+  needs: []
 
 # Publish coverage
 pages:
@@ -242,7 +138,7 @@ pages:
   only:
     - master
   needs:
-    - test/python3.7
+    - test/poetry/python3.7
 
 # Upload package to PyPI.
 # Place your PyPI API token in the repository's GitLab CI secrets.
@@ -253,8 +149,7 @@ pypi:
     - pip install twine
     - twine upload --username __token__ --password $PYPI_API_TOKEN *.tar.* *.whl
   needs:
-    - sdist
-    - bdist
+    - build
   only:
     - tags@emfollow/gwcelery
 
