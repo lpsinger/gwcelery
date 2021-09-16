@@ -70,7 +70,7 @@ metadata = pep517.meta.load(parent_path).metadata
 
 project = metadata['name']
 author = metadata['author']
-description = metadata['description']
+description = metadata['summary']
 release = metadata['version']
 version = Version(metadata['version']).public
 
