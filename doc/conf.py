@@ -18,7 +18,6 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import builtins
-import importlib
 from pathlib import Path
 import sys
 
@@ -93,59 +92,6 @@ pygments_style = 'sphinx'
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
 
-autodoc_mock_imports = []
-for mod in ['astropy',
-            'astropy_healpix',
-            'click',
-            'comet',
-            'flask',
-            'flask_caching',
-            'gcn',
-            'glue',
-            'gracedb_sdk',
-            'gwdatafind',
-            'gwpy',
-            'healpy',
-            'h5py',
-            'imapclient',
-            'lal',
-            'lalapps',
-            'lalburst',
-            'laldetchar',
-            'lalframe',
-            'lalinference',
-            'lalinspiral',
-            'lalmetaio',
-            'lalpulsar',
-            'lalsimulation',
-            'lalstochastic',
-            'lalxml',
-            'ligo',
-            'ligo.computeDiskMass',
-            'ligo.em_bright',
-            'ligo.followup_advocate',
-            'ligo.gracedb',
-            'ligo.p_astro',
-            'ligo.p_astro_computation',
-            'ligo.raven',
-            'ligo.segments',
-            'ligo.skymap',
-            'lxml',
-            'lxml.etree',
-            'matplotlib',
-            'numpy',
-            'pytest',
-            'safe_netrc',
-            'scipy',
-            'sentry_sdk',
-            'sleek_lvalert',
-            'twisted',
-            'werkzeug',
-            'zope']:
-    try:
-        importlib.import_module(mod)
-    except ImportError:
-        autodoc_mock_imports.append(mod)
 autodoc_default_options = {
     'members': None,
     'undoc-members': None,

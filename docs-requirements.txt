@@ -1,4 +1,0 @@
-celery[redis]>=5.1
-matplotlib
-pep517
-sphinx>=2.0
