@@ -15,3 +15,9 @@ Interactive terminal sessions are for EMERGENCY USE ONLY. \
 Are you sure that you want to proceed?" 15 70 --defaultno \
 --title 'FOR EMERGENCY USE ONLY' \
 --backtitle "${USER}@$(hostname --fqdn)" || logout
+
+# If Poetry is installed, then enable poetry shell completion.
+if type -P poetry &> /dev/null
+then
+    . <(poetry completions bash)
+fi
