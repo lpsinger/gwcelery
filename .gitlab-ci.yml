@@ -226,7 +226,13 @@ release:
       . .bashrc
       set -e
       python -m pip install --upgrade pip poetry poetry-dynamic-versioning
-      poetry install
+      # poetry install
+      # FIXME: replace the following two commands with 'poetry install'
+      # after https://git.ligo.org/sccb/requests/-/issues/741
+      # has been fixed
+      pip install -r <(poetry export)
+      pip install --prefix=$USER/.local -e .
+
       # FIXME: remove pip uninstall temporary directories left behind due to
       # bug with pip on NFS. See https://github.com/pypa/pip/issues/6327
       chmod -R ug+rwx .local/lib/python*/site-packages/~* || true
