@@ -15,6 +15,9 @@ export PATH="$(python -m site --user-base)/bin${PATH+:${PATH}}"
 # `pip install` should always behave as if it was called with `--user`.
 export PIP_USER=1
 
+# `poetry install` should install into the current environment, not a virtualenv
+export POETRY_VIRTUALENVS_CREATE=false
+
 # Disable OpenMP threading by default.
 # In this environmnet, it will be enabled selectively by processes that use it.
 export OMP_NUM_THREADS=1
