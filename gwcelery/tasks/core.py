@@ -1,6 +1,4 @@
 """Base classes for other Celery tasks."""
-from operator import itemgetter
-
 from celery import group
 from celery.utils.log import get_logger
 
@@ -16,42 +14,23 @@ def identity(arg=None):
 
 
 @app.task(shared=False)
-def _pack(result, i):
-    return i, result
+def get_first(args):
+    """Get the first result of a group. Identity for scalar"""
+    try:
+        first, *_ = args
+    except TypeError:
+        first = args  # if scalar
+    return first
 
 
 @app.task(shared=False)
-def _unpack(results):
-    return tuple(map(itemgetter(1), sorted(results, key=itemgetter(0))))
-
-
-@app.task(shared=False)
-def _first(results):
-    return min(results, key=itemgetter(0))[1]
-
-
-@app.task(shared=False)
-def _last(results):
-    return max(results, key=itemgetter(0))[1]
-
-
-def ordered_group(*args):
-    """Like :meth:`celery.group`, but preserve order.
-
-    This is a temporary workaround for
-    https://github.com/celery/celery/pull/4858.
-    """
-    return group(arg | _pack.s(i) for i, arg in enumerate(args)) | _unpack.s()
-
-
-def ordered_group_first(*args):
-    """Like :meth:`celery.group`, but only return the first result."""
-    return group(arg | _pack.s(i) for i, arg in enumerate(args)) | _first.s()
-
-
-def ordered_group_last(*args):
-    """Like :meth:`celery.group`, but only return the last result."""
-    return group(arg | _pack.s(i) for i, arg in enumerate(args)) | _last.s()
+def get_last(args):
+    """Get the last result of a group. Identity for scalar"""
+    try:
+        *_, last = args
+    except TypeError:
+        last = args  # if scalar
+    return last
 
 
 class DispatchHandler(dict):

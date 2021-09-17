@@ -17,7 +17,6 @@ from requests.exceptions import HTTPError
 
 from .. import app
 from ..jinja import env
-from .core import ordered_group
 from . import condor
 from . import gracedb
 
@@ -363,7 +362,7 @@ def dag_prepare_task(rundir, superevent_id, preferred_event_id, pe_pipeline,
 
     """
     if pe_pipeline == 'lalinference':
-        canvas = ordered_group(
+        canvas = group(
             gracedb.download.si('coinc.xml', preferred_event_id),
             _download_psd.si(preferred_event_id)
         ) | _setup_dag_for_lalinference.s(ini_contents, rundir, superevent_id)

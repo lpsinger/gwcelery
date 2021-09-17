@@ -12,7 +12,7 @@ from celery import group
 from ..import app
 from . import bayestar
 from . import circulars
-from .core import identity, ordered_group, ordered_group_first
+from .core import identity, get_first
 from . import detchar
 from . import em_bright
 from . import gcn
@@ -45,7 +45,7 @@ def handle_superevent(alert):
                 countdown=app.conf['pe_timeout']
             )
             |
-            ordered_group(
+            group(
                 _get_lowest_far.si(superevent_id),
                 gracedb.get_event.s()
             )
@@ -488,11 +488,11 @@ def preliminary_alert(event, superevent_id, annotation_prefix='',
     is_publishable = (superevents.should_publish(event)
                       and {'DQV', 'INJ'}.isdisjoint(event['labels']))
 
-    canvas = ordered_group(
+    canvas = group(
         (
             gracedb.download.si(original_skymap_filename, preferred_event_id)
             |
-            ordered_group_first(
+            group(
                 skymaps.flatten.s(annotation_prefix + skymap_filename)
                 |
                 gracedb.upload.s(
@@ -524,6 +524,8 @@ def preliminary_alert(event, superevent_id, annotation_prefix='',
                         'sky_loc', 'public']
                 )
             )
+            |
+            get_first.s()
         ) if skymap_filename is not None else identity.s(None),
 
         (
