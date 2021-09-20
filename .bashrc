@@ -12,9 +12,6 @@ conda activate igwn-py38-20210916
 # Add user site directory to the PATH. On Linux, this is usuall ~/.local/bin.
 export PATH="$(python -m site --user-base)/bin${PATH+:${PATH}}"
 
-# `pip install` should always behave as if it was called with `--user`.
-export PIP_USER=1
-
 # `poetry install` should install into the current environment, not a virtualenv
 export POETRY_VIRTUALENVS_CREATE=false
 
