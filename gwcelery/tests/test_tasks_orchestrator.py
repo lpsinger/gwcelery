@@ -450,13 +450,15 @@ def test_handle_cbc_event_ignored(mock_localize,
     mock_classifier.assert_not_called()
 
 
+@pytest.mark.live_worker
 @patch('gwcelery.tasks.gcn.send')
 def test_alerts_skip_inj(mock_gcn_send):
-    orchestrator.preliminary_initial_update_alert(
+    orchestrator.preliminary_initial_update_alert.delay(
         ('bayestar.fits.gz', 'em_bright.json', 'p_astro.json'),
         'S1234',
         'preliminary',
-        labels=['INJ'])
+        labels=['INJ']
+    ).get()
     mock_gcn_send.assert_not_called()
 
 
@@ -465,6 +467,7 @@ def only_mdc_alerts(monkeypatch):
     monkeypatch.setitem(app.conf, 'only_alert_for_mdc', True)
 
 
+@pytest.mark.live_worker
 @patch('gwcelery.tasks.skymaps.flatten')
 @patch('gwcelery.tasks.gracedb.download')
 @patch('gwcelery.tasks.gracedb.upload')
@@ -485,5 +488,8 @@ def test_only_mdc_alerts_switch(mock_alert, mock_upload, mock_download,
                             'offline': False,
                             'labels': []}
         superevent_id = 'S1234'
-        orchestrator.preliminary_alert(event_dictionary, superevent_id)
+        orchestrator.preliminary_alert.delay(
+            event_dictionary,
+            superevent_id
+        ).get()
         mock_alert.assert_not_called()
