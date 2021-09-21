@@ -225,13 +225,11 @@ release:
       ssh -T $REMOTE_HOST bash <<EOF
       . .bashrc
       set -e
-      python -m pip install --upgrade pip poetry poetry-dynamic-versioning
-      # poetry install
-      # FIXME: replace the following two commands with 'poetry install'
-      # after https://git.ligo.org/sccb/requests/-/issues/741
-      # has been fixed
+      python -m pip install --upgrade pip poetry
+      # FIXME: It would be simpler to use `poetry install`, but it tries to
+      # uninstall system site-packages even if they are not writable.
       pip install -r <(poetry export)
-      pip install --prefix=~/.local -e .
+      pip install --use-feature=in-tree-build .
 
       # FIXME: remove pip uninstall temporary directories left behind due to
       # bug with pip on NFS. See https://github.com/pypa/pip/issues/6327

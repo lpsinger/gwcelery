@@ -12,9 +12,6 @@ conda activate igwn-py38-20210916
 # Add user site directory to the PATH. On Linux, this is usuall ~/.local/bin.
 export PATH="$(python -m site --user-base)/bin${PATH+:${PATH}}"
 
-# `poetry install` should install into the current environment, not a virtualenv
-export POETRY_VIRTUALENVS_CREATE=false
-
 # Disable OpenMP threading by default.
 # In this environmnet, it will be enabled selectively by processes that use it.
 export OMP_NUM_THREADS=1
