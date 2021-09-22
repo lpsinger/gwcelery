@@ -228,7 +228,7 @@ release:
       python -m pip install --upgrade pip poetry
       # FIXME: It would be simpler to use `poetry install`, but it tries to
       # uninstall system site-packages even if they are not writable.
-      pip install -r <(poetry export)
+      pip install -r <(poetry export --dev)
       pip install --use-feature=in-tree-build .
 
       # FIXME: remove pip uninstall temporary directories left behind due to
