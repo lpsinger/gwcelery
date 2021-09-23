@@ -122,6 +122,12 @@ change log.
 8.  If desired, navigate to the GitLab project's `Environments`_ page and
     trigger a deployment to production.
 
+    Each pipeline has an interface which enables deployment to the 
+    available environments. 
+
+    .. image:: _static/deployment-screenshot.png
+       :alt: Screen shot of deployment options
+
 .. _`Environments`: https://git.ligo.org/emfollow/gwcelery/environments
 .. _`.gitlab-ci.yml`: https://git.ligo.org/emfollow/gwcelery/blob/master/.gitlab-ci.yml
 .. _`poetry`: https://python-poetry.org/
