@@ -283,25 +283,14 @@ of several processes:
 
 8.  **General-Purpose Worker**
 
-    A Celery worker that accepts all other tasks.
+    A Celery worker that accepts all other tasks. This worker also runs an
+    :doc:`embedded LVAlert listener service <gwcelery.lvalert>` that is started
+    and stopped as a bootstep.
 
 9.  **Flask Web Application**
 
     A web application that provides forms to manually initiate certain tasks,
     including sending an update alert or creating a mock event.
-
-Eternal tasks
--------------
-
-GWCelery has a few long-running tasks that do not return because they have to
-keep open a persistent connection with some external service. These tasks are
-subclasses of :class:`celery_eternal.EternalTask` or
-:class:`celery_eternal.EternalProcessTask`.
-
-*  :meth:`gwcelery.tasks.lvalert.listen`
-
-These tasks run inside the general-purpose worker process described above,
-and are automatically started (and restarted as necessary) by Celery Beat.
 
 Handlers
 --------
