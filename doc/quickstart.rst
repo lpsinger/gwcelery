@@ -6,33 +6,63 @@ Quick start
 These instructions are suitable for installing GWCelery for development and
 testing on any machine.
 
+GWCelery requires Python >= 3.7 and a Linux or UNIX-like operating system. It
+does not support Windows.
+
 To install
 ----------
 
-GWCelery requires Python >= 3.7.
+GWCelery uses `Poetry`_ for packaging, dependency tracking, and virtual
+environment management; and the `poetry-dynamic-versioning`_ plugin for
+synchronizing the package's version number with Git tags. First, install these
+two tools if you do not already have them.
 
-The easiest way to install it is with ``venv`` and ``pip``::
+1. Run the following command to `install Poetry using the recommended method`_::
 
-    $ python -m venv --system-site-packages ~/gwcelery
-    $ source ~/gwcelery/bin/activate
-    $ pip install gwcelery
+    $ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
 
-.. hint::
-   **Note:** GWCelery requires a fairly new version of `setuptools`. If you get
-   an error message that looks like this::
+2. Then, install poetry-dynamic-versioning using pip::
 
-       pkg_resources.VersionConflict: (setuptools 0.9.8
-       (/usr/lib/python2.7/site-packages),
-       Requirement.parse('setuptools>=30.3.0'))
+    $ pip install poetry-dynamic-versioning
 
-   then run ``pip install --upgrade setuptools`` and try again.
+3. Run these commands to clone the GWCelery git repository::
+
+    $ git clone https://git.ligo.org/emfollow/gwcelery.git
+    $ cd gwcelery
+
+4. Inside the cloned git repository, run this command to create a
+   Poetry-managed virtual environment containing GWCelery and all of its
+   dependencies::
+
+    $ poetry install
+
+5. Now, whenever you want to enter a shell within the virtual environment, run
+   this command inside the git clone directory::
+
+    $ poetry shell
+
+.. _`Poetry`: https://python-poetry.org
+.. _`poetry-dynamic-versioning`: https://github.com/mtkennerly/poetry-dynamic-versioning
+.. _`install Poetry using the recommended method`: https://python-poetry.org/docs/#osx--linux--bashonwindows-install-instructions
 
 To test
 -------
 
-With ``setup.py``::
+First, install the extra test dependencies in the Poetry-managed virtual
+environment by running this command::
 
-    $ python setup.py test
+    $ poetry install --extras=test
+
+Then, to run the unit tests, just run pytest within the Poetry virtual
+environment::
+
+    $ poetry shell
+    $ pytest
+
+As a shortcut, you can use ``poetry run`` to execute a single command within
+the virtual environment, like this::
+
+    $ poetry run pytest
 
 To start
 --------
