@@ -17,7 +17,7 @@ __version__ = get_versions()['version']
 del get_versions
 
 # Use redis broker, because it supports locks (and thus singleton tasks).
-app = Celery(__name__, broker='redis://', autofinalize=False)
+app = Celery(__name__, broker='redis://', config_source=playground)
 """Celery application object."""
 
 # Register email, LVAlert and VOEvent subsystems.
@@ -27,10 +27,6 @@ voevent.install(app)
 
 # Register all tasks.
 app.autodiscover_tasks([__name__])
-
-# Add default configuration.
-app.add_defaults(playground)
-app.finalize()
 
 # Customize configuration from environment variable.
 app.config_from_envvar('CELERY_CONFIG_MODULE', silent=True)

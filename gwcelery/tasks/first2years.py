@@ -143,7 +143,7 @@ def _upload_psd(graceid):
     gracedb.upload(psd, 'psd.xml.gz', graceid, 'Noise PSD', ['psd'])
 
 
-@app.on_after_configure.connect
+@app.on_after_finalize.connect
 def setup_periodic_tasks(sender, **kwargs):
     """Register periodic tasks.
 
