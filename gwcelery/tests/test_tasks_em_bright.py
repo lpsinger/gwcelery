@@ -39,12 +39,12 @@ def test_classify_gstlal():
 
 @pytest.mark.parametrize(
         'posterior_samples,embright',
-        [[[(1.2, 1.0, 0.0, 0.0, 100.0),
-           (2.0, 0.5, 0.99, 0.99, 150.0)],
+        [[[(1.2, 1.0, 0.0, 0.0, 100.0, 0.0, 0.0),
+           (2.0, 0.5, 0.99, 0.99, 150.0, 0.0, 0.0)],
           {'HasNS': 1.0, 'HasRemnant': 1.0}],
-         [[(20., 12.0, 0.0, 0.0, 200.0),
-           (22.0, 11.5, 0.80, 0.00, 250.0),
-           (21.0, 10.0, 0.0, 0.0, 250)],
+         [[(20., 12.0, 0.0, 0.0, 200.0, 0.0, 0.0),
+           (22.0, 11.5, 0.80, 0.00, 250.0, 0.0, 0.0),
+           (21.0, 10.0, 0.0, 0.0, 250, 0.0, 0.0)],
           {'HasNS': 0.0, 'HasRemnant': 0.0}]])
 def test_posterior_samples(posterior_samples, embright):
     with NamedTemporaryFile() as f:
@@ -53,7 +53,9 @@ def test_posterior_samples(posterior_samples, embright):
             data = np.array(
                     posterior_samples,
                     dtype=[('mc', '<f8'), ('q', '<f8'),
-                           ('a1', '<f8'), ('a2', '<f8'), ('dist', '<f8')])
+                           ('a1', '<f8'), ('a2', '<f8'),
+                           ('dist', '<f8'), ('tilt1', '<f8'),
+                           ('tilt2', '<f8')])
             tmp_h5.create_dataset(
                 'lalinference/lalinference_mcmc/posterior_samples',
                 data=data)

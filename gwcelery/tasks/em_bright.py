@@ -3,7 +3,7 @@ import io
 import json
 from matplotlib import pyplot as plt
 
-from ligo import computeDiskMass, em_bright
+from ligo.em_bright import computeDiskMass, em_bright, PACKAGE_FILENAMES
 
 from celery.utils.log import get_task_logger
 
@@ -14,9 +14,13 @@ from ..util import (closing_figures, NamedTemporaryFile, PromiseProxy,
                     read_pickle)
 
 NS_CLASSIFIER = PromiseProxy(
-    read_pickle, ('ligo.data', 'knn_ns_classifier.pkl'))
+    read_pickle, (PACKAGE_FILENAMES['knn_ns_classifier.pkl'],),
+    dict(encoding='binary')
+)
 EM_CLASSIFIER = PromiseProxy(
-    read_pickle, ('ligo.data', 'knn_em_classifier.pkl'))
+    read_pickle, (PACKAGE_FILENAMES['knn_em_classifier.pkl'],),
+    dict(encoding='binary')
+)
 
 log = get_task_logger(__name__)
 

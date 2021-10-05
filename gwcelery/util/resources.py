@@ -3,6 +3,9 @@ from importlib import resources
 import json
 import pickle
 
+from astropy.utils.data import get_readable_fileobj
+
+
 __all__ = ('read_json', 'read_pickle')
 
 
@@ -13,6 +16,6 @@ def read_json(*args, **kwargs):
 
 
 def read_pickle(*args, **kwargs):
-    """Load a JSON file from package data."""
-    with resources.open_binary(*args, **kwargs) as f:
+    """Load a pickle file using astropy.utils.data."""
+    with get_readable_fileobj(*args, **kwargs) as f:
         return pickle.load(f)
