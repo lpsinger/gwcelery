@@ -107,6 +107,9 @@ doc:
   extends:
     - .debian:base
     - .python:sphinx
+  # FIXME: temporarily set image to Python 3.9 because default `python` image
+  # is now Python 3.10 which lacks wheels for many packages right now.
+  image: python:3.9
   variables:
     SOURCEDIR: doc
     REQUIREMENTS: .[doc]
