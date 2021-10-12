@@ -5,7 +5,7 @@ License
 The `GWCelery Logo`_ is a composite of `Celery2`_ by Tiia Monto and `Lorentzian
 Wormhole`_ by Kes47 from Wikimedia Commons (`CC BY-SA 3.0`_).
 
-.. _`GWCelery Logo`: https://git.ligo.org/emfollow/gwcelery/blob/master/doc/_static/logo.png
+.. _`GWCelery Logo`: https://git.ligo.org/emfollow/gwcelery/blob/main/doc/_static/logo.png
 .. _`Celery2`: https://commons.wikimedia.org/wiki/File:Celery2.png
 .. _`Lorentzian Wormhole`: https://commons.wikimedia.org/wiki/File:Lorentzian_Wormhole.svg
 .. _`CC BY-SA 3.0`: https://creativecommons.org/licenses/by-sa/3.0/legalcode

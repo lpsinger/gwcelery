@@ -91,7 +91,7 @@ associate commits in Sentry:
   needs:
     - build
   only:
-    - master@emfollow/gwcelery
+    - main@emfollow/gwcelery
     - tags@emfollow/gwcelery
   image:
     name: getsentry/sentry-cli
@@ -136,7 +136,7 @@ pages:
       - public
     expire_in: 30 days
   only:
-    - master
+    - main
   needs:
     - test/poetry/python3.7
 

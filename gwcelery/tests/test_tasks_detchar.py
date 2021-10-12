@@ -149,7 +149,7 @@ def test_dqr_json(mock_time, mock_host, mock_user):
             },
             {
                 "href":
-                "https://git.ligo.org/emfollow/gwcelery/blob/master/gwcelery/tasks/detchar.py",  # noqa
+                "https://git.ligo.org/emfollow/gwcelery/blob/main/gwcelery/tasks/detchar.py",  # noqa
                 "innerHTML": "a link to the source code in the gwcelery repo"
             }
         ]),

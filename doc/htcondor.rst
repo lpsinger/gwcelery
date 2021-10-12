@@ -34,7 +34,7 @@ rebooted, because the jobs will persist in the HTCondor queue.
 
 
 .. _HTCondor: https://research.cs.wisc.edu/htcondor/
-.. _gwcelery.sub: https://git.ligo.org/emfollow/gwcelery/blob/master/gwcelery/data/gwcelery.sub
+.. _gwcelery.sub: https://git.ligo.org/emfollow/gwcelery/blob/main/gwcelery/data/gwcelery.sub
 
 Shortcuts
 ---------

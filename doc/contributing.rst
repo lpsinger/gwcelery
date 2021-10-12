@@ -74,9 +74,9 @@ Guidelines for tasks
        in our deployment. If you make changes to requirements.txt, then run
        ``poetry update`` and commit the changes to `poetry.lock`_.
 
-.. _`requirements.txt`: https://git.ligo.org/emfollow/gwcelery/blob/master/requirements.txt
-.. _`doc/conf.py`: https://git.ligo.org/emfollow/gwcelery/blob/master/doc/conf.py
-.. _`poetry.lock`: https://git.ligo.org/emfollow/gwcelery/blob/master/poetry.lock
+.. _`requirements.txt`: https://git.ligo.org/emfollow/gwcelery/blob/main/requirements.txt
+.. _`doc/conf.py`: https://git.ligo.org/emfollow/gwcelery/blob/main/doc/conf.py
+.. _`poetry.lock`: https://git.ligo.org/emfollow/gwcelery/blob/main/poetry.lock
 .. _`pip`: https://pip.pypa.io/
 .. _`poetry`: https://python-poetry.org/
 

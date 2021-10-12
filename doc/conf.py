@@ -62,8 +62,8 @@ templates_path = ['_templates']
 source_suffix = ['.rst']
 source_parsers = {}
 
-# The master toctree document.
-master_doc = 'index'
+# The main toctree document.
+main_doc = 'index'
 
 # General information about the project.
 metadata = pep517.meta.load(parent_path).metadata
@@ -175,7 +175,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, project + '.tex', 'GWCelery Documentation',
+    (main_doc, project + '.tex', 'GWCelery Documentation',
      author, 'manual'),
 ]
 
@@ -185,7 +185,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, project.lower(), project + ' Documentation',
+    (main_doc, project.lower(), project + ' Documentation',
      [author], 1)
 ]
 
@@ -196,7 +196,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, project, project + ' Documentation',
+    (main_doc, project, project + ' Documentation',
      author, project, 'One line description of project.',
      'Miscellaneous'),
 ]
@@ -215,7 +215,7 @@ intersphinx_mapping = {
     'htcondor': ('https://htcondor.readthedocs.io/en/latest/', None),
     'gwpy': ('https://gwpy.github.io/docs/stable/', None),
     'ligo.skymap': ('https://lscsoft.docs.ligo.org/ligo.skymap/', None),
-    'requests': ('https://requests.readthedocs.io/en/master/', None),
+    'requests': ('https://requests.readthedocs.io/en/main/', None),
     'twisted': ('https://twistedmatrix.com/documents/current/api/', None),
     'userguide': ('https://emfollow.docs.ligo.org/userguide/', None)
 }
