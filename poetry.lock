@@ -2183,7 +2183,7 @@ test = ["pytest-celery", "pytest-flask", "pytest-socket"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "e4dc7b18e2f76fc3d36ea0e93bea7a45b52aee43af633f2a8a5697e6ed46b5a0"
+content-hash = "1c86527cdf04a8edf69bc6cb229ef34fa56f7453249a82cd5af5edd39a36230e"
 
 [metadata.files]
 alabaster = [
