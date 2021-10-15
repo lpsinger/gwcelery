@@ -167,8 +167,8 @@ def test_create_upload_swift_skymap(mock_plot_allsky,
              'extra_attributes': {
                  'GRB': {
                      'trigger_id': 1234567,
-                     'ra': 0,
-                     'dec': 0,
+                     'ra': 1.,
+                     'dec': 1.,
                      'error_radius': 0}},
              'links': {
                  'self': 'https://gracedb.ligo.org/api/events/E356793'}}
@@ -176,3 +176,22 @@ def test_create_upload_swift_skymap(mock_plot_allsky,
                                                    '2020-01-09T01:47:09')
     mock_upload.assert_called()
     mock_plot_allsky.assert_called_once()
+
+
+@patch('gwcelery.tasks.gracedb.upload.run')
+def test_create_upload_skymap_filter(mock_upload):
+    """Test that empty notices don't create sky maps."""
+    event = {'graceid': 'E1234',
+             'pipeline': 'Swift',
+             'gpstime': 1259790538.77,
+             'extra_attributes': {
+                 'GRB': {
+                     'trigger_id': 1234567,
+                     'ra': 0.,
+                     'dec': 0.,
+                     'error_radius': 0.}},
+             'links': {
+                 'self': 'https://gracedb.ligo.org/api/events/E356793'}}
+    external_skymaps.create_upload_external_skymap(event, '111',
+                                                   '2020-01-09T01:47:09')
+    mock_upload.assert_not_called()

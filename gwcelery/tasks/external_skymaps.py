@@ -359,6 +359,10 @@ def create_upload_external_skymap(event, notice_type, notice_date):
     dec = event['extra_attributes']['GRB']['dec']
     error = event['extra_attributes']['GRB']['error_radius']
     pipeline = event['pipeline']
+
+    if not (ra or dec or error):
+        # Don't create sky map if notice only contains zeros, lacking info
+        return
     skymap = create_external_skymap(ra, dec, error, pipeline, notice_type)
 
     skymap_data = write_to_fits(skymap, event, notice_type, notice_date)

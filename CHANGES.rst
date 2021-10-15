@@ -34,6 +34,9 @@ Changelog
 
 -   Fix threshold to correct scale in order to consider a Fermi GRB real.
 
+-   Prevent external GCN notices with no sky map information (all zeros) from
+    creating sky maps.
+
 1.0.0 (2022-01-21)
 ------------------
 
