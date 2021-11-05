@@ -21,8 +21,8 @@ Changelog
 -   Rewrite GitLab CI pipeline to use the IGWN computing group's Python job
     templates.
 
--   For deploymenet jobs in the GitLab CI pipeline, use ssh+kerberos instead of
-    the now-defunct gsissh for unattended login to LDG hosts.
+-   Use ssh+kerberos instead of the now-defunct gsissh for unattended login to
+    LDG hosts for deployment jobs in the GitLab CI pipeline.
 
 -   Remove mock module imports from Sphinx configuration, for simpler and more
     robust documentation builds.
