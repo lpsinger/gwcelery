@@ -1,8 +1,37 @@
 Changelog
 =========
 
-0.13.2 (unreleased)
--------------------
+1.0.0 (unreleased)
+------------------
+
+-   Update to Celery 5.
+
+-   Rename branch ``master`` to ``main``.
+
+-   Switch build, packaging, and deployment from setuptools+pipenv to poetry.
+
+-   Use a date-tagged IGWN Conda environment to prevent unversioned changes
+    to dependencies.
+
+-   Some unit tests now use a live worker instead of "eager" mode. As a result,
+    Celery's behavior in those unit tests is more similar to production, and
+    therefore more likely to catch any concurrency bugs, race conditions, or
+    deadlocks.
+
+-   Rewrite GitLab CI pipeline to use the IGWN computing group's Python job
+    templates.
+
+-   For deploymenet jobs in the GitLab CI pipeline, use ssh+kerberos instead of
+    the now-defunct gsissh for unattended login to LDG hosts.
+
+-   Remove mock module imports from Sphinx configuration, for simpler and more
+    robust documentation builds.
+
+-   Increase the value of the Celery ``worker_proc_alive_timeout`` to 8 seconds
+    in order to avoid unnecessarily killing workers that are slow to start up.
+
+-   Remove workarounds that were in place to preserve order of results from
+    groups of tasks, because Celery 5 now preserves result order automatically.
 
 -   Require astropy >= 4.3.1 due to an upstream bug
     (https://github.com/astropy/astropy/issues/11879).
