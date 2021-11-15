@@ -32,6 +32,8 @@ Changelog
 
 -   Update conda environment in bashrc to igwn-py39-20220317.
 
+-   Fix threshold to correct scale in order to consider a Fermi GRB real.
+
 1.0.0 (2022-01-21)
 ------------------
 

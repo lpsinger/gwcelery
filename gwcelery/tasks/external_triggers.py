@@ -25,7 +25,7 @@ FERMI_GRB_CLASS_VALUE = 4
 """This is the index that denote GRBs within Fermi's Flight Position
 classification."""
 
-FERMI_GRB_CLASS_THRESH = .5
+FERMI_GRB_CLASS_THRESH = 50
 """This values denotes the threshold of the most likely Fermi source
 classification, above which we will consider a Fermi Flight Position
 notice."""

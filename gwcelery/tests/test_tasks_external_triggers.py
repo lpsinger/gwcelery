@@ -120,6 +120,9 @@ def test_handle_create_subthreshold_grb_event(mock_get_upload_ext_skymap,
          'gbm_subthresh_578679393.215999_healpix.fits'))
 
 
+@pytest.mark.parametrize('filename',
+                         ['fermi_noise_gcn.xml',
+                          'fermi_noise_gcn_2.xml'])
 @patch('gwcelery.tasks.external_skymaps.get_upload_external_skymap.run')
 @patch('gwcelery.tasks.gracedb.get_events', return_value=[])
 @patch('gwcelery.tasks.gracedb.get_event', return_value={
@@ -134,8 +137,9 @@ def test_handle_noise_fermi_event(mock_check_vectors,
                                   mock_create_event,
                                   mock_get_event,
                                   mock_get_events,
-                                  mock_get_upload_external_skymap):
-    text = read_binary(data, 'fermi_noise_gcn.xml')
+                                  mock_get_upload_external_skymap,
+                                  filename):
+    text = read_binary(data, filename)
     external_triggers.handle_grb_gcn(payload=text)
     mock_get_events.assert_called_once_with(query=(
                                             'group: External pipeline: '
