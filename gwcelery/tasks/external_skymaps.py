@@ -150,8 +150,8 @@ def get_external_skymap(link, search):
     return urllib.request.urlopen(skymap_link, context=context).read()
 
 
-@app.task(autoretry_for=(urllib.error.HTTPError, urllib.error.URLError,
-          ValueError,), retry_backoff=10, retry_backoff_max=1200)
+@app.task(autoretry_for=(urllib.error.HTTPError, urllib.error.URLError,),
+          retry_backoff=10, retry_backoff_max=1200)
 def get_upload_external_skymap(graceid, search, skymap_link=None):
     """If a Fermi sky map is not uploaded yet, tries to download one and upload
     to external event. If sky map is not available, passes so that this can be
