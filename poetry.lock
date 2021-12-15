@@ -1115,7 +1115,7 @@ python-versions = ">=3.4"
 
 [[package]]
 name = "lscsoft-glue"
-version = "1.60.0"
+version = "2.0.0"
 description = "Grid LSC User Engine"
 category = "main"
 optional = false
@@ -2237,7 +2237,7 @@ test = ["pytest-celery", "pytest-flask", "pytest-socket"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "913cd65960b724fa2b1b7e178d2cd199366795bceb6e7868877cd978668a90b6"
+content-hash = "1c86527cdf04a8edf69bc6cb229ef34fa56f7453249a82cd5af5edd39a36230e"
 
 [metadata.files]
 alabaster = [
@@ -2742,7 +2742,7 @@ ligotimegps = [
     {file = "ligotimegps-2.0.1.tar.gz", hash = "sha256:88626c02ad9a464d1242a1147b40074792f424bafa2ab013eee629c7d1b6469c"},
 ]
 lscsoft-glue = [
-    {file = "lscsoft-glue-1.60.0.tar.gz", hash = "sha256:c51a5703e33c8ca244ab50723dd5bf3984c3c6383838e77e9dd451678024a2a6"},
+    {file = "lscsoft-glue-2.0.0.tar.gz", hash = "sha256:9bdfaebe4c921d83d1e3d1ca24379a644665e9d7530e7070665f387767c66923"},
 ]
 lxml = [
     {file = "lxml-4.7.1-cp27-cp27m-macosx_10_14_x86_64.whl", hash = "sha256:d546431636edb1d6a608b348dd58cc9841b81f4116745857b6cb9f8dadb2725f"},

@@ -68,7 +68,7 @@ ligo-gracedb = ">=2.7.5"  # https://git.ligo.org/lscsoft/gracedb-client/-/issues
 ligo-raven = ">=1.17"
 ligo-segments = "*"
 "ligo.skymap" = ">=0.4.0"
-lscsoft-glue = "^1.7.0"  # https://git.ligo.org/lscsoft/ligo.skymap/-/merge_requests/255
+lscsoft-glue = "*"
 lxml = "*"
 numpy = "*"
 p_astro = ">=0.8.1"
