@@ -1625,7 +1625,7 @@ six = ">=1.5"
 
 [[package]]
 name = "python-ligo-lw"
-version = "1.8.0"
+version = "1.7.1"
 description = "Python LIGO Light-Weight XML I/O Library"
 category = "main"
 optional = false
@@ -2237,7 +2237,7 @@ test = ["pytest-celery", "pytest-flask", "pytest-socket"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "1c86527cdf04a8edf69bc6cb229ef34fa56f7453249a82cd5af5edd39a36230e"
+content-hash = "05326d9500a1e69bd4d944f93c4e8a8307467166ed9e4d6fe91bdfd08def77d9"
 
 [metadata.files]
 alabaster = [
@@ -3186,7 +3186,7 @@ python-dateutil = [
     {file = "python_dateutil-2.8.2-py2.py3-none-any.whl", hash = "sha256:961d03dc3453ebbc59dbdea9e4e11c5651520a876d0f4db161e8674aae935da9"},
 ]
 python-ligo-lw = [
-    {file = "python-ligo-lw-1.8.0.tar.gz", hash = "sha256:13707815d44db2dc3c097efe96e98548733a6fcec6f864b85c86af2fa96035c3"},
+    {file = "python-ligo-lw-1.7.1.tar.gz", hash = "sha256:0b9476d5edaf17ef9036ec17344645129b752097446d6001725ad41ce7d4f206"},
 ]
 pytz = [
     {file = "pytz-2021.3-py2.py3-none-any.whl", hash = "sha256:3672058bc3453457b622aab7a1c3bfd5ab0bdae451512f6cf25f64ed37f5b87c"},

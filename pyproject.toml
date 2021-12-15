@@ -74,7 +74,7 @@ numpy = "*"
 p_astro = ">=0.8.1"
 pesummary = "<0.13"  # https://git.ligo.org/lscsoft/pesummary/-/issues/269. FIXME: remove this requirement entirely once resolved.
 pygcn = ">=1.0.1"
-python-ligo-lw = "*"
+python-ligo-lw = "~1.7.0"  # https://git.ligo.org/lscsoft/ligo.skymap/-/merge_requests/255
 safe-netrc = "*"
 sentry-sdk = {version = "*", extras = ["flask", "tornado"]}
 service-identity = "*"  # We don't actually use this package, but it silences some annoying warnings from twistd.
