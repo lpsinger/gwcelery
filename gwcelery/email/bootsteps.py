@@ -74,14 +74,11 @@ class Receiver(EmailBootStep):
             except IMAPClientAbortError:
                 log.exception('IMAP connection aborted')
 
-    def create(self, consumer):
-        super().create(consumer)
+    def start(self, consumer):
+        super().start(consumer)
         self._host = consumer.app.conf['email_host']
         self._running = True
         self._thread = Thread(target=self._runloop, name='EmailClientThread')
-
-    def start(self, consumer):
-        super().start(consumer)
         self._thread.start()
 
     def stop(self, consumer):

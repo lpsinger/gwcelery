@@ -35,15 +35,12 @@ class Receiver(LVAlertBootStep):
 
     name = 'LVAlert client'
 
-    def create(self, consumer):
-        super().create(consumer)
+    def start(self, consumer):
+        super().start(consumer)
         from .client import LVAlertClient
         self._client = LVAlertClient(
             server=consumer.app.conf['lvalert_host'],
             nodes=consumer.app.conf['lvalert_nodes'])
-
-    def start(self, consumer):
-        super().start(consumer)
         self._client.connect()
         self._client.process()
         self._client.listen(_send_lvalert_received)
@@ -53,4 +50,9 @@ class Receiver(LVAlertBootStep):
         self._client.disconnect()
 
     def info(self, consumer):
-        return {'lvalert-nodes': self._client.get_subscriptions()}
+        try:
+            lvalert_nodes = self._client.get_subscriptions()
+        except:  # noqa: E722
+            log.exception('failed to get info for lvalert-nodes')
+            lvalert_nodes = []
+        return {'lvalert-nodes': lvalert_nodes}

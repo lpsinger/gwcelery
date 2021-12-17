@@ -46,15 +46,11 @@ class Reactor(VOEventBootStep):
     def __init__(self, consumer, **kwargs):
         self._thread = None
 
-    def create(self, consumer):
-        from twisted.internet import reactor
-
-        super().create(consumer)
-        self._thread = threading.Thread(target=reactor.run, args=(False,),
-                                        name='TwistedReactorThread')
-
     def start(self, consumer):
         super().start(consumer)
+        from twisted.internet import reactor
+        self._thread = threading.Thread(target=reactor.run, args=(False,),
+                                        name='TwistedReactorThread')
         self._thread.start()
 
     def stop(self, consumer):
@@ -73,10 +69,6 @@ class TwistedService(VOEventBootStep):
     def __init__(self, consumer, **kwargs):
         self._service = None
 
-    def create(self, consumer):
-        super().create(consumer)
-        self._service = self.create_service(consumer)
-
     def create_service(self, consumer):
         raise NotImplementedError
 
@@ -84,6 +76,7 @@ class TwistedService(VOEventBootStep):
         from twisted.internet import reactor
 
         super().start(consumer)
+        self._service = self.create_service(consumer)
         reactor.callFromThread(self._service.startService)
 
     def stop(self, consumer):
@@ -130,8 +123,13 @@ class Broadcaster(TwistedService):
         return TCPServer(port, factory, interface=host)
 
     def info(self, consumer):
-        return {'voevent-broker-peers': [
-            b.transport.getPeer().host for b in self._factory.broadcasters]}
+        try:
+            peers = [
+                b.transport.getPeer().host for b in self._factory.broadcasters]
+        except:  # noqa: E722
+            log.exception('failed to get info for voevent-broker-peers')
+            peers = []
+        return {'voevent-broker-peers': peers}
 
 
 class Receiver(TwistedService):
@@ -178,5 +176,10 @@ class Receiver(TwistedService):
         return TCPClient(host, port, factory)
 
     def info(self, consumer):
-        return {'voevent-receiver-peers': [
-            b.transport.getPeer().host for b in self._factory.subscribers]}
+        try:
+            peers = [
+                b.transport.getPeer().host for b in self._factory.subscribers]
+        except:  # noqa: E722
+            log.exception('failed to get info for voevent-receiver-peers')
+            peers = []
+        return {'voevent-receiver-peers': peers}
