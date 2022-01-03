@@ -6,7 +6,6 @@ from celery.utils.log import get_task_logger
 from ..import app
 from . import external_skymaps
 from . import gracedb
-from . import legacy_gracedb
 
 log = get_task_logger(__name__)
 
@@ -48,14 +47,14 @@ def calculate_coincidence_far(superevent, exttrig, tl, th):
                    se_dict=superevent, ext_dict=exttrig,
                    grb_search=exttrig['search'],
                    se_fitsfile=se_skymap, ext_fitsfile=ext_skymap,
-                   incl_sky=True, gracedb=legacy_gracedb.client,
+                   incl_sky=True, gracedb=gracedb.client,
                    far_grb=exttrig['far'])
     else:
         return ligo.raven.search.calc_signif_gracedb(
                    superevent_id, exttrig_id, tl, th,
                    se_dict=superevent, ext_dict=exttrig,
                    grb_search=exttrig['search'],
-                   incl_sky=False, gracedb=legacy_gracedb.client,
+                   incl_sky=False, gracedb=gracedb.client,
                    far_grb=exttrig['far'])
 
 
@@ -160,7 +159,7 @@ def search(gracedb_id, alert_object, tl=-5, th=5, group=None,
     """
     return ligo.raven.search.search(gracedb_id, tl, th,
                                     event_dict=alert_object,
-                                    gracedb=legacy_gracedb.client,
+                                    gracedb=gracedb.client,
                                     group=group, pipelines=pipelines,
                                     searches=searches)
 

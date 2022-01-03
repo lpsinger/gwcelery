@@ -40,6 +40,8 @@ Changelog
 
 -   Reduce queries to gracedb by RAVEN by passing event dictionaries directly.
 
+-   Switch to use gracedb-sdk for RAVEN.
+
 0.13.1 (2021-03-01)
 -------------------
 
