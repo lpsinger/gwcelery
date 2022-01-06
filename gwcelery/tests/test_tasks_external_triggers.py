@@ -157,7 +157,8 @@ def test_handle_noise_fermi_event(mock_check_vectors,
 
 @pytest.mark.parametrize('filename',
                          ['fermi_grb_gcn.xml',
-                          'fermi_noise_gcn.xml'])
+                          'fermi_noise_gcn.xml',
+                          'fermi_subthresh_grb_gcn.xml'])
 @patch('gwcelery.tasks.external_skymaps.create_upload_external_skymap.run')
 @patch('gwcelery.tasks.external_skymaps.get_upload_external_skymap.run')
 @patch('gwcelery.tasks.gracedb.create_label.run')
@@ -177,10 +178,15 @@ def test_handle_replace_grb_event(mock_get_events,
                                   filename):
     text = read_binary(data, filename)
     external_triggers.handle_grb_gcn(payload=text)
-    mock_replace_event.assert_called_once_with('E1', text)
-    if 'grb' in filename:
+    if 'subthresh' in filename:
+        mock_replace_event.assert_not_called()
+        mock_remove_label.assert_not_called()
+        mock_create_label.assert_not_called()
+    elif 'grb' in filename:
+        mock_replace_event.assert_called_once_with('E1', text)
         mock_remove_label.assert_called_once_with('NOT_GRB', 'E1')
     elif 'noise' in filename:
+        mock_replace_event.assert_called_once_with('E1', text)
         mock_create_label.assert_called_once_with('NOT_GRB', 'E1')
 
 

@@ -23,6 +23,7 @@ Changelog
     flat-resolution files asynchronously.
 -   Move functions in handle_grb_gcn to asynchronous group to prevent detchar
     errors from interupting sky map generation.
+-   Prevent sub-threhsold GRBs from overwriting high-threshold GRBs.
 
 1.0.1 (2022-05-09)
 ------------------

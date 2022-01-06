@@ -149,7 +149,12 @@ def handle_grb_gcn(payload):
             canvas = gracedb.create_label.si(labels[0], graceid)
         else:
             canvas = gracedb.remove_label.si('NOT_GRB', graceid)
-        canvas |= gracedb.replace_event.si(graceid, payload)
+
+        # Prevent SubGRBs from appending GRBs
+        if search == 'GRB':
+            canvas |= gracedb.replace_event.si(graceid, payload)
+        else:
+            return
 
     else:
         canvas = gracedb.create_event.s(filecontents=payload,
