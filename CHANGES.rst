@@ -15,6 +15,10 @@ Changelog
     them.
 -   Enable ingestion and processing of test SNEWS external events.
 -   Add a Celery bootstep for external Kafka brokers
+-   Create external MDC events to consistency test the RAVEN alert system.
+    Add acceptance tests for the RAVEN alert system. Add options to use
+    the superevent search field in coincident searches. Update preferred
+    external event based on best available.
 
 1.0.1 (2022-05-09)
 ------------------

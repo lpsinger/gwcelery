@@ -60,7 +60,7 @@ def calculate_coincidence_far(superevent, exttrig, tl, th):
 
 @app.task(shared=False)
 def coincidence_search(gracedb_id, alert_object, group=None, pipelines=[],
-                       searches=[]):
+                       searches=[], se_searches=[]):
     """Perform ligo-raven search for coincidences. Determines time window to
     use. If events found, launches raven pipeline.
 
@@ -80,7 +80,7 @@ def coincidence_search(gracedb_id, alert_object, group=None, pipelines=[],
 
     (
         search.si(gracedb_id, alert_object, tl, th, group, pipelines,
-                  searches)
+                  searches, se_searches)
         |
         raven_pipeline.s(gracedb_id, alert_object, tl, th, group)
     ).delay()
@@ -133,7 +133,7 @@ def _time_window(gracedb_id, group, pipelines, searches):
 
 @app.task(shared=False)
 def search(gracedb_id, alert_object, tl=-5, th=5, group=None,
-           pipelines=[], searches=[]):
+           pipelines=[], searches=[], se_searches=[]):
     """Perform ligo-raven search for coincidences.
 
     Parameters
@@ -161,7 +161,8 @@ def search(gracedb_id, alert_object, tl=-5, th=5, group=None,
                                     event_dict=alert_object,
                                     gracedb=gracedb.client,
                                     group=group, pipelines=pipelines,
-                                    searches=searches)
+                                    searches=searches,
+                                    se_searches=se_searches)
 
 
 @app.task(shared=False)
@@ -206,6 +207,8 @@ def raven_pipeline(raven_search_results, gracedb_id, alert_object, tl, th,
             |
             calculate_coincidence_far.si(superevent, ext_event, tl, th)
             |
+            update_coinc_far.s(superevent, ext_event)
+            |
             group(gracedb.create_label.si('EM_COINC', superevent_id),
                   gracedb.create_label.si('EM_COINC', exttrig_id),
                   trigger_raven_alert.s(superevent, gracedb_id,
@@ -229,6 +232,31 @@ def preferred_superevent(raven_search_results):
     minfar, idx = min((result['far'], idx) for (idx, result) in
                       enumerate(raven_search_results))
     return [raven_search_results[idx]]
+
+
+@app.task(shared=False)
+def update_coinc_far(coinc_far_dict, superevent, ext_event):
+
+    #  Load needed variables
+    infty = float('inf')
+    new_time_far = coinc_far_dict['temporal_coinc_far']
+    new_space_far = coinc_far_dict['spatiotemporal_coinc_far']
+    #  Map None to infinity to make logic easier
+    new_space_far_f = new_space_far if new_space_far else infty
+    old_time_far = superevent['time_coinc_far']
+    old_time_far_f = old_time_far if old_time_far else infty
+    old_space_far = superevent['space_coinc_far']
+    old_space_far_f = old_space_far if old_space_far else infty
+
+    superevent_id = superevent['superevent_id']
+    ext_id = ext_event['graceid']
+
+    if new_space_far_f < old_space_far_f or \
+            (new_time_far < old_time_far_f and old_space_far_f == infty):
+        gracedb.update_superevent(superevent_id, em_type=ext_id,
+                                  time_coinc_far=new_time_far,
+                                  space_coinc_far=new_space_far)
+    return coinc_far_dict
 
 
 @app.task(shared=False)
@@ -307,9 +335,10 @@ def trigger_raven_alert(coinc_far_dict, superevent, gracedb_id,
         coinc_far_f = coinc_far * trials_factor * (trials_factor - 1.)
         pass_far_threshold = coinc_far_f <= far_threshold
 
-    no_previous_alert = {'RAVEN_ALERT'}.isdisjoint(
-        gracedb.get_labels(superevent_id))
-    likely_real_ext_event = {'NOT_GRB'}.isdisjoint(ext_event['labels'])
+    #  Get most recent labels to prevent race conditions
+    ext_labels = gracedb.get_labels(ext_id)
+    no_previous_alert = {'RAVEN_ALERT'}.isdisjoint(ext_labels)
+    likely_real_ext_event = {'NOT_GRB'}.isdisjoint(ext_labels)
     is_test_event = (superevent['preferred_event_data']['group'] == 'Test' or
                      ext_event['group'] == 'Test')
 
@@ -321,9 +350,6 @@ def trigger_raven_alert(coinc_far_dict, superevent, gracedb_id,
         messages.append('RAVEN: publishing criteria met for %s' % (
             preferred_gwevent_id))
         if no_previous_alert:
-            gracedb.update_superevent(superevent_id, em_type=ext_id,
-                                      time_coinc_far=time_coinc_far,
-                                      space_coinc_far=space_coinc_far)
             messages.append('Triggering RAVEN alert for %s' % (
                 preferred_gwevent_id))
             (
@@ -350,7 +376,7 @@ def trigger_raven_alert(coinc_far_dict, superevent, gracedb_id,
                         'at least one event is a Test event')
     if not no_previous_alert:
         messages.append(('RAVEN: Alert already triggered for  %s'
-                         % (superevent_id)))
+                         % (ext_id)))
     if missing_skymap:
         messages.append('RAVEN: Will only publish Swift coincidence '
                         'event if spatial-temporal FAR is present. '

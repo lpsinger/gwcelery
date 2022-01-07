@@ -424,10 +424,8 @@ def test_handle_superevent_cbc_creation(mock_raven_coincidence_search,
 
 @patch('gwcelery.tasks.gracedb.get_superevent',
        return_value={'preferred_event': 'M4634'})
-@patch('gwcelery.tasks.gracedb.get_group', return_value='Burst')
 @patch('gwcelery.tasks.raven.coincidence_search')
 def test_handle_superevent_burst_creation(mock_raven_coincidence_search,
-                                          mock_get_group,
                                           mock_get_superevent):
     """
     Test dispatch of an IGWN alert message for a burst superevent
@@ -435,6 +433,7 @@ def test_handle_superevent_burst_creation(mock_raven_coincidence_search,
     """
     # Test IGWN alert payload.
     alert = read_json(data, 'igwn_alert_superevent_creation.json')
+    alert['object']['preferred_event_data']['group'] = 'Burst'
 
     # Run function under test
     external_triggers.handle_grb_igwn_alert(alert)
@@ -442,3 +441,32 @@ def test_handle_superevent_burst_creation(mock_raven_coincidence_search,
     # Check that the correct tasks were dispatched.
     mock_raven_coincidence_search.assert_has_calls([
         call('S180616h', alert['object'], group='Burst', searches=['GRB'])])
+
+
+@pytest.mark.parametrize('path',
+                         ['igwn_alert_superevent_creation.json',
+                          'igwn_alert_exttrig_creation.json'])
+@patch('gwcelery.tasks.raven.coincidence_search')
+def test_handle_mdc_creation(mock_raven_coincidence_search,
+                             path):
+    """Test dispatch of an IGWN alert message for a CBC superevent creation."""
+    # Test IGWN alert payload.
+    alert = read_json(data, path)
+    if 'superevent' in path:
+        alert['object']['preferred_event_data']['search'] = 'MDC'
+    elif 'exttrig' in path:
+        alert['object']['search'] = 'MDC'
+
+    # Run function under test
+    external_triggers.handle_grb_igwn_alert(alert)
+
+    # Check that the correct tasks were dispatched.
+    if 'superevent' in path:
+        calls = [call('S180616h', alert['object'], group='CBC',
+                      searches=['MDC'])]
+    elif 'exttrig' in path:
+        calls = [call('E1234', alert['object'], group='CBC',
+                      se_searches=['MDC']),
+                 call('E1234', alert['object'], group='Burst',
+                      se_searches=['MDC'])]
+    mock_raven_coincidence_search.assert_has_calls(calls, any_order=True)

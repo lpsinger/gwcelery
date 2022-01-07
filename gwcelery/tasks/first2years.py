@@ -173,3 +173,5 @@ def upload_event():
         |
         _vet_event.s()
     ).apply_async()
+
+    return graceid

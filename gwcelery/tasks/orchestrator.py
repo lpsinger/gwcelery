@@ -103,7 +103,7 @@ def handle_superevent(alert):
 
         # launch second preliminary on GCN_PRELIM_SENT
         elif label_name == 'GCN_PRELIM_SENT':
-            query = f'superevent: {superevent_id}'
+            query = f'superevent: {superevent_id} group: CBC Burst'
             if alert['object']['category'] == 'MDC':
                 query += ' MDC'
             elif alert['object']['category'] == 'Test':

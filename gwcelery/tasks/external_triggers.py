@@ -130,6 +130,8 @@ def handle_grb_gcn(payload):
     ivorn = root.attrib['ivorn']
     if 'subthresh' in ivorn.lower():
         search = 'SubGRB'
+    elif 'mdc-test_event' in ivorn.lower():
+        search = 'MDC'
     else:
         search = 'GRB'
 
@@ -163,18 +165,20 @@ def handle_grb_gcn(payload):
         end = start + integration_time
         detchar.check_vectors(event, event['graceid'], start, end)
 
-    if search == 'GRB':
+    if search in {'GRB', 'MDC'}:
         notice_type = \
             int(root.find("./What/Param[@name='Packet_Type']").attrib['value'])
         notice_date = root.find("./Who/Date").text
         external_skymaps.create_upload_external_skymap(
             event, notice_type, notice_date)
     if event['pipeline'] == 'Fermi':
-        if event['search'] == 'SubGRB':
+        if search == 'SubGRB':
             skymap_link = \
                 root.find("./What/Param[@name='HealPix_URL']").attrib['value']
-        else:
+        elif search == 'GRB':
             skymap_link = None
+        else:
+            return
         external_skymaps.get_upload_external_skymap.s(graceid,
                                                       event['search'],
                                                       skymap_link).delay()
@@ -201,9 +205,10 @@ def handle_grb_igwn_alert(alert):
       :meth:`gwcelery.tasks.raven.coincidence_search`.
     * When both a GW and GRB sky map are available during a coincidence,
       indicated by the labels ``SKYMAP_READY`` and ``EXT_SKYMAP_READY``
-      respectfully, this trigger the spacetime coinc FAR to be calculated. If
-      an alert is triggered with these same conditions, indicated by the
-      ``RAVEN_ALERT`` label, a combined GW-GRB sky map is created using
+      respectively on the external event, this triggers the spacetime coinc
+      FAR to be calculated. If an alert is triggered with these same
+      conditions, indicated by the ``RAVEN_ALERT`` label, a combined GW-GRB
+      sky map is created using
       :meth:`gwcelery.tasks.external_skymaps.create_combined_skymap`.
 
     """
@@ -220,6 +225,14 @@ def handle_grb_igwn_alert(alert):
                 external_skymaps.create_upload_external_skymap(
                     alert['object'], None, alert['object']['created'])
 
+            # launch search with MDC events and exit
+            if alert['object']['search'] == 'MDC':
+                raven.coincidence_search(graceid, alert['object'],
+                                         group='CBC', se_searches=['MDC'])
+                raven.coincidence_search(graceid, alert['object'],
+                                         group='Burst', se_searches=['MDC'])
+                return
+
             # launch standard Burst-GRB search
             raven.coincidence_search(graceid, alert['object'], group='Burst')
 
@@ -235,8 +248,15 @@ def handle_grb_igwn_alert(alert):
                                          group='CBC', searches=['GRB'])
         elif 'S' in graceid:
             # launch standard GRB search based on group
-            preferred_event_id = alert['object']['preferred_event']
-            gw_group = gracedb.get_group(preferred_event_id)
+            gw_group = alert['object']['preferred_event_data']['group']
+
+            # launch search with MDC events and exit
+            if alert['object']['preferred_event_data']['search'] == 'MDC':
+                raven.coincidence_search(graceid, alert['object'],
+                                         group=gw_group, searches=['MDC'])
+                return
+
+            # launch standard GRB search
             raven.coincidence_search(graceid, alert['object'],
                                      group=gw_group, searches=['GRB'])
             if gw_group == 'CBC':

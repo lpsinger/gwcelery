@@ -338,5 +338,10 @@ only_alert_for_mdc = False
 """If True, then only sends alerts for MDC events. Useful for times outside
 of observing runs."""
 
+joint_mdc_freq = 2
+"""Determines how often an external MDC event will be created near an
+MDC superevent to test the RAVEN alert pipeline, i.e for every x
+MDC superevents an external MDC event is created."""
+
 # Delete imported modules so that they do not pollute the config object
 del os, getpass

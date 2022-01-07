@@ -19,7 +19,8 @@ from requests.exceptions import HTTPError
 from . import app as celery_app
 from ._version import get_versions
 from .flask import app, cache
-from .tasks import first2years, gracedb, orchestrator, circulars, superevents
+from .tasks import first2years, gracedb, orchestrator, circulars, \
+    superevents, first2years_external, external_triggers
 from .util import PromiseProxy
 
 distributions = PromiseProxy(lambda: tuple(metadata.distributions()))
@@ -287,4 +288,31 @@ def send_mock_event():
     """Handle submission of mock alert form."""
     first2years.upload_event.delay()
     flash('Queued a mock event.', 'success')
+    return redirect(url_for('index'))
+
+
+@gracedb.task(shared=False)
+def _create_upload_external_event(graceid):
+    superevent = gracedb.get_superevents('MDC event: {}'.format(graceid))[0]
+
+    gpstime = float(superevent['t_0'])
+    new_time = first2years_external._offset_time(gpstime)
+
+    ext_event = first2years_external.create_grb_event(new_time)
+
+    # Upload as from GCN
+    external_triggers.handle_grb_gcn(ext_event)
+
+    return ext_event
+
+
+@app.route('/send_mock_joint_event', methods=['POST'])
+def send_mock_joint_event():
+    """Handle submission of mock alert form."""
+    (
+        first2years.upload_event.si()
+        |
+        _create_upload_external_event.s().set(countdown=5)
+    ).delay()
+    flash('Queued a mock joint event.', 'success')
     return redirect(url_for('index'))
