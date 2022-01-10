@@ -372,24 +372,30 @@ def test_handle_subgrb_targeted_creation(mock_raven_coincidence_search,
              pipelines=['Swift'])])
 
 
-@pytest.mark.parametrize('calls, path',
-                         [[False, 'igwn_alert_snews_test_creation.json'],
-                          [True, 'igwn_alert_snews_creation.json']])
+@pytest.mark.parametrize('path',
+                         ['igwn_alert_snews_test_creation.json',
+                          'igwn_alert_snews_creation.json'])
 @patch('gwcelery.tasks.raven.coincidence_search')
-def test_handle_sntrig_creation(mock_raven_coincidence_search, calls, path):
-    """Test dispatch of an IGWN alert message for SNEWS alerts."""
+def test_handle_sntrig_creation(mock_raven_coincidence_search, path):
+    """Test dispatch of an IGWN alert message for SNEWS alerts
+    This now includes both real and test SNEWS events to ensure both are
+    ingested correctly.
+    """
     # Test IGWN alert payload.
     alert = read_json(data, path)
 
     # Run function under test
     external_triggers.handle_snews_igwn_alert(alert)
 
-    if calls is True:
-        mock_raven_coincidence_search.assert_has_calls([
-                call('E1235', alert['object'],
-                     group='Burst', pipelines=['SNEWS'])])
+    if 'test' in path:
+        graceid = 'E1236'
     else:
-        mock_raven_coincidence_search.assert_not_called()
+        graceid = 'E1235'
+
+    mock_raven_coincidence_search.assert_has_calls([
+            call(graceid, alert['object'],
+                 group='Burst', searches=['Supernova'],
+                 pipelines=['SNEWS'])])
 
 
 @patch('gwcelery.tasks.gracedb.get_superevent',

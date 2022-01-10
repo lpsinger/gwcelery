@@ -308,18 +308,19 @@ def handle_snews_igwn_alert(alert):
     # Determine GraceDB ID
     graceid = alert['uid']
 
-    if alert['object'].get('group', '') == 'Test':
-        pass
-    elif alert['alert_type'] == 'new' and \
-            alert['object'].get('group') == 'External':
-        raven.coincidence_search(graceid, alert['object'],
-                                 group='Burst', pipelines=['SNEWS'])
-    elif 'S' in graceid:
-        preferred_event_id = gracedb.get_superevent(graceid)['preferred_event']
-        group = gracedb.get_event(preferred_event_id)['group']
-        if alert['alert_type'] == 'new' and group == 'Burst':
+    if alert['alert_type'] == 'new':
+        if alert['object'].get('superevent_id'):
+            group = alert['object']['preferred_event_data']['group']
+            # Run on Test and Burst superevents
+            if group in {'Burst', 'Test'}:
+                raven.coincidence_search(graceid, alert['object'],
+                                         group='Burst', searches=['Supernova'],
+                                         pipelines=['SNEWS'])
+        else:
+            # Run on SNEWS event, either real or test
             raven.coincidence_search(graceid, alert['object'],
-                                     group=group, pipelines=['SNEWS'])
+                                     group='Burst', searches=['Supernova'],
+                                     pipelines=['SNEWS'])
 
 
 def _skymaps_are_ready(event, label, task):

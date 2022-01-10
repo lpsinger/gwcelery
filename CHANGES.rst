@@ -14,6 +14,8 @@ Changelog
 -   Disable parameter estimation for MDC events as it is currently broken for
     them.
 
+-   Enable ingestion and processing of test SNEWS external events.
+
 1.0.1 (2022-05-09)
 ------------------
 

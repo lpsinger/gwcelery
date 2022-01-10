@@ -187,19 +187,19 @@ def raven_pipeline(raven_search_results, gracedb_id, alert_object, tl, th,
     """
     if not raven_search_results:
         return
-    if alert_object.get('group') == 'External':
+    if 'S' not in gracedb_id:
         raven_search_results = preferred_superevent(raven_search_results)
     for result in raven_search_results:
-        if alert_object.get('group') == 'External':
-            superevent_id = result['superevent_id']
-            exttrig_id = gracedb_id
-            superevent = result
-            ext_event = alert_object
-        elif 'S' in gracedb_id:
+        if 'S' in gracedb_id:
             superevent_id = gracedb_id
             exttrig_id = result['graceid']
             superevent = alert_object
             ext_event = result
+        else:
+            superevent_id = result['superevent_id']
+            exttrig_id = gracedb_id
+            superevent = result
+            ext_event = alert_object
 
         canvas = (
             gracedb.add_event_to_superevent.si(superevent_id, exttrig_id)
@@ -310,11 +310,14 @@ def trigger_raven_alert(coinc_far_dict, superevent, gracedb_id,
     no_previous_alert = {'RAVEN_ALERT'}.isdisjoint(
         gracedb.get_labels(superevent_id))
     likely_real_ext_event = {'NOT_GRB'}.isdisjoint(ext_event['labels'])
+    is_test_event = (superevent['preferred_event_data']['group'] == 'Test' or
+                     ext_event['group'] == 'Test')
 
     #  If publishable, trigger an alert by applying `RAVEN_ALERT` label to
     #  preferred event
     if pass_far_threshold and not is_ext_subthreshold and \
-            likely_real_ext_event and not missing_skymap:
+            likely_real_ext_event and not missing_skymap and \
+            not is_test_event:
         messages.append('RAVEN: publishing criteria met for %s' % (
             preferred_gwevent_id))
         if no_previous_alert:
@@ -342,6 +345,9 @@ def trigger_raven_alert(coinc_far_dict, superevent, gracedb_id,
     if not likely_real_ext_event:
         messages.append(('RAVEN: %s is likely non-astrophysical.'
                          % (ext_id)))
+    if is_test_event:
+        messages.append('RAVEN: Coincidence is non-astrophysical, '
+                        'at least one event is a Test event')
     if not no_previous_alert:
         messages.append(('RAVEN: Alert already triggered for  %s'
                          % (superevent_id)))
