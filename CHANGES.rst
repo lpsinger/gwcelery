@@ -4,11 +4,15 @@ Changelog
 1.0.1 (unreleased)
 ------------------
 
+
 -   Bump ``p-astro`` to pre-release ``v1.0.0dev1``. This version is a stop gap to
     bring back the reference O3 hard-cut implementation of p-astro, and
     resolve the dependency issues. Will need a full release later.
 
 -   Add ``ligo.em_bright>=0.1.5`` dependency.
+
+-   Configure the playground environment to read O3ReplayMDC frames.
+
 
 1.0.0 (2022-01-21)
 ------------------
