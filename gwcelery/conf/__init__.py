@@ -183,9 +183,10 @@ uses_gatedhoft = {'gstlal': True,
 """Whether or not a pipeline uses gated h(t). Determines whether or not
 the DMT-DQ_VECTOR will be analyzed for data quality."""
 
-llhoft_glob = '/dev/shm/kafka/{detector}_O3/*.gwf'
+llhoft_glob = '/dev/shm/kafka/{detector}_O3ReplayMDC/*.gwf'
 """File glob for playground low-latency h(t) frames. Currently points
-to O3 replay data."""
+to O3 MDC Mock Data Challange data. 
+See https://git.ligo.org/emfollow/mock-data-challenge"""
 
 llhoft_channels = {
     'H1:DMT-DQ_VECTOR': 'dmt_dq_vector_bits',
@@ -224,9 +225,9 @@ idq_veto = {'gstlal': False,
 Currently all False, pending iDQ review (should be done before O3).
 """
 
-low_latency_frame_types = {'H1': 'H1_O3_llhoft',
-                           'L1': 'L1_O3_llhoft',
-                           'V1': 'V1_O3_llhoft'}
+low_latency_frame_types = {'H1': 'H1_O3ReplayMDC_llhoft',
+                           'L1': 'L1_O3ReplayMDC_llhoft',
+                           'V1': 'V1_O3ReplayMDC_llhoft'}
 """Types of low latency frames used in Parameter Estimation (see
 :mod:`gwcelery.tasks.inference`) and in cache creation for detchar
 checks (see :mod:`gwcelery.tasks.detchar`).
@@ -240,9 +241,9 @@ creation for detchar checks. They do not exist for O3Replay data. (see
 :mod:`gwcelery.tasks.inference` and :mod:`gwcelery.tasks.detchar`)
 """
 
-strain_channel_names = {'H1': 'H1:GDS-CALIB_STRAIN_O3Replay',
-                        'L1': 'L1:GDS-CALIB_STRAIN_O3Replay',
-                        'V1': 'V1:Hrec_hoft_16384Hz_O3Replay'}
+strain_channel_names = {'H1': 'H1:GDS-CALIB_STRAI_INJ1_O3Replay',
+                        'L1': 'L1:GDS-CALIB_STRAIN_INJ1_O3Replay',
+                        'V1': 'V1:Hrec_hoft_16384Hz_INJ1_O3Replay'}
 """Names of h(t) channels used in Parameter Estimation (see
 :mod:`gwcelery.tasks.inference`) and in detchar omegascan creation
 (see :mod:`gwcelery.tasks.detchar`)."""
