@@ -185,7 +185,7 @@ the DMT-DQ_VECTOR will be analyzed for data quality."""
 
 llhoft_glob = '/dev/shm/kafka/{detector}_O3ReplayMDC/*.gwf'
 """File glob for playground low-latency h(t) frames. Currently points
-to O3 MDC Mock Data Challange data. 
+to O3 MDC Mock Data Challange data.
 See https://git.ligo.org/emfollow/mock-data-challenge"""
 
 llhoft_channels = {
@@ -241,7 +241,7 @@ creation for detchar checks. They do not exist for O3Replay data. (see
 :mod:`gwcelery.tasks.inference` and :mod:`gwcelery.tasks.detchar`)
 """
 
-strain_channel_names = {'H1': 'H1:GDS-CALIB_STRAI_INJ1_O3Replay',
+strain_channel_names = {'H1': 'H1:GDS-CALIB_STRAIN_INJ1_O3Replay',
                         'L1': 'L1:GDS-CALIB_STRAIN_INJ1_O3Replay',
                         'V1': 'V1:Hrec_hoft_16384Hz_INJ1_O3Replay'}
 """Names of h(t) channels used in Parameter Estimation (see

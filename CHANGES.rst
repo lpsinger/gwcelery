@@ -4,7 +4,7 @@ Changelog
 1.0.1 (unreleased)
 ------------------
 
--   No changes yet.
+-   Configure the playground environment to read O3ReplayMDC frames.
 
 1.0.0 (2022-01-21)
 ------------------
