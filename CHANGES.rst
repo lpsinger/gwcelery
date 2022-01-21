@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.0 (unreleased)
+1.0.0 (2022-01-21)
 ------------------
 
 -   Update to Celery 5.
