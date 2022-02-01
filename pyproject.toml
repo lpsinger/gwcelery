@@ -72,7 +72,7 @@ ligo-segments = "*"
 lscsoft-glue = "*"
 lxml = "*"
 numpy = "*"
-p-astro = { version = "1.0.0dev1", allow-prereleases = true }
+p-astro = ">=1.0.0"
 pesummary = "<0.13"  # https://git.ligo.org/lscsoft/pesummary/-/issues/269. FIXME: remove this requirement entirely once resolved.
 pygcn = ">=1.0.1"
 python-ligo-lw = "~1.7.0"  # https://git.ligo.org/lscsoft/ligo.skymap/-/merge_requests/255
