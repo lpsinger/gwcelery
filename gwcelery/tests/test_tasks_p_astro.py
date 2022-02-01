@@ -16,6 +16,9 @@ def test_compute_p_astro(snr, far, mass1, mass2,
     p_astros = json.loads(
         p_astro.compute_p_astro(snr, far, mass1, mass2,
                                 pipeline, instruments))
+    assert (
+        set(p_astros) - set({'BNS', 'Terrestrial', 'NSBH', 'BBH'})
+    ) == set()
     assert pytest.approx(sum(p_astros.values())) == 1.
 
 
@@ -43,4 +46,4 @@ def test_compute_p_astro_bns(far, pipeline, instruments,
         p_astro.compute_p_astro(snr, far, mass1, mass2,
                                 pipeline, instruments))
 
-    assert pytest.approx(p_astros['BNS'], abs=1e-2) == val
+    assert pytest.approx(p_astros['BNS'], abs=1e-1) == val

@@ -131,7 +131,7 @@ def plot(contents):
        >>> from gwcelery.tasks import p_astro
        >>> contents = '''
        ... {"Terrestrial": 0.001, "BNS": 0.65, "NSBH": 0.20,
-       ... "MassGap": 0.10, "BBH": 0.059}
+       ... "BBH": 0.059}
        ... '''
        >>> p_astro.plot(contents)
 

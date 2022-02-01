@@ -55,14 +55,14 @@ def _vo_match_notice(gcn_notice_mail, params_vo, trigger_time_vo):
     notice_keys = ({"types": ["GROUP_TYPE", "PIPELINE_TYPE", "SEARCH_TYPE"],
                     "classif_props_cbc": ["PROB_NS", "PROB_REMNANT",
                                           "PROB_BNS", "PROB_NSBH", "PROB_BBH",
-                                          "PROB_MassGap", "PROB_TERRES"],
+                                          "PROB_TERRES"],
                     "urls": ["SKYMAP_FITS_URL", "EVENTPAGE_URL"],
                     "classif_props_burst": ["CENTRAL_FREQ", "DURATION"]})
 
     # Votable keywords
     vo_keys = ({"types": ["Group", "Pipeline", "Search"],
                 "classif_props_cbc": ["HasNS", "HasRemnant", "BNS",
-                                      "NSBH", "BBH", "MassGap", "Terrestrial"],
+                                      "NSBH", "BBH", "Terrestrial"],
                 "urls": ["skymap_fits", "EventPage"],
                 "classif_props_burst": ["CentralFreq", "Duration"]})
 
