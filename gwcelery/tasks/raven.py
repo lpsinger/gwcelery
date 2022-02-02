@@ -60,7 +60,7 @@ def calculate_coincidence_far(superevent, exttrig, tl, th):
 
 @app.task(shared=False)
 def coincidence_search(gracedb_id, alert_object, group=None, pipelines=[],
-                       searches=None):
+                       searches=[]):
     """Perform ligo-raven search for coincidences. Determines time window to
     use. If events found, launches raven pipeline.
 

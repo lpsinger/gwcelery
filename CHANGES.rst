@@ -18,6 +18,8 @@ Changelog
     Update the list of pipelines that have not yet made the transition and
     still require the old behavior (gstlal, spiir).
 
+-   Set default RAVEN search to empty list to fix argument error.
+
 1.0.0 (2022-01-21)
 ------------------
 
