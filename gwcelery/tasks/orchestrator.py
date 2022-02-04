@@ -176,6 +176,11 @@ def handle_cbc_event(alert):
     pipeline = alert['object']['pipeline'].lower()
     priority = 0 if superevents.should_publish(alert['object']) else 1
 
+    # Pipelines that upload PSDs in a separate file.
+    # FIXME: remove this once all pipelines include the PSDs in the initial
+    # upload.
+    pipelines_external_psds = {'gstlal', 'spiir'}
+
     # em_bright and p_astro calculation
     if alert['alert_type'] == 'new':
         instruments = superevents.get_instruments_in_ranking_statistic(
@@ -220,10 +225,8 @@ def handle_cbc_event(alert):
                 gracedb.create_label.si('PASTRO_READY', graceid)
             ).apply_async(priority=priority)
 
-        # Start BAYESTAR for PyCBC.
-        # PyCBC includes the PSD data in the initial upload,
-        # so we just download the coinc.xml file.
-        if pipeline == 'pycbc':
+        # Start BAYESTAR for pipelines that embed PSDs in the initial upload.
+        if pipeline not in pipelines_external_psds:
             (
                 group(
                     gracedb.download.s('coinc.xml', graceid)
@@ -244,15 +247,15 @@ def handle_cbc_event(alert):
 
     filename = alert['data']['filename']
 
-    # Start BAYESTAR for any pipeline *except* PyCBC.
-    # All pipelines but PyCBC upload the PSD in a separate file, psd.xml.gz.
+    # Start BAYESTAR for pipelines that do *not* include the PSD in the initial
+    # upload, but instead upload a separate file, psd.xml.gz.
     # For those pipelines, BAYESTAR must download coinc.xml *and* psd.xml.gz.
     #
     # FIXME: The separate psd.xml.gz upload adds an extra couple seconds of
     # latency due to the additional GraceDB transactions and ping times.
     # If other pipelines were able to add the PSD to the initial upload,
     # then we could cut down on the alert latency by a couple seconds.
-    if pipeline != 'pycbc' and filename == 'psd.xml.gz':
+    if (pipeline in pipelines_external_psds and filename == 'psd.xml.gz'):
         (
             group(
                 gracedb.download.s('coinc.xml', graceid),

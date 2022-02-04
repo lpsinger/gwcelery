@@ -13,6 +13,10 @@ Changelog
 
 -   Configure the playground environment to read O3ReplayMDC frames.
 
+-   In O4, online CBC pipelines shall include the PSDs in the initial
+    ``coinc.xml`` upload and shall not upload a separate ``psd.xml.gz`` file.
+    Update the list of pipelines that have not yet made the transition and
+    still require the old behavior (gstlal, spiir).
 
 1.0.0 (2022-01-21)
 ------------------
