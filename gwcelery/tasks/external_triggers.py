@@ -3,6 +3,7 @@ from urllib.parse import urlparse
 from celery import group
 from celery.utils.log import get_logger
 
+from ..import app
 from . import detchar
 from . import gcn
 from . import gracedb
@@ -43,7 +44,7 @@ def handle_snews_gcn(payload):
 
     #  Get TrigID and Test Event Boolean
     trig_id = root.find("./What/Param[@name='TrigID']").attrib['value']
-    group = 'Test' if root.attrib['role'] == 'test' else 'External'
+    ext_group = 'Test' if root.attrib['role'] == 'test' else 'External'
 
     event_observatory = 'SNEWS'
     query = 'group: External pipeline: {} grbevent.trigger_id = "{}"'.format(
@@ -60,7 +61,7 @@ def handle_snews_gcn(payload):
     else:
         graceid = gracedb.create_event(filecontents=payload,
                                        search='Supernova',
-                                       group=group,
+                                       group=ext_group,
                                        pipeline=event_observatory)
     event = gracedb.get_event(graceid)
     start, end = event['gpstime'], event['gpstime']
@@ -96,7 +97,7 @@ def handle_grb_gcn(payload):
         trig_id = root.find("./What/Param[@name='TrigID']").attrib['value']
     except AttributeError:
         trig_id = root.find("./What/Param[@name='Trans_Num']").attrib['value']
-    group = 'Test' if root.attrib['role'] == 'test' else 'External'
+    ext_group = 'Test' if root.attrib['role'] == 'test' else 'External'
 
     stream_obsv_dict = {'/SWIFT': 'Swift',
                         '/Fermi': 'Fermi',
@@ -139,49 +140,47 @@ def handle_grb_gcn(payload):
         event_observatory, trig_id)
     events = gracedb.get_events(query=query)
 
+    group_canvas = ()
     if events:
         assert len(events) == 1, 'Found more than one matching GraceDB entry'
         event, = events
         graceid = event['graceid']
-        gracedb.replace_event(graceid, payload)
         if labels:
-            gracedb.create_label(labels[0], graceid)
+            canvas = gracedb.create_label.si(labels[0], graceid)
         else:
-            gracedb.remove_label('NOT_GRB', graceid)
-        event = gracedb.get_event(graceid)
+            canvas = gracedb.remove_label.si('NOT_GRB', graceid)
+        canvas |= gracedb.replace_event.si(graceid, payload)
 
     else:
-        graceid = gracedb.create_event(filecontents=payload,
-                                       search=search,
-                                       group=group,
-                                       pipeline=event_observatory,
-                                       labels=labels)
-        event = gracedb.get_event(graceid)
-        start = event['gpstime']
-        integration_time = event['extra_attributes']['GRB']['trigger_duration']
-        # if None, pick a wide window to check data
-        if integration_time is None:
-            integration_time = 4.
-        end = start + integration_time
-        detchar.check_vectors(event, event['graceid'], start, end)
+        canvas = gracedb.create_event.s(filecontents=payload,
+                                        search=search,
+                                        group=ext_group,
+                                        pipeline=event_observatory,
+                                        labels=labels)
+        group_canvas += _launch_external_detchar.s(),
 
     if search in {'GRB', 'MDC'}:
         notice_type = \
             int(root.find("./What/Param[@name='Packet_Type']").attrib['value'])
         notice_date = root.find("./Who/Date").text
-        external_skymaps.create_upload_external_skymap(
-            event, notice_type, notice_date)
-    if event['pipeline'] == 'Fermi':
+        group_canvas += external_skymaps.create_upload_external_skymap.s(
+                      notice_type, notice_date),
+    if event_observatory == 'Fermi':
         if search == 'SubGRB':
             skymap_link = \
                 root.find("./What/Param[@name='HealPix_URL']").attrib['value']
+            group_canvas += \
+                external_skymaps.get_upload_external_skymap.s(skymap_link),
         elif search == 'GRB':
             skymap_link = None
-        else:
-            return
-        external_skymaps.get_upload_external_skymap.s(graceid,
-                                                      event['search'],
-                                                      skymap_link).delay()
+            group_canvas += \
+                external_skymaps.get_upload_external_skymap.s(skymap_link),
+
+    (
+        canvas
+        |
+        group(group_canvas)
+    ).delay()
 
 
 @igwn_alert.handler('superevent',
@@ -365,3 +364,17 @@ def _get_superevent_ext_ids(graceid, event, task):
             se_id = event['superevent']
             ext_id = [event['graceid']]
     return se_id, ext_id
+
+
+@app.task(shared=False)
+def _launch_external_detchar(event):
+    start = event['gpstime']
+    if event['search'] == 'Supernova':
+        start, end = event['gpstime'], event['gpstime']
+    else:
+        integration_time = \
+            event['extra_attributes']['GRB']['trigger_duration'] or 4.0
+        end = start + integration_time
+    detchar.check_vectors.si(event, event['graceid'], start, end).delay()
+
+    return event

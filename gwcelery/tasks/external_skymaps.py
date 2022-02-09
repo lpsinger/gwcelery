@@ -152,12 +152,15 @@ def get_external_skymap(link, search):
 
 @app.task(autoretry_for=(urllib.error.HTTPError, urllib.error.URLError,),
           retry_backoff=10, retry_backoff_max=1200)
-def get_upload_external_skymap(graceid, search, skymap_link=None):
+def get_upload_external_skymap(event, skymap_link=None):
     """If a Fermi sky map is not uploaded yet, tries to download one and upload
     to external event. If sky map is not available, passes so that this can be
     re-run the next time an update GCN notice is received. If GRB, will
     construct a HEASARC url, while if SubGRB, will use the link directly.
     """
+    graceid = event['graceid']
+    search = event['search']
+
     try:
         filename = get_skymap_filename(graceid)
         if 'glg_healpix_all_bn_v00.fit' in filename:

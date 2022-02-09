@@ -5,18 +5,20 @@ from ..tasks import first2years_external
 from ..util import read_json
 
 
-@patch('gwcelery.tasks.external_skymaps.create_upload_external_skymap')
-@patch('gwcelery.tasks.detchar.dqr_json', return_value='dqrjson')
-@patch('gwcelery.tasks.gracedb.upload.run')
-@patch('gwcelery.tasks.gracedb.get_event', return_value={
+@patch('gwcelery.tasks.external_skymaps.create_upload_external_skymap.run')
+@patch('gwcelery.tasks.external_skymaps.get_upload_external_skymap.run')
+@patch('gwcelery.tasks.detchar.check_vectors.run')
+@patch('gwcelery.tasks.gracedb.create_event.run', return_value={
     'graceid': 'E1', 'gpstime': 1, 'instruments': '', 'pipeline': 'Fermi',
     'search': 'GRB',
     'extra_attributes': {'GRB': {'trigger_duration': 1, 'trigger_id': 123,
                                  'ra': 0., 'dec': 0., 'error_radius': 10.}},
     'links': {'self': 'https://gracedb.ligo.org/events/E356793/'}})
-@patch('gwcelery.tasks.gracedb.create_event', return_value='E356793')
-def test_handle_create_grb_event(mock_create_event, mock_get_event,
-                                 mock_upload, mock_json,
+@patch('gwcelery.tasks.gracedb.get_events', return_value=[])
+def test_handle_create_grb_event(mock_get_events,
+                                 mock_create_event,
+                                 mock_check_vectors,
+                                 mock_get_upload_external_skymap,
                                  mock_create_upload_external_skymap):
 
     # Test IGWN alert payload.
@@ -32,5 +34,4 @@ def test_handle_create_grb_event(mock_create_event, mock_get_event,
                                               pipeline='Fermi',
                                               group='External',
                                               labels=None)
-    mock_upload.assert_called()
     mock_create_upload_external_skymap.assert_called()

@@ -116,8 +116,8 @@ def test_get_upload_external_skymap(mock_external_trigger_heasarc,
                                     mock_plot_allsky,
                                     mock_upload):
     """Test that an external sky map is grabbed and uploaded."""
-    graceid = 'E12345'
-    external_skymaps.get_upload_external_skymap(graceid, 'GRB')
+    event = {'graceid': 'E12345', 'search': 'GRB'}
+    external_skymaps.get_upload_external_skymap(event)
     mock_external_trigger_heasarc.assert_called_once()
     mock_get_external_skymap.assert_called_once()
     mock_upload.assert_called()
@@ -130,9 +130,9 @@ def test_get_upload_external_skymap_subgrb(mock_get_external_skymap,
                                            mock_plot_allsky,
                                            mock_upload):
     """Test that an external sky map is grabbed and uploaded."""
-    graceid = 'E12345'
+    event = {'graceid': 'E12345', 'search': 'SubGRB'}
     external_skymaps.get_upload_external_skymap(
-        graceid, 'SubGRB',
+        event,
         ('https://gcn.gsfc.nasa.gov/notices_gbm_sub/' +
          'gbm_subthresh_604671025.728000_healpix.fits'))
     mock_get_external_skymap.assert_called_once()

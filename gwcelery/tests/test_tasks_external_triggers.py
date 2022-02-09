@@ -13,18 +13,17 @@ from ..util import read_json
                          [['Fermi', 'fermi_grb_gcn.xml'],
                           ['INTEGRAL', 'integral_grb_gcn.xml'],
                           ['AGILE', 'agile_grb_gcn.xml']])
-@patch('gwcelery.tasks.external_skymaps.create_upload_external_skymap')
+@patch('gwcelery.tasks.external_skymaps.create_upload_external_skymap.run')
 @patch('gwcelery.tasks.external_skymaps.get_upload_external_skymap.run')
 @patch('gwcelery.tasks.detchar.dqr_json', return_value='dqrjson')
 @patch('gwcelery.tasks.gracedb.upload.run')
-@patch('gwcelery.tasks.gracedb.get_event', return_value={
+@patch('gwcelery.tasks.gracedb.create_event.run', return_value={
     'graceid': 'E1', 'gpstime': 1, 'instruments': '', 'pipeline': 'Fermi',
     'search': 'GRB',
     'extra_attributes': {'GRB': {'trigger_duration': 1, 'trigger_id': 123,
                                  'ra': 0., 'dec': 0., 'error_radius': 10.}},
     'links': {'self': 'https://gracedb.ligo.org/events/E356793/'}})
-@patch('gwcelery.tasks.gracedb.create_event', return_value='E356793')
-def test_handle_create_grb_event(mock_create_event, mock_get_event,
+def test_handle_create_grb_event(mock_create_event,
                                  mock_upload, mock_json,
                                  mock_get_upload_external_skymap,
                                  mock_create_upload_external_skymap,
@@ -84,19 +83,17 @@ def test_handle_create_grb_event(mock_create_event, mock_get_event,
 
 
 @patch('gwcelery.tasks.gracedb.get_events', return_value=[])
-@patch('gwcelery.tasks.gracedb.get_event', return_value={
+@patch('gwcelery.tasks.gracedb.create_event.run', return_value={
     'graceid': 'E1', 'gpstime': 1, 'instruments': '', 'pipeline': 'Fermi',
     'search': 'SubGRB',
     'extra_attributes': {'GRB': {'trigger_duration': None, 'trigger_id': 123,
                                  'ra': 0., 'dec': 0., 'error_radius': 10.}},
     'links': {'self': 'https://gracedb.ligo.org/events/E356793/'}})
-@patch('gwcelery.tasks.gracedb.create_event', return_value='E356793')
-@patch('gwcelery.tasks.detchar.check_vectors')
+@patch('gwcelery.tasks.detchar.check_vectors.run')
 @patch('gwcelery.tasks.external_skymaps.get_upload_external_skymap.run')
 def test_handle_create_subthreshold_grb_event(mock_get_upload_ext_skymap,
                                               mock_check_vectors,
                                               mock_create_event,
-                                              mock_get_event,
                                               mock_get_events):
     text = read_binary(data, 'fermi_subthresh_grb_lowconfidence.xml')
     external_triggers.handle_grb_gcn(payload=text)
@@ -115,7 +112,12 @@ def test_handle_create_subthreshold_grb_event(mock_get_upload_ext_skymap,
                                               labels=None)
     mock_check_vectors.assert_called_once()
     mock_get_upload_ext_skymap.assert_called_with(
-        'E356793', 'SubGRB',
+        {'graceid': 'E1', 'gpstime': 1, 'instruments': '',
+         'pipeline': 'Fermi', 'search': 'SubGRB',
+         'extra_attributes': {
+             'GRB': {'trigger_duration': None, 'trigger_id': 123,
+                     'ra': 0., 'dec': 0., 'error_radius': 10.}},
+         'links': {'self': 'https://gracedb.ligo.org/events/E356793/'}},
         ('https://gcn.gsfc.nasa.gov/notices_gbm_sub/' +
          'gbm_subthresh_578679393.215999_healpix.fits'))
 
@@ -125,17 +127,15 @@ def test_handle_create_subthreshold_grb_event(mock_get_upload_ext_skymap,
                           'fermi_noise_gcn_2.xml'])
 @patch('gwcelery.tasks.external_skymaps.get_upload_external_skymap.run')
 @patch('gwcelery.tasks.gracedb.get_events', return_value=[])
-@patch('gwcelery.tasks.gracedb.get_event', return_value={
+@patch('gwcelery.tasks.gracedb.create_event.run', return_value={
     'graceid': 'E1', 'gpstime': 1, 'instruments': '', 'pipeline': 'Fermi',
     'search': 'GRB',
     'extra_attributes': {'GRB': {'trigger_duration': 1, 'trigger_id': 123,
                                  'ra': 0., 'dec': 0., 'error_radius': 10.}},
     'links': {'self': 'https://gracedb.ligo.org/events/E356793/'}})
-@patch('gwcelery.tasks.gracedb.create_event', return_value='E356793')
-@patch('gwcelery.tasks.detchar.check_vectors')
+@patch('gwcelery.tasks.detchar.check_vectors.run')
 def test_handle_noise_fermi_event(mock_check_vectors,
                                   mock_create_event,
-                                  mock_get_event,
                                   mock_get_events,
                                   mock_get_upload_external_skymap,
                                   filename):
@@ -158,26 +158,23 @@ def test_handle_noise_fermi_event(mock_check_vectors,
 @pytest.mark.parametrize('filename',
                          ['fermi_grb_gcn.xml',
                           'fermi_noise_gcn.xml'])
+@patch('gwcelery.tasks.external_skymaps.create_upload_external_skymap.run')
 @patch('gwcelery.tasks.external_skymaps.get_upload_external_skymap.run')
-@patch('gwcelery.tasks.gracedb.create_label')
-@patch('gwcelery.tasks.gracedb.remove_label')
-@patch('gwcelery.tasks.gracedb.replace_event')
+@patch('gwcelery.tasks.gracedb.create_label.run')
+@patch('gwcelery.tasks.gracedb.remove_label.run')
+@patch('gwcelery.tasks.gracedb.replace_event.run')
 @patch('gwcelery.tasks.gracedb.get_events', return_value=[{
     'graceid': 'E1', 'gpstime': 1, 'instruments': '', 'pipeline': 'Fermi',
     'search': 'GRB',
     'extra_attributes': {'GRB': {'trigger_duration': 1, 'trigger_id': 123,
                                  'ra': 0., 'dec': 0., 'error_radius': 10.}},
     'links': {'self': 'https://gracedb.ligo.org/events/E356793/'}}])
-@patch('gwcelery.tasks.gracedb.get_event', return_value={
-    'graceid': 'E2', 'gpstime': 1, 'instruments': '', 'pipeline': 'Fermi',
-    'search': 'GRB',
-    'extra_attributes': {'GRB': {'trigger_duration': 1, 'trigger_id': 123,
-                                 'ra': 10., 'dec': 0., 'error_radius': 10.}},
-    'links': {'self': 'https://gracedb.ligo.org/events/E356793/'}})
-def test_handle_replace_grb_event(mock_get_event, mock_get_events,
+def test_handle_replace_grb_event(mock_get_events,
                                   mock_replace_event, mock_remove_label,
                                   mock_create_label,
-                                  mock_get_upload_external_skymap, filename):
+                                  mock_get_upload_external_skymap,
+                                  mock_create_upload_external_skymap,
+                                  filename):
     text = read_binary(data, filename)
     external_triggers.handle_grb_gcn(payload=text)
     mock_replace_event.assert_called_once_with('E1', text)

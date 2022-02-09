@@ -30,7 +30,8 @@ def test_pick_coinc():
 
 
 @patch('lal.GPSTimeNow', mock_now)
-@patch('gwcelery.tasks.gracedb.create_event', return_value='M1234')
+@patch('gwcelery.tasks.gracedb.create_event',
+       return_value={'graceid': 'M1234'})
 @patch('gwcelery.tasks.gracedb.get_superevents.run',
        return_value=[{'superevent_id': 'S1234'}])
 @patch('gwcelery.tasks.gracedb.create_signoff.run')

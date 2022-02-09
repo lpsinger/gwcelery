@@ -22,12 +22,13 @@ def patch(*args, **kwargs):
 
 @patch('gwcelery.tasks.gracedb.client')
 def test_create_event(mock_gracedb):
-    graceid = gracedb.create_event(
+    event = gracedb.create_event(
         'filecontents', 'search', 'pipeline', 'group')
     mock_gracedb.events.create.assert_called_once_with(
         filename='initial.data', filecontents='filecontents', search='search',
         pipeline='pipeline', group='group', labels=())
-    assert graceid == mock_gracedb.events.create.return_value['graceid']
+    assert event['graceid'] == \
+        mock_gracedb.events.create.return_value['graceid']
 
 
 @patch('gwcelery.tasks.gracedb.client')

@@ -68,7 +68,7 @@ def create_event(filecontents, search, pipeline, group, labels=()):
     response = client.events.create(group=group, pipeline=pipeline,
                                     filename='initial.data', search=search,
                                     filecontents=filecontents, labels=labels)
-    return response['graceid']
+    return response
 
 
 @task(ignore_result=True, shared=False)
@@ -233,7 +233,7 @@ def get_superevent(graceid):
 @catch_retryable_http_errors
 def replace_event(graceid, payload):
     """Get an event from GraceDB."""
-    client.events.update(graceid, filecontents=payload)
+    return client.events.update(graceid, filecontents=payload)
 
 
 @task(shared=False)

@@ -156,7 +156,7 @@ def upload_event():
     """
     coinc = pick_coinc()
 
-    graceid = gracedb.create_event(coinc, 'MDC', 'gstlal', 'CBC')
+    graceid = gracedb.create_event(coinc, 'MDC', 'gstlal', 'CBC')['graceid']
     log.info('uploaded as %s', graceid)
 
     if app.conf['mock_events_simulate_multiple_uploads']:
