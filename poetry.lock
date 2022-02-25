@@ -719,14 +719,6 @@ numpy = ">=1.13"
 scipy = "*"
 
 [[package]]
-name = "htcondor"
-version = "9.5.0"
-description = "HTCondor Python bindings"
-category = "main"
-optional = false
-python-versions = "*"
-
-[[package]]
 name = "humanize"
 version = "3.14.0"
 description = "Python humanize utilities"
@@ -1091,7 +1083,7 @@ six = "*"
 
 [[package]]
 name = "ligo.em-bright"
-version = "0.1.5"
+version = "0.1.6"
 description = "Possibility and properties of Electromagnetically-bright sources of gravitational-wave events"
 category = "main"
 optional = false
@@ -1100,7 +1092,6 @@ python-versions = ">=3.7,<4.0"
 [package.dependencies]
 astropy = ">=4.0"
 h5py = ">=2.10.0"
-htcondor = ">=9.0.6"
 lalsuite = ">=7.0,<8.0"
 pandas = ">=1.0,<2.0"
 scikit-learn = ">=0.24,<0.25"
@@ -1865,7 +1856,7 @@ scipy = ">=1.0"
 
 [[package]]
 name = "sentry-sdk"
-version = "1.5.4"
+version = "1.5.6"
 description = "Python client for Sentry (https://sentry.io)"
 category = "main"
 optional = false
@@ -2675,13 +2666,6 @@ healpy = [
     {file = "healpy-1.15.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:4c8d7a279815446d12d6cc3e2c030d893dac785ac65f11314e2932638970c5f8"},
     {file = "healpy-1.15.2.tar.gz", hash = "sha256:d559ad287a78d3b500919a5cb9e4dff3cb63c1b3a2e23edf62819c871ccacf7f"},
 ]
-htcondor = [
-    {file = "htcondor-9.5.0-cp310-cp310-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:91450b5fd1663a38d54b27013833f6a0f98ae917d188fedfaf486e5f098b2eaa"},
-    {file = "htcondor-9.5.0-cp36-cp36m-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:77233404cb31ae88c4f1fc57a607eba2572b987d3a5497fae0116c3dbd0af9b5"},
-    {file = "htcondor-9.5.0-cp37-cp37m-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:0c3cf3f08b1c48d71107528efe70b683a74752519993d8ea722b57a00ac62cb3"},
-    {file = "htcondor-9.5.0-cp38-cp38-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:f8bd785217f9577d7f6ff29a77d8d0e1c155cc54e8d3c1306fe6c7a635f5d204"},
-    {file = "htcondor-9.5.0-cp39-cp39-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:410fbaac9f03c2ea45f6d1f21816a8acb910379f46c87933f0a942e1252f806e"},
-]
 humanize = [
     {file = "humanize-3.14.0-py3-none-any.whl", hash = "sha256:32bcf712ac98ff5e73627a9d31e1ba5650619008d6d13543b5d53b48e8ab8d43"},
     {file = "humanize-3.14.0.tar.gz", hash = "sha256:60dd8c952b1df1ad83f0903844dec50a34ba7a04eea22a6b14204ffb62dbb0a4"},
@@ -2824,8 +2808,8 @@ ligo-segments = [
     {file = "ligo-segments-1.4.0.tar.gz", hash = "sha256:e072a844713c5b02efdcaf5bfe4c3a8cd9ef225b08cfd3202a4e185e0f71f5dc"},
 ]
 "ligo.em-bright" = [
-    {file = "ligo.em-bright-0.1.5.tar.gz", hash = "sha256:29f43d7b1ebf34ab4014557265c0185824def839c23b790ffc670418fc0fed73"},
-    {file = "ligo.em_bright-0.1.5-py3-none-any.whl", hash = "sha256:656923356441cd1651bbe697311cd543b998c14b8fa359e961d94e2d5183ef7b"},
+    {file = "ligo.em-bright-0.1.6.tar.gz", hash = "sha256:8f142468fe8d70c7fc6ea4159b34183d1bbbf8cf759f2abf22b34973b5609c7a"},
+    {file = "ligo.em_bright-0.1.6-py3-none-any.whl", hash = "sha256:845608752b55cd1b636f56bb03d00622fe217db99b204b8be24e35ebbce1abc0"},
 ]
 "ligo.skymap" = [
     {file = "ligo.skymap-0.5.3-cp36-abi3-macosx_10_12_x86_64.whl", hash = "sha256:c1bb9e389b32f4924f04d5f423b1407e5ffdb0155f18cab2756bedeb87069039"},
@@ -3141,6 +3125,9 @@ pickleshare = [
     {file = "pickleshare-0.7.5.tar.gz", hash = "sha256:87683d47965c1da65cdacaf31c8441d12b8044cdec9aca500cd78fc2c683afca"},
 ]
 pillow = [
+    {file = "Pillow-9.0.1-1-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:a5d24e1d674dd9d72c66ad3ea9131322819ff86250b30dc5821cbafcfa0b96b4"},
+    {file = "Pillow-9.0.1-1-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:2632d0f846b7c7600edf53c48f8f9f1e13e62f66a6dbc15191029d950bfed976"},
+    {file = "Pillow-9.0.1-1-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:b9618823bd237c0d2575283f2939655f54d51b4527ec3972907a927acbcc5bfc"},
     {file = "Pillow-9.0.1-cp310-cp310-macosx_10_10_universal2.whl", hash = "sha256:9bfdb82cdfeccec50aad441afc332faf8606dfa5e8efd18a6692b5d6e79f00fd"},
     {file = "Pillow-9.0.1-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:5100b45a4638e3c00e4d2320d3193bdabb2d75e79793af7c3eb139e4f569f16f"},
     {file = "Pillow-9.0.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:528a2a692c65dd5cafc130de286030af251d2ee0483a5bf50c9348aefe834e8a"},
@@ -3560,8 +3547,8 @@ seaborn = [
     {file = "seaborn-0.11.2.tar.gz", hash = "sha256:cf45e9286d40826864be0e3c066f98536982baf701a7caa386511792d61ff4f6"},
 ]
 sentry-sdk = [
-    {file = "sentry-sdk-1.5.4.tar.gz", hash = "sha256:f7e54567937ebcbe938c4df1075ec891587faeb7c74184b88cf2894e47c86116"},
-    {file = "sentry_sdk-1.5.4-py2.py3-none-any.whl", hash = "sha256:4fc7960a82c95d906a0514cf4d9aacba1743eb9863a5b7c2a01c525a7d9b21e6"},
+    {file = "sentry-sdk-1.5.6.tar.gz", hash = "sha256:ac2a50128409d57655279817aedcb7800cace1f76b266f3dd62055d5afd6e098"},
+    {file = "sentry_sdk-1.5.6-py2.py3-none-any.whl", hash = "sha256:1ab34e3851a34aeb3d1af1a0f77cec73978c4e9698e5210d050e4932953cb241"},
 ]
 service-identity = [
     {file = "service-identity-21.1.0.tar.gz", hash = "sha256:6e6c6086ca271dc11b033d17c3a8bea9f24ebff920c587da090afc9519419d34"},
