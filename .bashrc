@@ -7,7 +7,7 @@ if [ -f /etc/bashrc ]; then
 fi
 
 source /cvmfs/oasis.opensciencegrid.org/ligo/sw/conda/etc/profile.d/conda.sh
-conda activate igwn-py38-20220120
+conda activate igwn-py38-20220212
 
 # Add user site directory to the PATH. On Linux, this is usuall ~/.local/bin.
 export PATH="$(python -m site --user-base)/bin${PATH+:${PATH}}"
