@@ -20,6 +20,15 @@ Changelog
 
 -   Set default RAVEN search to empty list to fix argument error.
 
+-   Drop python3.7 support, add python3.9 testing.
+
+-   Update to em-bright >=1.0 that implements EoS maginalization for HasNS
+    and HasRemnant. An important difference compared to previous versions
+    is that the trained classifiers are no longer stored as package data,
+    but downloaded and cached using ``astropy.utils.data.download_file``.
+    These are also loaded in module scope in em_bright, and therefore
+    we are no longer required to pass them explicitly.
+
 1.0.0 (2022-01-21)
 ------------------
 

@@ -3,24 +3,15 @@ import io
 import json
 from matplotlib import pyplot as plt
 
-from ligo.em_bright import computeDiskMass, em_bright, PACKAGE_FILENAMES
+from ligo.em_bright import computeDiskMass, em_bright
 
 from celery.utils.log import get_task_logger
 
 from ..import app
 from . import gracedb, lvalert
 from .p_astro import _format_prob
-from ..util import (closing_figures, NamedTemporaryFile, PromiseProxy,
-                    read_pickle)
+from ..util import closing_figures, NamedTemporaryFile
 
-NS_CLASSIFIER = PromiseProxy(
-    read_pickle, (PACKAGE_FILENAMES['knn_ns_classifier.pkl'],),
-    dict(encoding='binary')
-)
-EM_CLASSIFIER = PromiseProxy(
-    read_pickle, (PACKAGE_FILENAMES['knn_em_classifier.pkl'],),
-    dict(encoding='binary')
-)
 
 log = get_task_logger(__name__)
 
@@ -212,9 +203,8 @@ def classifier_gstlal(mass1, mass2, spin1z, spin2z, snr):
     '{"HasNS": 1.0, "HasRemnant": 1.0}'
     """
     p_ns, p_em = em_bright.source_classification(
-        mass1, mass2, spin1z, spin2z, snr,
-        ns_classifier=NS_CLASSIFIER,
-        emb_classifier=EM_CLASSIFIER)
+        mass1, mass2, spin1z, spin2z, snr
+    )
 
     data = json.dumps({
         'HasNS': p_ns,
