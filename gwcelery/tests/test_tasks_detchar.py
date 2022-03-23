@@ -1,6 +1,6 @@
-from importlib import resources
 from io import BytesIO
 import logging
+from pathlib import Path
 from unittest.mock import call, patch
 
 from astropy.time import Time
@@ -12,20 +12,17 @@ import pytest
 from ..import app
 from ..import _version
 from ..tasks import detchar
-from . import data
 
 
 @pytest.fixture
 def llhoft_glob_pass(monkeypatch):
-    with resources.path(data, '') as path:
-        path = str(path / 'llhoft/pass/{detector}/*.gwf')
+    path = str(Path(__file__).parent / 'data/llhoft/pass/{detector}/*.gwf')
     yield monkeypatch.setitem(app.conf, 'llhoft_glob', path)
 
 
 @pytest.fixture
 def llhoft_glob_fail(monkeypatch):
-    with resources.path(data, '') as path:
-        path = str(path / 'llhoft/fail/{detector}/*.gwf')
+    path = str(Path(__file__).parent / 'data/llhoft/fail/{detector}/*.gwf')
     yield monkeypatch.setitem(app.conf, 'llhoft_glob', path)
 
 
@@ -70,8 +67,7 @@ def test_create_cache_old_data(mock_find, llhoft_glob_fail):
     mock_find.assert_called()
 
 
-with resources.path(data, '') as expected_path:
-    expected_path = str(expected_path / 'llhoft/omegascan/scanme.gwf')
+expected_path = Path(__file__).parent / 'data/llhoft/omegascan/scanme.gwf'
 
 
 @patch('gwcelery.tasks.detchar.create_cache', return_value=[expected_path])

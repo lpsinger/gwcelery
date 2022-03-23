@@ -55,12 +55,12 @@ build:
     - poetry config virtualenvs.create false
     - poetry install -E test
   needs: []
-test/poetry/python3.7:
-  extends: .test-poetry
-  image: python:3.7
 test/poetry/python3.8:
   extends: .test-poetry
   image: python:3.8
+test/poetry/python3.9:
+  extends: .test-poetry
+  image: python:3.9
 
 # Run test suite using wheel and bleeding-edge dependencies
 .test-wheel:
@@ -75,12 +75,12 @@ test/poetry/python3.8:
     - *install-redis
   needs:
     - build
-test/wheel/python3.7:
-  extends: .test-wheel
-  image: python:3.7
 test/wheel/python3.8:
   extends: .test-wheel
   image: python:3.8
+test/wheel/python3.9:
+  extends: .test-wheel
+  image: python:3.9
 
 lint:
   stage: test
@@ -142,7 +142,7 @@ pages:
   only:
     - main
   needs:
-    - test/poetry/python3.7
+    - test/poetry/python3.8
 
 # Upload package to PyPI.
 # Place your PyPI API token in the repository's GitLab CI secrets.

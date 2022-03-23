@@ -45,7 +45,7 @@ include = [
 "Bug Tracker" = "https://git.ligo.org/emfollow/gwcelery/issues"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 astropy = ">=4.3.1"  # https://github.com/astropy/astropy/issues/11879
 bilby-pipe = ">=0.3.8"
 celery = {version = ">=5.1", extras = ["redis"]}
@@ -67,7 +67,7 @@ ligo-followup-advocate = ">=1.1.6"
 ligo-gracedb = ">=2.7.5"  # https://git.ligo.org/lscsoft/gracedb-client/-/issues/28
 ligo-raven = ">=2.0"
 ligo-segments = "*"
-"ligo.em-bright" = ">=0.1.5"
+"ligo.em-bright" = "<1.0"
 "ligo.skymap" = ">=0.4.0"
 lscsoft-glue = "*"
 lxml = "*"
