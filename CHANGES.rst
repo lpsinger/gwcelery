@@ -29,6 +29,8 @@ Changelog
     These are also loaded in module scope in em_bright, and therefore
     we are no longer required to pass them explicitly.
 
+-   Update conda environment in bashrc to igwn-py39-20220317.
+
 1.0.0 (2022-01-21)
 ------------------
 
