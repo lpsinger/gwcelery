@@ -7,7 +7,7 @@ from . import detchar
 from . import gcn
 from . import gracedb
 from . import external_skymaps
-from . import lvalert
+from . import igwn_alert
 from . import raven
 
 log = get_logger(__name__)
@@ -180,22 +180,22 @@ def handle_grb_gcn(payload):
                                                       skymap_link).delay()
 
 
-@lvalert.handler('superevent',
-                 'mdc_superevent',
-                 'external_fermi',
-                 'external_swift',
-                 'external_integral',
-                 'external_agile',
-                 shared=False)
-def handle_grb_lvalert(alert):
-    """Parse an LVAlert message related to superevents/GRB external triggers
+@igwn_alert.handler('superevent',
+                    'mdc_superevent',
+                    'external_fermi',
+                    'external_swift',
+                    'external_integral',
+                    'external_agile',
+                    shared=False)
+def handle_grb_igwn_alert(alert):
+    """Parse an IGWN alert message related to superevents/GRB external triggers
     and dispatch it to other tasks.
 
     Notes
     -----
-    This LVAlert message handler is triggered by creating a new superevent or
-    GRB external trigger event, or a label associated with completeness of sky
-    maps:
+    This IGWN alert message handler is triggered by creating a new superevent
+    or GRB external trigger event, or a label associated with completeness of
+    skymaps:
 
     * Any new event triggers a coincidence search with
       :meth:`gwcelery.tasks.raven.coincidence_search`.
@@ -288,18 +288,18 @@ def handle_grb_lvalert(alert):
         ).delay()
 
 
-@lvalert.handler('superevent',
-                 'mdc_superevent',
-                 'external_snews',
-                 shared=False)
-def handle_snews_lvalert(alert):
-    """Parse an LVAlert message related to superevents/SN external triggers and
-    dispatch it to other tasks.
+@igwn_alert.handler('superevent',
+                    'mdc_superevent',
+                    'external_snews',
+                    shared=False)
+def handle_snews_igwn_alert(alert):
+    """Parse an IGWN alert message related to superevents/SN external triggers
+    and dispatch it to other tasks.
 
     Notes
     -----
-    This LVAlert message handler is triggered by creating a new superevent or
-    SN external trigger event:
+    This igwn_alert message handler is triggered by creating a new superevent
+    or SN external trigger event:
 
     * Any new event triggers a coincidence search with
       :meth:`gwcelery.tasks.raven.coincidence_search`.

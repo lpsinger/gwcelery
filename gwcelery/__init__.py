@@ -7,7 +7,7 @@ from celery import Celery
 from ._version import get_versions
 from .conf import playground
 from . import email
-from . import lvalert
+from . import igwn_alert
 from . import sentry
 from . import voevent
 
@@ -22,7 +22,7 @@ app = Celery(__name__, broker='redis://', config_source=playground)
 
 # Register email, LVAlert and VOEvent subsystems.
 email.install(app)
-lvalert.install(app)
+igwn_alert.install(app)
 voevent.install(app)
 
 # Register all tasks.

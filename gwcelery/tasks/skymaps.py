@@ -15,7 +15,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 from . import gracedb
-from . import lvalert
+from . import igwn_alert
 from ..import app
 from ..jinja import env
 from ..util.cmdline import handling_system_exit
@@ -238,7 +238,7 @@ def plot_bayes_factor(logb,
 @app.task(shared=False)
 @closing_figures()
 def plot_coherence(filecontents):
-    """LVAlert handler to plot the coherence Bayes factor.
+    """IGWN alert handler to plot the coherence Bayes factor.
 
     Parameters
     ----------
@@ -274,11 +274,11 @@ def plot_coherence(filecontents):
     return outfile.getvalue()
 
 
-@lvalert.handler('superevent',
-                 'mdc_superevent',
-                 shared=False)
+@igwn_alert.handler('superevent',
+                    'mdc_superevent',
+                    shared=False)
 def handle_plot_coherence(alert):
-    """LVAlert handler to plot and upload a visualization of the coherence
+    """IGWN alert handler to plot and upload a visualization of the coherence
     Bayes factor.
 
     Notes

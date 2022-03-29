@@ -10,7 +10,7 @@ from ligo import p_astro_computation as pastrocomp
 from matplotlib import pyplot as plt
 import numpy as np
 
-from . import gracedb, lvalert
+from . import gracedb, igwn_alert
 from .. import app
 from ..util import closing_figures, PromiseProxy, read_json
 
@@ -161,9 +161,9 @@ def plot(contents):
     return outfile.getvalue()
 
 
-@lvalert.handler('superevent',
-                 'mdc_superevent',
-                 shared=False)
+@igwn_alert.handler('superevent',
+                    'mdc_superevent',
+                    shared=False)
 def handle(alert):
     """LVAlert handler to plot and upload a visualization of every
     ``p_astro.json`` that is added to a superevent.

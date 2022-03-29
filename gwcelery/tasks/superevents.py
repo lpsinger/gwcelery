@@ -12,7 +12,7 @@ from celery.utils.log import get_task_logger
 from ligo.segments import segment, segmentlist
 
 from ..import app
-from . import gracedb, lvalert
+from . import gracedb, igwn_alert
 
 log = get_task_logger(__name__)
 
@@ -33,16 +33,16 @@ READY_LABEL = 'EM_READY'
 has all data products required to make it ready for annotations."""
 
 
-@lvalert.handler('cbc_gstlal',
-                 'cbc_spiir',
-                 'cbc_pycbc',
-                 'cbc_mbtaonline',
-                 'burst_olib',
-                 'burst_cwb',
-                 shared=False)
+@igwn_alert.handler('cbc_gstlal',
+                    'cbc_spiir',
+                    'cbc_pycbc',
+                    'cbc_mbtaonline',
+                    'burst_olib',
+                    'burst_cwb',
+                    shared=False)
 def handle(payload):
-    """Respond to lvalert nodes from low-latency search pipelines and delegate
-    to :meth:`process` for superevent management.
+    """Respond to IGWN alert topics from low-latency search pipelines and
+    delegate to :meth:`process` for superevent management.
     """
     alert_type = payload['alert_type']
     gid = payload['object']['graceid']

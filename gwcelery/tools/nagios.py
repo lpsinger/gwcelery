@@ -32,9 +32,9 @@ def get_active_queues(inspector):
             for queue in queues}
 
 
-def get_active_lvalert_nodes(inspector):
+def get_active_igwn_alert_topics(inspector):
     return {node for stat in inspector.stats().values()
-            for node in stat.get('lvalert-nodes', ())}
+            for node in stat.get('igwn-alert-topics', ())}
 
 
 def get_expected_queues(app):
@@ -47,8 +47,8 @@ def get_expected_queues(app):
     return result
 
 
-def get_expected_lvalert_nodes(app):
-    return app.conf['lvalert_nodes']
+def get_expected_igwn_alert_topics(app):
+    return app.conf['igwn_alert_topics']
 
 
 def get_active_voevent_peers(inspector):
@@ -75,16 +75,17 @@ def check_status(app):
         raise NagiosCriticalError('Not all expected queues are active') from \
               AssertionError('Missing queues: ' + ', '.join(missing))
 
-    active = get_active_lvalert_nodes(inspector)
-    expected = get_expected_lvalert_nodes(app)
+    active = get_active_igwn_alert_topics(inspector)
+    expected = get_expected_igwn_alert_topics(app)
     missing = expected - active
     extra = active - expected
     if missing:
-        raise NagiosCriticalError('Not all lvalert nodes are subscribed') \
-            from AssertionError('Missing nodes: ' + ', '.join(missing))
+        raise NagiosCriticalError('Not all IGWN alert topics are subscribed') \
+            from AssertionError('Missing topics: ' + ', '.join(missing))
     if extra:
-        raise NagiosCriticalError('Too many lvalert nodes are subscribed') \
-            from AssertionError('Extra nodes: ' + ', '.join(extra))
+        raise NagiosCriticalError(
+            'Too many IGWN alert topics are subscribed') from AssertionError(
+                    'Extra topics: ' + ', '.join(extra))
 
     broker_peers, receiver_peers = get_active_voevent_peers(inspector)
     if app.conf['voevent_broadcaster_whitelist'] and not broker_peers:

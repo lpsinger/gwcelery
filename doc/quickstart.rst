@@ -68,7 +68,7 @@ To start
 --------
 
 Before starting GWCelery, you need to authenticate for access to GraceDB and
-LVAlert and make sure that you have a Redis server running. Once you have
+IGWN Alert and make sure that you have a Redis server running. Once you have
 completed those steps, you can start each of the GWCelery manually.
 
 Authentication
@@ -79,19 +79,17 @@ DataGrid Client`_ by running ``ligo-proxy-init``::
 
     $ ligo-proxy-init albert.einstein
 
-To authenticate for LVAlert, first complete the `LVAlert Account Activation`_
-form once for each LVAlert server that you intend to use (generally you only
-need "Playground" for development purposes). Make a note of the passwords and
-store them in your ~/.netrc file with appropriate file permissions::
+To authenticate for :doc:`IGWN Alert <igwn-alert:index>`, create an account in `SCiMMA Auth portal`_, and
+follow the necessary steps in the :doc:`IGWN Alert Users Guide <igwn-alert:guide>`. Make a note of the
+passwords and store them in your ~/.netrc file with appropriate file permissions::
 
     $ echo > ~/.netrc
     $ chmod 0600 ~/.netrc
-    $ echo machine lvalert.cgca.uwm.edu login albert.einstein password password-for-production >> ~/.netrc
-    $ echo machine lvalert-playground.cgca.uwm.edu login albert.einstein password password-for-playground >> ~/.netrc
-    $ echo machine lvalert-test.cgca.uwm.edu login albert.einstein password password-for-test >> ~/.netrc
+    $ echo machine kafka://kafka.scimma.org/ login albert.einstein password password-for-production >> ~/.netrc
+    $ echo machine kafka://kafka.scimma.org/ login albert.einstein password password-for-playground >> ~/.netrc
+    $ echo machine kafka://kafka.scimma.org/ login albert.einstein password password-for-test >> ~/.netrc
 
 .. _`LSC DataGrid Client`: https://www.lsc-group.phys.uwm.edu/lscdatagrid/doc/installclient.html
-.. _`LVAlert Account Activation`: https://www.lsc-group.phys.uwm.edu/cgi-bin/jabber-acct.cgi
 
 Redis
 ~~~~~
@@ -134,7 +132,7 @@ GWCelery itself consists of five :ref:`Celery workers <celery:guide-workers>`
 and one `Flask`_ web application. Start them all by running each of the
 following commands::
 
-    $ gwcelery worker -l info -n gwcelery-worker -Q celery -B --lvalert
+    $ gwcelery worker -l info -n gwcelery-worker -Q celery -B --igwn-alert
     $ gwcelery worker -l info -n gwcelery-exttrig-worker -Q exttrig -c 1
     $ gwcelery worker -l info -n gwcelery-openmp-worker -Q openmp -c 1
     $ gwcelery worker -l info -n gwcelery-superevent-worker -Q superevent -c 1
@@ -152,3 +150,5 @@ following commands::
 .. _`Flask`: http://flask.pocoo.org
 .. _`screen`: https://linux.die.net/man/1/screen
 .. _`nohup`: https://linux.die.net/man/1/nohup
+.. _`SCiMMA Auth portal`: https://my.hop.scimma.org/
+

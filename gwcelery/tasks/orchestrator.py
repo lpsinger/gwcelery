@@ -18,15 +18,15 @@ from . import em_bright
 from . import gcn
 from . import gracedb
 from . import inference
-from . import lvalert
+from . import igwn_alert
 from . import p_astro
 from . import skymaps
 from . import superevents
 
 
-@lvalert.handler('superevent',
-                 'mdc_superevent',
-                 shared=False)
+@igwn_alert.handler('superevent',
+                    'mdc_superevent',
+                    shared=False)
 def handle_superevent(alert):
     """Schedule annotations for new superevents.
 
@@ -148,18 +148,18 @@ def handle_superevent(alert):
             ).apply_async()
 
 
-@lvalert.handler('cbc_gstlal',
-                 'cbc_spiir',
-                 'cbc_pycbc',
-                 'cbc_mbtaonline',
-                 shared=False)
+@igwn_alert.handler('cbc_gstlal',
+                    'cbc_spiir',
+                    'cbc_pycbc',
+                    'cbc_mbtaonline',
+                    shared=False)
 def handle_cbc_event(alert):
     """Perform annotations for CBC events that depend on pipeline-specific
     matched-filter parameter estimates.
 
     Notes
     -----
-    This LVAlert message handler is triggered by updates that include the file
+    This IGWN alert message handler is triggered by updates that include the file
     ``psd.xml.gz``. The table below lists which
     files are created as a result, and which tasks generate them.
 
@@ -273,9 +273,9 @@ def handle_cbc_event(alert):
         ).apply_async(priority=priority)
 
 
-@lvalert.handler('superevent',
-                 'mdc_superevent',
-                 shared=False)
+@igwn_alert.handler('superevent',
+                    'mdc_superevent',
+                    shared=False)
 def handle_posterior_samples(alert):
     """Generate multi-resolution and flat-resolution fits files and skymaps
     from an uploaded HDF5 file containing posterior samples.

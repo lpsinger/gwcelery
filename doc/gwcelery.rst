@@ -7,7 +7,7 @@ API Reference
 
     gwcelery.conf
     gwcelery.email
-    gwcelery.lvalert
+    gwcelery.igwn_alert
     gwcelery.sentry
     gwcelery.tasks
     gwcelery.tools

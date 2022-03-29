@@ -56,8 +56,8 @@ expose_to_public = False
 """Set to True if events meeting the public alert threshold really should be
 exposed to the public."""
 
-lvalert_host = 'lvalert-playground.cgca.uwm.edu'
-"""LVAlert host."""
+igwn_alert_group = 'gracedb-playground'
+"""IGWN alert group."""
 
 gracedb_host = 'gracedb-playground.ligo.org'
 """GraceDB host."""

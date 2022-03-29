@@ -5,8 +5,8 @@ below.
 """
 from . import *  # noqa: F401, F403
 
-lvalert_host = 'lvalert-test.cgca.uwm.edu'
-"""LVAlert host."""
+igwn_alert_group = 'gracedb-test'
+"""IGWN alert group."""
 
 gracedb_host = 'gracedb-test.ligo.org'
 """GraceDB host."""

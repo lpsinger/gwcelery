@@ -8,20 +8,20 @@ Several online gravitational-wave transient search pipelines (currently Gstlal,
 PyCBC, cWB, and oLIB) upload candidates in real time to GraceDB, the central
 database and web portal for low-latency LIGO/Virgo analyses. Whenever an event
 is uploaded or altered, GraceDB pushes machine-readable notifications through
-LVAlert, a pubsub system based on XMPP_.
+:doc:`IGWN Alert <igwn-alert:index>`, a pubsub system based on Kafka_.
 
 The business logic for selecting and sending alerts to astronomers resides not
 in GraceDB itself but in GWCelery. The role of GWCelery in the LIGO/Virgo alert
 infrastructure is to drive the workflow of aggregating and annotating
 gravitational-wave candidates and sending GCN Notices to astronomers.
 
-GWCelery interacts with GraceDB by listening for LVAlert messages and making
+GWCelery interacts with GraceDB by listening for IGWN Alert messages and making
 REST API requests through the GraceDB client. GWCelery interacts with GCN by
 listening for and sending GCN Notices using the Comet VOEvent broker.
 
 The major subsystems of GWCelery are:
 
-* the LVAlert listener
+* the IGWN Alert listener
 * the GraceDB client
 * the GCN listener
 * the GCN broker
@@ -60,8 +60,8 @@ documentation.
         label = "GraceDB"
     ]
 
-    lvalert [
-        label = "LVAlert"
+    igwn_alert [
+        label = "IGWN Alert"
     ]
 
     {
@@ -90,9 +90,9 @@ documentation.
         {
             rank = same
 
-            lvalert_listener [
-                href = "../gwcelery.tasks.lvalert.html"
-                label = "LVAlert\nListener"
+            igwn_alert_listener [
+                href = "../gwcelery.tasks.igwn_alert.html"
+                label = "IGWN Alert\nListener"
             ]
 
             superevent_manager [
@@ -185,13 +185,13 @@ documentation.
     cwb -> gracedb
     olib -> gracedb
 
-    gracedb -> lvalert
-    lvalert -> lvalert_listener
+    gracedb -> igwn_alert
+    igwn_alert -> igwn_alert_listener
     gracedb -> gracedb_client [dir=back]
 
-    lvalert_listener -> superevent_manager
-    lvalert_listener -> detchar [lhead=cluster_orchestrator]
-    lvalert_listener -> raven
+    igwn_alert_listener -> superevent_manager
+    igwn_alert_listener -> detchar [lhead=cluster_orchestrator]
+    igwn_alert_listener -> raven
 
     superevent_manager -> gracedb_client
     inference -> gracedb_client [ltail=cluster_orchestrator]
@@ -285,7 +285,7 @@ of several processes:
 8.  **General-Purpose Worker**
 
     A Celery worker that accepts all other tasks. This worker also runs an
-    :doc:`embedded LVAlert listener service <gwcelery.lvalert>` that is started
+    :doc:`embedded IGWN Alert listener service <gwcelery.igwn_alert>` that is started
     and stopped as a bootstep.
 
 9.  **Flask Web Application**
@@ -302,7 +302,7 @@ dispatches further handling to other tasks based on packet type.
 
 A decorator is provided to register a function as a Celery task and also plug
 it in as a handler for one or more packet types. This pattern is used for both
-GCN notices and LVAlert message handlers.
+GCN notices and IGWN Alert message handlers.
 
 GCN notices
 ~~~~~~~~~~~
@@ -319,20 +319,20 @@ GCN notice handler tasks are declared using the
         root = lxml.etree.fromstring(payload)
         # do work here...
 
-LVAlert messages
-~~~~~~~~~~~~~~~~
+IGWN Alert messages
+~~~~~~~~~~~~~~~~~~~
 
-LVAlert message handler tasks are declared using the
-:meth:`gwcelery.tasks.lvalert.handler` decorator::
+IGWN Alert message handler tasks are declared using the
+:meth:`gwcelery.tasks.igwn_alert.handler` decorator::
 
-    from gwcelery.tasks import lvalert
+    from gwcelery.tasks import igwn_alert
 
-    @lvalert.handler('cbc_gstlal',
-                     'cbc_spiir',
-                     'cbc_pycbc',
-                     'cbc_mbtaonline')
+    @igwn_alert.handler('cbc_gstlal',
+                        'cbc_spiir',
+                        'cbc_pycbc',
+                        'cbc_mbtaonline')
     def handle_cbc(alert):
         # do work here...
 
 .. _PyGCN: https://pypi.org/project/pygcn/
-.. _XMPP: https://xmpp.org
+.. _Kafka: https://kafka.apache.org/

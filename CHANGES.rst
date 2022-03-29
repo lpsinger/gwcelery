@@ -50,6 +50,9 @@ Changelog
 -   Drop --use-feature=in-tree-build from pip call in deployment, as pip now
     does this by default and has deprecated this option
 
+-   Switch to using IGWN alerts instead of LVAlert. Add ``igwn-alert``
+    as a dependency.
+
 1.0.0 (2022-01-21)
 ------------------
 

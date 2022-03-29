@@ -59,6 +59,7 @@ gracedb-sdk = ">=0.1.5"
 gwdatafind = "*"
 gwpy = ">=2.0.1"  # https://github.com/gwpy/gwpy/issues/1277
 healpy = "*"
+igwn-alert = "*"
 imapclient = "*"
 importlib-metadata = { version = "*", python = "<3.8" }
 jinja2 = ">=2.11.2"  # https://github.com/pallets/jinja/issues/1168
@@ -79,7 +80,6 @@ python-ligo-lw = "~1.7.0"  # https://git.ligo.org/lscsoft/ligo.skymap/-/merge_re
 safe-netrc = "*"
 sentry-sdk = {version = "*", extras = ["flask", "tornado"]}
 service-identity = "*"  # We don't actually use this package, but it silences some annoying warnings from twistd.
-sleek-lvalert = "<2.0.0"
 voeventlib = ">=1.2"
 werkzeug = ">=0.15.0"  # for werkzeug.middleware.proxy_fix.ProxyFix
 zstandard = "*"  # for task compression

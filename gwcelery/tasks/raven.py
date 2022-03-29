@@ -69,7 +69,7 @@ def coincidence_search(gracedb_id, alert_object, group=None, pipelines=[],
     gracedb_id: str
         ID of the trigger used by GraceDB
     alert_object: dict
-        lvalert['object']
+        Alert dictionary
     group: str
         Burst or CBC
     pipelines: list
@@ -141,7 +141,7 @@ def search(gracedb_id, alert_object, tl=-5, th=5, group=None,
     gracedb_id: str
         ID of the trigger used by GraceDB
     alert_object: dict
-        lvalert['object']
+        Alert dictionary
     tl: int
         number of seconds to search before
     th: int
@@ -180,7 +180,7 @@ def raven_pipeline(raven_search_results, gracedb_id, alert_object, tl, th,
     gracedb_id: str
         ID of either a superevent or external trigger
     alert_object: dict
-        lvalert['object'], either a superevent or an external event
+        Alert dictionary, either a superevent or an external event
     gw_group: str
         Burst or CBC
 

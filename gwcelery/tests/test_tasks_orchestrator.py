@@ -401,7 +401,7 @@ def test_handle_cbc_event_ignored(mock_localize,
                                   mock_classifier,
                                   mock_get_event):
     """Test that unrelated LVAlert messages do not trigger BAYESTAR."""
-    alert = read_json(data, 'lvalert_detchar.json')
+    alert = read_json(data, 'igwn_alert_detchar.json')
     orchestrator.handle_cbc_event(alert)
     mock_localize.assert_not_called()
     mock_classifier.assert_not_called()

@@ -8,7 +8,7 @@ from ligo.em_bright import computeDiskMass, em_bright
 from celery.utils.log import get_task_logger
 
 from ..import app
-from . import gracedb, lvalert
+from . import gracedb, igwn_alert
 from .p_astro import _format_prob
 from ..util import closing_figures, NamedTemporaryFile
 
@@ -16,11 +16,11 @@ from ..util import closing_figures, NamedTemporaryFile
 log = get_task_logger(__name__)
 
 
-@lvalert.handler('superevent',
-                 'mdc_superevent',
-                 shared=False)
+@igwn_alert.handler('superevent',
+                    'mdc_superevent',
+                    shared=False)
 def handle(alert):
-    """LVAlert handler to plot and upload a visualization
+    """IGWN alert handler to plot and upload a visualization
     of every ``em_bright.json``.
     """
     filename = 'em_bright.json'

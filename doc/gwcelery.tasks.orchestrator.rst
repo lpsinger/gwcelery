@@ -5,7 +5,7 @@ This module implements the alert orchestrator, which responsible for the
 vetting and annotation workflow to produce preliminary, initial, and update
 alerts for gravitational-wave event candidates.
 
-The orchestrator consists of two LVAlert message handlers:
+The orchestrator consists of two IGWN Alert message handlers:
 
 * :meth:`~gwcelery.tasks.orchestrator.handle_superevent` is called for each
   superevent. It waits for a short duration of
@@ -51,7 +51,7 @@ The flow chart below illustrates the operation of these two tasks.
     ]
 
     superevent [
-        label = "LVAlert message\nfor new\nsuperevent"
+        label = "IGWN Alert message\nfor new\nsuperevent"
         style = rounded
     ]
 
@@ -125,7 +125,7 @@ The flow chart below illustrates the operation of these two tasks.
     copy_from_preferred_event -> annotate_skymaps -> send_gcn -> circular
 
     cbc_event [
-        label = "LVAlert for\nfile added\nto CBC event"
+        label = "IGWN Alert for\nfile added\nto CBC event"
         style = rounded
     ]
 

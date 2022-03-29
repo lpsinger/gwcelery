@@ -217,7 +217,8 @@ intersphinx_mapping = {
     'ligo.skymap': ('https://lscsoft.docs.ligo.org/ligo.skymap/', None),
     'requests': ('https://docs.python-requests.org/en/latest/', None),
     'twisted': ('https://twistedmatrix.com/documents/current/api/', None),
-    'userguide': ('https://emfollow.docs.ligo.org/userguide/', None)
+    'userguide': ('https://emfollow.docs.ligo.org/userguide/', None),
+    'igwn-alert': ('https://igwn-alert.readthedocs.io/en/latest/', None)
 }
 
 

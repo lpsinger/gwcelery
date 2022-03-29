@@ -203,7 +203,7 @@ def test_handle_create_skymap_label_from_ext_event(mock_get_labels,
                  "superevent": "S1234"
                        }
              }
-    external_triggers.handle_grb_lvalert(alert)
+    external_triggers.handle_grb_igwn_alert(alert)
     mock_create_label.assert_called_once_with('SKYMAP_READY', 'E1212')
 
 
@@ -221,7 +221,7 @@ def test_handle_create_skymap_label_from_superevent(mock_create_label,
                  "em_events": ['E1212']
                        }
              }
-    external_triggers.handle_grb_lvalert(alert)
+    external_triggers.handle_grb_igwn_alert(alert)
     mock_create_label.assert_called_once_with('SKYMAP_READY', 'E1212')
 
 
@@ -251,7 +251,7 @@ def test_handle_skymap_comparison(mock_get_event, mock_get_superevent,
                  "search": "GRB"
                        }
              }
-    external_triggers.handle_grb_lvalert(alert)
+    external_triggers.handle_grb_igwn_alert(alert)
     mock_raven_pipeline.assert_called_once_with([alert['object']], 'S1234',
                                                 {'superevent_id': 'S1234',
                                                  'preferred_event': 'G1234'},
@@ -270,7 +270,7 @@ def test_handle_skymap_combine(mock_create_combined_skymap):
                             "RAVEN_ALERT"],
                  "superevent": "S1234"}
              }
-    external_triggers.handle_grb_lvalert(alert)
+    external_triggers.handle_grb_igwn_alert(alert)
     mock_create_combined_skymap.assert_called_once_with('S1234', 'E1212')
 
 
@@ -320,12 +320,12 @@ def test_handle_replace_snews_event(mock_get_events, mock_replace_event):
 
 @patch('gwcelery.tasks.raven.coincidence_search')
 def test_handle_grb_exttrig_creation(mock_raven_coincidence_search):
-    """Test dispatch of an LVAlert message for an exttrig creation."""
-    # Test LVAlert payload.
-    alert = read_json(data, 'lvalert_exttrig_creation.json')
+    """Test dispatch of an IGWN alert message for an exttrig creation."""
+    # Test IGWN alert payload.
+    alert = read_json(data, 'igwn_alert_exttrig_creation.json')
 
     # Run function under test
-    external_triggers.handle_grb_lvalert(alert)
+    external_triggers.handle_grb_igwn_alert(alert)
 
     # Check that the correct tasks were dispatched.
     mock_raven_coincidence_search.assert_has_calls([
@@ -335,12 +335,12 @@ def test_handle_grb_exttrig_creation(mock_raven_coincidence_search):
 
 @patch('gwcelery.tasks.raven.coincidence_search')
 def test_handle_subgrb_exttrig_creation(mock_raven_coincidence_search):
-    """Test dispatch of an LVAlert message for an exttrig creation."""
-    # Test LVAlert payload.
-    alert = read_json(data, 'lvalert_subgrb_creation.json')
+    """Test dispatch of an IGWN alert message for an exttrig creation."""
+    # Test IGWN alert payload.
+    alert = read_json(data, 'igwn_alert_subgrb_creation.json')
 
     # Run function under test
-    external_triggers.handle_grb_lvalert(alert)
+    external_triggers.handle_grb_igwn_alert(alert)
 
     # Check that the correct tasks were dispatched.
     mock_raven_coincidence_search.assert_has_calls([
@@ -353,12 +353,12 @@ def test_handle_subgrb_exttrig_creation(mock_raven_coincidence_search):
 @patch('gwcelery.tasks.raven.coincidence_search')
 def test_handle_subgrb_targeted_creation(mock_raven_coincidence_search,
                                          mock_create_upload_external_skymap):
-    """Test dispatch of an LVAlert message for an exttrig creation."""
-    # Test LVAlert payload.
-    alert = read_json(data, 'lvalert_exttrig_subgrb_targeted_creation.json')
+    """Test dispatch of an IGWN alert message for an exttrig creation."""
+    # Test IGWN alert payload.
+    alert = read_json(data, 'igwn_alert_exttrig_subgrb_targeted_creation.json')
 
     # Run function under test
-    external_triggers.handle_grb_lvalert(alert)
+    external_triggers.handle_grb_igwn_alert(alert)
 
     # Check that sky map is uploaded
     mock_create_upload_external_skymap.assert_called_once_with(
@@ -373,16 +373,16 @@ def test_handle_subgrb_targeted_creation(mock_raven_coincidence_search,
 
 
 @pytest.mark.parametrize('calls, path',
-                         [[False, 'lvalert_snews_test_creation.json'],
-                          [True, 'lvalert_snews_creation.json']])
+                         [[False, 'igwn_alert_snews_test_creation.json'],
+                          [True, 'igwn_alert_snews_creation.json']])
 @patch('gwcelery.tasks.raven.coincidence_search')
 def test_handle_sntrig_creation(mock_raven_coincidence_search, calls, path):
-    """Test dispatch of an LVAlert message for SNEWS alerts."""
-    # Test LVAlert payload.
+    """Test dispatch of an IGWN alert message for SNEWS alerts."""
+    # Test IGWN alert payload.
     alert = read_json(data, path)
 
     # Run function under test
-    external_triggers.handle_snews_lvalert(alert)
+    external_triggers.handle_snews_igwn_alert(alert)
 
     if calls is True:
         mock_raven_coincidence_search.assert_has_calls([
@@ -399,12 +399,12 @@ def test_handle_sntrig_creation(mock_raven_coincidence_search, calls, path):
 def test_handle_superevent_cbc_creation(mock_raven_coincidence_search,
                                         mock_get_group,
                                         mock_get_superevent):
-    """Test dispatch of an LVAlert message for a CBC superevent creation."""
-    # Test LVAlert payload.
-    alert = read_json(data, 'lvalert_superevent_creation.json')
+    """Test dispatch of an IGWN alert message for a CBC superevent creation."""
+    # Test IGWN alert payload.
+    alert = read_json(data, 'igwn_alert_superevent_creation.json')
 
     # Run function under test
-    external_triggers.handle_grb_lvalert(alert)
+    external_triggers.handle_grb_igwn_alert(alert)
 
     # Check that the correct tasks were dispatched.
     mock_raven_coincidence_search.assert_has_calls([
@@ -423,12 +423,15 @@ def test_handle_superevent_cbc_creation(mock_raven_coincidence_search,
 def test_handle_superevent_burst_creation(mock_raven_coincidence_search,
                                           mock_get_group,
                                           mock_get_superevent):
-    """Test dispatch of an LVAlert message for a burst superevent creation."""
-    # Test LVAlert payload.
-    alert = read_json(data, 'lvalert_superevent_creation.json')
+    """
+    Test dispatch of an IGWN alert message for a burst superevent
+    creation.
+    """
+    # Test IGWN alert payload.
+    alert = read_json(data, 'igwn_alert_superevent_creation.json')
 
     # Run function under test
-    external_triggers.handle_grb_lvalert(alert)
+    external_triggers.handle_grb_igwn_alert(alert)
 
     # Check that the correct tasks were dispatched.
     mock_raven_coincidence_search.assert_has_calls([

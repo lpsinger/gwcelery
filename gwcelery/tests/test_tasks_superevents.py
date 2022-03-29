@@ -9,7 +9,7 @@ from ..tasks import gracedb, superevents
 from ..util import read_json
 from . import data
 
-lvalert_content = {
+igwn_alert_content = {
     'object': {
         'graceid': '',
         'gpstime': '',
@@ -390,7 +390,7 @@ def test_is_complete(labels):
      [['SKYMAP_READY', 'EMBRIGHT_READY', 'PASTRO_READY'], 'SKYMAP_READY']])
 def test_process_called(labels, label):
     """Test whether the :meth:`superevents.process` is called
-    new type lvalerts, and label additions that complete the event.
+    new type IGWN alerts, and label additions that complete the event.
     """
     payload = {
         "alert_type": "label_added",
@@ -591,7 +591,7 @@ def test_parse_trigger_cbc_1(mock_db):
                             'CoincInspiral': {'snr': 10.0},
                             'SingleInspiral': [
                                 {'ifo': ifo} for ifo in ['H1', 'L1']]}}
-    payload = dict(lvalert_content,
+    payload = dict(igwn_alert_content,
                    object=event_dictionary,
                    data=event_dictionary,
                    alert_type='new',
@@ -620,7 +620,7 @@ def test_parse_trigger_cbc_2(mock_db):
                             'CoincInspiral': {'snr': 30.0},
                             'SingleInspiral': [
                                 {"ifo": ifo} for ifo in ["H1", "L1"]]}}
-    payload = dict(lvalert_content,
+    payload = dict(igwn_alert_content,
                    object=event_dictionary,
                    data=event_dictionary,
                    alert_type='new',
@@ -658,7 +658,7 @@ def test_parse_trigger_cbc_3(mock_db):
                             'SingleInspiral': [
                                 {"ifo": ifo} for ifo in
                                 ["H1", "L1", "V1"]]}}
-    payload = dict(lvalert_content,
+    payload = dict(igwn_alert_content,
                    object=event_dictionary,
                    data=event_dictionary,
                    alert_type='new',
@@ -686,7 +686,7 @@ def test_parse_trigger_cbc_4(mock_db):
                             'SingleInspiral': [
                                 {"ifo": ifo} for ifo in
                                 ["H1", "L1", "V1"]]}}
-    payload = dict(lvalert_content,
+    payload = dict(igwn_alert_content,
                    alert_type='new',
                    object=event_dictionary,
                    data=event_dictionary,
@@ -716,7 +716,7 @@ def test_parse_trigger_burst_1(mock_db):
                                 'duration': 0.23639,
                                 'start_time': 1163905215,
                                 'snr': 10.3440}}}
-    payload = dict(lvalert_content,
+    payload = dict(igwn_alert_content,
                    object=event_dictionary,
                    data=event_dictionary,
                    alert_type='new',
@@ -752,7 +752,7 @@ def test_parse_trigger_burst_2(mock_db):
                                 'quality_mean': 20.6458,
                                 'frequency_mean': 117.9644,
                                 'omicron_snr_network': 8.77}}}
-    payload = dict(lvalert_content,
+    payload = dict(igwn_alert_content,
                    object=event_dictionary,
                    data=event_dictionary,
                    alert_type='new',
@@ -784,7 +784,7 @@ def test_parse_trigger_burst_3(mock_db):
                                 'quality_mean': 100.0,
                                 'frequency_mean': 100.0,
                                 'omicron_snr_network': 8.0}}}
-    payload = dict(lvalert_content,
+    payload = dict(igwn_alert_content,
                    object=event_dictionary,
                    data=event_dictionary,
                    alert_type='new',
@@ -817,7 +817,7 @@ def test_parse_trigger_burst_4(mock_db):
                                 'duration': 0.02,
                                 'start_time': 1128658942,
                                 'snr': 19.824}}}
-    payload = dict(lvalert_content,
+    payload = dict(igwn_alert_content,
                    object=event_dictionary,
                    data=event_dictionary,
                    alert_type='new',
@@ -849,7 +849,7 @@ def test_S190421ar_spiir_scenario(mock_db):    # noqa: N802
                                 'snr': 10.5107507705688},
                             'SingleInspiral': [
                                 {"ifo": ifo} for ifo in ["H1", "L1"]]}}
-    payload = dict(lvalert_content,
+    payload = dict(igwn_alert_content,
                    alert_type='new',
                    object=event_dictionary,
                    data=event_dictionary,

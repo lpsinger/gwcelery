@@ -8,7 +8,7 @@ possibly from different pipelines, that are neighbors in time. At any given
 time, one event belonging to the superevent is identified as the *preferred
 event*.
 
-This module provides the Superevent Manager, an LVAlert handler that creates
+This module provides the Superevent Manager, an IGWN Alert handler that creates
 and updates superevents whenever new events are uploaded to GraceDB. It also
 checks whether the superevent qualifies to be sent out as a LIGO-Virgo
 public alert.

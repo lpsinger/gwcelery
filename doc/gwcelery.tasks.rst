@@ -17,7 +17,7 @@ gwcelery.tasks module
     gwcelery.tasks.gcn
     gwcelery.tasks.gracedb
     gwcelery.tasks.inference
-    gwcelery.tasks.lvalert
+    gwcelery.tasks.igwn_alert
     gwcelery.tasks.orchestrator
     gwcelery.tasks.p_astro
     gwcelery.tasks.raven

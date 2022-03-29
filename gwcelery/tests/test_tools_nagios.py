@@ -31,9 +31,9 @@ def celery_worker_parameters():
 
 def test_nagios(capsys, monkeypatch, request, socket_enabled, starter,
                 tmp_path):
-    mock_lvalert_client = Mock()
+    mock_igwn_alert_client = Mock()
     monkeypatch.setattr(
-        'gwcelery.lvalert.client.LVAlertClient', mock_lvalert_client)
+        'igwn_alert.client', mock_igwn_alert_client)
     unix_socket = str(tmp_path / 'redis.sock')
     broker_url = f'redis+socket://{unix_socket}'
     monkeypatch.setitem(app.conf, 'broker_url', broker_url)
@@ -63,37 +63,37 @@ def test_nagios(capsys, monkeypatch, request, socket_enabled, starter,
     out, err = capsys.readouterr()
     assert 'CRITICAL: Not all expected queues are active' in out
 
-    # worker, no LVAlert nodes
+    # worker, no igwn_alert nodes
 
     request.getfixturevalue('celery_worker')
 
-    mock_lvalert_client.configure_mock(**{
-        'return_value.get_subscriptions.return_value': {}})
+    mock_igwn_alert_client.configure_mock(**{
+        'return_value.get_topics.return_value': {}})
 
     with pytest.raises(SystemExit) as excinfo:
         main(['gwcelery', 'nagios'])
     assert excinfo.value.code == nagios.NagiosPluginStatus.CRITICAL
     out, err = capsys.readouterr()
-    assert 'CRITICAL: Not all lvalert nodes are subscribed' in out
+    assert 'CRITICAL: Not all IGWN alert topics are subscribed' in out
 
-    # tasks, too many LVAlert nodes
+    # tasks, too many igwn_alert topics
 
-    expected_lvalert_nodes = nagios.get_expected_lvalert_nodes(app)
+    expected_igwn_alert_topics = nagios.get_expected_igwn_alert_topics(app)
     monkeypatch.setattr(
         'celery.app.control.Inspect.stats', Mock(return_value={'foo': {
-            'lvalert-nodes': expected_lvalert_nodes | {'foobar'}}}))
+            'igwn-alert-topics': expected_igwn_alert_topics | {'foobar'}}}))
 
     with pytest.raises(SystemExit) as excinfo:
         main(['gwcelery', 'nagios'])
     assert excinfo.value.code == nagios.NagiosPluginStatus.CRITICAL
     out, err = capsys.readouterr()
-    assert 'CRITICAL: Too many lvalert nodes are subscribed' in out
+    assert 'CRITICAL: Too many IGWN alert topics are subscribed' in out
 
-    # LVAlert nodes present, no VOEvent broker peers
+    # igwn_alert topics present, no VOEvent broker peers
 
     monkeypatch.setattr(
         'celery.app.control.Inspect.stats', Mock(return_value={'foo': {
-            'lvalert-nodes': expected_lvalert_nodes}}))
+            'igwn-alert-topics': expected_igwn_alert_topics}}))
 
     with pytest.raises(SystemExit) as excinfo:
         main(['gwcelery', 'nagios'])
@@ -106,7 +106,7 @@ def test_nagios(capsys, monkeypatch, request, socket_enabled, starter,
     monkeypatch.setattr(
         'celery.app.control.Inspect.stats', Mock(return_value={'foo': {
             'voevent-broker-peers': ['127.0.0.1'],
-            'lvalert-nodes': expected_lvalert_nodes}}))
+            'igwn-alert-topics': expected_igwn_alert_topics}}))
 
     with pytest.raises(SystemExit) as excinfo:
         main(['gwcelery', 'nagios'])
@@ -120,7 +120,7 @@ def test_nagios(capsys, monkeypatch, request, socket_enabled, starter,
         'celery.app.control.Inspect.stats',
         Mock(return_value={'foo': {'voevent-broker-peers': ['127.0.0.1'],
                                    'voevent-receiver-peers': ['127.0.0.1'],
-                                   'lvalert-nodes': expected_lvalert_nodes}}))
+                                   'igwn-alert-topics': expected_igwn_alert_topics}}))  # noqa: E501
 
     with pytest.raises(SystemExit) as excinfo:
         main(['gwcelery', 'nagios'])

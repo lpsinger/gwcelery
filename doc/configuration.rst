@@ -11,7 +11,7 @@ section of the Celery manual.
 
 The configuration object also holds all of the options that are specific to
 GWCelery and affect the behavior of individual GWCelery tasks; examples include
-the GraceDB and LVAlert service URLs, GCN hostnames, and frame file types and
+the GraceDB service URLs, IGWN Alert groups, GCN hostnames, and frame file types and
 channel names. For a list of all GWCelery-specific options, see the
 API documentation for the :mod:`gwcelery.conf` module.
 
@@ -29,7 +29,7 @@ Authentication
 --------------
 
 There are a few files that must be present in order to provide authentication
-tokens for GraceDB and LValert.
+tokens for GraceDB and :doc:`IGWN Alert <igwn-alert:index>`.
 
 .. rubric:: GraceDB
 
@@ -44,15 +44,15 @@ For production deployment, you should `obtain a robot certificate`_ and store
 it in a location such as ``~/.globus/userkey.pem`` and
 ``~/.globus/usercert.pem``.
 
-.. rubric:: LVAlert
+.. rubric:: IGWN Alert
 
-You must provide a valid username and password for LVAlert. You can request an
-account using the `LVAlert Account Activation`_ form. The LVAlert username and
-password should be stored in your `netrc file`_.
+You must provide a valid username and password for :doc:`IGWN Alert <igwn-alert:index>`. You can request an
+account using the `SCiMMA Auth portal`_. To get started, see :doc:`IGWN Alert Userguide <igwn-alert:guide>`.
+The IGWN Alert username and password should be stored in your `netrc file`_.
 
 .. _`LSC DataGrid Client`: https://www.lsc-group.phys.uwm.edu/lscdatagrid/doc/installclient.html
 .. _`obtain a robot certificate`: https://robots.ligo.org
-.. _`LVAlert Account Activation`: https://www.lsc-group.phys.uwm.edu/cgi-bin/jabber-acct.cgi
+.. _`SCiMMA Auth portal`: https://my.hop.scimma.org/
 .. _`netrc file`: https://www.gnu.org/software/inetutils/manual/html_node/The-_002enetrc-file.html
 
 .. _redis-configuration:
