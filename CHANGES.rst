@@ -4,7 +4,7 @@ Changelog
 1.0.1 (unreleased)
 ------------------
 
--   Condor submition now require ``request_disk`` specification 
+-   Added ``request_disk`` specification for gwcelery condor submission
 
 -   Bump ``p-astro`` to pre-release ``v1.0.0dev1``. This version is a stop gap to
     bring back the reference O3 hard-cut implementation of p-astro, and
