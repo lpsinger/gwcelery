@@ -5,21 +5,19 @@ getenv = true
 executable = /usr/bin/env
 log = gwcelery-condor.log
 on_exit_remove = false
+request_disk = 10GB
 JobBatchName = gwcelery
 
 arguments = "gwcelery beat -f gwcelery-beat.log"
 description = gwcelery-beat
-request_disk = 10MB
 queue
 
 arguments = "gwcelery flask -l info -f gwcelery-flask.log run --with-threads --host 127.0.0.1"
 description = gwcelery-flask
-request_disk = 10MB
 queue
 
 arguments = "gwcelery flower --address=127.0.0.1 --log-file-prefix=gwcelery-flower.log"
 description = gwcelery-flower
-request_disk = 10MB
 queue
 
 # FIXME: The GraceDB tasks are not very computationally intensive, but take a
@@ -27,22 +25,18 @@ queue
 # number of hardware threads until the GraceDB API throughput is improved.
 arguments = "gwcelery worker -l info -n gwcelery-worker@%h -f %n.log -Q celery --lvalert --email --autoscale 64,8 --prefetch-multiplier 1"
 description = gwcelery-worker
-request_disk = 10MB
 queue
 
 arguments = "gwcelery worker -l info -n gwcelery-exttrig-worker@%h -f %n.log -Q exttrig -c 1"
 description = gwcelery-exttrig-worker
-request_disk = 10MB
 queue
 
 arguments = "gwcelery worker -l info -n gwcelery-superevent-worker@%h -f %n.log -Q superevent -c 1 --prefetch-multiplier 1"
 description = gwcelery-superevent-worker
-request_disk = 10MB
 queue
 
 arguments = "gwcelery worker -l info -n gwcelery-voevent-worker@%h -f %n.log -Q voevent -P solo"
 description = gwcelery-voevent-worker
-request_disk = 10MB
 queue
 
 
@@ -50,7 +44,6 @@ queue
 +Online_EMFollow = True
 Requirements = (TARGET.Online_EMFollow =?= True)
 request_cpus = TARGET.Cpus
-request_disk = 10MB
 request_memory = 3700
 universe = vanilla
 # FIXME: workaround for https://www-auth.cs.wisc.edu/lists/htcondor-users/2019-October/msg00051.shtml
