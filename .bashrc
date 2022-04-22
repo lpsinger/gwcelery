@@ -17,7 +17,7 @@ export PATH="$(python -m site --user-base)/bin${PATH+:${PATH}}"
 export OMP_NUM_THREADS=1
 
 # Use mpich for parameter estimation.
-module load mpi/mpich-3.0-x86_64
+module load mpi/mpich-x86_64
 
 # Unless the user has set `GSSAPIDelegateCredentials no` in their ~/.ssh/config
 # file, their Globus certificate will be copied in when they log in, shadowing
