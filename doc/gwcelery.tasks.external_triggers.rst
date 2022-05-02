@@ -11,13 +11,13 @@ rates.
 There are two GCN and two LVAlert message handlers in the
 `~gwcelery.tasks.external_triggers` module:
 
-* :meth:`~gwcelery.tasks.external_triggers.handle_sn_gcn` is called for
+* :meth:`~gwcelery.tasks.external_triggers.handle_snews_gcn` is called for
   each SNEWS GCN.
 
 * :meth:`~gwcelery.tasks.external_triggers.handle_grb_gcn` is called for
   each GRB GCN such as Fermi, Swift, INTEGRAL, and AGILE MCAL.
     
-* :meth:`~gwcelery.tasks.external_triggers.handle_sn_lvalert` is called
+* :meth:`~gwcelery.tasks.external_triggers.handle_snews_lvalert` is called
   for each SNEWS external trigger and superevent LVAlert.
 
 * :meth:`~gwcelery.tasks.external_triggers.handle_grb_lvalert` is called
@@ -178,9 +178,9 @@ Flow Chart
         label="SNEWS external trigger or\nSuperevent LVAlert received"
     ]
 
-    subgraph cluster_sn_lvalert_handle {
-        href = "../gwcelery.tasks.external_triggers.html#gwcelery.tasks.external_triggers.handle_sn_lvalert"
-        label = <<B><FONT face="monospace">handle_sn_lvalert</FONT></B>>
+    subgraph cluster_snews_lvalert_handle {
+        href = "../gwcelery.tasks.external_triggers.html#gwcelery.tasks.external_triggers.handle_snews_lvalert"
+        label = <<B><FONT face="monospace">handle_snews_lvalert</FONT></B>>
 
         ignore [
             label="Ignore"
@@ -202,7 +202,7 @@ Flow Chart
     }
 
     SNEWS_External_Trigger_or_Superevent_LVAlert -> is_new_exttrig_lvalert [
-        lhead = cluster_sn_lvalert_handle
+        lhead = cluster_snews_lvalert_handle
     ]
     is_new_exttrig_lvalert -> perform_raven_search[label="yes"]
     is_new_exttrig_lvalert -> is_new_superevent_lvalert[label="no"]
