@@ -69,7 +69,8 @@ def handle_snews_gcn(payload):
     detchar.check_vectors(event, event['graceid'], start, end)
 
 
-@gcn.handler(gcn.NoticeType.FERMI_GBM_FLT_POS,
+@gcn.handler(gcn.NoticeType.FERMI_GBM_ALERT,
+             gcn.NoticeType.FERMI_GBM_FLT_POS,
              gcn.NoticeType.FERMI_GBM_GND_POS,
              gcn.NoticeType.FERMI_GBM_FIN_POS,
              gcn.NoticeType.SWIFT_BAT_GRB_POS_ACK,
@@ -87,6 +88,13 @@ def handle_grb_gcn(payload):
     Filters out candidates likely to be noise. Creates external events
     from the notice if new notice, otherwise updates existing event. Then
     creates and/or grabs external sky map to be uploaded to the external event.
+
+    More info for these notices can be found at:
+    Fermi-GBM: https://gcn.gsfc.nasa.gov/fermi_grbs.html
+    Fermi-GBM sub: https://gcn.gsfc.nasa.gov/fermi_gbm_subthresh_archive.html
+    Swift: https://gcn.gsfc.nasa.gov/swift.html
+    INTEGRAL: https://gcn.gsfc.nasa.gov/integral.html
+    AGILE-MCAL: https://gcn.gsfc.nasa.gov/agile_mcal.html
     """
     root = etree.fromstring(payload)
     u = urlparse(root.attrib['ivorn'])
@@ -98,6 +106,9 @@ def handle_grb_gcn(payload):
     except AttributeError:
         trig_id = root.find("./What/Param[@name='Trans_Num']").attrib['value']
     ext_group = 'Test' if root.attrib['role'] == 'test' else 'External'
+
+    notice_type = \
+        int(root.find("./What/Param[@name='Packet_Type']").attrib['value'])
 
     stream_obsv_dict = {'/SWIFT': 'Swift',
                         '/Fermi': 'Fermi',
@@ -114,19 +125,27 @@ def handle_grb_gcn(payload):
     #  If not at least 50% chance of GRB we will not consider it for RAVEN
     likely_source = root.find("./What/Param[@name='Most_Likely_Index']")
     likely_prob = root.find("./What/Param[@name='Most_Likely_Prob']")
-    if likely_source is not None and \
+    not_likely_grb = likely_source is not None and \
         (likely_source.attrib['value'] != FERMI_GRB_CLASS_VALUE
-         or likely_prob.attrib['value'] < FERMI_GRB_CLASS_THRESH):
-        labels = ['NOT_GRB']
-    else:
-        labels = None
+         or likely_prob.attrib['value'] < FERMI_GRB_CLASS_THRESH)
+
+    #  Check if initial Fermi alert. These are generally unreliable and should
+    #  never trigger a RAVEN alert, but will give us earlier warning of a
+    #  possible coincidence. Later notices could change this.
+    initial_gbm_alert = notice_type == gcn.NoticeType.FERMI_GBM_ALERT
 
     #  Check if Swift has lost lock. If so then veto
     lost_lock = \
         root.find("./What/Group[@name='Solution_Status']" +
                   "/Param[@name='StarTrack_Lost_Lock']")
-    if lost_lock is not None and lost_lock.attrib['value'] == 'true':
+    swift_veto = lost_lock is not None and lost_lock.attrib['value'] == 'true'
+
+    #  Only send alerts if likely a GRB, is not a low-confidence early Fermi
+    #  alert, and if not a Swift veto
+    if not_likely_grb or initial_gbm_alert or swift_veto:
         labels = ['NOT_GRB']
+    else:
+        labels = None
 
     ivorn = root.attrib['ivorn']
     if 'subthresh' in ivorn.lower():
@@ -165,8 +184,6 @@ def handle_grb_gcn(payload):
         group_canvas += _launch_external_detchar.s(),
 
     if search in {'GRB', 'MDC'}:
-        notice_type = \
-            int(root.find("./What/Param[@name='Packet_Type']").attrib['value'])
         notice_date = root.find("./Who/Date").text
         group_canvas += external_skymaps.create_upload_external_skymap.s(
                       notice_type, notice_date),
@@ -279,23 +296,23 @@ def handle_grb_igwn_alert(alert):
         if _skymaps_are_ready(alert['object'], alert['data']['name'],
                               'compare'):
             # if both sky maps present and a coincidence, compare sky maps
-            se_id, ext_ids = _get_superevent_ext_ids(graceid, alert['object'],
-                                                     'compare')
-            superevent = gracedb.get_superevent(se_id)
+            superevent_id, ext_ids = _get_superevent_ext_ids(
+                graceid, alert['object'], 'compare')
+            superevent = gracedb.get_superevent(superevent_id)
             preferred_event_id = superevent['preferred_event']
             gw_group = gracedb.get_group(preferred_event_id)
             tl, th = raven._time_window(graceid, gw_group,
                                         [alert['object']['pipeline']],
                                         [alert['object']['search']])
-            raven.raven_pipeline([alert['object']], se_id, superevent,
+            raven.raven_pipeline([alert['object']], superevent_id, superevent,
                                  tl, th, gw_group)
         if _skymaps_are_ready(alert['object'], alert['data']['name'],
                               'combine'):
             # if both sky maps present and a raven alert, create combined
             # skymap
-            se_id, ext_id = _get_superevent_ext_ids(graceid, alert['object'],
-                                                    'combine')
-            external_skymaps.create_combined_skymap(se_id, ext_id)
+            superevent_id, ext_id = _get_superevent_ext_ids(
+                graceid, alert['object'], 'combine')
+            external_skymaps.create_combined_skymap(superevent_id, ext_id)
         elif 'EM_COINC' in alert['object']['labels']:
             # if not complete, check if GW sky map; apply label to external
             # event if GW sky map
@@ -310,6 +327,19 @@ def handle_grb_igwn_alert(alert):
             gracedb.create_label.si('SKYMAP_READY', ext_id)
             for ext_id in alert['object']['em_events']
         ).delay()
+    elif alert['alert_type'] == 'label_removed' and \
+            alert['object'].get('group') == 'External':
+        if alert['data']['name'] == 'NOT_GRB':
+            # if NOT_GRB is removed, re-check publishing conditions
+            superevent_id = alert['object']['superevent']
+            superevent = gracedb.get_superevent(superevent_id)
+            gw_group = superevent['preferred_event_data']['group']
+            coinc_far_dict = {
+                'temporal_coinc_far': superevent['time_coinc_far'],
+                'spatiotemporal_coinc_far': superevent['space_coinc_far']
+            }
+            raven.trigger_raven_alert(coinc_far_dict, superevent, graceid,
+                                      alert['object'], gw_group)
 
 
 @igwn_alert.handler('superevent',

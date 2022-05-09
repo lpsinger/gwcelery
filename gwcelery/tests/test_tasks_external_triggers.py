@@ -155,6 +155,38 @@ def test_handle_noise_fermi_event(mock_check_vectors,
     mock_get_upload_external_skymap.assert_called_once()
 
 
+@patch('gwcelery.tasks.external_skymaps.create_external_skymap')
+@patch('gwcelery.tasks.external_skymaps.get_upload_external_skymap.run')
+@patch('gwcelery.tasks.gracedb.get_events', return_value=[])
+@patch('gwcelery.tasks.gracedb.create_event.run', return_value={
+    'graceid': 'E1', 'gpstime': 1, 'instruments': '', 'pipeline': 'Fermi',
+    'search': 'GRB',
+    'extra_attributes': {'GRB': {'trigger_duration': 1, 'trigger_id': 123,
+                                 'ra': 0., 'dec': 0., 'error_radius': 0.}},
+    'links': {'self': 'https://gracedb.ligo.org/events/E356793/'}})
+@patch('gwcelery.tasks.detchar.check_vectors.run')
+def test_handle_initial_fermi_event(mock_check_vectors,
+                                    mock_create_event,
+                                    mock_get_events,
+                                    mock_get_upload_external_skymap,
+                                    mock_create_external_skymap):
+    text = read_binary(data, 'fermi_initial_grb_gcn.xml')
+    external_triggers.handle_grb_gcn(payload=text)
+    mock_get_events.assert_called_once_with(query=(
+                                            'group: External pipeline: '
+                                            'Fermi grbevent.trigger_id '
+                                            '= "548841234"'))
+    # Note that this is the exact ID in the .xml file
+    mock_create_event.assert_called_once_with(filecontents=text,
+                                              search='GRB',
+                                              pipeline='Fermi',
+                                              group='External',
+                                              labels=['NOT_GRB'])
+    mock_check_vectors.assert_called_once()
+    mock_get_upload_external_skymap.assert_called_once()
+    mock_create_external_skymap.assert_not_called()
+
+
 @pytest.mark.parametrize('filename',
                          ['fermi_grb_gcn.xml',
                           'fermi_noise_gcn.xml',
@@ -259,6 +291,45 @@ def test_handle_skymap_comparison(mock_get_event, mock_get_superevent,
                                                 {'superevent_id': 'S1234',
                                                  'preferred_event': 'G1234'},
                                                 -5, 1, 'CBC')
+
+
+@patch('gwcelery.tasks.raven.trigger_raven_alert')
+@patch('gwcelery.tasks.gracedb.get_superevent',
+       return_value={'superevent_id': 'S1234',
+                     'preferred_event': 'G1234',
+                     'preferred_event_data': {
+                         'group': 'CBC'},
+                     'time_coinc_far': 1e-9,
+                     'space_coinc_far': 1e-10})
+def test_handle_label_removed(mock_get_superevent,
+                              mock_trigger_raven_alert):
+    alert = {"uid": "E1212",
+             "alert_type": "label_removed",
+             "data": {"name": "NOT_GRB"},
+             "object": {
+                 "graceid": "E1212",
+                 "group": "External",
+                 "labels": ["EM_COINC", "EXT_SKYMAP_READY", "SKYMAP_READY"],
+                 "superevent": "S1234",
+                 "pipeline": "Fermi",
+                 "search": "GRB"
+                       }
+             }
+    superevent = {'superevent_id': 'S1234',
+                  'preferred_event': 'G1234',
+                  'preferred_event_data': {
+                      'group': 'CBC'},
+                  'time_coinc_far': 1e-9,
+                  'space_coinc_far': 1e-10}
+    coinc_far_dict = {
+                'temporal_coinc_far': 1e-9,
+                'spatiotemporal_coinc_far': 1e-10
+            }
+    external_triggers.handle_grb_igwn_alert(alert)
+    mock_trigger_raven_alert.assert_called_once_with(
+        coinc_far_dict, superevent, alert['uid'],
+        alert['object'], 'CBC'
+    )
 
 
 @patch('gwcelery.tasks.external_skymaps.create_combined_skymap')

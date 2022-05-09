@@ -24,6 +24,8 @@ Changelog
 -   Move functions in handle_grb_gcn to asynchronous group to prevent detchar
     errors from interupting sky map generation.
 -   Prevent sub-threhsold GRBs from overwriting high-threshold GRBs.
+-   Listen to initial GBM alerts for earlier warning. Prevent these events
+    from triggering alerts unless later updated.
 
 1.0.1 (2022-05-09)
 ------------------
