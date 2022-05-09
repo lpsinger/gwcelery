@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.1 (unreleased)
+1.0.1 (2022-05-09)
 ------------------
 
 -   Added ``request_disk`` specification for gwcelery condor submission
@@ -11,6 +11,8 @@ Changelog
     resolve the dependency issues. Will need a full release later.
 
 -   Add ``ligo.em_bright>=0.1.5`` dependency.
+
+-   Update MPICH module in deployment environment for RL8
 
 -   Configure the playground environment to read O3ReplayMDC frames.
 
@@ -36,6 +38,12 @@ Changelog
 
 -   Prevent external GCN notices with no sky map information (all zeros) from
     creating sky maps.
+
+-   Pass --no-deps to pip during deployment because of a bug in pip and because
+    the poetry lock file already contains all of the dependencies
+
+-   Drop --use-feature=in-tree-build from pip call in deployment, as pip now
+    does this by default and has deprecated this option
 
 1.0.0 (2022-01-21)
 ------------------
