@@ -287,7 +287,7 @@ def create_external_skymap(ra, dec, error, pipeline, notice_type=111):
 
     # Renormalize due to possible lack of precision
     # Enforce the skymap to be non-negative
-    return np.abs(skymap) / np.abs(skymap).sum()    
+    return np.abs(skymap) / np.abs(skymap).sum()
 
 
 def write_to_fits(skymap, event, notice_type, notice_date):
