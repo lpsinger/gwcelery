@@ -179,7 +179,7 @@ def handle_cbc_event(alert):
     # Pipelines that upload PSDs in a separate file.
     # FIXME: remove this once all pipelines include the PSDs in the initial
     # upload.
-    pipelines_external_psds = {'gstlal', 'spiir'}
+    pipelines_external_psds = {'spiir'}
 
     # em_bright and p_astro calculation
     if alert['alert_type'] == 'new':
