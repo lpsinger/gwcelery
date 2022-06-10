@@ -11,6 +11,11 @@ igwn_alert_group = 'gracedb-test'
 gracedb_host = 'gracedb-test.ligo.org'
 """GraceDB host."""
 
+kafka_urls = {
+    'scimma': 'kafka://kafka.scimma.org/igwn.gwalert-test'
+}
+"""Kafka broker URLs"""
+
 sentry_environment = 'test'
 """Record this `environment tag
 <https://docs.sentry.io/enriching-error-data/environments/>`_ in Sentry log

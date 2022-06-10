@@ -13,6 +13,7 @@ Changelog
     to fix bilby workflow for O3-replay.
 -   Disable parameter estimation for MDC events as it is currently broken for
     them.
+-   Add a Celery bootstep for external Kafka brokers
 
 -   Enable ingestion and processing of test SNEWS external events.
 

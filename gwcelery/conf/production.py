@@ -19,6 +19,12 @@ igwn_alert_group = 'gracedb'
 gracedb_host = 'gracedb.ligo.org'
 """GraceDB host."""
 
+kafka_urls = {
+    'scimma': 'kafka://kafka.scimma.org/igwn.gwalert',
+    'gcn': 'kafka://kafka.gcn.nasa.gov/igwn.gwalert'
+}
+"""Kafka broker URLs"""
+
 voevent_broadcaster_address = ':5341'
 """The VOEvent broker will bind to this address to send GCNs.
 This should be a string of the form `host:port`. If `host` is empty,

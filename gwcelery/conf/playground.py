@@ -18,6 +18,12 @@ mock_events_simulate_multiple_uploads = True
 """If True, then upload each mock event several times in rapid succession with
 random jitter in order to simulate multiple pipeline uploads."""
 
+kafka_urls = {
+    'scimma': 'kafka://kafka.scimma.org/igwn.gwalert-playground',
+    'gcn': 'kafka://kafka.test.gcn.nasa.gov/igwn.gwalert'
+}
+"""Kafka broker URLs"""
+
 voevent_broadcaster_address = ':5341'
 """The VOEvent broker will bind to this address to send GCNs.
 This should be a string of the form `host:port`. If `host` is empty,

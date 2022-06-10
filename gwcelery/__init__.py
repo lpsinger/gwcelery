@@ -8,6 +8,7 @@ from ._version import get_versions
 from .conf import playground
 from . import email
 from . import igwn_alert
+from . import kafka
 from . import sentry
 from . import voevent
 
@@ -24,6 +25,7 @@ app = Celery(__name__, broker='redis://', config_source=playground)
 email.install(app)
 igwn_alert.install(app)
 voevent.install(app)
+kafka.install(app)
 
 # Register all tasks.
 app.autodiscover_tasks([__name__])

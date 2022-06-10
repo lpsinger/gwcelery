@@ -39,6 +39,9 @@ arguments = "gwcelery worker -l info -n gwcelery-voevent-worker@%h -f %n.log -Q 
 description = gwcelery-voevent-worker
 queue
 
+arguments = "gwcelery worker -l info -n gwcelery-kafka-worker@%h -f %n.log -Q kafka -P solo"
+description = gwcelery-kafka-worker
+queue
 
 # Jobs defined below this point will run on specially configured cluster nodes.
 +Online_EMFollow = True
