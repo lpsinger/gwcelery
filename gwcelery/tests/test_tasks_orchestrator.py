@@ -320,29 +320,10 @@ def test_handle_superevent_retraction_alert(mock_create_retraction_circular,
 
 
 def mock_download(filename, graceid, *args, **kwargs):
-    assert graceid == 'T250822'
+    assert graceid == 'M394156'
     filenames = {'coinc.xml': 'coinc.xml',
-                 'psd.xml.gz': 'psd.xml.gz',
                  'ranking_data.xml.gz': 'ranking_data_G322589.xml.gz'}
     return resources.read_binary(data, filenames[filename])
-
-
-@patch(
-    'gwcelery.tasks.gracedb.get_event._orig_run',
-    return_value={'graceid': 'T250822', 'group': 'CBC', 'pipeline': 'gstlal',
-                  'far': 1e-7,
-                  'extra_attributes':
-                      {'CoincInspiral': {'snr': 10.},
-                       'SingleInspiral': [{'mass1': 10., 'mass2': 5.}]}})
-@patch('gwcelery.tasks.gracedb.download._orig_run', mock_download)
-@patch('gwcelery.tasks.bayestar.localize.run')
-def test_handle_cbc_event(mock_localize, mock_get_event):
-    """Test that an LVAlert message for a newly uploaded PSD file triggers
-    BAYESTAR.
-    """
-    alert = read_json(data, 'lvalert_psd.json')
-    orchestrator.handle_cbc_event(alert)
-    mock_localize.assert_called_once()
 
 
 @pytest.mark.parametrize(
@@ -396,38 +377,14 @@ def test_handle_posterior_samples(monkeypatch, alert_type, filename):
         flatten.assert_called_once()
 
 
+@patch('gwcelery.tasks.gracedb.download._orig_run', mock_download)
+@patch('gwcelery.tasks.bayestar.localize.run')
 @patch('gwcelery.tasks.em_bright.classifier_gstlal.run')
-def test_handle_cbc_event_new_event(mock_classifier):
-    payload = {
-        "uid": "G000003",
-        "alert_type": "new",
-        "description": "",
-        "object": {
-            "graceid": "G000003",
-            "gpstime": 100.0,
-            "pipeline": "gstlal",
-            "labels": [],
-            "group": "CBC",
-            "search": "AllSky",
-            "far": 1.e-31,
-            "instruments": "H1,L1",
-            "extra_attributes": {
-                "CoincInspiral": {"snr": 20},
-                "SingleInspiral": [{
-                    "mass1": 3.0,
-                    "mass2": 1.0,
-                    "spin1z": 0.0,
-                    "spin2z": 0.0,
-                    "snr": 20,
-                    "ifo": "H1",
-                    "chisq": 1.571
-                }]
-            },
-            "offline": False
-        }
-    }
-    orchestrator.handle_cbc_event(payload)
+def test_handle_cbc_event_new_event(mock_classifier, mock_localize):
+    alert = read_json(data, 'lvalert_event_creation.json')
+    orchestrator.handle_cbc_event(alert)
     mock_classifier.assert_called_once()
+    mock_localize.assert_called_once()
 
 
 @patch(
