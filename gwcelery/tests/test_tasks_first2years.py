@@ -1,4 +1,3 @@
-from importlib import resources
 import io
 from unittest.mock import call, patch
 
@@ -8,7 +7,6 @@ from ligo.skymap.io.events.ligolw import ContentHandler
 import pytest
 
 from ..tasks.first2years import pick_coinc, upload_event
-from ..data import first2years as data_first2years
 
 pytest.importorskip('lal')
 
@@ -33,21 +31,16 @@ def test_pick_coinc():
 
 @patch('lal.GPSTimeNow', mock_now)
 @patch('gwcelery.tasks.gracedb.create_event', return_value='M1234')
-@patch('gwcelery.tasks.gracedb.upload.run')
 @patch('gwcelery.tasks.gracedb.get_superevents.run',
        return_value=[{'superevent_id': 'S1234'}])
 @patch('gwcelery.tasks.gracedb.create_signoff.run')
 def test_upload_event(mock_create_signoff, mock_get_superevents,
-                      mock_upload, mock_create_event):
+                      mock_create_event):
     coinc = pick_coinc()
-    psd = resources.read_binary(data_first2years, 'psd.xml.gz')
 
     upload_event()
 
     mock_create_event.assert_called_once_with(coinc, 'MDC', 'gstlal', 'CBC')
-    mock_upload.assert_has_calls([
-        call(psd, 'psd.xml.gz', 'M1234', 'Noise PSD', ['psd'])
-    ])
     mock_get_superevents.assert_called_once_with('MDC event: M1234')
     mock_create_signoff.assert_called_once()
     msg = ('If this had been a real gravitational-wave event candidate, '

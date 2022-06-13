@@ -4,7 +4,9 @@ Changelog
 1.0.2 (unreleased)
 ------------------
 
--   No changes yet
+-   Remove gstlal from list of pipelines that upload PSDs in separate
+    ``psd.xml.gz`` file. Update mock event uploads to include PSD in
+    ``coinc.xml`` upload.
 
 1.0.1 (2022-05-09)
 ------------------

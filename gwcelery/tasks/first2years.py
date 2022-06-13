@@ -137,12 +137,6 @@ def _vet_event(superevents):
         ).apply_async()
 
 
-@gracedb.task(ignore_result=True, shared=False)
-def _upload_psd(graceid):
-    psd = resources.read_binary(data_first2years, 'psd.xml.gz')
-    gracedb.upload(psd, 'psd.xml.gz', graceid, 'Noise PSD', ['psd'])
-
-
 @app.on_after_finalize.connect
 def setup_periodic_tasks(sender, **kwargs):
     """Register periodic tasks.
@@ -168,17 +162,11 @@ def upload_event():
     if app.conf['mock_events_simulate_multiple_uploads']:
         num = 15
         for _ in range(num):
-            (
-                gracedb.create_event.s(
-                    _jitter_snr(coinc), 'MDC', 'gstlal', 'CBC'
-                )
-                |
-                _upload_psd.s()
+            gracedb.create_event.s(
+                 _jitter_snr(coinc), 'MDC', 'gstlal', 'CBC'
             ).apply_async()
 
     (
-        _upload_psd.si(graceid)
-        |
         gracedb.get_superevents.si(
             'MDC event: {}'.format(graceid)
         ).set(countdown=600)
