@@ -197,13 +197,13 @@ def test_setup_dag_for_lalinference_(monkeypatch, tmp_path, psd):
 @pytest.mark.parametrize(
     'host', ['gracedb-playground.ligo.org', 'gracedb.ligo.org'])
 def test_setup_dag_for_bilby(monkeypatch, tmp_path, host):
-    event, rundir = {}, str(tmp_path)
+    event_coinc, rundir = ({}, b'coinc'), str(tmp_path)
     pid, sid = 'G1234', 'S1234'
     monkeypatch.setitem(app.conf, 'gracedb_host', host)
     dag = 'bilby dag'
 
     def _subprocess_run(cmd, **kwargs):
-        is_quick_conf = 'o2replay' in cmd and 'FastTest' in cmd
+        is_quick_conf = 'o3replay' in cmd and 'FastTest' in cmd
         if host == 'gracedb.ligo.org':
             assert not is_quick_conf
         else:
@@ -219,7 +219,7 @@ def test_setup_dag_for_bilby(monkeypatch, tmp_path, host):
     monkeypatch.setattr('subprocess.run', _subprocess_run)
     monkeypatch.setattr('gwcelery.tasks.gracedb.upload.run', upload)
 
-    path_to_dag = inference._setup_dag_for_bilby(event, rundir, pid, sid)
+    path_to_dag = inference._setup_dag_for_bilby(event_coinc, rundir, pid, sid)
     with open(path_to_dag, 'r') as f:
         assert f.read() == dag
     upload.assert_called_once()
@@ -240,7 +240,8 @@ def test_setup_dag_for_failure(monkeypatch, tmp_path, pipeline):
             inference._setup_dag_for_lalinference(
                 (b'coinc', b'psd'), 'ini', rundir, 'S1234')
         elif pipeline == 'bilby':
-            inference._setup_dag_for_bilby({}, rundir, 'G1234', 'S1234')
+            inference._setup_dag_for_bilby(
+                ({}, b'coinc'), rundir, 'G1234', 'S1234')
     assert not os.path.exists(rundir)
     upload.assert_called_once()
 
@@ -265,8 +266,10 @@ def test_dag_prepare_task(monkeypatch, pipeline):
                 and r == rundir and s == sid)
         return path_to_dag
 
-    def _setup_dag_for_bilby(e, r, p, s):
-        assert e == event and r == rundir and p == gid and s == sid
+    def _setup_dag_for_bilby(e_c, r, p, s):
+        e, c = e_c
+        assert (e == event and c == coinc and r == rundir
+                and p == gid and s == sid)
         return path_to_dag
 
     def _subprocess_run(cmd, **kwargs):
@@ -335,11 +338,13 @@ def test_dag_finished(monkeypatch, tmp_path, pipeline):
     gid = 'G1234'
     rundir = str(tmp_path / 'rundir')
     resultdir = str(tmp_path / 'rundir/result')
+    sampledir = str(tmp_path / 'rundir/final_result')
     pe_results_path = str(tmp_path / 'public_html/online_pe')
     monkeypatch.setitem(app.conf, 'pe_results_path', pe_results_path)
     pe_results_path = os.path.join(pe_results_path, gid, pipeline)
     os.makedirs(rundir)
     os.makedirs(resultdir)
+    os.makedirs(sampledir)
     os.makedirs(pe_results_path)
 
     upload = Mock()
@@ -350,6 +355,7 @@ def test_dag_finished(monkeypatch, tmp_path, pipeline):
                         _upload_url)
     monkeypatch.setattr('gwcelery.tasks.gracedb.create_label.run',
                         create_label)
+    monkeypatch.setattr('subprocess.run', Mock())
 
     if pipeline in ['lalinference', 'bilby']:
         if pipeline == 'lalinference':
@@ -362,7 +368,7 @@ def test_dag_finished(monkeypatch, tmp_path, pipeline):
                      os.path.join(pe_results_path, 'extrinsic.png'),
                      os.path.join(pe_results_path, 'sourceFrame.png')]
         else:
-            paths = [os.path.join(resultdir, 'bilby_merge_result.json'),
+            paths = [os.path.join(sampledir, 'Bilby.posterior_samples.hdf5'),
                      os.path.join(resultdir, 'bilby_extrinsic_corner.png'),
                      os.path.join(resultdir, 'bilby_intrinsic_corner.png')]
         for path in paths:

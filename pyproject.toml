@@ -47,7 +47,7 @@ include = [
 [tool.poetry.dependencies]
 python = "^3.8"
 astropy = ">=4.3.1"  # https://github.com/astropy/astropy/issues/11879
-bilby-pipe = ">=0.3.8"
+bilby-pipe = ">=1.0.6"
 celery = {version = ">=5.1", extras = ["redis"]}
 click = "^7"
 comet = "*"
@@ -56,7 +56,7 @@ dnspython = "*"  # silence "DNS: dnspython not found. Can not use SRV lookup." w
 flask = "*"
 flask-caching = "*"
 gracedb-sdk = ">=0.1.5"
-gwdatafind = "*"
+gwdatafind = ">=1.1.1"
 gwpy = ">=2.0.1"  # https://github.com/gwpy/gwpy/issues/1277
 healpy = "*"
 igwn-alert = "*"
@@ -74,7 +74,7 @@ lscsoft-glue = "*"
 lxml = "*"
 numpy = "*"
 p-astro = ">=1.0"
-pesummary = "<0.13"  # https://git.ligo.org/lscsoft/pesummary/-/issues/269. FIXME: remove this requirement entirely once resolved.
+pesummary = "*"
 pygcn = ">=1.0.1"
 python-ligo-lw = "~1.7.0"  # https://git.ligo.org/lscsoft/ligo.skymap/-/merge_requests/255
 safe-netrc = "*"

@@ -7,6 +7,12 @@ Changelog
 -   Remove gstlal from list of pipelines that upload PSDs in separate
     ``psd.xml.gz`` file. Update mock event uploads to include PSD in
     ``coinc.xml`` upload.
+-   Disable lalinference parameter estimation and switch to bilby as a main
+    parameter estimation software.
+-   Add bilby-pipe>=1.0.6 and gwdatafind>=1.1.1 dependency, and unpin pesummary
+    to fix bilby workflow for O3-replay.
+-   Disable parameter estimation for MDC events as it is currently broken for
+    them.
 
 1.0.1 (2022-05-09)
 ------------------

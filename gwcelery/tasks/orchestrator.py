@@ -602,50 +602,33 @@ def _get_lowest_far(superevent_id):
 
 @app.task(ignore_result=True, shared=False)
 def parameter_estimation(far_event, superevent_id):
-    """Tasks for Parameter Estimation Followup with LALInference or Bilby
-
-    For LALInference, this consists of the following steps:
-
-    1.   Prepare and upload an ini file which is suitable for the target event.
-    2.   Start Parameter Estimation if FAR is smaller than the PE threshold.
-
-    For Bilby, this consists of the following steps:
+    """Parameter Estimation with Bilby. This consists of the following steps:
 
     1.   Start Parameter Estimation if FAR is smaller than the PE threshold.
     2.   Upload of ini file during Parameter Estimation
     """
     far, event = far_event
+    # TODO: parameter estimation is disabled for mock uploads as it is
+    # currently broken for them.
+    if event['group'] != 'CBC' or event['search'] == 'MDC':
+        return
     preferred_event_id = event['graceid']
     threshold = (app.conf['preliminary_alert_far_threshold']['cbc'] /
                  app.conf['preliminary_alert_trials_factor']['cbc'])
-    # FIXME: it will be better to start parameter estimation for 'burst'
-    # events.
-    is_production = (app.conf['gracedb_host'] == 'gracedb.ligo.org')
-    is_mdc = (event['search'] == 'MDC')
-    if event['group'] == 'CBC' and not (is_production and is_mdc):
-        canvas = inference.pre_pe_tasks(event, superevent_id)
-        if far <= threshold:
-            pipelines = ['lalinference']
-            # FIXME: The second condition guarantees that the bilby for
-            # playground or test events are started less than once per day to
-            # save computational resources. Once bilby becomes quick enough, we
-            # should drop that condition.
-            if is_production or (is_mdc and superevent_id[8:] == 'a'):
-                pipelines.append('bilby')
-            canvas |= group(
-                inference.start_pe.s(preferred_event_id, superevent_id, p)
-                for p in pipelines)
-        else:
-            canvas |= gracedb.upload.si(
-                          filecontents=None, filename=None,
-                          graceid=superevent_id,
-                          message='FAR is larger than the PE threshold, '
-                                  '{}  Hz. Parameter Estimation will not '
-                                  'start.'.format(threshold),
-                          tags='pe'
-                      )
-
-        canvas.apply_async()
+    canvas = inference.pre_pe_tasks(event, superevent_id)
+    if far <= threshold:
+        canvas |= inference.start_pe.s(
+            preferred_event_id, superevent_id, 'bilby'
+        )
+    else:
+        canvas |= gracedb.upload.si(
+            filecontents=None, filename=None,
+            graceid=superevent_id,
+            message='FAR is larger than the PE threshold, {}  Hz. '
+                    'Parameter Estimation will not start.'.format(threshold),
+            tags='pe'
+        )
+    canvas.apply_async()
 
 
 @gracedb.task(ignore_result=True, shared=False)

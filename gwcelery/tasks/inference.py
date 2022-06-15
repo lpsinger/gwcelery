@@ -268,13 +268,16 @@ def _setup_dag_for_lalinference(coinc_psd, ini_contents,
 
 
 @app.task(shared=False)
-def _setup_dag_for_bilby(event, rundir, preferred_event_id, superevent_id):
+def _setup_dag_for_bilby(
+    event_coinc, rundir, preferred_event_id, superevent_id
+):
     """Create DAG for a bilby run and return the path to DAG.
 
     Parameters
     ----------
-    event : json contents
-        The json contents retrieved from gracedb.get_event()
+    event_coinc : tuple
+        Tuple of the json contents retrieved from gracedb.get_event() and
+        the byte contents of coinc.xml
     rundir : str
         The path to a run directory where the DAG file exits
     preferred_event_id : str
@@ -288,20 +291,26 @@ def _setup_dag_for_bilby(event, rundir, preferred_event_id, superevent_id):
         The path to the .dag file
 
     """
+    event, coinc = event_coinc
+
     path_to_json = os.path.join(rundir, 'event.json')
     with open(path_to_json, 'w') as f:
         json.dump(event, f, indent=2)
+
+    path_to_coinc = os.path.join(rundir, 'coinc.xml')
+    with open(path_to_coinc, 'wb') as f:
+        f.write(coinc)
 
     path_to_webdir = os.path.join(
         app.conf['pe_results_path'], preferred_event_id, 'bilby'
     )
 
     setup_arg = ['bilby_pipe_gracedb', '--webdir', path_to_webdir,
-                 '--outdir', rundir, '--json', path_to_json, '--online-pe',
-                 '--convert-to-flat-in-component-mass']
+                 '--outdir', rundir, '--json', path_to_json,
+                 '--psd-file', path_to_coinc, '--online-pe']
 
     if not app.conf['gracedb_host'] == 'gracedb.ligo.org':
-        setup_arg += ['--channel-dict', 'o2replay',
+        setup_arg += ['--channel-dict', 'o3replay',
                       '--sampler-kwargs', 'FastTest']
     try:
         subprocess.run(setup_arg, capture_output=True, check=True)
@@ -323,7 +332,6 @@ def _setup_dag_for_bilby(event, rundir, preferred_event_id, superevent_id):
             'pe', 'online_bilby_pe.ini')).delay()
 
     path_to_dag, = glob.glob(os.path.join(rundir, 'submit/dag*.submit'))
-    print(path_to_dag)
     return path_to_dag
 
 
@@ -367,8 +375,10 @@ def dag_prepare_task(rundir, superevent_id, preferred_event_id, pe_pipeline,
             _download_psd.si(preferred_event_id)
         ) | _setup_dag_for_lalinference.s(ini_contents, rundir, superevent_id)
     elif pe_pipeline == 'bilby':
-        canvas = gracedb.get_event.si(preferred_event_id) | \
-            _setup_dag_for_bilby.s(rundir, preferred_event_id, superevent_id)
+        canvas = group(
+            gracedb.get_event.si(preferred_event_id),
+            gracedb.download.si('coinc.xml', preferred_event_id)
+        ) | _setup_dag_for_bilby.s(rundir, preferred_event_id, superevent_id)
     else:
         raise NotImplementedError(f'Unknown PE pipeline {pe_pipeline}.')
     canvas |= _condor_no_submit.s()
@@ -572,10 +582,16 @@ def dag_finished(rundir, preferred_event_id, superevent_id, pe_pipeline):
         ]
     elif pe_pipeline == 'bilby':
         resultdir = os.path.join(rundir, 'result')
+        sampledir = os.path.join(rundir, 'final_result')
+        sample_filename = 'Bilby.posterior_samples.hdf5'
+        subprocess.run(
+            ['bilby_pipe_to_ligo_skymap_samples',
+             os.path.join(sampledir, '*result.hdf5'),
+             '--out', os.path.join(sampledir, sample_filename)])
         uploads = [
-            (resultdir, '*merge_result.json',
+            (sampledir, sample_filename,
              'Bilby posterior samples',
-             'Bilby.posterior_samples.json'),
+             sample_filename),
             (resultdir, '*_extrinsic_corner.png',
              'Bilby corner plot for extrinsic parameters',
              'Bilby.extrinsic.png'),
