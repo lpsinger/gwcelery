@@ -617,7 +617,7 @@ def dag_finished(rundir, preferred_event_id, superevent_id, pe_pipeline):
         clean_up.si(rundir)
     ).delay()
 
-    if pe_pipeline == 'lalinference':
+    if pe_pipeline == 'bilby':
         gracedb.create_label.delay('PE_READY', superevent_id)
 
 
