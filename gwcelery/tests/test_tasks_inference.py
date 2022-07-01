@@ -377,7 +377,10 @@ def test_dag_finished(monkeypatch, tmp_path, pipeline):
 
         inference.dag_finished(rundir, gid, 'S1234', pipeline)
         assert upload.call_count == len(paths)
-        _upload_url.assert_called_once()
+        if pipeline == 'lalinference':
+            _upload_url.assert_called_once()
+        else:
+            _upload_url.assert_not_called()
         if pipeline == 'bilby':
             create_label.assert_called_once()
         else:

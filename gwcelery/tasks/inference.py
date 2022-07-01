@@ -607,15 +607,11 @@ def dag_finished(rundir, preferred_event_id, superevent_id, pe_pipeline):
         upload_tasks += upload_results_tasks(
             dir, name1, superevent_id, comment, 'pe', name2)
 
-    # FIXME: _upload_url.si has to be out of group for
-    # gracedb.create_label.si to run
-    (
-        _upload_url.si(pe_results_path, superevent_id, pe_pipeline)
-        |
-        group(upload_tasks)
-        |
-        clean_up.si(rundir)
-    ).delay()
+    chain = group(upload_tasks) | clean_up.si(rundir)
+    if pe_pipeline == 'lalinference':
+        chain = \
+            _upload_url.si(pe_results_path, superevent_id, pe_pipeline) | chain
+    chain.delay()
 
     if pe_pipeline == 'bilby':
         gracedb.create_label.delay('PE_READY', superevent_id)
