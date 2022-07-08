@@ -24,13 +24,6 @@ build:
 .install-redis: &install-redis
   apt-get install -y -qq redis-server
 
-# Install cython.
-# FIXME: This is needed to build ancient version of scikit-learn that p-astro
-# depends on. Remove once https://git.ligo.org/lscsoft/p-astro/-/issues/11
-# is fixed.
-.install-cython: &install-cython
-  ${PYTHON} -m pip install cython
-
 .test-common:
   stage: test
   extends:
@@ -69,7 +62,6 @@ test/poetry/python3.9:
     PYTEST_OPTIONS: "--pyargs $CI_PROJECT_NAME"
   before_script:
     - INSTALL_TARGET=$(echo *.whl)[test]
-    - *install-cython
     - !reference [".debian:base", before_script]
     - !reference [".python:pytest", before_script]
     - *install-redis
@@ -115,7 +107,6 @@ doc:
     SOURCEDIR: doc
     REQUIREMENTS: .[doc]
   before_script:
-    - *install-cython
     - !reference [".debian:base", before_script]
     - !reference [".python:sphinx", before_script]
     - apt-get install -y -qq graphviz
