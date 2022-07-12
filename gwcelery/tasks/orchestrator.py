@@ -207,23 +207,24 @@ def handle_cbc_event(alert):
             gracedb.create_label.si('EMBRIGHT_READY', graceid)
         ).apply_async(priority=priority)
 
-        # p_astro calculation for other pipelines
-        if pipeline != 'gstlal' or alert['object']['search'] == 'MDC':
-            (
-                p_astro.compute_p_astro.s(snr,
-                                          far,
-                                          mass1,
-                                          mass2,
-                                          pipeline,
-                                          instruments)
-                |
-                gracedb.upload.s(
-                    'p_astro.json', graceid,
-                    'p_astro computation complete', ['p_astro', 'public']
-                )
-                |
-                gracedb.create_label.si('PASTRO_READY', graceid)
-            ).apply_async(priority=priority)
+        # p_astro calculation for pipelines
+        # FIXME: Use reference implementation for p_astro for all
+        # pipelines including gstlal until filename is fixed.
+        (
+            p_astro.compute_p_astro.s(snr,
+                                      far,
+                                      mass1,
+                                      mass2,
+                                      pipeline,
+                                      instruments)
+            |
+            gracedb.upload.s(
+                'p_astro.json', graceid,
+                'p_astro computation complete', ['p_astro', 'public']
+            )
+            |
+            gracedb.create_label.si('PASTRO_READY', graceid)
+        ).apply_async(priority=priority)
 
         # Start BAYESTAR for pipelines that embed PSDs in the initial upload.
         if pipeline not in pipelines_external_psds:
