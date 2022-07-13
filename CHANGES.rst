@@ -37,6 +37,10 @@ Changelog
 -   Listen to initial GBM alerts for earlier warning. Prevent these events
     from triggering alerts unless later updated.
 
+-   Reduce GraceDB REST API GET requests in superevents by taking advantage of
+    ``superevent_neighbours`` and ``preferred_event_data`` fields in
+    the new igwn-alert packets.
+
 1.0.1 (2022-05-09)
 ------------------
 

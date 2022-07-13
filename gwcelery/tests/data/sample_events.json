@@ -1,6 +1,151 @@
 [
-{"graceid": "G1", "gpstime": 1, "pipeline": "pipeline", "group": "CBC", "extra_attributes": {"CoincInspiral": {"false_alarm_rate": 1e-8, "combined_far": 1e-8, "ifos": "H1,L1,V1", "snr": 7}, "SingleInspiral":[{"ifo": "H1"}, {"ifo": "L1"}, {"ifo": "V1"}]}, "far": 1e-8, "instruments": "H1,L1,V1", "labels": ["PASTRO_READY", "EMBRIGHT_READY", "SKYMAP_READY"], "search": "LowMass", "nevents": 2, "superevent": "S1", "submitter": "submitter", "offline": false, "likelihood": 0.0, "far_is_upper_limit": false},
-{"graceid": "G2", "gpstime": 1.1, "pipeline": "pipeline", "group": "CBC", "extra_attributes": {"CoincInspiral": {"false_alarm_rate": 1e-10, "combined_far": 1e-10, "ifos": "H1,L1,V1", "snr": 8}, "SingleInspiral":[{"ifo": "H1"}, {"ifo": "L1"}, {"ifo": "V1"}]}, "far": 1e-10, "instruments": "H1,L1,V1", "labels": ["PASTRO_READY", "EMBRIGHT_READY"], "search": "LowMass", "nevents": 2, "superevent": "S1", "submitter": "submitter", "offline": false, "likelihood": 0.0, "far_is_upper_limit": false},
-{"graceid": "G3", "gpstime": 1.2, "pipeline": "pipeline", "group": "CBC", "extra_attributes": {"CoincInspiral": {"false_alarm_rate": 1e-9, "combined_far": 1e-9, "ifos": "H1,L1,V1", "snr": 10}, "SingleInspiral":[{"ifo": "H1"}, {"ifo": "L1"}, {"ifo": "V1"}]}, "far": 1e-10, "instruments": "H1,L1,V1", "labels": ["PASTRO_READY", "EMBRIGHT_READY", "SKYMAP_READY"], "search": "LowMass", "nevents": 2, "superevent": "S1", "submitter": "submitter", "offline": false, "likelihood": 0.0, "far_is_upper_limit": false},
-{"pipeline": "Fermi", "nevents": null, "search": "GRB", "labels": ["EM_COINC", "SKYMAP_READY", "RAVEN_ALERT"], "instruments": "", "group": "External", "graceid": "E280506", "extra_attributes": {"GRB": {"redshift": null, "author_shortname": "Vermi", "trigger_duration": 3.141, "ra": 0.0, "dec": 0.0, "designation": null, "error_radius": 0.0}}, "superevent": "S1", "offline": false, "likelihood": null, "far_is_upper_limit": false, "far": null, "gpstime": 3.0}
+  {
+    "graceid": "G1",
+    "gpstime": 1,
+    "pipeline": "pipeline",
+    "group": "CBC",
+    "extra_attributes": {
+      "CoincInspiral": {
+        "false_alarm_rate": 1e-08,
+        "combined_far": 1e-08,
+        "ifos": "H1,L1,V1",
+        "snr": 7
+      },
+      "SingleInspiral": [
+        {
+          "ifo": "H1"
+        },
+        {
+          "ifo": "L1"
+        },
+        {
+          "ifo": "V1"
+        }
+      ]
+    },
+    "far": 1e-08,
+    "instruments": "H1,L1,V1",
+    "labels": [
+      "PASTRO_READY",
+      "EMBRIGHT_READY",
+      "SKYMAP_READY"
+    ],
+    "search": "LowMass",
+    "nevents": 2,
+    "superevent": "S1",
+    "superevent_neighbours": {"S1": {}},
+    "submitter": "submitter",
+    "offline": false,
+    "likelihood": 0,
+    "far_is_upper_limit": false
+  },
+  {
+    "graceid": "G2",
+    "gpstime": 1.1,
+    "pipeline": "pipeline",
+    "group": "CBC",
+    "extra_attributes": {
+      "CoincInspiral": {
+        "false_alarm_rate": 1e-10,
+        "combined_far": 1e-10,
+        "ifos": "H1,L1,V1",
+        "snr": 8
+      },
+      "SingleInspiral": [
+        {
+          "ifo": "H1"
+        },
+        {
+          "ifo": "L1"
+        },
+        {
+          "ifo": "V1"
+        }
+      ]
+    },
+    "far": 1e-10,
+    "instruments": "H1,L1,V1",
+    "labels": [
+      "PASTRO_READY",
+      "EMBRIGHT_READY"
+    ],
+    "search": "LowMass",
+    "nevents": 2,
+    "superevent": "S1",
+    "submitter": "submitter",
+    "offline": false,
+    "likelihood": 0,
+    "far_is_upper_limit": false
+  },
+  {
+    "graceid": "G3",
+    "gpstime": 1.2,
+    "pipeline": "pipeline",
+    "group": "CBC",
+    "extra_attributes": {
+      "CoincInspiral": {
+        "false_alarm_rate": 1e-09,
+        "combined_far": 1e-09,
+        "ifos": "H1,L1,V1",
+        "snr": 10
+      },
+      "SingleInspiral": [
+        {
+          "ifo": "H1"
+        },
+        {
+          "ifo": "L1"
+        },
+        {
+          "ifo": "V1"
+        }
+      ]
+    },
+    "far": 1e-10,
+    "instruments": "H1,L1,V1",
+    "labels": [
+      "PASTRO_READY",
+      "EMBRIGHT_READY",
+      "SKYMAP_READY"
+    ],
+    "search": "LowMass",
+    "nevents": 2,
+    "superevent": "S1",
+    "superevent_neighbours": {"S1": {}},
+    "submitter": "submitter",
+    "offline": false,
+    "likelihood": 0,
+    "far_is_upper_limit": false
+  },
+  {
+    "pipeline": "Fermi",
+    "nevents": null,
+    "search": "GRB",
+    "labels": [
+      "EM_COINC",
+      "SKYMAP_READY",
+      "RAVEN_ALERT"
+    ],
+    "instruments": "",
+    "group": "External",
+    "graceid": "E280506",
+    "extra_attributes": {
+      "GRB": {
+        "redshift": null,
+        "author_shortname": "Vermi",
+        "trigger_duration": 3.141,
+        "ra": 0,
+        "dec": 0,
+        "designation": null,
+        "error_radius": 0
+      }
+    },
+    "superevent": "S1",
+    "superevent_neighbours": {"S1": {}},
+    "offline": false,
+    "likelihood": null,
+    "far_is_upper_limit": false,
+    "far": null,
+    "gpstime": 3
+  }
 ]

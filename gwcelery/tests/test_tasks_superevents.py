@@ -1,6 +1,6 @@
 from celery import exceptions
 import pytest
-from unittest.mock import call, patch, Mock
+from unittest.mock import call, patch
 
 from requests.exceptions import HTTPError
 from requests.models import Response
@@ -9,184 +9,13 @@ from ..tasks import gracedb, superevents
 from ..util import read_json
 from . import data
 
-igwn_alert_content = {
-    'object': {
-        'graceid': '',
-        'gpstime': '',
-        'pipeline': '',
-        'group': '',
-        'created': '',
-        'far': '',
-        'instruments': '',
-        'labels': [],
-        'extra_attributes': [],
-        'submitter': 'deep.chatterjee@ligo.org',
-        'offline': False
-    },
-    'data': {
-        'graceid': '',
-        'gpstime': '',
-        'pipeline': '',
-        'group': '',
-        'created': '',
-        'far': '',
-        'instruments': '',
-        'labels': [],
-        'extra_attributes': [],
-        'submitter': 'deep.chatterjee@ligo.org',
-        'offline': False
-    },
-    'alert_type': 'new',
-    'uid': ''
-}
 
-
-G330308_RESPONSE = {
-    'graceid': 'G330308',
-    'gpstime': 1239917954.250977,
-    'pipeline': 'pycbc',
-    'group': 'CBC',
-    'offline': False,
-    'far': 1.48874654585461e-08,
-    'instruments': 'H1,L1',
-    'extra_attributes': {
-        'SingleInspiral': [
-            {
-                'chisq': 1.07,
-                'snr': 7.95,
-                'ifo': 'L1'
-            },
-            {
-                'chisq': 0.54,
-                'snr': 6.35,
-                'ifo': 'H1'
-            }
-        ],
-        'CoincInspiral': {
-            'snr': 10.17
-        }
-    },
-    'search': 'AllSky',
-    'superevent': 'S190421ar',
-    'labels': ['PASTRO_READY', 'EMBRIGHT_READY']
-}
-
-
-G330298_RESPONSE = {
-    'graceid': 'G330298',
-    'gpstime': 1239917954.40918,
-    'pipeline': 'spiir',
-    'group': 'CBC',
-    'offline': False,
-    'far': 5.57979637960671e-06,
-    'instruments': 'H1,L1',
-    'extra_attributes': {
-        'SingleInspiral': [
-            {
-                'chisq': 0.61,
-                'snr': 6.64,
-                'ifo': 'L1'
-            },
-            {
-                'chisq': 1.1,
-                'snr': 8.14,
-                'ifo': 'H1'
-            }
-        ],
-        'CoincInspiral': {
-            'snr': 10.51
-        }
-    },
-    'search': 'HighMass',
-    'superevent': 'S190421ar',
-    'labels': []
-}
-
-
-G000003_RESPONSE = {
-    "graceid": "G000003",
-    "pipeline": "gstlal",
-    "group": "CBC",
-    "search": "AllSky",
-    "far": 1.e-6,
-    "superevent": "S100",
-    "group": "CBC",
-    "instruments": "H1,L1",
-    'extra_attributes': {
-        'SingleInspiral': [
-            {
-                'chisq': 1.07,
-                'snr': 10.95,
-                'ifo': 'L1'
-            },
-            {
-                'chisq': 0.54,
-                'snr': 12.35,
-                'ifo': 'H1'
-            }
-        ],
-        'CoincInspiral': {
-            'snr': 10.17
-        },
-    },
-    "offline": False,
-    "gpstime": 1000000,
-    "labels": ["RAVEN_ALERT", "PASTRO_READY",
-               "EMBRIGHT_READY", "SKYMAP_READY"]
-}
+SUPEREVENTS_NEIGHBOURS = read_json(data, 'superevents.json')
+"""Dictionary storing mock superevent neighbors"""
 
 
 def assert_not_called_with(mock, *args, **kwargs):
     assert call(*args, **kwargs) not in mock.call_args_list
-
-
-def s100response(sid):
-    return {
-        "category": "Production",
-        "created": "2018-09-19 18:28:54 UTC",
-        "em_events": ["E0155"],
-        "far": 0.0000342353,
-        "gw_events": [
-            "G000003"
-        ],
-        "gw_id": None,
-        "labels": [],
-        "preferred_event": "G000003",
-        "submitter": "albert.einstein@LIGO.ORG",
-        "superevent_id": "S100",
-        "t_0": 1167264018.0,
-        "t_end": 1167264025.0,
-        "t_start": 1167264014.0
-    }
-
-
-@pytest.fixture(autouse=True)
-def mock_db(monkeypatch):
-
-    def get_superevents(*args, **kwargs):
-        return read_json(data, 'superevents.json')['superevents']
-
-    def get_event(gid):
-        if gid == "T0212":
-            return read_json(data, 'T0212_S0039_preferred.json')
-        elif gid == "G000003":
-            return G000003_RESPONSE
-        elif gid == "G000012":
-            return read_json(data, 'G000012_S0040_preferred.json')
-        elif gid == "G330308":
-            return G330308_RESPONSE
-        elif gid == "G330298":
-            return G330298_RESPONSE
-        else:
-            raise ValueError("Called with incorrect preferred event %s" % gid)
-
-    monkeypatch.setattr('gwcelery.tasks.gracedb.create_superevent', Mock())
-    monkeypatch.setattr('gwcelery.tasks.gracedb.get_superevents', Mock())
-    monkeypatch.setattr('gwcelery.tasks.gracedb.add_event_to_superevent',
-                        Mock())
-    monkeypatch.setattr('gwcelery.tasks.gracedb.get_superevents',
-                        get_superevents)
-    monkeypatch.setattr('gwcelery.tasks.gracedb.get_event', get_event)
 
 
 def test_select_preferred_event():
@@ -250,30 +79,16 @@ def test_update_preferred_event(superevent_labels, new_event_labels,
 
     new_event_dictionary['labels'] = new_event_labels
 
-    superevent_s0039 = superevents._SuperEvent(
-        1163905214.44,
-        1163905239.44,
-        1163905224.44,
-        'S0039',
-        preferred_event='T0212',
-        event_dict={
-            "labels": superevent_labels, "superevent_id": "S0039",
-            "submitter": "deep.chatterjee@LIGO.ORG",
-            "preferred_event": "T0212",
-            "t_start": 1163905214.44,
-            "em_events": [],
-            "t_0": 1163905224.44,
-            "gw_events": ["T0212", "T0211", "T0210"],
-            "t_end": 1163905239.44,
-            "created": "2018-05-09 07:23:16 UTC"
-        }
-    )
+    superevent_response = SUPEREVENTS_NEIGHBOURS['S0039'].copy()
+    superevent_response['labels'] = superevent_labels
+    superevent_response['preferred_event_data'] = preferred_event_dictionary
+    mock_get_superevent = patch('gwcelery.tasks.gracedb.get_superevent',
+                                return_value=superevent_response)
 
-    with patch('gwcelery.tasks.gracedb.update_superevent') as p, \
-            patch('gwcelery.tasks.gracedb.create_label.run') as create_label, \
-            patch('gwcelery.tasks.gracedb.get_event',
-                  return_value=preferred_event_dictionary):
-        superevents._update_superevent(superevent_s0039,
+    with mock_get_superevent, \
+            patch('gwcelery.tasks.gracedb.update_superevent') as p, \
+            patch('gwcelery.tasks.gracedb.create_label.run') as create_label:
+        superevents._update_superevent('S0039',
                                        new_event_dictionary,
                                        None,
                                        None,
@@ -325,12 +140,10 @@ def test_update_preferred_event(superevent_labels, new_event_labels,
                           ['SKYMAP_READY', 'EMBRIGHT_READY',
                            'PASTRO_READY', 'RAVEN_ALERT']])
 @patch('gwcelery.tasks.gracedb.create_label.run')
-@patch('gwcelery.tasks.gracedb.get_superevent', s100response)
 def test_raven_alert(mock_create_label, labels):
     payload = {
         "uid": "G000003",
         "alert_type": "label_added",
-        "description": "",
         "object": {
             "graceid": "G000003",
             "pipeline": "gstlal",
@@ -339,6 +152,54 @@ def test_raven_alert(mock_create_label, labels):
             "far": 1.e-6,
             "instruments": "H1,L1",
             "superevent": "S100",
+            "superevent_neighbours": {
+                "S100": {
+                    "far": 0.0000342353,
+                    "gw_events": [
+                        "G000003"
+                    ],
+                    "preferred_event": "G000003",
+                    "preferred_event_data": {
+                        "created": "",
+                        "extra_attributes": {
+                            'SingleInspiral': [
+                                {
+                                    'chisq': 1.07,
+                                    'snr': 10.95,
+                                    'ifo': 'L1'
+                                },
+                                {
+                                    'chisq': 0.54,
+                                    'snr': 12.35,
+                                    'ifo': 'H1'
+                                }
+                            ],
+                            'CoincInspiral': {
+                                'snr': 10.17
+                            },
+                        },
+                        "far": 1.e-6,
+                        "far_is_upper_limit": False,
+                        "gpstime": 1000000,
+                        "graceid": "G000003",
+                        "group": "CBC",
+                        "instruments": "H1,L1",
+                        "labels": labels,
+                        "likelihood": "",
+                        "nevents": 0,
+                        "offline": False,
+                        "pipeline": "gstlal",
+                        "reporting_latency": "",
+                        "search": "",
+                        "submitter": "albert.einstein@LIGO.ORG"
+                    },
+                    "superevent_id": "S100",
+                    "labels": [],
+                    "t_0": 1167264018.0,
+                    "t_end": 1167264025.0,
+                    "t_start": 1167264014.0
+                }
+            },
             "offline": False,
             "gpstime": 1000000,
             "labels": labels,
@@ -364,7 +225,10 @@ def test_raven_alert(mock_create_label, labels):
             "name": "RAVEN_ALERT"
         }
     }
-    superevents.handle(payload)
+    superevent_response = payload['object']['superevent_neighbours']['S100']
+    with patch('gwcelery.tasks.gracedb.get_superevent',
+               return_value=superevent_response):
+        superevents.handle(payload)
     calls = [call('ADVREQ', 'S100')]
     if {'SKYMAP_READY', 'EMBRIGHT_READY', 'PASTRO_READY'}.issubset(labels):
         calls.append(call('EM_Selected', 'S100'))
@@ -410,80 +274,57 @@ def test_process_called(labels, label):
             process.assert_not_called()
 
 
-def _mock_superevents(*args, **kwargs):
-    return [
-        {
-            "superevent_id": "S123456",
-            "preferred_event": "G000002",
-            "t_start": 99.0,
-            "t_0": 100.0,
-            "gw_events": [
-                "G000002",
-            ],
-            "t_end": 101.0,
-            "labels": []
-        }
-    ]
+_mock_event_data = {
+    "graceid": "G000002",
+    "gpstime": 100.0,
+    "pipeline": "gstlal",
+    "group": "CBC",
+    "far": 1.e-31,
+    "instruments": "H1,L1",
+    "labels": [],
+    "extra_attributes": {
+        "CoincInspiral": {"snr": 20},
+        "SingleInspiral": [{"ifo": ifo} for ifo in ["H1", "L1"]]
+    },
+    "offline": False
+}
+
+_mock_superevent_data = {
+    "superevent_id": "S123456",
+    "preferred_event": "G000002",
+    "preferred_event_data": _mock_event_data,
+    "t_start": 99.0,
+    "t_0": 100.0,
+    "gw_events": [
+        "G000002",
+    ],
+    "t_end": 101.0,
+    "labels": []
+}
 
 
 def _mock_event(event):
     if event == "G000002":
-        return {
-            "graceid": "G000002",
-            "gpstime": 100.0,
-            "pipeline": "gstlal",
-            "group": "CBC",
-            "far": 1.e-31,
-            "instruments": "H1,L1",
-            "labels": [],
-            "extra_attributes": {
-                "CoincInspiral": {"snr": 20},
-                "SingleInspiral": [{"ifo": ifo} for ifo in ["H1", "L1"]]
-            },
-            "offline": False
-        }
+        _mock_event_data['superevent_neighbours'] = {
+            _mock_superevent_data['superevent_id']: _mock_superevent_data}
+        return _mock_event_data
 
 
-@patch('gwcelery.tasks.gracedb.get_superevents', _mock_superevents)
-@patch('gwcelery.tasks.gracedb.get_event', _mock_event)
+@patch('gwcelery.tasks.gracedb.get_superevent',
+       lambda _: _mock_superevent_data)
 def test_upload_same_event():
     """New event uploaded with the same coinc file as an
-    existing event G000002. This could happen during testing
-    the superevent manager.
+    existing event G000002. The second upload should be added to
+    the superevent, but no attribute should change.
     """
     # payload same as _mock_event except graceid
+    object_for_G000003 = _mock_event("G000002").copy()
+    object_for_G000003['graceid'] = "G000003"
     payload = {
         "uid": "G000003",
         "alert_type": "new",
-        "description": "",
-        "object": {
-            "graceid": "G000003",
-            "gpstime": 100.0,
-            "pipeline": "gstlal",
-            "group": "CBC",
-            "far": 1.e-31,
-            "instruments": "H1,L1",
-            "extra_attributes": {
-                "CoincInspiral": {"snr": 20},
-                "SingleInspiral": [{"ifo": ifo} for ifo in ["H1", "L1"]]
-            },
-            "offline": False,
-            "labels": []
-        },
-        "data": {
-            "graceid": "G000003",
-            "gpstime": 100.0,
-            "pipeline": "gstlal",
-            "group": "CBC",
-            "far": 1.e-31,
-            "instruments": "H1,L1",
-            "extra_attributes": {
-                "CoincInspiral": {"snr": 20},
-                "SingleInspiral": [{"ifo": ifo} for ifo in ["H1", "L1"]]
-            },
-            "offline": False,
-            "labels": []
-        }
+        "object": object_for_G000003,
+        "data": object_for_G000003
     }
     with patch('gwcelery.tasks.gracedb.add_event_to_superevent') as p1, \
             patch('gwcelery.tasks.gracedb.update_superevent') as p2:
@@ -550,7 +391,9 @@ def test_raising_http_error(failing_create_superevent):
                 "CoincInspiral": {"snr": 20}
             },
             "offline": False,
-            "labels": []
+            "labels": [],
+            "superevent": None,
+            "superevent_neighbours": {}
         },
         "data": {
             "graceid": "G000003",
@@ -563,7 +406,9 @@ def test_raising_http_error(failing_create_superevent):
                 "CoincInspiral": {"snr": 20}
             },
             "offline": False,
-            "labels": []
+            "labels": [],
+            "superevent": None,
+            "superevent_neighbours": {}
         }
     }
     with pytest.raises(
@@ -571,7 +416,7 @@ def test_raising_http_error(failing_create_superevent):
         superevents.handle.delay(payload)
 
 
-def test_parse_trigger_cbc_1(mock_db):
+def test_parse_trigger_cbc_1():
     """New trigger G000000, less significant than already
     existing superevent. Superevent window much larger than event
     window of G000000.
@@ -587,23 +432,28 @@ def test_parse_trigger_cbc_1(mock_db):
                         'far': 3e-09,
                         'instruments': 'H1,L1',
                         'labels': [],
+                        'superevent': None,
+                        'superevent_neighbours': SUPEREVENTS_NEIGHBOURS,
                         'extra_attributes': {
                             'CoincInspiral': {'snr': 10.0},
                             'SingleInspiral': [
                                 {'ifo': ifo} for ifo in ['H1', 'L1']]}}
-    payload = dict(igwn_alert_content,
-                   object=event_dictionary,
+    payload = dict(object=event_dictionary,
                    data=event_dictionary,
                    alert_type='new',
                    uid='G000000')
-    with patch('gwcelery.tasks.gracedb.add_event_to_superevent') as p1, \
+    superevent_reponse = patch(
+        'gwcelery.tasks.gracedb.get_superevent',
+        return_value=SUPEREVENTS_NEIGHBOURS['S0039'])
+    with superevent_reponse, \
+            patch('gwcelery.tasks.gracedb.add_event_to_superevent') as p1, \
             patch('gwcelery.tasks.gracedb.update_superevent') as p2:
         superevents.handle(payload)
         p1.assert_called_once()
         p2.assert_not_called()
 
 
-def test_parse_trigger_cbc_2(mock_db):
+def test_parse_trigger_cbc_2():
     """New trigger G000003, more significant than already
     existing superevent. Superevent window is much larger that
     event window of G000000
@@ -616,18 +466,24 @@ def test_parse_trigger_cbc_2(mock_db):
                         'far': 3e-31,
                         'instruments': 'H1,L1',
                         'labels': [],
+                        'superevent': None,
+                        'superevent_neighbours': SUPEREVENTS_NEIGHBOURS,
                         'extra_attributes': {
                             'CoincInspiral': {'snr': 30.0},
                             'SingleInspiral': [
                                 {"ifo": ifo} for ifo in ["H1", "L1"]]}}
-    payload = dict(igwn_alert_content,
-                   object=event_dictionary,
+    payload = dict(object=event_dictionary,
                    data=event_dictionary,
                    alert_type='new',
                    uid='G000003')
+    superevent_reponse = patch(
+        'gwcelery.tasks.gracedb.get_superevent',
+        return_value=SUPEREVENTS_NEIGHBOURS['S0039'])
+
     # addEventToSuperevent should be called
     # preferred event should be updated, t_0 should change
-    with patch('gwcelery.tasks.gracedb.add_event_to_superevent') as p1, \
+    with superevent_reponse, \
+            patch('gwcelery.tasks.gracedb.add_event_to_superevent') as p1, \
             patch('gwcelery.tasks.gracedb.update_superevent') as p2, \
             patch('gwcelery.tasks.gracedb.create_label.run') as create_label:
         superevents.handle(payload)
@@ -641,7 +497,7 @@ def test_parse_trigger_cbc_2(mock_db):
             assert_not_called_with(create_label, 'EM_READY', 'S0039')
 
 
-def test_parse_trigger_cbc_3(mock_db):
+def test_parse_trigger_cbc_3():
     """New trigger G000001, not present among superevents
     New superevent created.
     """
@@ -653,13 +509,14 @@ def test_parse_trigger_cbc_3(mock_db):
                         'far': 3e-31,
                         'instruments': 'H1,L1,V1',
                         'labels': [],
+                        'superevent': None,
+                        'superevent_neighbours': SUPEREVENTS_NEIGHBOURS,
                         'extra_attributes': {
                             'CoincInspiral': {'snr': 12.0},
                             'SingleInspiral': [
                                 {"ifo": ifo} for ifo in
                                 ["H1", "L1", "V1"]]}}
-    payload = dict(igwn_alert_content,
-                   object=event_dictionary,
+    payload = dict(object=event_dictionary,
                    data=event_dictionary,
                    alert_type='new',
                    uid='G000001')
@@ -671,7 +528,7 @@ def test_parse_trigger_cbc_3(mock_db):
         p.assert_called_once()
 
 
-def test_parse_trigger_cbc_4(mock_db):
+def test_parse_trigger_cbc_4():
     """New trigger G000002, doesn't pass far threshold"""
     event_dictionary = {'graceid': 'G000002',
                         'gpstime': 1286741861.52678,
@@ -681,13 +538,14 @@ def test_parse_trigger_cbc_4(mock_db):
                         'far': 5.5e-02,
                         'instruments': 'H1,L1,V1',
                         'labels': [],
+                        'superevent': None,
+                        'superevent_neighbours': SUPEREVENTS_NEIGHBOURS,
                         'extra_attributes': {
                             'CoincInspiral': {'snr': 4.0},
                             'SingleInspiral': [
                                 {"ifo": ifo} for ifo in
                                 ["H1", "L1", "V1"]]}}
-    payload = dict(igwn_alert_content,
-                   alert_type='new',
+    payload = dict(alert_type='new',
                    object=event_dictionary,
                    data=event_dictionary,
                    uid='G000002')
@@ -698,7 +556,7 @@ def test_parse_trigger_cbc_4(mock_db):
         mock_process.assert_not_called()
 
 
-def test_parse_trigger_burst_1(mock_db):
+def test_parse_trigger_burst_1():
     """New cwb trigger G000005 with gpstime lying partially in
     S0039 window, not more significant than existing preferred
     event, superevent window changed.
@@ -711,19 +569,26 @@ def test_parse_trigger_burst_1(mock_db):
                         'far': 3.02e-09,
                         'instruments': 'H1,L1',
                         'labels': [],
+                        'superevent': None,
+                        'superevent_neighbours': SUPEREVENTS_NEIGHBOURS,
                         'extra_attributes': {
                             'MultiBurst': {
                                 'duration': 0.23639,
                                 'start_time': 1163905215,
                                 'snr': 10.3440}}}
-    payload = dict(igwn_alert_content,
-                   object=event_dictionary,
+    payload = dict(object=event_dictionary,
                    data=event_dictionary,
                    alert_type='new',
                    uid='G000005')
+
+    superevent_response = patch(
+        'gwcelery.tasks.gracedb.get_superevent',
+        return_value=SUPEREVENTS_NEIGHBOURS['S0039'])
+
     # preferred event should not be updated
     # superevent window should change
-    with patch('gwcelery.tasks.gracedb.add_event_to_superevent') as p1, \
+    with superevent_response, \
+            patch('gwcelery.tasks.gracedb.add_event_to_superevent') as p1, \
             patch('gwcelery.tasks.gracedb.update_superevent') as p2:
         superevents.handle(payload)
         p1.assert_called_once()
@@ -732,7 +597,7 @@ def test_parse_trigger_burst_1(mock_db):
                                    t_start=pytest.approx(1163905214, abs=1))
 
 
-def test_parse_trigger_burst_2(mock_db):
+def test_parse_trigger_burst_2():
     """New oLIB trigger G000006 with gpstime lying partially in
     S0039 window, more significant than already existing preferred
     event. superevent window changed
@@ -747,17 +612,23 @@ def test_parse_trigger_burst_2(mock_db):
                         'far': 3.02e-16,
                         'instruments': 'H1,L1',
                         'labels': [],
+                        'superevent': None,
+                        'superevent_neighbours': SUPEREVENTS_NEIGHBOURS,
                         'extra_attributes': {
                             'LalInferenceBurst': {
                                 'quality_mean': 20.6458,
                                 'frequency_mean': 117.9644,
                                 'omicron_snr_network': 8.77}}}
-    payload = dict(igwn_alert_content,
-                   object=event_dictionary,
+    payload = dict(object=event_dictionary,
                    data=event_dictionary,
                    alert_type='new',
                    uid='G000006')
-    with patch('gwcelery.tasks.gracedb.add_event_to_superevent') as p1, \
+    superevent_response = patch(
+        'gwcelery.tasks.gracedb.get_superevent',
+        return_value=SUPEREVENTS_NEIGHBOURS['S0039'])
+
+    with superevent_response, \
+            patch('gwcelery.tasks.gracedb.add_event_to_superevent') as p1, \
             patch('gwcelery.tasks.gracedb.update_superevent') as p2:
         superevents.handle(payload)
         p1.assert_called_once()
@@ -766,7 +637,7 @@ def test_parse_trigger_burst_2(mock_db):
                                    t_start=pytest.approx(1163905214, abs=1))
 
 
-def test_parse_trigger_burst_3(mock_db):
+def test_parse_trigger_burst_3():
     """New oLIB trigger G000007, not present among superevents
     New superevent created.
     Q_mean = frequency_mean = 100., hence d_t_start = d_t_end = 1s
@@ -779,13 +650,14 @@ def test_parse_trigger_burst_3(mock_db):
                         'far': 3.02e-16,
                         'instruments': 'H1,L1',
                         'labels': [],
+                        'superevent': None,
+                        'superevent_neighbours': SUPEREVENTS_NEIGHBOURS,
                         'extra_attributes': {
                             'LalInferenceBurst': {
                                 'quality_mean': 100.0,
                                 'frequency_mean': 100.0,
                                 'omicron_snr_network': 8.0}}}
-    payload = dict(igwn_alert_content,
-                   object=event_dictionary,
+    payload = dict(object=event_dictionary,
                    data=event_dictionary,
                    alert_type='new',
                    uid='G000007')
@@ -799,7 +671,7 @@ def test_parse_trigger_burst_3(mock_db):
                                   pytest.approx(1163905250.5))
 
 
-def test_parse_trigger_burst_4(mock_db):
+def test_parse_trigger_burst_4():
     """New CWB trigger G000008, not present among superevents
     New superevent created.
     extra attribute duration = 0.02s
@@ -812,13 +684,14 @@ def test_parse_trigger_burst_4(mock_db):
                         'far': 1.23e-09,
                         'instruments': 'H1,L1',
                         'labels': [],
+                        'superevent': None,
+                        'superevent_neighbours': SUPEREVENTS_NEIGHBOURS,
                         'extra_attributes': {
                             'MultiBurst': {
                                 'duration': 0.02,
                                 'start_time': 1128658942,
                                 'snr': 19.824}}}
-    payload = dict(igwn_alert_content,
-                   object=event_dictionary,
+    payload = dict(object=event_dictionary,
                    data=event_dictionary,
                    alert_type='new',
                    uid='G000008')
@@ -829,7 +702,7 @@ def test_parse_trigger_burst_4(mock_db):
         p.assert_called_once()
 
 
-def test_S190421ar_spiir_scenario(mock_db):    # noqa: N802
+def test_S190421ar_spiir_scenario():    # noqa: N802
     """Test to ensure that a low FAR event with accidental high
     SNR is not promoted to the preferred event status. For example, here,
     the new event G330298 has SNR 10.51, higher than the preferred event
@@ -844,17 +717,23 @@ def test_S190421ar_spiir_scenario(mock_db):    # noqa: N802
                         'pipeline': 'spiir',
                         'offline': False,
                         'labels': [],
+                        'superevent': None,
+                        'superevent_neighbours': SUPEREVENTS_NEIGHBOURS,
                         'extra_attributes': {
                             'CoincInspiral': {
                                 'snr': 10.5107507705688},
                             'SingleInspiral': [
                                 {"ifo": ifo} for ifo in ["H1", "L1"]]}}
-    payload = dict(igwn_alert_content,
-                   alert_type='new',
+    payload = dict(alert_type='new',
                    object=event_dictionary,
                    data=event_dictionary,
                    uid='G330298')
-    with patch('gwcelery.tasks.gracedb.add_event_to_superevent') as p1, \
+    superevent_response = patch(
+        'gwcelery.tasks.gracedb.get_superevent',
+        return_value=SUPEREVENTS_NEIGHBOURS['S190421ar'])
+
+    with superevent_response, \
+            patch('gwcelery.tasks.gracedb.add_event_to_superevent') as p1, \
             patch('gwcelery.tasks.gracedb.update_superevent') as p2:
         superevents.handle(payload)
         p1.assert_called_once()

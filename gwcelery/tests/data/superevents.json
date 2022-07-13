@@ -1,111 +1,336 @@
 {
-    "numRows": 18,
-    "superevents": [
-        {
-            "labels": [
-
-            ],
-            "superevent_id": "S0041",
-            "submitter": "deep.chatterjee@LIGO.ORG",
-            "preferred_event": "T0217",
-            "t_start": 1061338859.05,
-            "em_events": [
-
-            ],
-            "t_0": 1061338864.05,
-            "gw_events": [
-                "T0219",
-                "T0218",
-                "T0217",
-                "T0216"
-            ],
-            "t_end": 1061338869.05,
-            "created": "2018-05-10 18:56:21 UTC",
-            "links": {
-                "self": "https://gracedb-dev1.ligo.org/api/superevents/S0041/",
-                "labels": "https://gracedb-dev1.ligo.org/api/superevents/S0041/labels/",
-                "logs": "https://gracedb-dev1.ligo.org/api/superevents/S0041/logs/",
-                "events": "https://gracedb-dev1.ligo.org/api/superevents/S0041/events/",
-                "voevents": "https://gracedb-dev1.ligo.org/api/superevents/S0041/voevents/",
-                "files": "https://gracedb-dev1.ligo.org/api/superevents/S0041/files/",
-                "emobservations": "TBD"
-            }
-        },
-        {
-            "labels": [
-
-            ],
-            "superevent_id": "S0040",
-            "submitter": "deep.chatterjee@LIGO.ORG",
-            "preferred_event": "G000012",
-            "t_start": 1078515564.0,
-            "em_events": [
-
-            ],
-            "t_0": 1078515565.0,
-            "gw_events": [
-                "G000012"
-            ],
-            "t_end": 1078515566.0,
-            "created": "2018-05-10 18:29:02 UTC",
-            "links": {
-                "self": "https://gracedb-dev1.ligo.org/api/superevents/S0040/",
-                "labels": "https://gracedb-dev1.ligo.org/api/superevents/S0040/labels/",
-                "logs": "https://gracedb-dev1.ligo.org/api/superevents/S0040/logs/",
-                "events": "https://gracedb-dev1.ligo.org/api/superevents/S0040/events/",
-                "voevents": "https://gracedb-dev1.ligo.org/api/superevents/S0040/voevents/",
-                "files": "https://gracedb-dev1.ligo.org/api/superevents/S0040/files/",
-                "emobservations": "TBD"
-            }
-        },
-        {
-            "labels": [
-
-            ],
-            "superevent_id": "S0039",
-            "submitter": "deep.chatterjee@LIGO.ORG",
-            "preferred_event": "T0212",
-            "t_start": 1163905214.44,
-            "em_events": [
-
-            ],
-            "t_0": 1163905224.44,
-            "gw_events": [
-                "T0212",
-                "T0211",
-                "T0210"
-            ],
-            "t_end": 1163905239.44,
-            "created": "2018-05-09 07:23:16 UTC",
-            "links": {
-                "self": "https://gracedb-dev1.ligo.org/api/superevents/S0039/",
-                "labels": "https://gracedb-dev1.ligo.org/api/superevents/S0039/labels/",
-                "logs": "https://gracedb-dev1.ligo.org/api/superevents/S0039/logs/",
-                "events": "https://gracedb-dev1.ligo.org/api/superevents/S0039/events/",
-                "voevents": "https://gracedb-dev1.ligo.org/api/superevents/S0039/voevents/",
-                "files": "https://gracedb-dev1.ligo.org/api/superevents/S0039/files/",
-                "emobservations": "TBD"
-            }
-        },
-        {
-            "labels": [
-
-            ],
-            "superevent_id": "S190421ar",
-            "created": "2019-04-21 21:39:16 UTC",
-            "preferred_event": "G330308",
-            "t_start": 1239917953.250977,
-            "t_0": 1239917954.40918,
-            "t_end": 1239917955.40918,
-            "gw_events": ["G330308"],
-            "far": 1.48874654585461e-08
+  "S0041": {
+    "labels": [],
+    "far": 1e-10,
+    "superevent_id": "S0041",
+    "preferred_event": "T0217",
+    "preferred_event_data": {
+      "extra_attributes": {
+        "SingleInspiral": [
+          {
+            "Gamma1": -662.50171,
+            "Gamma4": -20.539438,
+            "eff_distance": 2189.0596,
+            "psi3": -949.42133,
+            "mtotal": 23.478067,
+            "sigmasq": 845986248.232064,
+            "mchirp": 10.064469,
+            "Gamma0": 358780.03,
+            "mass1": 13.60044,
+            "tau2": 2.6977291,
+            "eta": 0.24371424,
+            "ifo": "H1",
+            "end_time_gmst": 31402.9700637974,
+            "end_time": 1061338864,
+            "tau4": 0.151914,
+            "channel": "FAKE-STRAIN",
+            "template_duration": 30.507843521946,
+            "Gamma3": 8.6963263,
+            "chisq": 0.65085709,
+            "tau0": 29.71183,
+            "f_final": 1906.3959,
+            "search": "tmpltbank",
+            "chisq_dof": 1,
+            "coa_phase": -0.07418716,
+            "snr": 13.286913,
+            "mass2": 9.8776274,
+            "tau3": 2.1703069,
+            "Gamma5": 57.627792,
+            "ttotal": 30.391159,
+            "Gamma2": 2556.6213,
+            "end_time_ns": 76276078,
+            "psi0": 51990.879
+          },
+          {
+            "Gamma1": -662.50171,
+            "Gamma4": -20.539438,
+            "eff_distance": 1623.0696,
+            "psi3": -949.42133,
+            "mtotal": 23.478067,
+            "sigmasq": 845986248.232064,
+            "mchirp": 10.064469,
+            "Gamma0": 358780.03,
+            "mass1": 13.60044,
+            "tau2": 2.6977291,
+            "eta": 0.24371424,
+            "ifo": "L1",
+            "end_time_gmst": 31402.9700640114,
+            "end_time": 1061338864,
+            "tau4": 0.151914,
+            "channel": "FAKE-STRAIN",
+            "template_duration": 30.507843521946,
+            "Gamma3": 8.6963263,
+            "chisq": 0.66025233,
+            "tau0": 29.71183,
+            "f_final": 1906.3959,
+            "search": "tmpltbank",
+            "chisq_dof": 1,
+            "coa_phase": 2.9499717,
+            "snr": 17.920269,
+            "mass2": 9.8776274,
+            "tau3": 2.1703069,
+            "Gamma5": 57.627792,
+            "ttotal": 30.391159,
+            "Gamma2": 2556.6213,
+            "end_time_ns": 79211450,
+            "psi0": 51990.879
+          },
+          {
+            "Gamma1": -662.50171,
+            "Gamma4": -20.539438,
+            "eff_distance": 2323.4199,
+            "psi3": -949.42133,
+            "mtotal": 23.478067,
+            "sigmasq": 453387443.254161,
+            "mchirp": 10.064469,
+            "Gamma0": 358780.03,
+            "mass1": 13.60044,
+            "tau2": 2.6977291,
+            "eta": 0.24371424,
+            "ifo": "V1",
+            "end_time_gmst": 31402.9700633043,
+            "end_time": 1061338864,
+            "tau4": 0.151914,
+            "channel": "FAKE_h_16384Hz_4R",
+            "template_duration": 30.507843521946,
+            "Gamma3": 8.6963263,
+            "chisq": 1.0104573,
+            "tau0": 29.71183,
+            "f_final": 1906.3959,
+            "search": "tmpltbank",
+            "chisq_dof": 1,
+            "coa_phase": 1.9486179,
+            "snr": 9.164463,
+            "mass2": 9.8776274,
+            "tau3": 2.1703069,
+            "Gamma5": 57.627792,
+            "ttotal": 30.391159,
+            "Gamma2": 2556.6213,
+            "end_time_ns": 69514428,
+            "psi0": 51990.879
+          }
+        ],
+        "CoincInspiral": {
+          "mass": 23.4780673980713,
+          "ifos": "H1,L1,V1",
+          "minimum_duration": 58.923723922,
+          "combined_far": 1.57469034332286e-15,
+          "end_time": 1061338864,
+          "false_alarm_rate": 3.44036451499692e-09,
+          "mchirp": 10.0644693374634,
+          "end_time_ns": 76276078,
+          "snr": 14.1177420013143
         }
+      },
+      "offline": false,
+      "nevents": 3,
+      "far": 1e-10,
+      "graceid": "T0217",
+      "far_is_upper_limit": false,
+      "instruments": "H1,L1,V1",
+      "pipeline": "gstlal",
+      "likelihood": 3.16351696864855e+45,
+      "created": "2018-05-10 18:57:58 UTC",
+      "submitter": "deep.chatterjee@LIGO.ORG",
+      "group": "Test",
+      "labels": [],
+      "superevent": "S0041",
+      "gpstime": 1061338864.076276
+    },
+    "t_start": 1061338859.05,
+    "t_0": 1061338864.05,
+    "gw_events": [
+      "T0219",
+      "T0218",
+      "T0217",
+      "T0216"
     ],
-    "links": {
-        "self": "https://gracedb-dev1.ligo.org/api/superevents/",
-        "previous": null,
-        "first": "https://gracedb-dev1.ligo.org/api/superevents/",
-        "last": "https://gracedb-dev1.ligo.org/api/superevents/?count=3&start=18",
-        "next": "https://gracedb-dev1.ligo.org/api/superevents/?count=3&start=3"
-    }
+    "t_end": 1061338869.05
+  },
+  "S0040": {
+    "labels": [],
+    "far": 3.021362523404484e-10,
+    "superevent_id": "S0040",
+    "preferred_event": "G000012",
+    "preferred_event_data": {
+      "graceid": "G000012",
+      "gpstime": 1078515565,
+      "pipeline": "oLIB",
+      "group": "Burst",
+      "links": {
+        "neighbors": "",
+        "files": "",
+        "log": "",
+        "tags": "",
+        "self": "",
+        "labels": "",
+        "filemeta": "",
+        "emobservations": ""
+      },
+      "created": 1524056420.473776,
+      "far": 3.021362523404484e-10,
+      "instruments": "H1,L1",
+      "labels": {},
+      "extra_attributes": {
+        "LalInferenceBurst": {
+          "omicron_snr_H1": 20,
+          "quality_mean": 100,
+          "hrss_mean": 5,
+          "frequency_median": 100,
+          "hrss_median": 5e-23,
+          "omicron_snr_network": 8,
+          "omicron_snr_L1": 26,
+          "bsn": 20,
+          "frequency_mean": 100,
+          "quality_median": 100,
+          "omicron_snr_V1": null,
+          "bci": 7
+        }
+      },
+      "submitter": "deep.chatterjee@ligo.org",
+      "offline": false
+    },
+    "t_start": 1078515564,
+    "t_end": 1078515566,
+    "t_0": 1078515565,
+    "gw_events": [
+      "G000012"
+    ]
+  },
+  "S0039": {
+    "labels": [],
+    "superevent_id": "S0039",
+    "preferred_event": "T0212",
+    "preferred_event_data": {
+      "extra_attributes": {
+        "SingleInspiral": [
+          {
+            "Gamma1": 1301,
+            "Gamma0": 498303,
+            "eff_distance": 1082.0029,
+            "mtotal": 59.551109,
+            "sigmasq": 388288325.487022,
+            "mchirp": 25.655746,
+            "mass1": 33.658367,
+            "spin2z": -0.25708467,
+            "eta": 0.24574879,
+            "ifo": "H1",
+            "end_time_gmst": 38882.227816743,
+            "channel": "GDS-CALIB_STRAIN",
+            "template_duration": 3.0830845033459,
+            "end_time": 1163905224,
+            "chisq": 1.8269345,
+            "spin1z": -0.74969435,
+            "f_final": 719.54395,
+            "tau0": 2.1185076,
+            "chisq_dof": 1,
+            "coa_phase": -2.8013358,
+            "snr": 18.211626,
+            "mass2": 25.89274,
+            "tau3": 0.58876282,
+            "end_time_ns": 433208220
+          },
+          {
+            "Gamma1": 1301,
+            "Gamma0": 498303,
+            "eff_distance": 1285.2217,
+            "mtotal": 59.551109,
+            "sigmasq": 388288325.487022,
+            "mchirp": 25.655746,
+            "mass1": 33.658367,
+            "spin2z": -0.25708467,
+            "eta": 0.24574879,
+            "ifo": "L1",
+            "end_time_gmst": 38882.2278162379,
+            "channel": "GDS-CALIB_STRAIN",
+            "template_duration": 3.0830845033459,
+            "end_time": 1163905224,
+            "chisq": 2.0833051,
+            "spin1z": -0.74969435,
+            "f_final": 719.54395,
+            "tau0": 2.1185076,
+            "chisq_dof": 1,
+            "coa_phase": -0.05576409,
+            "snr": 15.332011,
+            "mass2": 25.89274,
+            "tau3": 0.58876282,
+            "end_time_ns": 426281437
+          }
+        ],
+        "CoincInspiral": {
+          "mass": 59.5511074066162,
+          "ifos": "H1,L1",
+          "minimum_duration": 22.5667917728424,
+          "combined_far": 9.94694273123401e-15,
+          "end_time": 1163905224,
+          "false_alarm_rate": 3.02136252340448e-09,
+          "mchirp": 25.6557464599609,
+          "end_time_ns": 433208220,
+          "snr": 23.8061733931842
+        }
+      },
+      "far": 9.94694273123401e-15,
+      "far_is_upper_limit": false,
+      "gpstime": 1163905224.433208,
+      "graceid": "T0212",
+      "group": "CBC",
+      "instruments": "H1,L1",
+      "labels": [],
+      "offline": false,
+      "pipeline": "gstlal"
+    },
+    "t_start": 1163905214.44,
+    "t_0": 1163905224.44,
+    "gw_events": [
+      "T0212",
+      "T0211",
+      "T0210"
+    ],
+    "t_end": 1163905239.44,
+    "far": ""
+  },
+  "S190421ar": {
+    "labels": [],
+    "superevent_id": "S190421ar",
+    "preferred_event": "G330308",
+    "preferred_event_data": {
+      "graceid": "G330308",
+      "gpstime": 1239917954.250977,
+      "pipeline": "pycbc",
+      "group": "CBC",
+      "offline": false,
+      "far": 1.48874654585461e-08,
+      "instruments": "H1,L1",
+      "extra_attributes": {
+        "SingleInspiral": [
+          {
+            "chisq": 1.07,
+            "snr": 7.95,
+            "ifo": "L1"
+          },
+          {
+            "chisq": 0.54,
+            "snr": 6.35,
+            "ifo": "H1"
+          }
+        ],
+        "CoincInspiral": {
+          "snr": 10.17
+        }
+      },
+      "search": "AllSky",
+      "superevent": "S190421ar",
+      "labels": [
+        "PASTRO_READY",
+        "EMBRIGHT_READY"
+      ]
+    },
+    "t_start": 1239917953.250977,
+    "t_0": 1239917954.40918,
+    "t_end": 1239917955.40918,
+    "gw_events": [
+      "G330308"
+    ],
+    "far": 1.48874654585461e-08
+  }
 }

@@ -86,36 +86,34 @@ def process(payload):
     Parameters
     ----------
     payload : dict
-        LVAlert payload
+        IGWN alert payload
 
     """
     event_info = payload['object']
     gid = event_info['graceid']
-    category = get_category(event_info)
     t_0, t_start, t_end = get_ts(event_info)
 
     if event_info.get('superevent'):
         sid = event_info['superevent']
         log.info('Event %s already belongs to superevent %s', gid, sid)
-        s = gracedb.get_superevent(sid)
+        # superevent_neighbours has current and nearby superevents
+        s = event_info['superevent_neighbours'][sid]
         superevent = _SuperEvent(s['t_start'],
                                  s['t_end'],
                                  s['t_0'],
-                                 s['superevent_id'],
-                                 s['preferred_event'], s)
-        _update_superevent(superevent,
+                                 s['superevent_id'])
+        _update_superevent(superevent.superevent_id,
                            event_info,
                            t_0=t_0,
                            t_start=None,
                            t_end=None)
-    else:  # not event_info.get('superevent')
+    else:
         log.info('Event %s does not yet belong to a superevent', gid)
-        superevents = gracedb.get_superevents('category: {} {} .. {}'.format(
-            category,
-            event_info['gpstime'] - app.conf['superevent_query_d_t_start'],
-            event_info['gpstime'] + app.conf['superevent_query_d_t_end']))
+        # note that superevent_neightbours contain nearby superevents
+        # in the same category
+        superevent_neighbors = event_info['superevent_neighbours']
 
-        for s in superevents:
+        for s in superevent_neighbors.values():
             if gid in s['gw_events']:
                 sid = s['superevent_id']
                 log.info('Event %s found assigned to superevent %s', gid, sid)
@@ -123,30 +121,25 @@ def process(payload):
                     log.info('Label %s added to %s',
                              payload['data']['name'], gid)
                 elif payload['alert_type'] == 'new':
-                    log.info('New type LVAlert for %s with '
+                    log.info('new alert type for %s with '
                              'existing superevent %s. '
                              'No action required', gid, sid)
                     return
                 superevent = _SuperEvent(s['t_start'],
                                          s['t_end'],
                                          s['t_0'],
-                                         s['superevent_id'],
-                                         s['preferred_event'], s)
-                _update_superevent(superevent,
+                                         s['superevent_id'])
+                _update_superevent(superevent.superevent_id,
                                    event_info,
                                    t_0=t_0,
                                    t_start=None,
                                    t_end=None)
                 break
         else:  # s not in superevents
-            event_segment = _Event(t_0, t_start, t_end,
-                                   event_info['graceid'],
-                                   event_info['group'],
-                                   event_info['pipeline'],
-                                   event_info.get('search'),
-                                   event_dict=event_info)
+            event_segment = _Event(t_start, t_end, t_0, event_info['graceid'])
 
-            superevent = _partially_intersects(superevents, event_segment)
+            superevent = _partially_intersects(superevent_neighbors.values(),
+                                               event_segment)
 
             if superevent:
                 sid = superevent.superevent_id
@@ -165,7 +158,7 @@ def process(payload):
                     log.info('%s is completely contained in %s',
                              event_segment.gid, sid)
                     new_t_start = new_t_end = None
-                _update_superevent(superevent,
+                _update_superevent(superevent.superevent_id,
                                    event_info,
                                    t_0=t_0,
                                    t_start=new_t_start,
@@ -189,28 +182,6 @@ def process(payload):
                 gracedb.create_label(FROZEN_LABEL, sid)
 
 
-def get_category(event):
-    """Get the superevent category for an event.
-
-    Parameters
-    ----------
-    event : dict
-        Event dictionary (e.g., the return value from
-        :meth:`gwcelery.tasks.gracedb.get_event`).
-
-    Returns
-    -------
-    {'mdc', 'test', 'production'}
-
-    """
-    if event.get('search') == 'MDC':
-        return 'mdc'
-    elif event['group'] == 'Test':
-        return 'test'
-    else:
-        return 'production'
-
-
 def get_ts(event):
     """Get time extent of an event, depending on pipeline-specific parameters.
 
@@ -225,7 +196,8 @@ def get_ts(event):
     ----------
     event : dict
         Event dictionary (e.g., the return value from
-        :meth:`gwcelery.tasks.gracedb.get_event`).
+        :meth:`gwcelery.tasks.gracedb.get_event` or
+        ``preferred_event_data`` in igwn-alert packet.)
 
     Returns
     -------
@@ -264,7 +236,8 @@ def get_snr(event):
     ----------
     event : dict
         Event dictionary (e.g., the return value from
-        :meth:`gwcelery.tasks.gracedb.get_event`).
+        :meth:`gwcelery.tasks.gracedb.get_event`, or
+        ``preferred_event_data`` in igwn-alert packet.)
 
     Returns
     -------
@@ -294,7 +267,8 @@ def get_instruments(event):
     ----------
     event : dict
         Event dictionary (e.g., the return value from
-        :meth:`gwcelery.tasks.gracedb.get_event`).
+        :meth:`gwcelery.tasks.gracedb.get_event`, or
+        ``preferred_event_data`` in igwn-alert packet.)
 
     Returns
     -------
@@ -314,7 +288,8 @@ def get_instruments_in_ranking_statistic(event):
     ----------
     event : dict
         Event dictionary (e.g., the return value from
-        :meth:`gwcelery.tasks.gracedb.get_event`).
+        :meth:`gwcelery.tasks.gracedb.get_event`, or
+        ``preferred_event_data`` in igwn-alert packet.)
 
     Returns
     -------
@@ -376,7 +351,8 @@ def is_complete(event):
     ----------
     event : dict
         Event dictionary (e.g., the return value from
-        :meth:`gwcelery.tasks.gracedb.get_event`).
+        :meth:`gwcelery.tasks.gracedb.get_event`, or
+        ``preferred_event_data`` in igwn-alert packet.)
 
     """
     group = event['group'].lower()
@@ -401,7 +377,8 @@ def should_publish(event):
     ----------
     event : dict
         Event dictionary (e.g., the return value from
-        :meth:`gwcelery.tasks.gracedb.get_event`).
+        :meth:`gwcelery.tasks.gracedb.get_event`, or
+        ``preferred_event_data`` in igwn-alert packet.)
 
     Returns
     -------
@@ -476,7 +453,7 @@ def keyfunc(event):
             significance)
 
 
-def _update_superevent(superevent, new_event_dict,
+def _update_superevent(superevent_id, new_event_dict,
                        t_0, t_start, t_end):
     """Update preferred event and/or change time window. Events with multiple
     detectors take precedence over single-detector events, then CBC events take
@@ -486,8 +463,8 @@ def _update_superevent(superevent, new_event_dict,
 
     Parameters
     ----------
-    superevent : object
-        instance of :class:`_SuperEvent`
+    superevent_id : str
+        the superevent_id
     new_event_dict : dict
         event info of the new trigger as a dictionary
     t_0 : float
@@ -498,16 +475,17 @@ def _update_superevent(superevent, new_event_dict,
         end time of `superevent_id`, None for no change
 
     """
-    superevent_id = superevent.superevent_id
-    preferred_event = superevent.preferred_event
+    # labels and preferred event in the IGWN alert are not the latest
+    superevent_dict = gracedb.get_superevent(superevent_id)
 
+    superevent_labels = superevent_dict['labels']
+    preferred_event_dict = superevent_dict['preferred_event_data']
     kwargs = {}
     if t_start is not None:
         kwargs['t_start'] = t_start
     if t_end is not None:
         kwargs['t_end'] = t_end
-    if FROZEN_LABEL not in superevent.event_dict['labels']:
-        preferred_event_dict = gracedb.get_event(preferred_event)
+    if FROZEN_LABEL not in superevent_labels:
         if keyfunc(new_event_dict) > keyfunc(preferred_event_dict):
             # update preferred event when EM_Selected is not applied
             kwargs['t_0'] = t_0
@@ -515,6 +493,7 @@ def _update_superevent(superevent, new_event_dict,
 
     if kwargs:
         gracedb.update_superevent(superevent_id, **kwargs)
+
     # completeness takes first precedence in deciding preferred event
     # necessary and suffiecient condition to superevent as ready
     if is_complete(new_event_dict):
@@ -528,8 +507,8 @@ def _superevent_segment_list(superevents):
     Parameters
     ----------
     superevents : list
-        List of superevent dictionaries (e.g., the return value from
-        :meth:`gwcelery.tasks.gracedb.get_superevents`).
+        List of superevent dictionaries (e.g., the values
+        of field ``superevent_neighbours`` in igwn-alert packet).
 
     Returns
     -------
@@ -537,13 +516,9 @@ def _superevent_segment_list(superevents):
         superevents as a segmentlist object
 
     """
-    return segmentlist([_SuperEvent(s.get('t_start'),
-                        s.get('t_end'),
-                        s.get('t_0'),
-                        s.get('superevent_id'),
-                        s.get('preferred_event'),
-                        s)
-                       for s in superevents])
+    return segmentlist(
+        [_SuperEvent(s['t_start'], s['t_end'], s['t_0'], s['superevent_id'])
+         for s in superevents])
 
 
 def _partially_intersects(superevents, event_segment):
@@ -554,8 +529,8 @@ def _partially_intersects(superevents, event_segment):
     Parameters
     ----------
     superevents : list
-        list pulled down using the gracedb client
-        :method:`superevents`
+        list of superevents. Typical value of
+        ``superevent_neighbours.values()``.
     event_segment : segment
         segment object whose index is wanted
 
@@ -576,17 +551,12 @@ def _partially_intersects(superevents, event_segment):
 class _Event(segment):
     """An event implemented as an extension of :class:`segment`."""
 
-    def __new__(cls, t0, t_start, t_end, *args, **kwargs):
+    def __new__(cls, t_start, t_end, *args, **kwargs):
         return super().__new__(cls, t_start, t_end)
 
-    def __init__(self, t0, t_start, t_end, gid, group=None, pipeline=None,
-                 search=None, event_dict={}):
-        self.t0 = t0
+    def __init__(self, t_start, t_end, t_0, gid):
+        self.t_0 = t_0
         self.gid = gid
-        self.group = group
-        self.pipeline = pipeline
-        self.search = search
-        self.event_dict = event_dict
 
 
 class _SuperEvent(segment):
@@ -595,11 +565,8 @@ class _SuperEvent(segment):
     def __new__(cls, t_start, t_end, *args, **kwargs):
         return super().__new__(cls, t_start, t_end)
 
-    def __init__(self, t_start, t_end, t_0, sid,
-                 preferred_event=None, event_dict={}):
+    def __init__(self, t_start, t_end, t_0, sid):
         self.t_start = t_start
         self.t_end = t_end
         self.t_0 = t_0
         self.superevent_id = sid
-        self.preferred_event = preferred_event
-        self.event_dict = event_dict
