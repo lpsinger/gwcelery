@@ -19,6 +19,8 @@ Changelog
     Add acceptance tests for the RAVEN alert system. Add options to use
     the superevent search field in coincident searches. Update preferred
     external event based on best available.
+-   Report the URL of multi-resolution FITS files in GCN Notices and create
+    flat-resolution files asynchronously.
 
 1.0.1 (2022-05-09)
 ------------------

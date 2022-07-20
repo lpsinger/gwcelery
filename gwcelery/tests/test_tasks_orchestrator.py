@@ -230,7 +230,7 @@ def superevent_initial_alert_download(filename, graceid):
 @patch('gwcelery.tasks.gracedb.expose._orig_run', return_value=None)
 @patch('gwcelery.tasks.gracedb.get_log',
        return_value=[{'tag_names': ['sky_loc', 'public'],
-                      'filename': 'foobar.fits.gz',
+                      'filename': 'foobar.multiorder.fits',
                       'file_version': 0},
                      {'tag_names': ['em_bright'],
                       'filename': 'em_bright.json',
@@ -269,7 +269,7 @@ def test_handle_superevent_initial_alert(mock_create_initial_circular,
     mock_create_voevent.assert_called_once_with(
         'S1234', 'initial', BBH=0.02, BNS=0.94, NSBH=0.03, ProbHasNS=0.0,
         ProbHasRemnant=0.0, Terrestrial=0.01, internal=False, open_alert=True,
-        skymap_filename='foobar.fits.gz,0', skymap_type='foobar',
+        skymap_filename='foobar.multiorder.fits,0', skymap_type='foobar',
         raven_coinc='RAVEN_ALERT' in labels)
     mock_send.assert_called_once_with('contents of S1234-Initial-1.xml')
     if 'RAVEN_ALERT' in labels:
@@ -277,7 +277,7 @@ def test_handle_superevent_initial_alert(mock_create_initial_circular,
     else:
         mock_create_initial_circular.assert_called_once_with('S1234')
     mock_create_tag.assert_has_calls(
-        [call('foobar.fits.gz,0', 'public', 'S1234'),
+        [call('foobar.multiorder.fits,0', 'public', 'S1234'),
          call('em_bright.json,0', 'public', 'S1234'),
          call('p_astro.json,0', 'public', 'S1234'),
          call('S1234-Initial-1.xml', 'public', 'S1234')],

@@ -161,7 +161,7 @@ def typeahead_skymap_filename():
     return jsonify(_search_by_tag_and_filename(
         request.args.get('superevent_id') or '',
         request.args.get('filename') or '',
-        '.fits.gz', 'sky_loc'
+        '.multiorder.fits', 'sky_loc'
     ))
 
 

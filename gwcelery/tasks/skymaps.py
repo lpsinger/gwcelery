@@ -30,7 +30,18 @@ def annotate_fits(filecontents, versioned_filename, graceid, tags):
     This function downloads a FITS file and then generates and uploads all
     derived images as well as an HTML dump of the FITS header.
     """
-    filebase = versioned_filename.partition('.fits')[0]
+    multiorder_extension = '.multiorder.fits'
+    flat_extension = '.fits'
+
+    if multiorder_extension in versioned_filename:
+        extension = multiorder_extension
+        multiorder = True
+    else:
+        extension = flat_extension
+        multiorder = False
+
+    filebase, _, _ = versioned_filename.partition(extension)
+
     header_msg = (
         'FITS headers for <a href="/api/superevents/{graceid}/files/'
         '{versioned_filename}">{versioned_filename}</a>').format(
@@ -43,18 +54,34 @@ def annotate_fits(filecontents, versioned_filename, graceid, tags):
         'Volume rendering of <a href="/api/superevents/{graceid}/files/'
         '{versioned_filename}">{versioned_filename}</a>').format(
             graceid=graceid, versioned_filename=versioned_filename)
+    flatten_msg = (
+        'Flat-resolution fits file created from '
+        '<a href="/api/superevents/{graceid}/files/'
+        '{versioned_filename}">{versioned_filename}</a>').format(
+            graceid=graceid, versioned_filename=versioned_filename)
 
     group(
-        fits_header.s(versioned_filename) |
+        fits_header.s(versioned_filename)
+        |
         gracedb.upload.s(
             filebase + '.html', graceid, header_msg, tags),
 
-        plot_allsky.s() |
+        plot_allsky.s()
+        |
         gracedb.upload.s(
             filebase + '.png', graceid, allsky_msg, tags),
 
         annotate_fits_volume.s(
-            filebase + '.volume.png', graceid, volume_msg, tags)
+            filebase + '.volume.png', graceid, volume_msg, tags),
+
+        *(
+            [
+                flatten.s(f'{filebase}.fits.gz')
+                |
+                gracedb.upload.s(
+                    f'{filebase}.fits.gz', graceid, flatten_msg, tags)
+            ] if multiorder else []
+        )
     ).delay(filecontents)
 
 

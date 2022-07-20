@@ -295,6 +295,8 @@ def handle_posterior_samples(alert):
     filename = alert['data']['filename']
     info = '{} {}'.format(alert['data']['comment'], filename)
     prefix, _ = filename.rsplit('.posterior_samples.')
+    skymap_filename = f'{prefix}.multiorder.fits'
+    labels = ['pe', 'sky_loc', 'public']
 
     (
         gracedb.download.si(filename, superevent_id)
@@ -303,22 +305,13 @@ def handle_posterior_samples(alert):
         |
         group(
             skymaps.annotate_fits.s(
-                '{}.fits.gz'.format(prefix),
-                superevent_id, ['pe', 'sky_loc', 'public']
+                skymap_filename, superevent_id, labels
             ),
 
             gracedb.upload.s(
-                '{}.multiorder.fits'.format(prefix), superevent_id,
+                skymap_filename, superevent_id,
                 'Multiresolution fits file generated from "{}"'.format(info),
-                ['pe', 'sky_loc', 'public']
-            ),
-
-            skymaps.flatten.s('{}.fits.gz'.format(prefix))
-            |
-            gracedb.upload.s(
-                '{}.fits.gz'.format(prefix), superevent_id,
-                'Flat-resolution fits file created from "{}"'.format(info),
-                ['pe', 'sky_loc', 'public']
+                labels
             )
         )
     ).delay()
@@ -407,7 +400,8 @@ def _create_voevent(classification, *args, **kwargs):
 
     skymap_filename = kwargs.get('skymap_filename')
     if skymap_filename is not None:
-        skymap_type = re.sub(r'\.fits(\..+)?$', '', skymap_filename)
+        skymap_type = re.sub(
+            r'(\.multiorder)?\.fits(\..+)?(,[0-9]+)?$', '', skymap_filename)
         kwargs.setdefault('skymap_type', skymap_type)
 
     # FIXME: remove ._orig_run when this bug is fixed:
@@ -491,12 +485,6 @@ def preliminary_alert(event, alert, annotation_prefix='',
     else:
         skymap_filename = None
 
-    original_skymap_filename = skymap_filename
-    if skymap_filename.endswith('.multiorder.fits'):
-        skymap_filename = skymap_filename.replace('.multiorder.fits', '.fits')
-    if skymap_filename.endswith('.fits'):
-        skymap_filename += '.gz'
-
     # Determine if the event should be made public.
     is_publishable = (superevents.should_publish(
                       alert['object']['preferred_event_data']) and
@@ -505,31 +493,20 @@ def preliminary_alert(event, alert, annotation_prefix='',
 
     canvas = group(
         (
-            gracedb.download.si(original_skymap_filename, preferred_event_id)
+            gracedb.download.si(skymap_filename, preferred_event_id)
             |
             group(
-                skymaps.flatten.s(annotation_prefix + skymap_filename)
-                |
                 gracedb.upload.s(
                     annotation_prefix + skymap_filename,
                     superevent_id,
-                    message='Flattened from multiresolution file {}'.format(
-                        original_skymap_filename),
+                    message='Localization copied from {}'.format(
+                        preferred_event_id),
                     tags=['sky_loc'] if annotation_prefix else [
                         'sky_loc', 'public']
                 )
                 |
                 _create_label_and_return_filename.s(
                     'SKYMAP_READY', superevent_id
-                ),
-
-                gracedb.upload.s(
-                    annotation_prefix + original_skymap_filename,
-                    superevent_id,
-                    message='Localization copied from {}'.format(
-                        preferred_event_id),
-                    tags=['sky_loc'] if annotation_prefix else [
-                        'sky_loc', 'public']
                 ),
 
                 skymaps.annotate_fits.s(
@@ -691,7 +668,7 @@ def preliminary_initial_update_alert(filenames, superevent, alert_type):
                 continue
             if skymap_needed \
                     and {'sky_loc', 'public'}.issubset(t) \
-                    and f.endswith('.fits.gz'):
+                    and f.endswith('.multiorder.fits'):
                 skymap_filename = fv
             if em_bright_needed \
                     and 'em_bright' in t \
