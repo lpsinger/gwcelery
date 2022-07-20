@@ -5,6 +5,7 @@ include:
     file: python.yml
   - project: computing/gitlab-ci-templates
     file: workflow/sccb.yml
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
 
 variables:
   # Allow Celery to run as root, because everything runs as root under Docker.
