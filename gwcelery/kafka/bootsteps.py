@@ -49,5 +49,5 @@ class Producer(KafkaBootStep):
 
     def stop(self, consumer):
         super().stop(consumer)
-        for s in consumer.app.conf['kafka_urls'].values():
+        for s in consumer.app.conf['kafka_streams'].values():
             s.close()
