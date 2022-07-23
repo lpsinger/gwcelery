@@ -33,12 +33,6 @@ def _send_igwn_alert(topic, payload):
     igwn_alert_received.send(None, topic=topic, payload=payload)
 
 
-class _IGWNAlertThread(Thread):
-    def run(self, *args, **kwargs):
-        super().run(*args, **kwargs)
-        self._client.disconnect()
-
-
 class Receiver(IGWNAlertBootStep):
     """Run the global IGWN alert receiver in background thread."""
 
@@ -48,7 +42,7 @@ class Receiver(IGWNAlertBootStep):
         super().start(consumer)
 
         self._client = client(group=consumer.app.conf['igwn_alert_group'])
-        self.thread = _IGWNAlertThread(
+        self.thread = Thread(
             target=self._client.listen,
             args=(_send_igwn_alert, consumer.app.conf['igwn_alert_topics']),
             name='IGWNReceiverThread')
@@ -57,6 +51,7 @@ class Receiver(IGWNAlertBootStep):
     def stop(self, consumer):
         super().stop(consumer)
         self.thread.join()
+        self._client.disconnect()
 
     def info(self, consumer):
         return {'igwn-alert-topics': consumer.app.conf[
