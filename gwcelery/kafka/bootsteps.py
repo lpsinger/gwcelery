@@ -30,10 +30,12 @@ class KafkaBootStep(bootsteps.ConsumerStep):
                 'Start the worker with "--queues=kafka --pool=solo".')
 
     def start(self, consumer):
-        log.info(f'Starting {self.name}, topics: ' + ' '.join[self.kafka_urls])
+        log.info(f'Starting {self.name}, topics: '
+                 ' '.join(consumer.app.conf['kafka_urls']))
 
     def stop(self, consumer):
-        log.info('Closing connection to topics: ' + ' '.join(self.kafka_urls))
+        log.info('Closing connection to topics: '
+                 ' '.join(consumer.app.conf['kafka_urls']))
 
 
 class Producer(KafkaBootStep):
@@ -44,7 +46,8 @@ class Producer(KafkaBootStep):
     def start(self, consumer):
         super().start(consumer)
         consumer.app.conf['kafka_streams'] = {
-            k: stream.open(v, 'w') for k, v in consumer.app.conf['kafka_urls']
+            k: stream.open(v, 'w') for k, v in
+            consumer.app.conf['kafka_urls'].items()
         }
 
     def stop(self, consumer):
