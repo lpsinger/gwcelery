@@ -5,7 +5,7 @@ getenv = true
 executable = /usr/bin/env
 log = gwcelery-condor.log
 on_exit_remove = false
-request_disk = 10GB
+request_disk = 7GB
 JobBatchName = gwcelery
 
 arguments = "gwcelery beat -f gwcelery-beat.log"
