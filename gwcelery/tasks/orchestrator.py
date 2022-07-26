@@ -133,6 +133,10 @@ def handle_superevent(alert):
 
     # check DQV label on superevent, run check_vectors if required
     elif alert['alert_type'] == 'event_added':
+        # FIXME Check if this should be changed to 'update' alert_types instead
+        # of 'event_added'. 'event_added' seems like it's just a new event in
+        # the superevent window, not necessarily an event that should be
+        # promoted to preferred event
         start = alert['data']['t_start']
         end = alert['data']['t_end']
 
