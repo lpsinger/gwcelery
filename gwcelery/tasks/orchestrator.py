@@ -57,9 +57,8 @@ def handle_superevent(alert):
         group(
             detchar.omegascan.si(alert['object']['t_0'], superevent_id),
 
-            gracedb.get_event.si(alert['object']['preferred_event'])
-            |
-            detchar.check_vectors.s(
+            detchar.check_vectors.si(
+                alert['object']['preferred_event_data'],
                 superevent_id,
                 alert['object']['t_start'],
                 alert['object']['t_end']
@@ -70,16 +69,17 @@ def handle_superevent(alert):
         label_name = alert['data']['name']
         if label_name == superevents.FROZEN_LABEL:
             (
-                gracedb.get_event.s(alert['object']['preferred_event'])
-                |
-                _leave_log_message_and_return_event_dict.s(
+                gracedb.upload.s(
+                    None,
+                    None,
                     superevent_id,
                     "Automated DQ check before sending preliminary alert. "
                     "New results supersede old results.",
                     tags=['data_quality']
                 )
                 |
-                detchar.check_vectors.s(
+                detchar.check_vectors.si(
+                    alert['object']['preferred_event_data'],
                     superevent_id,
                     alert['object']['t_start'],
                     alert['object']['t_end']
@@ -133,17 +133,22 @@ def handle_superevent(alert):
 
     # check DQV label on superevent, run check_vectors if required
     elif alert['alert_type'] == 'event_added':
-        new_event_id = alert['data']['preferred_event']
         start = alert['data']['t_start']
         end = alert['data']['t_end']
 
         if 'DQV' in gracedb.get_labels(superevent_id):
             (
-                gracedb.get_event.s(new_event_id)
+                detchar.check_vectors.s(
+                    alert['object']['preferred_event_data'],
+                    superevent_id,
+                    start,
+                    end
+                )
                 |
-                detchar.check_vectors.s(superevent_id, start, end)
-                |
-                _update_if_dqok.si(superevent_id, new_event_id)
+                _update_if_dqok.si(
+                    superevent_id,
+                    alert['object']['preferred_event_data']['graceid']
+                )
             ).apply_async()
 
 
