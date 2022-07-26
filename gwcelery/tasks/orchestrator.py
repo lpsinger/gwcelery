@@ -85,7 +85,7 @@ def handle_superevent(alert):
                     alert['object']['t_end']
                 )
                 |
-                preliminary_alert.s(superevent_id)
+                preliminary_alert.s(alert)
             ).apply_async()
 
         elif label_name == superevents.READY_LABEL:
@@ -96,7 +96,7 @@ def handle_superevent(alert):
                 |
                 gracedb.get_event.s()
                 |
-                preliminary_alert.s(superevent_id,
+                preliminary_alert.s(alert,
                                     annotation_prefix='subthreshold.',
                                     initiate_voevent=False)
             ).apply_async()
@@ -123,14 +123,13 @@ def handle_superevent(alert):
                     "Superevent cleaned up."
                 )
                 |
-                preliminary_alert.s(superevent_id)
+                preliminary_alert.s(alert)
             ).apply_async()
         # launch initial/retraction alert on ADVOK/ADVNO
         elif label_name == 'ADVOK':
-            initial_alert((None, None, None), superevent_id,
-                          labels=alert['object']['labels'])
+            initial_alert((None, None, None), alert)
         elif label_name == 'ADVNO':
-            retraction_alert(superevent_id)
+            retraction_alert(alert)
 
     # check DQV label on superevent, run check_vectors if required
     elif alert['alert_type'] == 'event_added':
@@ -455,7 +454,7 @@ def _proceed_if_no_advocate_action(filenames, superevent_id):
 
 
 @app.task(ignore_result=True, shared=False)
-def preliminary_alert(event, superevent_id, annotation_prefix='',
+def preliminary_alert(event, alert, annotation_prefix='',
                       initiate_voevent=True):
     """Produce a preliminary alert by copying any sky maps.
 
@@ -470,14 +469,16 @@ def preliminary_alert(event, superevent_id, annotation_prefix='',
     5.   Apply the GCN_PRELIM_SENT label to the superevent.
     6.   Create and upload a GCN Circular draft.
     """
-    priority = 0 if superevents.should_publish(event) else 1
-    preferred_event_id = event['graceid']
+    priority = 0 if superevents.should_publish(
+        alert['object']['preferred_event_data']) else 1
+    preferred_event_id = alert['object']['preferred_event']
+    superevent_id = alert['uid']
 
-    if event['group'] == 'CBC':
+    if alert['object']['preferred_event_data']['group'] == 'CBC':
         skymap_filename = 'bayestar.multiorder.fits'
-    elif event['pipeline'] == 'CWB':
+    elif alert['object']['preferred_event_data']['pipeline'] == 'CWB':
         skymap_filename = 'cWB.fits.gz'
-    elif event['pipeline'] == 'oLIB':
+    elif alert['object']['preferred_event_data']['pipeline'] == 'oLIB':
         skymap_filename = 'oLIB.fits.gz'
     else:
         skymap_filename = None
@@ -489,8 +490,10 @@ def preliminary_alert(event, superevent_id, annotation_prefix='',
         skymap_filename += '.gz'
 
     # Determine if the event should be made public.
-    is_publishable = (superevents.should_publish(event)
-                      and {'DQV', 'INJ'}.isdisjoint(event['labels']))
+    is_publishable = (superevents.should_publish(
+                      alert['object']['preferred_event_data']) and
+                      {'DQV', 'INJ'}.isdisjoint(
+                      alert['object']['preferred_event_data']['labels']))
 
     canvas = group(
         (
@@ -547,7 +550,8 @@ def preliminary_alert(event, superevent_id, annotation_prefix='',
             _create_label_and_return_filename.s(
                 'EMBRIGHT_READY', superevent_id
             )
-        ) if event['group'] == 'CBC' else identity.s(None),
+        ) if alert['object']['preferred_event_data']['group'] == 'CBC' else
+        identity.s(None),
 
         (
             gracedb.download.si('p_astro.json', preferred_event_id)
@@ -564,12 +568,13 @@ def preliminary_alert(event, superevent_id, annotation_prefix='',
             _create_label_and_return_filename.s(
                 'PASTRO_READY', superevent_id
             )
-        ) if event['group'] == 'CBC' else identity.s(None)
+        ) if alert['object']['preferred_event_data']['group'] == 'CBC' else
+        identity.s(None)
     )
 
     # Switch for disabling all but MDC alerts.
     if app.conf['only_alert_for_mdc']:
-        if event.get('search') != 'MDC':
+        if alert['object']['preferred_event_data'].get('search') != 'MDC':
             canvas |= gracedb.upload.s(
                 None, None, superevent_id,
                 ("Skipping alert because gwcelery has been configured to only"
@@ -583,10 +588,10 @@ def preliminary_alert(event, superevent_id, annotation_prefix='',
             _proceed_if_no_advocate_action.s(superevent_id)
             |
             preliminary_initial_update_alert.s(
-                superevent_id,
+                alert['object'],
                 ('earlywarning' if 'EARLY_WARNING' in event['labels']
-                 else 'preliminary'),
-                labels=event['labels'])
+                 else 'preliminary')
+            )
         )
 
     canvas.apply_async(priority=priority)
@@ -633,8 +638,7 @@ def parameter_estimation(far_event, superevent_id):
 
 
 @gracedb.task(ignore_result=True, shared=False)
-def preliminary_initial_update_alert(filenames, superevent_id, alert_type,
-                                     labels=[]):
+def preliminary_initial_update_alert(filenames, superevent, alert_type):
     """
     Create and send a preliminary, initial, or update GCN notice.
 
@@ -642,12 +646,11 @@ def preliminary_initial_update_alert(filenames, superevent_id, alert_type,
     ----------
     filenames : tuple
         A list of the sky map, em_bright, and p_astro filenames.
-    superevent_id : str
-        The superevent ID.
+    superevent : dict
+        The superevent dictionary, typically obtained from an IGWN Alert or
+        from querying GraceDB.
     alert_type : {'earlywarning', 'preliminary', 'initial', 'update'}
         The alert type.
-    labels : list
-        A list of labels applied to superevent.
 
     Notes
     -----
@@ -659,6 +662,9 @@ def preliminary_initial_update_alert(filenames, superevent_id, alert_type,
     """
     if filenames is None:
         return
+
+    labels = superevent['labels']
+    superevent_id = superevent['superevent_id']
 
     if 'INJ' in labels:
         return
@@ -755,7 +761,7 @@ def preliminary_initial_update_alert(filenames, superevent_id, alert_type,
 
 
 @gracedb.task(ignore_result=True, shared=False)
-def initial_alert(filenames, superevent_id, labels=[]):
+def initial_alert(filenames, alert):
     """Produce an initial alert.
 
     This does nothing more than call
@@ -766,10 +772,8 @@ def initial_alert(filenames, superevent_id, labels=[]):
     ----------
     filenames : tuple
         A list of the sky map, em_bright, and p_astro filenames.
-    superevent_id : str
-        The superevent ID.
-    labels : list
-        A list of labels applied to superevent.
+    alert : dict
+        IGWN-Alert dictionary
 
     Notes
     -----
@@ -779,8 +783,7 @@ def initial_alert(filenames, superevent_id, labels=[]):
     API failures.
 
     """
-    preliminary_initial_update_alert(filenames, superevent_id, 'initial',
-                                     labels=labels)
+    preliminary_initial_update_alert(filenames, alert['object'], 'initial')
 
 
 @gracedb.task(ignore_result=True, shared=False)
@@ -806,12 +809,14 @@ def update_alert(filenames, superevent_id):
     API failures.
 
     """
-    preliminary_initial_update_alert(filenames, superevent_id, 'update')
+    superevent = gracedb.get_superevent._orig_run(superevent_id)
+    preliminary_initial_update_alert(filenames, superevent, 'update')
 
 
 @app.task(ignore_result=True, shared=False)
-def retraction_alert(superevent_id):
+def retraction_alert(alert):
     """Produce a retraction alert."""
+    superevent_id = alert['uid']
     (
         gracedb.expose.si(superevent_id)
         |
