@@ -188,10 +188,8 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
 
 
 @patch('gwcelery.tasks.gracedb.get_labels', return_value={'DQV', 'ADVREQ'})
-@patch('gwcelery.tasks.gracedb.get_event.run', return_value='event data')
 @patch('gwcelery.tasks.detchar.check_vectors.run')
-def test_handle_superevent_event_added(mock_check_vectors, mock_get_event,
-                                       mock_get_labels):
+def test_handle_superevent_event_added(mock_check_vectors, mock_get_labels):
     alert = {
         'alert_type': 'event_added',
         'uid': 'TS123456a',
@@ -204,11 +202,14 @@ def test_handle_superevent_event_added(mock_check_vectors, mock_get_event,
                    'preferred_event': 'G123456',
                    't_start': 1.,
                    't_0': 2.,
-                   't_end': 3.}
+                   't_end': 3.,
+                   'preferred_event_data': {
+                       'graceid': 'G123456'
+                   }}
     }
     orchestrator.handle_superevent(alert)
     mock_check_vectors.assert_called_once_with(
-        'event data', 'TS123456a', 1., 3.)
+        {'graceid': 'G123456'}, 'TS123456a', 1., 3.)
 
 
 def superevent_initial_alert_download(filename, graceid):
@@ -256,7 +257,10 @@ def test_handle_superevent_initial_alert(mock_create_initial_circular,
         'alert_type': 'label_added',
         'uid': 'S1234',
         'data': {'name': 'ADVOK'},
-        'object': {'labels': labels}
+        'object': {
+            'labels': labels,
+            'superevent_id': 'S1234'
+        }
     }
 
     # Run function under test
@@ -412,9 +416,8 @@ def test_handle_cbc_event_ignored(mock_localize,
 def test_alerts_skip_inj(mock_gcn_send):
     orchestrator.preliminary_initial_update_alert.delay(
         ('bayestar.fits.gz', 'em_bright.json', 'p_astro.json'),
-        'S1234',
-        'preliminary',
-        labels=['INJ']
+        {'superevent_id': 'S1234', 'labels': ['INJ']},
+        'preliminary'
     ).get()
     mock_gcn_send.assert_not_called()
 
