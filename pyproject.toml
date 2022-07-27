@@ -49,7 +49,7 @@ python = "^3.8"
 astropy = ">=4.3.1"  # https://github.com/astropy/astropy/issues/11879
 bilby-pipe = ">=1.0.6"
 celery = {version = ">=5.1", extras = ["redis"]}
-click = "^7"
+click = ">=7"
 comet = "*"
 corner = "*"
 dnspython = "*"  # silence "DNS: dnspython not found. Can not use SRV lookup." warning from SleekXMPP
