@@ -59,7 +59,7 @@ gracedb-sdk = ">=0.1.5"
 gwdatafind = ">=1.1.1"
 gwpy = ">=2.0.1"  # https://github.com/gwpy/gwpy/issues/1277
 healpy = "*"
-igwn-alert = "*"
+igwn-alert = "0.2.1"
 imapclient = "*"
 importlib-metadata = { version = "*", python = "<3.8" }
 jinja2 = ">=2.11.2"  # https://github.com/pallets/jinja/issues/1168

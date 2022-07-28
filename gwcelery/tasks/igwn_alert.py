@@ -1,4 +1,6 @@
 """IGWN alert client."""
+import json
+
 from celery.utils.log import get_task_logger
 
 from ..igwn_alert.signals import igwn_alert_received
@@ -18,7 +20,12 @@ class _IGWNAlertDispatchHandler(DispatchHandler):
         igwn_alert_topics.update(keys)
         return super().__call__(*keys, **kwargs)
 
-    def process_args(self, topic, alert):
+    def process_args(self, topic, message):
+        # FIXME: Loading the message with json.loads() is a change required
+        # because we are using a newer version of hop-client than IGWN-Alert
+        # is, once IGWN-Alert upgrades to the newest version the message may
+        # become a dictionary once again
+        alert = json.loads(message.content)
         # Determine GraceDB service URL
         try:
             try:
