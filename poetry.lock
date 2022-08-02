@@ -581,8 +581,8 @@ igwn-auth-utils = {version = ">=0.2.2", extras = ["requests"]}
 ligo-segments = ">=1.0.0"
 
 [package.extras]
-lint = ["flake8 (>=3.7.0)", "flake8-bandit"]
-test = ["pytest (>=2.9.2)", "pytest-cov (>=2.5.1)", "requests-mock (>=1.5.0)"]
+test = ["requests-mock (>=1.5.0)", "pytest-cov (>=2.5.1)", "pytest (>=2.9.2)"]
+lint = ["flake8-bandit", "flake8 (>=3.7.0)"]
 
 [[package]]
 name = "dynesty"
@@ -831,8 +831,8 @@ toml = ">=0.9.4"
 xmltodict = ">=0.9.0"
 
 [package.extras]
-docs = ["sphinxcontrib-programoutput", "sphinx-rtd-theme", "sphinx"]
-dev = ["twine", "pytest-runner", "pytest-cov", "pytest-console-scripts", "pytest (>=5.0,<5.4)", "flake8", "autopep8"]
+dev = ["autopep8", "flake8", "pytest (>=5.0,<5.4)", "pytest-console-scripts", "pytest-cov", "pytest-runner", "twine"]
+docs = ["sphinx", "sphinx-rtd-theme", "sphinxcontrib-programoutput"]
 
 [[package]]
 name = "humanize"
@@ -866,7 +866,7 @@ python-versions = ">=3.5"
 
 [[package]]
 name = "igwn-alert"
-version = "0.2.1"
+version = "0.2.2"
 description = "IGWN Alert Network"
 category = "main"
 optional = false
@@ -2009,7 +2009,7 @@ scipy = ">=1.0"
 
 [[package]]
 name = "sentry-sdk"
-version = "1.9.0"
+version = "1.9.1"
 description = "Python client for Sentry (https://sentry.io)"
 category = "main"
 optional = false
@@ -2020,7 +2020,10 @@ blinker = {version = ">=1.1", optional = true, markers = "extra == \"flask\""}
 certifi = "*"
 flask = {version = ">=0.11", optional = true, markers = "extra == \"flask\""}
 tornado = {version = ">=5", optional = true, markers = "extra == \"tornado\""}
-urllib3 = ">=1.10.0"
+urllib3 = [
+    {version = ">=1.26.9", markers = "python_version >= \"3.5\""},
+    {version = ">=1.26.11", markers = "python_version >= \"3.6\""},
+]
 
 [package.extras]
 aiohttp = ["aiohttp (>=3.5)"]
@@ -2485,7 +2488,7 @@ test = ["pytest-celery", "pytest-flask", "pytest-socket"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "4a43d42f56f3e742e99374b52e21e526dbd0e94f481cf27752370bc61cbbba3d"
+content-hash = "161bfadbebeff80186bee5d478dc835d37d2c45be3bc55e68d79018eacd9dc98"
 
 [metadata.files]
 adc-streaming = [
@@ -2921,7 +2924,6 @@ healpy = [
     {file = "healpy-1.16.1.tar.gz", hash = "sha256:6d691b0a77fdf699672de09d39d82a640cfcc8ca03ae55022fb71e6edda69d2f"},
 ]
 hop-client = [
-    {file = "hop-client-0.6.0.tar.gz", hash = "sha256:46ba23fca457d3ae98bb3b2e7c49e3957947783da0f15dd2fb333c56124a6d95"},
     {file = "hop_client-0.6.0-py3-none-any.whl", hash = "sha256:c481b46c21d7ebee25b9bfc7d155e48b7da98b03e8d1e7b7605f5ee1a33eacef"},
 ]
 humanize = [
@@ -2937,7 +2939,7 @@ idna = [
     {file = "idna-3.3.tar.gz", hash = "sha256:9d643ff0a55b762d5cdb124b8eaa99c66322e2157b69160bc32796e824360e6d"},
 ]
 igwn-alert = [
-    {file = "igwn-alert-0.2.1.tar.gz", hash = "sha256:8a5226285a36f4ae045e2bb2b2dfcf8215283c1a88aa34fde5eaf7963a0fba53"},
+    {file = "igwn-alert-0.2.2.tar.gz", hash = "sha256:a61239af28c33a12d5c6c6628a85e0b6e261089afeb14e6db5074f56f5877767"},
 ]
 igwn-auth-utils = [
     {file = "igwn-auth-utils-0.2.3.tar.gz", hash = "sha256:17ea61ef47dd642a572e887f37f5181613d8882ed4b917b1279cdb188859de3c"},
@@ -3835,8 +3837,8 @@ seaborn = [
     {file = "seaborn-0.11.2.tar.gz", hash = "sha256:cf45e9286d40826864be0e3c066f98536982baf701a7caa386511792d61ff4f6"},
 ]
 sentry-sdk = [
-    {file = "sentry-sdk-1.9.0.tar.gz", hash = "sha256:f185c53496d79b280fe5d9d21e6572aee1ab802d3354eb12314d216cfbaa8d30"},
-    {file = "sentry_sdk-1.9.0-py2.py3-none-any.whl", hash = "sha256:60b13757d6344a94bf0ccb3c0a006c4de77daab09871b30fbbd05d5ec24e54fb"},
+    {file = "sentry-sdk-1.9.1.tar.gz", hash = "sha256:0c8d2e1a02c4d438aec762cd82c1f785f6477a9436fd6279996be0b0f139dd5a"},
+    {file = "sentry_sdk-1.9.1-py2.py3-none-any.whl", hash = "sha256:6167aa8f39d50661cee560db76b71c256a1b5ad68c3fcdc9df20c4c9b3796c8c"},
 ]
 service-identity = [
     {file = "service-identity-21.1.0.tar.gz", hash = "sha256:6e6c6086ca271dc11b033d17c3a8bea9f24ebff920c587da090afc9519419d34"},

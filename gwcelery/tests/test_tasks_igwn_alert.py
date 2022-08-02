@@ -3,7 +3,7 @@ import json
 import logging
 import os
 import stat
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 import lxml
 import pytest
@@ -54,12 +54,7 @@ def test_handle_messages(mock_superevents_handle, mock_get_event,
         alert['object']['self'].replace('gracedb.ligo.org', 'gracedb.invalid')
 
     # Run function under test
-    # FIXME: We need to mock the content attribute of a JSONBlob because we
-    # IGWN-Alert does not yet use hop-client 0.6.0. Once IGWN-Alert updates
-    # that dep we will probably be able to drop this mock
-    mock_message = Mock()
-    mock_message.content = json.dumps(alert)
-    igwn_alert.handler.dispatch(node, mock_message)
+    igwn_alert.handler.dispatch(node, alert)
     mock_superevents_handle.assert_called_once()
 
 
@@ -77,13 +72,8 @@ def test_handle_messages_wrong_server(mock_superevents_handle,
         alert['object']['self'].replace('gracedb.ligo.org', 'gracedb2.invalid')
 
     # Run function under test
-    # FIXME: We need to mock the content attribute of a JSONBlob because we
-    # IGWN-Alert does not yet use hop-client 0.6.0. Once IGWN-Alert updates
-    # that dep we will probably be able to drop this mock
-    mock_message = Mock()
-    mock_message.content = json.dumps(alert)
     caplog.set_level(logging.WARNING)
-    igwn_alert.handler.dispatch(node, mock_message)
+    igwn_alert.handler.dispatch(node, alert)
     record, *_ = caplog.records
     assert record.message == ('ignoring IGWN alert message because it is '
                               'intended for GraceDB server '
@@ -105,13 +95,8 @@ def test_handle_messages_no_self_link(mock_superevents_handle,
     del alert['object']['self']
 
     # Run function under test
-    # FIXME: We need to mock the content attribute of a JSONBlob because we
-    # IGWN-Alert does not yet use hop-client 0.6.0. Once IGWN-Alert updates
-    # that dep we will probably be able to drop this mock
-    mock_message = Mock()
-    mock_message.content = json.dumps(alert)
     caplog.set_level(logging.ERROR)
-    igwn_alert.handler.dispatch(node, mock_message)
+    igwn_alert.handler.dispatch(node, alert)
     record, = caplog.records
     assert 'IGWN alert message does not contain an API URL' in record.message
     mock_superevents_handle.assert_not_called()
