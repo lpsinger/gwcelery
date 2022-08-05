@@ -4,7 +4,7 @@ from contextlib import ExitStack, nullcontext
 from celery.bin.base import CeleryDaemonCommand, CeleryOption, LOG_LEVEL
 from celery.platforms import detached
 import click
-from flask.cli import FlaskGroup, ScriptInfo
+from flask.cli import FlaskGroup
 
 from ..flask import app
 from .. import views as _  # noqa: F401
@@ -39,10 +39,10 @@ def maybe_detached(*, detach, **kwargs):
 def flask(ctx, detach=None, loglevel=None, logfile=None,
           pidfile=None, uid=None, gid=None, umask=None, **kwargs):
     # Look up Celery app
-    celery_app = ctx.obj.app
+    celery_app = ctx.parent.obj.app
 
-    # Prepare to pass Flask app to Flask CLI
-    ctx.obj = ScriptInfo(create_app=lambda *args, **kwargs: app)
+    # # Prepare to pass Flask app to Flask CLI
+    ctx.obj.create_app = lambda *args, **kwargs: app
 
     # Detach from the tty if requested.
     # FIXME: After we update to click >= 8, replace the elaborate construction

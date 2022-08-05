@@ -53,7 +53,7 @@ click = ">=7"
 comet = "*"
 corner = "*"
 dnspython = "*"  # silence "DNS: dnspython not found. Can not use SRV lookup." warning from SleekXMPP
-flask = "*"
+flask = ">=2.2"
 flask-caching = "*"
 gracedb-sdk = ">=0.1.5"
 gwdatafind = ">=1.1.1"
