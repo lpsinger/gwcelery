@@ -53,6 +53,8 @@ def test_handle_messages(mock_superevents_handle, mock_get_event,
     alert['object']['self'] = \
         alert['object']['self'].replace('gracedb.ligo.org', 'gracedb.invalid')
 
+    # dump back into string
+    alert = json.dumps(alert)
     # Run function under test
     igwn_alert.handler.dispatch(node, alert)
     mock_superevents_handle.assert_called_once()
@@ -70,7 +72,8 @@ def test_handle_messages_wrong_server(mock_superevents_handle,
     alert = json.loads(payload)
     alert['object']['self'] = \
         alert['object']['self'].replace('gracedb.ligo.org', 'gracedb2.invalid')
-
+    # dump back into string
+    alert = json.dumps(alert)
     # Run function under test
     caplog.set_level(logging.WARNING)
     igwn_alert.handler.dispatch(node, alert)
@@ -93,7 +96,8 @@ def test_handle_messages_no_self_link(mock_superevents_handle,
     # Manipulate alert content
     alert = json.loads(payload)
     del alert['object']['self']
-
+    # dump back into string
+    alert = json.dumps(alert)
     # Run function under test
     caplog.set_level(logging.ERROR)
     igwn_alert.handler.dispatch(node, alert)

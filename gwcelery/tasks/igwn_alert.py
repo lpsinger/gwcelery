@@ -1,4 +1,6 @@
 """IGWN alert client."""
+import json
+
 from celery.utils.log import get_task_logger
 
 from ..igwn_alert.signals import igwn_alert_received
@@ -19,6 +21,7 @@ class _IGWNAlertDispatchHandler(DispatchHandler):
         return super().__call__(*keys, **kwargs)
 
     def process_args(self, topic, alert):
+        alert = json.loads(alert)
         # Determine GraceDB service URL
         try:
             try:
