@@ -4,9 +4,9 @@ import io
 import random
 
 from celery.utils.log import get_task_logger
+from ligo.lw.table import Table
 from ligo.lw import utils
 from ligo.lw import lsctables
-import ligo.lw.table
 import lal
 from ligo.skymap.io.events.ligolw import ContentHandler
 import numpy as np
@@ -32,7 +32,7 @@ def pick_coinc():
             lsctables.SimInspiralTable.tableName,
             lsctables.SummValueTable.tableName,
             lsctables.SearchSummVarsTable.tableName):
-        root.removeChild(ligo.lw.table.get_table(xmldoc, name))
+        root.removeChild(Table.get_table(xmldoc, name))
 
     coinc_inspiral_table = table = lsctables.CoincInspiralTable.get_table(
         xmldoc)

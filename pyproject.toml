@@ -75,7 +75,7 @@ numpy = "*"
 p-astro = ">=1.0"
 pesummary = "*"
 pygcn = ">=1.0.1"
-python-ligo-lw = "~1.7.0"  # https://git.ligo.org/lscsoft/ligo.skymap/-/merge_requests/255
+python-ligo-lw = "^1.8.3"
 safe-netrc = "*"
 sentry-sdk = {version = "*", extras = ["flask", "tornado"]}
 service-identity = "*"  # We don't actually use this package, but it silences some annoying warnings from twistd.
