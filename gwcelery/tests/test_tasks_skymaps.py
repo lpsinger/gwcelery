@@ -154,4 +154,4 @@ def test_handle_plot_coherence(mock_upload):
     }
 
     skymaps.handle_plot_coherence(alert)
-    mock_upload.asert_called_once()
+    mock_upload.assert_called_once()
