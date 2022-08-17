@@ -54,6 +54,9 @@ test/poetry/python3.8:
 test/poetry/python3.9:
   extends: .test-poetry
   image: python:3.9
+test/poetry/python3.10:
+  extends: .test-poetry
+  image: python:3.10
 
 # Run test suite using wheel and bleeding-edge dependencies
 .test-wheel:
@@ -73,6 +76,9 @@ test/wheel/python3.8:
 test/wheel/python3.9:
   extends: .test-wheel
   image: python:3.9
+test/wheel/python3.10:
+  extends: .test-wheel
+  image: python:3.10
 
 lint:
   stage: test
