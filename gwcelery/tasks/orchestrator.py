@@ -110,9 +110,12 @@ def handle_superevent(alert):
                 query += ' Test'
 
             (
-                gracedb.get_events.si(query).set(
-                    countdown=app.conf['superevent_clean_up_timeout']
+                group(
+                    gracedb.get_events.si(query),
+                    gracedb.create_label.si('DQR_REQUEST', superevent_id)
                 )
+                |
+                get_first.s()
                 |
                 superevents.select_preferred_event.s()
                 |
@@ -124,7 +127,7 @@ def handle_superevent(alert):
                 )
                 |
                 preliminary_alert.s(alert)
-            ).apply_async()
+            ).apply_async(countdown=app.conf['superevent_clean_up_timeout'])
         # launch initial/retraction alert on ADVOK/ADVNO
         elif label_name == 'ADVOK':
             initial_alert((None, None, None), alert)

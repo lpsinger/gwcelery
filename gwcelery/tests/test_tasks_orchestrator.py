@@ -153,6 +153,7 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
     orchestrator.handle_superevent(alert)
 
     if label == 'GCN_PRELIM_SENT':
+        create_label.assert_call_once_with('DQR_REQUEST', 'S1234')
         select_preferred_event_task.assert_called_once()
         preliminary_alert_pipeline.assert_called_once()
     elif alert_type == 'label_added':
