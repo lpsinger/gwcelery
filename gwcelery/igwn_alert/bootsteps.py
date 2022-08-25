@@ -22,7 +22,7 @@ class IGWNAlertClient(client):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.batch_size = 1
-        self.until_eos = True
+        self.until_eos = False  # FIXME: Revert to True when fix for autocommit is found  # noqa: E501
         self.running = False
         self.start_at = StartPosition.LATEST
 
