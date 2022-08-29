@@ -584,9 +584,9 @@ def dag_finished(rundir, preferred_event_id, superevent_id, pe_pipeline):
         resultdir = os.path.join(rundir, 'result')
         sampledir = os.path.join(rundir, 'final_result')
         sample_filename = 'Bilby.posterior_samples.hdf5'
+        input_sample, = glob.glob(os.path.join(sampledir, '*result.hdf5'))
         subprocess.run(
-            ['bilby_pipe_to_ligo_skymap_samples',
-             os.path.join(sampledir, '*result.hdf5'),
+            ['bilby_pipe_to_ligo_skymap_samples', input_sample,
              '--out', os.path.join(sampledir, sample_filename)])
         uploads = [
             (sampledir, sample_filename,

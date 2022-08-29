@@ -355,7 +355,6 @@ def test_dag_finished(monkeypatch, tmp_path, pipeline):
                         _upload_url)
     monkeypatch.setattr('gwcelery.tasks.gracedb.create_label.run',
                         create_label)
-    monkeypatch.setattr('subprocess.run', Mock())
 
     if pipeline in ['lalinference', 'bilby']:
         if pipeline == 'lalinference':
@@ -368,6 +367,10 @@ def test_dag_finished(monkeypatch, tmp_path, pipeline):
                      os.path.join(pe_results_path, 'extrinsic.png'),
                      os.path.join(pe_results_path, 'sourceFrame.png')]
         else:
+            input_sample = os.path.join(sampledir, "test_result.hdf5")
+            with open(input_sample, 'wb') as f:
+                f.write(b'result')
+            monkeypatch.setattr('subprocess.run', Mock())
             paths = [os.path.join(sampledir, 'Bilby.posterior_samples.hdf5'),
                      os.path.join(resultdir, 'bilby_extrinsic_corner.png'),
                      os.path.join(resultdir, 'bilby_intrinsic_corner.png')]
