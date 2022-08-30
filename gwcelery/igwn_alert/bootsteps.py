@@ -2,6 +2,7 @@ import json
 from threading import Thread
 import warnings
 
+from adc.errors import KafkaException
 from celery import bootsteps
 from celery.utils.log import get_logger
 from hop.models import JSONBlob
@@ -70,8 +71,11 @@ class IGWNAlertClient(client):
                     else:
                         callback(topic=metadata.topic.split('.')[1],
                                  payload=payload)
-            except (KeyboardInterrupt, SystemExit):
-                self.running = False
+            except KafkaException as err:
+                if '_TIMED_OUT' in err.name:
+                    log.exception("Timeout from kafka")
+                else:
+                    raise
         s.close()
 
 
