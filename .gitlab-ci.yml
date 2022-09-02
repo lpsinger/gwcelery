@@ -39,12 +39,12 @@ build:
 # Run test suite using poetry environment and locked dependencies
 .test-poetry:
   extends: .test-common
-  variables:
-    INSTALL_TARGET: poetry
   before_script:
     - !reference [".debian:base", before_script]
     - !reference [".python:pytest", before_script]
     - *install-redis
+    - curl -sSL https://install.python-poetry.org | python3 -
+    - export PATH="/root/.local/bin:$PATH"
     - poetry config virtualenvs.create false
     - poetry install -E test
   needs: []
@@ -124,7 +124,10 @@ sccb:
   before_script:
     # poetry-dynamic-versioning needs to be installed to properly
     # update the version information in pyproject.toml
-    - python -m pip install --upgrade pip poetry poetry-dynamic-versioning
+    - >
+      python -m pip install --upgrade pip;
+      curl -sSL https://install.python-poetry.org | python3 -;
+      python -m pip install --upgrade poetry-dynamic-versioning
   needs: []
 
 # Publish coverage
@@ -226,10 +229,13 @@ release:
       ssh -T $REMOTE_HOST bash <<EOF
       . .bashrc
       set -e
-      python -m pip install --upgrade pip poetry
+      python -m pip install --upgrade pip
+      curl -sSL https://install.python-poetry.org | python3 -
       # FIXME: It would be simpler to use `poetry install`, but it tries to
       # uninstall system site-packages even if they are not writable.
-      pip install --no-deps -r <(poetry export --dev)
+      # FIXME: remove --without-hashes once unreleased dependencies, like
+      # adc-streaming, perform their next release
+      pip install --no-deps -r <(poetry export --with dev --without-hashes)
       pip install --no-deps .
 
       # FIXME: remove pip uninstall temporary directories left behind due to

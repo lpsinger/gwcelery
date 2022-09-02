@@ -19,7 +19,7 @@ two tools if you do not already have them.
 
 1. Run the following command to `install Poetry using the recommended method`_::
 
-    $ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+    $ curl -sSL https://install.python-poetry.org | python3 -
 
 2. Then, install poetry-dynamic-versioning using pip::
 
