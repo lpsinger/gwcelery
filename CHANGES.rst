@@ -7,23 +7,33 @@ Changelog
 -   Remove gstlal from list of pipelines that upload PSDs in separate
     ``psd.xml.gz`` file. Update mock event uploads to include PSD in
     ``coinc.xml`` upload.
+
 -   Disable lalinference parameter estimation and switch to bilby as a main
     parameter estimation software.
+
 -   Add bilby-pipe>=1.0.6 and gwdatafind>=1.1.1 dependency, and unpin pesummary
     to fix bilby workflow for O3-replay.
+
 -   Disable parameter estimation for MDC events as it is currently broken for
     them.
+
 -   Enable ingestion and processing of test SNEWS external events.
+
 -   Add a Celery bootstep for external Kafka brokers
+
 -   Create external MDC events to consistency test the RAVEN alert system.
     Add acceptance tests for the RAVEN alert system. Add options to use
     the superevent search field in coincident searches. Update preferred
     external event based on best available.
+
 -   Report the URL of multi-resolution FITS files in GCN Notices and create
     flat-resolution files asynchronously.
+
 -   Move functions in handle_grb_gcn to asynchronous group to prevent detchar
     errors from interupting sky map generation.
+
 -   Prevent sub-threhsold GRBs from overwriting high-threshold GRBs.
+
 -   Listen to initial GBM alerts for earlier warning. Prevent these events
     from triggering alerts unless later updated.
 
