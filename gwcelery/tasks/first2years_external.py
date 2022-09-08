@@ -13,18 +13,20 @@ from . import external_triggers
 from . import igwn_alert
 
 
-def create_grb_event(gpstime):
+def create_grb_event(gpstime, pipeline):
 
     new_date = str(Time(gpstime, format='gps', scale='utc').isot)
-    new_TrigID = str(gpstime)
+    new_TrigID = str(int(gpstime))
 
-    fname = str(Path(__file__).parent / '../tests/data/fermi_grb_gcn.xml')
+    fname = str(Path(__file__).parent /
+                '../tests/data/{}_grb_gcn.xml'.format(pipeline.lower()))
 
     root = etree.parse(fname)
 
     # Change ivorn to indicate is an MDC event
     root.xpath('.')[0].attrib['ivorn'] = \
-        'ivo://lvk.internal/Fermi#MDC-test_event{}'.format(new_date).encode()
+        'ivo://lvk.internal/{0}#MDC-test_event{1}'.format(
+            pipeline if pipeline != 'Swift' else 'SWIFT', new_date).encode()
 
     # Change times to chosen time
     root.find("./Who/Date").text = str(new_date).encode()
@@ -45,9 +47,10 @@ def create_grb_event(gpstime):
         str(random.choices(
             np.rad2deg(thetas),
             weights=np.cos(thetas) / sum(np.cos(thetas)))[0]).encode()
-    root.find(("./WhereWhen/ObsDataLocation/"
-               "ObservationLocation/AstroCoords/Position2D/"
-               "Error2Radius")).text = str(random.uniform(1, 30)).encode()
+    if pipeline != 'Swift':
+        root.find(("./WhereWhen/ObsDataLocation/"
+                   "ObservationLocation/AstroCoords/Position2D/"
+                   "Error2Radius")).text = str(random.uniform(1, 30)).encode()
 
     return etree.tostring(root, xml_declaration=True, encoding="UTF-8",
                           pretty_print=True)
@@ -89,12 +92,22 @@ def upload_external_event(alert):
     # Only create external MDC for the occasional MDC superevent
     if not _is_joint_mdc(alert['uid']) or alert['alert_type'] != 'new':
         return
-    gpstime = float(alert['object']['t_0'])
-    new_time = _offset_time(gpstime)
+    # Potentially upload 1, 2, or 3 GRB events
+    num = 1 + np.random.choice(np.arange(3), p=[.6, .3, .1])
+    events = []
+    pipelines = []
+    for i in range(num):
+        gpstime = float(alert['object']['t_0'])
+        new_time = _offset_time(gpstime)
 
-    ext_event = create_grb_event(new_time)
+        # Choose external grb pipeline to simulate
+        pipeline = np.random.choice(['Fermi', 'Swift', 'INTEGRAL', 'AGILE'],
+                                    p=[.5, .3, .1, .1])
+        ext_event = create_grb_event(new_time, pipeline)
 
-    # Upload as from GCN
-    external_triggers.handle_grb_gcn(ext_event)
+        # Upload as from GCN
+        external_triggers.handle_grb_gcn(ext_event)
 
-    return ext_event
+        events.append(ext_event), pipelines.append(pipeline)
+
+    return events, pipelines

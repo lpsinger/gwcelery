@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import call, patch
 
 from . import data
 from ..tasks import first2years_external
@@ -27,11 +27,14 @@ def test_handle_create_grb_event(mock_get_events,
     alert['uid'] = 'MS180616j'
     alert['object']['superevent_id'] = alert['uid']
     alert['object']['preferred_event_data']['search'] = 'MDC'
-    text = first2years_external.upload_external_event(alert)
+    events, pipelines = first2years_external.upload_external_event(alert)
 
-    mock_create_event.assert_called_once_with(filecontents=text,
-                                              search='MDC',
-                                              pipeline='Fermi',
-                                              group='External',
-                                              labels=None)
+    calls = []
+    for i in range(len(events)):
+        calls.append(call(filecontents=events[i],
+                          search='MDC',
+                          pipeline=pipelines[i],
+                          group='External',
+                          labels=None))
+    mock_create_event.assert_has_calls(calls)
     mock_create_upload_external_skymap.assert_called()

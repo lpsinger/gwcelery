@@ -24,6 +24,7 @@ Changelog
 -   Add a Celery bootstep for external Kafka brokers
 
 -   Create external MDC events to consistency test the RAVEN alert system.
+    These now include from Fermi, Swift, INTEGRAL, and AGILE-MCAL.
     Add acceptance tests for the RAVEN alert system. Add options to use
     the superevent search field in coincident searches. Update preferred
     external event based on best available.

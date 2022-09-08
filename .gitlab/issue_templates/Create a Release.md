@@ -54,7 +54,7 @@
 16. [ ] Issuing an `ADVOK` signoff through GraceDB results in an initial VOEvent.
 17. [ ] Issuing an `ADVNO` signoff through GraceDB results in a retraction VOEvent.
 18. [ ] Requesting an update alert through the [Flask dashboard](https://emfollow-playground.ligo.caltech.edu/gwcelery) results in an update VOEvent.
-19. [ ] Playground has recently [produced an MDC superevent with an external coincidence](https://gracedb-playground.ligo.org/latest/?query=MDC+EM_COINC&query_type=S), i.e. with a `EM_COINC` label. Use the [Flask dashboard](https://emfollow-playground.ligo.caltech.edu/gwcelery) to do this manually.
+19. [ ] Playground has recently [produced an MDC superevent with an external coincidence](https://gracedb-playground.ligo.org/latest/?query=MDC+EM_COINC&query_type=S), i.e. with a `EM_COINC` label. Use the [Flask dashboard](https://emfollow-playground.ligo.caltech.edu/gwcelery) to do this manually (note that joint events with Swift may not pass publishing conditions).
 20. [ ] The joint MDC superevent has the following annotations.
     - [ ] `coincidence_far.json`
     - [ ] `bayestar-ext.fits.gz` or `subthreshold.bayestar-ext.fits.gz`

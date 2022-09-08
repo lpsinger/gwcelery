@@ -299,7 +299,7 @@ def _create_upload_external_event(graceid):
     gpstime = float(superevent['t_0'])
     new_time = first2years_external._offset_time(gpstime)
 
-    ext_event = first2years_external.create_grb_event(new_time)
+    ext_event = first2years_external.create_grb_event(new_time, 'Fermi')
 
     # Upload as from GCN
     external_triggers.handle_grb_gcn(ext_event)
