@@ -41,6 +41,11 @@ Changelog
     ``superevent_neighbours`` and ``preferred_event_data`` fields in
     the new igwn-alert packets.
 
+-   Adjust Celery working concurrency settings: turn off autoscaling, turn
+    on prefetching. This is seen to decrease the latency of most tasks.
+    For example, the latency of ``gwcelery.tasks.gracedb.upload`` tasks is
+    decreased by a median of about 0.5 s.
+
 1.0.1 (2022-05-09)
 ------------------
 
