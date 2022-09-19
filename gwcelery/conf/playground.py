@@ -1,5 +1,9 @@
 """Application configuration for ``gracedb-playground.ligo.org``."""
 
+from base64 import b64encode
+
+from hop.models import JSONBlob, AvroBlob
+
 from . import *  # noqa: F401, F403
 
 sentry_environment = 'playground'
@@ -18,11 +22,13 @@ mock_events_simulate_multiple_uploads = True
 """If True, then upload each mock event several times in rapid succession with
 random jitter in order to simulate multiple pipeline uploads."""
 
-kafka_urls = {
-    'scimma': 'kafka://kafka.scimma.org/igwn.gwalert-playground',
-    'gcn': 'kafka://kafka.test.gcn.nasa.gov/igwn.gwalert'
+kafka_alert_config = {
+    'scimma': {'url': 'kafka://kafka.scimma.org/igwn.gwalert-playground',
+               'serialization_model': AvroBlob, 'skymap_encoder': lambda _: _},
+    'gcn': {'url': 'kafka://kafka.test.gcn.nasa.gov/igwn.gwalert',
+            'serialization_model': JSONBlob, 'skymap_encoder': b64encode}
 }
-"""Kafka broker URLs"""
+"""Kafka broker configuration details"""
 
 voevent_broadcaster_address = ':5341'
 """The VOEvent broker will bind to this address to send GCNs.

@@ -3,6 +3,9 @@
 Inherits all settings from :mod:`gwcelery.conf.playground`, with the exceptions
 below.
 """
+
+from hop.models import AvroBlob
+
 from . import *  # noqa: F401, F403
 
 igwn_alert_group = 'gracedb-test'
@@ -11,10 +14,11 @@ igwn_alert_group = 'gracedb-test'
 gracedb_host = 'gracedb-test.ligo.org'
 """GraceDB host."""
 
-kafka_urls = {
-    'scimma': 'kafka://kafka.scimma.org/igwn.gwalert-test'
+kafka_alert_config = {
+    'scimma': {'url': 'kafka://kafka.scimma.org/igwn.gwalert-test',
+               'serialization_model': AvroBlob, 'skymap_encoder': lambda _: _},
 }
-"""Kafka broker URLs"""
+"""Kafka broker configuration details"""
 
 sentry_environment = 'test'
 """Record this `environment tag

@@ -1,4 +1,5 @@
 from hop import stream
+from hop.models import AvroBlob
 
 from celery import bootsteps
 from celery.concurrency import solo
@@ -10,17 +11,49 @@ __all__ = ('Producer',)
 log = get_logger(__name__)
 
 
+class KafkaWriter:
+    '''Class to write to kafka stream and monitor stream health.'''
+
+    def __init__(self, config):
+        self._config = config
+        self._open_hop_stream = stream.open(config['url'], 'w')
+
+        # Set up flag for failed delivery of messages
+        self.kafka_delivery_failures = False
+
+    def _delivery_cb(self, kafka_error, message):
+        # FIXME Get rid of if-else logic once
+        # https://github.com/scimma/hop-client/pull/190 is merged
+        if self._config['serialization_model'] == AvroBlob:
+            record = self._config['serialization_model']\
+                .deserialize(message.value()).content[0]
+        else:
+            record = self._config['serialization_model']\
+                .deserialize(message.value()).content
+        kafka_url = self._config['url']
+        if kafka_error is None:
+            self.kafka_delivery_failures = False
+        else:
+            log.error(f'Received error code {kafka_error.error_code} '
+                      f'({kafka_error.reason}) when delivering '
+                      f'{record["superevent_id"]} '
+                      f'{record["alert_type"]} alert to {kafka_url}')
+            self.kafka_delivery_failures = True
+
+    def write(self, payload):
+        self._open_hop_stream.write(payload,
+                                    delivery_callback=self._delivery_cb)
+        self._open_hop_stream.flush()
+
+
 class KafkaBootStep(bootsteps.ConsumerStep):
     """Generic boot step to limit us to appropriate kinds of workers.
 
-    Only include this bootstep in workers that are started with the
-    ``--kafka`` command line option.
+    Only include this bootstep in workers that are configured to listen to the
+    ``kafka`` queue.
     """
 
     def include_if(self, consumer):
-        """Only include this bootstep in workers that are configured to listen
-        to the ``kafka`` queue.
-        """
         return 'kafka' in consumer.app.amqp.queues
 
     def create(self, consumer):
@@ -30,27 +63,41 @@ class KafkaBootStep(bootsteps.ConsumerStep):
                 'Start the worker with "--queues=kafka --pool=solo".')
 
     def start(self, consumer):
-        log.info(f'Starting {self.name}, topics: '
-                 ' '.join(consumer.app.conf['kafka_urls']))
+        log.info(f'Starting {self.name}, topics: ' +
+                 ' '.join(config['url'] for config in
+                          consumer.app.conf['kafka_alert_config'].values()))
 
     def stop(self, consumer):
-        log.info('Closing connection to topics: '
-                 ' '.join(consumer.app.conf['kafka_urls']))
+        log.info('Closing connection to topics: ' +
+                 ' '.join(config['url'] for config in
+                          consumer.app.conf['kafka_alert_config'].values()))
 
 
 class Producer(KafkaBootStep):
-    """Run the global Kafka producer in a background thread."""
+    """Run the global Kafka producers in a background thread.
+
+    Flags that document the health of the connections are made available
+    :ref:`inspection <celery:worker-inspect>` with the ``gwcelery inspect
+    stats`` command under the ``kafka_topic_up`` and
+    ``kafka_delivery_failures`` keys.
+    """
 
     name = 'Kafka producer'
 
     def start(self, consumer):
         super().start(consumer)
-        consumer.app.conf['kafka_streams'] = {
-            k: stream.open(v, 'w') for k, v in
-            consumer.app.conf['kafka_urls'].items()
+        consumer.app.conf['kafka_streams'] = self._writers = {
+            brokerhost: KafkaWriter(config) for brokerhost, config in
+            consumer.app.conf['kafka_alert_config'].items()
         }
 
     def stop(self, consumer):
         super().stop(consumer)
-        for s in consumer.app.conf['kafka_streams'].values():
-            s.close()
+        for s in self._writers.values():
+            s._open_hop_stream.close()
+
+    def info(self, consumer):
+        return {'kafka_delivery_failures': {
+                    brokerhost: writer.kafka_delivery_failures for
+                    brokerhost, writer in self._writers.items()
+                }}

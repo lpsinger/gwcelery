@@ -4,6 +4,10 @@ Inherits all settings from :mod:`gwcelery.conf.playground`, with the exceptions
 below.
 """
 
+from base64 import b64encode
+
+from hop.models import JSONBlob, AvroBlob
+
 from . import *  # noqa: F401, F403
 
 condor_accounting_group = 'ligo.prod.o3.cbc.pe.bayestar'
@@ -19,11 +23,13 @@ igwn_alert_group = 'gracedb'
 gracedb_host = 'gracedb.ligo.org'
 """GraceDB host."""
 
-kafka_urls = {
-    'scimma': 'kafka://kafka.scimma.org/igwn.gwalert',
-    'gcn': 'kafka://kafka.gcn.nasa.gov/igwn.gwalert'
+kafka_alert_config = {
+    'scimma': {'url': 'kafka://kafka.scimma.org/igwn.gwalert',
+               'serialization_model': AvroBlob, 'skymap_encoder': lambda _: _},
+    'gcn': {'url': 'kafka://kafka.gcn.nasa.gov/igwn.gwalert',
+            'serialization_model': JSONBlob, 'skymap_encoder': b64encode}
 }
-"""Kafka broker URLs"""
+"""Kafka broker configuration details"""
 
 voevent_broadcaster_address = ':5341'
 """The VOEvent broker will bind to this address to send GCNs.
