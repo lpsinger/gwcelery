@@ -53,6 +53,7 @@ bilby-pipe = ">=1.0.6"
 celery = {version = ">=5.1", extras = ["redis"]}
 click = ">=7"
 comet = "*"
+confluent-kafka = "^1.9.2"
 dnspython = "*"  # silence "DNS: dnspython not found. Can not use SRV lookup." warning from SleekXMPP
 flask = ">=2.2"
 flask-caching = "*"
@@ -60,6 +61,7 @@ gracedb-sdk = ">=0.1.5"
 gwdatafind = ">=1.1.1"
 gwpy = ">=2.0.1"  # https://github.com/gwpy/gwpy/issues/1277
 healpy = "*"
+hop-client = "^0.6.0"
 igwn-alert = ">=0.2.2"
 imapclient = "*"
 importlib-metadata = { version = "*"}
@@ -90,13 +92,14 @@ pep517 = {version="*", optional=true}
 sphinx = {version=">=4.0", optional=true}
 
 # For tests
+fastavro = {version = "^1.6.1", optional = true}
 pytest-celery = {version="*", optional=true}
 pytest-flask = {version="*", optional=true}
 pytest-socket = {version="*", optional=true}
 
 [tool.poetry.extras]
 doc = ["pep517", "sphinx"]
-test = ["pytest-celery", "pytest-flask", "pytest-socket"]
+test = ["fastavro", "pytest-celery", "pytest-flask", "pytest-socket"]
 
 [tool.poetry.dev-dependencies]
 ipython = "*"  # Include IPython for a nicer ``gwcelery shell`` experience.

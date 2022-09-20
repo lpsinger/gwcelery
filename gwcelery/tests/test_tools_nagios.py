@@ -25,17 +25,22 @@ def test_nagios_unknown_error(monkeypatch, capsys):
 def celery_worker_parameters():
     return dict(
         perform_ping_check=False,
-        queues=['celery', 'exttrig', 'openmp', 'superevent', 'voevent']
+        queues=['celery', 'exttrig', 'kafka', 'openmp', 'superevent',
+                'voevent']
     )
 
 
 def test_nagios(capsys, monkeypatch, request, socket_enabled, starter,
                 tmp_path):
     mock_igwn_alert_client = Mock()
-    monkeypatch.setattr(
-        'igwn_alert.client', mock_igwn_alert_client)
+    mock_hop_stream_object = Mock()
+    mock_hop_stream_object.configure_mock(**{'close.return_value': None})
+    mock_hop_stream = Mock(return_value=mock_hop_stream_object)
     unix_socket = str(tmp_path / 'redis.sock')
     broker_url = f'redis+socket://{unix_socket}'
+
+    monkeypatch.setattr('hop.io.Stream.open', mock_hop_stream)
+    monkeypatch.setattr('igwn_alert.client', mock_igwn_alert_client)
     monkeypatch.setitem(app.conf, 'broker_url', broker_url)
     monkeypatch.setitem(app.conf, 'result_backend', broker_url)
 
@@ -114,13 +119,54 @@ def test_nagios(capsys, monkeypatch, request, socket_enabled, starter,
     out, err = capsys.readouterr()
     assert 'CRITICAL: The VOEvent receiver has no active connections' in out
 
-    # success
+    # Kafka broker, topic or broker are down
+    monkeypatch.setattr(
+        'celery.app.control.Inspect.stats',
+        Mock(return_value={'foo': {'voevent-broker-peers': ['127.0.0.1'],
+                                   'voevent-receiver-peers': ['127.0.0.1'],
+                                   'igwn-alert-topics':
+                                   expected_igwn_alert_topics,
+                                   'kafka_topic_up': {'kafka://kafka.scimma.org/gwalert-test': False}}}))  # noqa: E501
+
+    with pytest.raises(SystemExit) as excinfo:
+        main(['gwcelery', 'nagios'])
+    assert excinfo.value.code == nagios.NagiosPluginStatus.CRITICAL
+    out, err = capsys.readouterr()
+    assert 'CRITICAL: Not all Kafka bootstep URLs are active' in out
+
+    # Kafka broker, message not delivered
+    monkeypatch.setattr(
+        'celery.app.control.Inspect.stats',
+        Mock(return_value={'foo': {'voevent-broker-peers': ['127.0.0.1'],
+                                   'voevent-receiver-peers': ['127.0.0.1'],
+                                   'igwn-alert-topics':
+                                   expected_igwn_alert_topics,
+                                   'kafka_topic_up':
+                                   {'kafka://kafka.scimma.org/gwalert-test':
+                                    True},
+                                   'kafka_delivery_failures':
+                                   {'kafka://kafka.scimma.org/gwalert-test':
+                                    True}}}))  # noqa: E501
+
+    with pytest.raises(SystemExit) as excinfo:
+        main(['gwcelery', 'nagios'])
+    assert excinfo.value.code == nagios.NagiosPluginStatus.CRITICAL
+    out, err = capsys.readouterr()
+    assert 'CRITICAL: Not all Kafka messages have been succesfully delivered' \
+           in out
 
     monkeypatch.setattr(
         'celery.app.control.Inspect.stats',
         Mock(return_value={'foo': {'voevent-broker-peers': ['127.0.0.1'],
                                    'voevent-receiver-peers': ['127.0.0.1'],
-                                   'igwn-alert-topics': expected_igwn_alert_topics}}))  # noqa: E501
+                                   'igwn-alert-topics':
+                                   expected_igwn_alert_topics,
+                                   'kafka_topic_up':
+                                   {'kafka://kafka.scimma.org/gwalert-test':
+                                    True},
+                                   'kafka_delivery_failures':
+                                   {'kafka://kafka.scimma.org/gwalert-test':
+                                    False}}}))  # noqa: E501
 
     with pytest.raises(SystemExit) as excinfo:
         main(['gwcelery', 'nagios'])

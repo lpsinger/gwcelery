@@ -59,6 +59,30 @@ def get_active_voevent_peers(inspector):
     return broker_peers, receiver_peers
 
 
+def get_expected_kafka_bootstep_urls(inspector):
+    stats = inspector.stats()
+    expected_kafka_urls = \
+        {peer for stat in stats.values() for peer in
+         stat.get('kafka_topic_up', {})}
+    return expected_kafka_urls
+
+
+def get_active_kafka_bootstep_urls(inspector):
+    stats = inspector.stats()
+    active_kafka_urls = \
+        {kafka_url for stat in stats.values() for kafka_url, active_flag in
+         stat.get('kafka_topic_up', {}).items() if active_flag}
+    return active_kafka_urls
+
+
+def get_undelivered_message_urls(inspector):
+    stats = inspector.stats()
+    undelievered_messages = \
+        {kafka_url for stat in stats.values() for kafka_url, active_flag in
+         stat.get('kafka_delivery_failures', {}).items() if active_flag}
+    return undelievered_messages
+
+
 def check_status(app):
     connection = app.connection()
     try:
@@ -98,6 +122,21 @@ def check_status(app):
             'The VOEvent receiver has no active connections') \
                 from AssertionError('voevent_receiver_address: {}'.format(
                     app.conf['voevent_receiver_address']))
+
+    active = get_active_kafka_bootstep_urls(inspector)
+    expected = get_expected_kafka_bootstep_urls(inspector)
+    missing = expected - active
+    if missing:
+        raise NagiosCriticalError('Not all Kafka bootstep URLs are active') \
+            from AssertionError('Missing urls: ' + ', '.join(missing))
+
+    undelivered_messages = get_undelivered_message_urls(inspector)
+    if undelivered_messages:
+        raise NagiosCriticalError(
+            'Not all Kafka messages have been succesfully delivered'
+        ) from AssertionError(
+                'URLs with undelivered messages: ' + ', '.join(missing)
+        )
 
 
 @click.command(help=__doc__)
