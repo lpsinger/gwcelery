@@ -350,10 +350,10 @@ def test_handle_skymap_combine(mock_create_combined_skymap):
 
 @patch('gwcelery.tasks.detchar.dqr_json', return_value='dqrjson')
 @patch('gwcelery.tasks.gracedb.upload.run')
-@patch('gwcelery.tasks.gracedb.get_event', return_value={
-    'graceid': 'E1', 'gpstime': 1, 'instruments': '', 'pipeline': 'SNEWS'})
-@patch('gwcelery.tasks.gracedb.create_event')
-def test_handle_create_snews_event(mock_create_event, mock_get_event,
+@patch('gwcelery.tasks.gracedb.create_event.run', return_value={
+    'graceid': 'E1', 'gpstime': 1, 'instruments': '', 'pipeline': 'SNEWS',
+    'search': 'Supernova'})
+def test_handle_create_snews_event(mock_create_event,
                                    mock_upload, mock_json):
     text = read_binary(data, 'snews_gcn.xml')
     external_triggers.handle_snews_gcn(payload=text)
@@ -384,7 +384,7 @@ def test_handle_create_snews_event(mock_create_event, mock_get_event,
     mock_upload.assert_has_calls(calls, any_order=True)
 
 
-@patch('gwcelery.tasks.gracedb.replace_event')
+@patch('gwcelery.tasks.gracedb.replace_event.run')
 @patch('gwcelery.tasks.gracedb.get_events', return_value=[{'graceid': 'E1'}])
 def test_handle_replace_snews_event(mock_get_events, mock_replace_event):
     text = read_binary(data, 'snews_gcn.xml')

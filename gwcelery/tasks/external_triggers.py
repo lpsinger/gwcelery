@@ -56,18 +56,16 @@ def handle_snews_gcn(payload):
         assert len(events) == 1, 'Found more than one matching GraceDB entry'
         event, = events
         graceid = event['graceid']
-        gracedb.replace_event(graceid, payload)
-        return
+        canvas = gracedb.replace_event.s(graceid, payload)
 
     else:
-        graceid = gracedb.create_event(filecontents=payload,
-                                       search='Supernova',
-                                       group=ext_group,
-                                       pipeline=event_observatory)
-    event = gracedb.get_event(graceid)
-    start, end = event['gpstime'], event['gpstime']
-    # Pre-start and post-end padding is applied by check_vectors
-    detchar.check_vectors(event, event['graceid'], start, end)
+        canvas = gracedb.create_event.s(filecontents=payload,
+                                        search='Supernova',
+                                        group=ext_group,
+                                        pipeline=event_observatory)
+        canvas |= _launch_external_detchar.s()
+
+    canvas.delay()
 
 
 @gcn.handler(gcn.NoticeType.FERMI_GBM_ALERT,

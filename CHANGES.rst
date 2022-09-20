@@ -8,6 +8,9 @@ Changelog
 
 -   Fix bug where updated GRB events couldn't create sky maps.
 
+-   Update SNEWS ingestion to use canvas structure. This also fixes a bug
+    where SNEWS tests events were not being ingested properly.
+
 -   Fix datetime format in Avro and JSON notices so that they conform to
     ISO 8601. They were missing the ``T`` separating the date from the time
     and the final ``Z`` denoting the UTC time zone.
