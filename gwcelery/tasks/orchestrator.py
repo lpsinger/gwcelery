@@ -486,7 +486,9 @@ def preliminary_alert(event, alert, annotation_prefix='',
     elif alert['object']['preferred_event_data']['pipeline'] == 'oLIB':
         skymap_filename = 'oLIB.fits.gz'
     else:
-        skymap_filename = None
+        raise NotImplementedError(
+            'Valid skymap required for preliminary alert'
+        )
 
     # Determine if the event should be made public.
     is_publishable = (superevents.should_publish(
