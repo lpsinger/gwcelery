@@ -31,11 +31,11 @@ def handle_superevent(alert):
     """Schedule annotations for new superevents.
 
     After waiting for a time specified by the
-    :obj:`~gwcelery.conf.orchestrator_timeout` configuration variable
-    for the choice of preferred event to settle down, this task performs data
-    quality checks with :meth:`gwcelery.tasks.detchar.check_vectors` and
-    calls :meth:`~gwcelery.tasks.orchestrator.preliminary_alert` to send a
-    preliminary GCN notice.
+    :obj:`~gwcelery.conf.orchestrator_timeout` configuration variable for the
+    choice of preferred event to settle down, this task performs data quality
+    checks with :meth:`gwcelery.tasks.detchar.check_vectors` and calls
+    :meth:`~gwcelery.tasks.orchestrator.earlywarning_preliminary_alert` to send
+    a preliminary GCN notice.
     """
     superevent_id = alert['uid']
     # launch PE and detchar based on new type superevents
@@ -85,7 +85,7 @@ def handle_superevent(alert):
                     alert['object']['t_end']
                 )
                 |
-                preliminary_alert.s(alert)
+                earlywarning_preliminary_alert.s(alert)
             ).apply_async()
 
         elif label_name == superevents.READY_LABEL:
@@ -96,9 +96,11 @@ def handle_superevent(alert):
                 |
                 gracedb.get_event.s()
                 |
-                preliminary_alert.s(alert,
-                                    annotation_prefix='subthreshold.',
-                                    initiate_voevent=False)
+                earlywarning_preliminary_alert.s(
+                    alert,
+                    annotation_prefix='subthreshold.',
+                    initiate_voevent=False
+                )
             ).apply_async()
 
         # launch second preliminary on GCN_PRELIM_SENT
@@ -126,7 +128,7 @@ def handle_superevent(alert):
                     "Superevent cleaned up."
                 )
                 |
-                preliminary_alert.s(alert)
+                earlywarning_preliminary_alert.s(alert)
             ).apply_async(countdown=app.conf['superevent_clean_up_timeout'])
         # launch initial/retraction alert on ADVOK/ADVNO
         elif label_name == 'ADVOK':
@@ -459,8 +461,8 @@ def _proceed_if_no_advocate_action(filenames, superevent_id):
 
 
 @app.task(ignore_result=True, shared=False)
-def preliminary_alert(event, alert, annotation_prefix='',
-                      initiate_voevent=True):
+def earlywarning_preliminary_alert(event, alert, annotation_prefix='',
+                                   initiate_voevent=True):
     """Produce a preliminary alert by copying any sky maps.
 
     This consists of the following steps:
@@ -577,7 +579,7 @@ def preliminary_alert(event, alert, annotation_prefix='',
         canvas |= (
             _proceed_if_no_advocate_action.s(superevent_id)
             |
-            preliminary_initial_update_alert.s(
+            earlywarning_preliminary_initial_update_alert.s(
                 alert['object'],
                 ('earlywarning' if 'EARLY_WARNING' in event['labels']
                  else 'preliminary')
@@ -628,7 +630,8 @@ def parameter_estimation(far_event, superevent_id):
 
 
 @gracedb.task(ignore_result=True, shared=False)
-def preliminary_initial_update_alert(filenames, superevent, alert_type):
+def earlywarning_preliminary_initial_update_alert(filenames, superevent,
+                                                  alert_type):
     """
     Create and send a preliminary, initial, or update GCN notice.
 
@@ -755,8 +758,8 @@ def initial_alert(filenames, alert):
     """Produce an initial alert.
 
     This does nothing more than call
-    :meth:`~gwcelery.tasks.orchestrator.preliminary_initial_update_alert` with
-    ``alert_type='initial'``.
+    :meth:`~gwcelery.tasks.orchestrator.earlywarning_preliminary_initial_update_alert`
+    with ``alert_type='initial'``.
 
     Parameters
     ----------
@@ -773,7 +776,8 @@ def initial_alert(filenames, alert):
     API failures.
 
     """
-    preliminary_initial_update_alert(filenames, alert['object'], 'initial')
+    earlywarning_preliminary_initial_update_alert(filenames, alert['object'],
+                                                  'initial')
 
 
 @gracedb.task(ignore_result=True, shared=False)
@@ -781,8 +785,8 @@ def update_alert(filenames, superevent_id):
     """Produce an update alert.
 
     This does nothing more than call
-    :meth:`~gwcelery.tasks.orchestrator.preliminary_initial_update_alert` with
-    ``alert_type='update'``.
+    :meth:`~gwcelery.tasks.orchestrator.earlywarning_preliminary_initial_update_alert`
+    with ``alert_type='update'``.
 
     Parameters
     ----------
@@ -800,7 +804,8 @@ def update_alert(filenames, superevent_id):
 
     """
     superevent = gracedb.get_superevent._orig_run(superevent_id)
-    preliminary_initial_update_alert(filenames, superevent, 'update')
+    earlywarning_preliminary_initial_update_alert(filenames, superevent,
+                                                  'update')
 
 
 @app.task(ignore_result=True, shared=False)
