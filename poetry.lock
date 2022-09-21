@@ -1,6 +1,6 @@
 [[package]]
 name = "adc-streaming"
-version = "2.0.1.dev24+g9b59f7e"
+version = "2.1.1.dev14+g9b59f7e"
 description = "Astronomy Data Commons streaming client libraries"
 category = "main"
 optional = false
@@ -15,7 +15,7 @@ requests = "*"
 tqdm = "*"
 
 [package.extras]
-dev = ["autopep8", "docker", "flake8", "isort", "pytest", "pytest-integration", "pytest-timeout", "sphinx", "sphinx_rtd_theme", "twine"]
+dev = ["autopep8", "docker", "flake8", "isort", "pytest", "pytest-integration", "pytest-timeout", "sphinx", "sphinx-rtd-theme", "twine"]
 
 [package.source]
 type = "git"
@@ -849,14 +849,14 @@ scipy = "*"
 
 [[package]]
 name = "hop-client"
-version = "0.6.0"
+version = "0.7.0"
 description = "A pub-sub client library for Multi-messenger Astrophysics"
 category = "main"
 optional = false
 python-versions = ">=3.6.*"
 
 [package.dependencies]
-adc-streaming = ">=2.0.0"
+adc-streaming = ">=2.1.0"
 fastavro = ">=1.4.0"
 pluggy = ">=0.11"
 toml = ">=0.9.4"
@@ -898,7 +898,7 @@ python-versions = ">=3.5"
 
 [[package]]
 name = "igwn-alert"
-version = "0.2.2"
+version = "0.2.3"
 description = "IGWN Alert Network"
 category = "main"
 optional = false
@@ -906,7 +906,7 @@ python-versions = ">=3.6"
 
 [package.dependencies]
 confluent-kafka = ">=1.7.0"
-hop-client = "0.6.0"
+hop-client = ">=0.6.0"
 safe-netrc = "*"
 setuptools = "*"
 
@@ -2556,7 +2556,7 @@ test = ["fastavro", "pytest-celery", "pytest-flask", "pytest-socket"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8,<3.11"
-content-hash = "535e962f7082d601ad3260ca29682391d9d5cda24c6c5f550c0766572c991ffd"
+content-hash = "e5062adce8ae90bc8d0d08c17fdb666c024954165708980837cca6ca1ef21be8"
 
 [metadata.files]
 adc-streaming = []
@@ -3066,8 +3066,8 @@ healpy = [
     {file = "healpy-1.16.1.tar.gz", hash = "sha256:6d691b0a77fdf699672de09d39d82a640cfcc8ca03ae55022fb71e6edda69d2f"},
 ]
 hop-client = [
-    {file = "hop-client-0.6.0.tar.gz", hash = "sha256:46ba23fca457d3ae98bb3b2e7c49e3957947783da0f15dd2fb333c56124a6d95"},
-    {file = "hop_client-0.6.0-py3-none-any.whl", hash = "sha256:c481b46c21d7ebee25b9bfc7d155e48b7da98b03e8d1e7b7605f5ee1a33eacef"},
+    {file = "hop-client-0.7.0.tar.gz", hash = "sha256:574182c763a79bfdce3dc11a4b1d2b693a17d1edb5d0eeff86881dce043dcbed"},
+    {file = "hop_client-0.7.0-py3-none-any.whl", hash = "sha256:97ac5ab45e885dd5a55419054769cfb9ced133c1634ac909c41dd8fa4f46197c"},
 ]
 humanize = [
     {file = "humanize-4.4.0-py3-none-any.whl", hash = "sha256:8830ebf2d65d0395c1bd4c79189ad71e023f277c2c7ae00f263124432e6f2ffa"},
@@ -3082,7 +3082,7 @@ idna = [
     {file = "idna-3.4.tar.gz", hash = "sha256:814f528e8dead7d329833b91c5faa87d60bf71824cd12a7530b5526063d02cb4"},
 ]
 igwn-alert = [
-    {file = "igwn-alert-0.2.2.tar.gz", hash = "sha256:a61239af28c33a12d5c6c6628a85e0b6e261089afeb14e6db5074f56f5877767"},
+    {file = "igwn-alert-0.2.3.tar.gz", hash = "sha256:66df56f88e6b7d7b50be152353ca753df254250342276ed055d7ed3f1cea499d"},
 ]
 igwn-auth-utils = [
     {file = "igwn-auth-utils-0.3.1.tar.gz", hash = "sha256:9698bbd9c46eddf4fe65d157c16a2ee185e4ccf5f98ecc24b08d4bd79378ccae"},

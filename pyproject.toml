@@ -61,7 +61,7 @@ gracedb-sdk = ">=0.1.5"
 gwdatafind = ">=1.1.1"
 gwpy = ">=2.0.1"  # https://github.com/gwpy/gwpy/issues/1277
 healpy = "*"
-hop-client = "^0.6.0"
+hop-client = ">=0.7.0"  # https://github.com/scimma/hop-client/pull/176
 igwn-alert = ">=0.2.2"
 imapclient = "*"
 importlib-metadata = { version = "*"}
