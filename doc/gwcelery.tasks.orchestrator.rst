@@ -12,9 +12,9 @@ The orchestrator consists of two IGWN Alert message handlers:
   :obj:`~gwcelery.conf.orchestrator_timeout` seconds for the selection of the
   superevent by the :mod:`superevent manager <gwcelery.tasks.superevents>` to
   stabilize, then performs data quality checks. If the data quality checks
-  pass, then it calls :meth:`~gwcelery.tasks.orchestrator.preliminary_alert` to
-  copy annotations from the preferred event and send the preliminary GCN
-  notice.
+  pass, then it calls
+  :meth:`~gwcelery.tasks.orchestrator.earlywarning_preliminary_alert` to copy
+  annotations from the preferred event and send the preliminary GCN notice.
 
 * :meth:`~gwcelery.tasks.orchestrator.handle_cbc_event` is called for each CBC
   event. It performs some CBC-specific annotations that depend closely on the
@@ -31,7 +31,7 @@ Preliminary Alerts
 
 The flow chart below illustrates the operation of these two tasks.
 
-.. digraph:: preliminary_alert
+.. digraph:: earlywarning_preliminary_alert
 
     compound = true
     nodesep = 0.1
@@ -89,8 +89,8 @@ The flow chart below illustrates the operation of these two tasks.
         ]
 
         subgraph cluster_preliminary_alert {
-            href = "../gwcelery.tasks.orchestrator.html#gwcelery.tasks.orchestrator.preliminary_alert"
-            label = <<B><FONT face="monospace">preliminary_alert</FONT></B>>
+            href = "../gwcelery.tasks.orchestrator.html#gwcelery.tasks.orchestrator.earlywarning_preliminary_alert"
+            label = <<B><FONT face="monospace">earlywarning_preliminary_alert</FONT></B>>
 
             copy_from_preferred_event [
                 label = "Copy classification\n(if CBC) and\nsky map from\npreferred event"
