@@ -138,7 +138,7 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
     monkeypatch.setattr('gwcelery.tasks.gracedb.create_label._orig_run',
                         create_label)
     monkeypatch.setattr(
-        'gwcelery.tasks.orchestrator.preliminary_alert.run',
+        'gwcelery.tasks.orchestrator.earlywarning_preliminary_alert.run',
         preliminary_alert_pipeline
     )
     monkeypatch.setattr(
@@ -415,7 +415,7 @@ def test_handle_cbc_event_ignored(mock_localize,
 @pytest.mark.live_worker
 @patch('gwcelery.tasks.gcn.send')
 def test_alerts_skip_inj(mock_gcn_send):
-    orchestrator.preliminary_initial_update_alert.delay(
+    orchestrator.earlywarning_preliminary_initial_update_alert.delay(
         ('bayestar.fits.gz', 'em_bright.json', 'p_astro.json'),
         {'superevent_id': 'S1234', 'labels': ['INJ']},
         'preliminary'
@@ -432,7 +432,8 @@ def only_mdc_alerts(monkeypatch):
 @patch('gwcelery.tasks.skymaps.flatten')
 @patch('gwcelery.tasks.gracedb.download')
 @patch('gwcelery.tasks.gracedb.upload')
-@patch('gwcelery.tasks.orchestrator.preliminary_initial_update_alert')
+@patch('gwcelery.tasks.orchestrator.'
+       'earlywarning_preliminary_initial_update_alert')
 def test_only_mdc_alerts_switch(mock_alert, mock_upload, mock_download,
                                 mock_flatten, only_mdc_alerts):
     """Test to ensure that if the `only_alert_for_mdc` configuration variable
@@ -449,7 +450,7 @@ def test_only_mdc_alerts_switch(mock_alert, mock_upload, mock_download,
                             'offline': False,
                             'labels': []}
         superevent_id = 'S1234'
-        orchestrator.preliminary_alert.delay(
+        orchestrator.earlywarning_preliminary_alert.delay(
             event_dictionary,
             superevent_id
         ).get()
