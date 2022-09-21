@@ -28,7 +28,7 @@ def test_send_preliminary_gcn_post_no_data(client, monkeypatch):
         'gwcelery.tasks.gracedb.get_event.run',
         mock_get_event)
     monkeypatch.setattr(
-        'gwcelery.tasks.orchestrator.preliminary_alert.run',
+        'gwcelery.tasks.orchestrator.earlywarning_preliminary_alert.run',
         mock_preliminary_alert)
 
     response = client.post(url_for('send_preliminary_gcn'))
@@ -53,7 +53,7 @@ def test_send_preliminary_gcn_post(client, monkeypatch):
         'gwcelery.tasks.gracedb.get_event.run',
         mock_get_event)
     monkeypatch.setattr(
-        'gwcelery.tasks.orchestrator.preliminary_alert.run',
+        'gwcelery.tasks.orchestrator.earlywarning_preliminary_alert.run',
         mock_preliminary_alert)
 
     response = client.post(url_for('send_preliminary_gcn'), data={
@@ -81,7 +81,7 @@ def test_change_prefered_event_post(client, monkeypatch):
         'gwcelery.tasks.gracedb.get_event.run',
         mock_get_event)
     monkeypatch.setattr(
-        'gwcelery.tasks.orchestrator.preliminary_alert.run',
+        'gwcelery.tasks.orchestrator.earlywarning_preliminary_alert.run',
         mock_preliminary_alert)
 
     response = client.post(url_for('change_prefered_event'), data={

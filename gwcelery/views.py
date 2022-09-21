@@ -205,7 +205,7 @@ def send_preliminary_gcn():
             |
             gracedb.get_event.si(event_id)
             |
-            orchestrator.preliminary_alert.s(superevent_id)
+            orchestrator.earlywarning_preliminary_alert.s(superevent_id)
         ).delay()
         flash('Queued preliminary alert for {}.'.format(superevent_id),
               'success')
@@ -232,7 +232,7 @@ def change_prefered_event():
             |
             gracedb.get_event.si(event_id)
             |
-            orchestrator.preliminary_alert.s(
+            orchestrator.earlywarning_preliminary_alert.s(
                 superevent_id, initiate_voevent=False)
         ).delay()
         flash('Changed prefered event for {}.'.format(superevent_id),
