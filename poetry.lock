@@ -1,6 +1,6 @@
 [[package]]
 name = "adc-streaming"
-version = "2.1.1.dev13+g869b19d"
+version = "2.1.1.dev14+g9b59f7e"
 description = "Astronomy Data Commons streaming client libraries"
 category = "main"
 optional = false
@@ -1430,7 +1430,7 @@ scipy = "*"
 [package.source]
 type = "git"
 url = "https://git.ligo.org/lscsoft/p-astro.git"
-reference = "HEAD"
+reference = "master"
 resolved_reference = "33eb0d21bd38381130b5c3b3aba1bc9a0777491a"
 
 [[package]]
@@ -2563,7 +2563,7 @@ test = ["fastavro", "pytest-celery", "pytest-flask", "pytest-socket"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8,<3.11"
-content-hash = "bbd73fbd601de4462ac50a82ba7ef410be4109da801394d389ff4aed08d958a2"
+content-hash = "d87a200bdbf06218b43ff51a9b9095a124aa00bfd230addce02e1549c00b0ac4"
 
 [metadata.files]
 adc-streaming = []
