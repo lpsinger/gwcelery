@@ -7,8 +7,8 @@ from ..tasks import p_astro
 
 @pytest.mark.parametrize(
     'snr,far,mass1,mass2,pipeline,instruments',
-    ([30., 1e-17, 1.4, 1.4, 'mbtaonline', {'H1', 'L1', 'V1'}],
-     [100, 3e-10, 400, 40, 'mbtaonline', {'H1', 'L1'}],
+    ([30., 1e-17, 1.4, 1.4, 'mbta', {'H1', 'L1', 'V1'}],
+     [100, 3e-10, 400, 40, 'mbta', {'H1', 'L1'}],
      [10, 3e-10, 20, 30, 'pycbc', {'L1', 'V1'}]))
 def test_compute_p_astro(snr, far, mass1, mass2,
                          pipeline, instruments):
@@ -24,9 +24,9 @@ def test_compute_p_astro(snr, far, mass1, mass2,
 
 @pytest.mark.parametrize(
     'far,pipeline,instruments,snr_thresh,val',
-    ([1e-25, 'mbtaonline', {'H1', 'L1', 'V1'}, 12, 1],
-     [1e-8, 'mbtaonline', {'L1', 'V1'}, 33, 0.08],
-     [6e-10, 'mbtaonline', {'H1', 'V1'}, 10, 0.99],
+    ([1e-25, 'mbta', {'H1', 'L1', 'V1'}, 12, 1],
+     [1e-8, 'mbta', {'L1', 'V1'}, 33, 0.08],
+     [6e-10, 'mbta', {'H1', 'V1'}, 10, 0.99],
      [7.6e-59, 'spiir', {'H1', 'L1', 'V1'}, 33, 1],
      [1e-10, 'pycbc', {'H1', 'L1'}, 10, 1],
      [1e-10, 'pycbc', {'H1', 'L1', 'V1'}, 10, 1]))

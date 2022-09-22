@@ -76,7 +76,7 @@ ligo-segments = "*"
 lscsoft-glue = "*"
 lxml = "*"
 numpy = "*"
-p-astro = ">=1.0"
+p-astro = { git = "https://git.ligo.org/lscsoft/p-astro.git" }  # FIXME: https://git.ligo.org/lscsoft/p-astro/-/merge_requests/40
 pesummary = "*"
 pygcn = ">=1.0.1"
 python-ligo-lw = "^1.8.3"

@@ -4,6 +4,8 @@ Changelog
 1.0.2 (unreleased)
 ------------------
 
+-   Replace instances of "MBTAOnline" with "MBTA".
+
 -   Remove gstlal from list of pipelines that upload PSDs in separate
     ``psd.xml.gz`` file. Update mock event uploads to include PSD in
     ``coinc.xml`` upload.

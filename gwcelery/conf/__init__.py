@@ -83,14 +83,14 @@ email_host = 'imap.gmail.com'
 superevent_d_t_start = {'gstlal': 1.0,
                         'spiir': 1.0,
                         'pycbc': 1.0,
-                        'mbtaonline': 1.0}
+                        'mbta': 1.0}
 """Pipeline based lower extent of superevent segments.
 For cwb and lib this is decided from extra attributes."""
 
 superevent_d_t_end = {'gstlal': 1.0,
                       'spiir': 1.0,
                       'pycbc': 1.0,
-                      'mbtaonline': 1.0}
+                      'mbta': 1.0}
 """Pipeline based upper extent of superevent segments
 For cwb and lib this is decided from extra attributes."""
 
@@ -119,8 +119,8 @@ producing early warning events: gstlal and spiir."""
 
 preliminary_alert_trials_factor = dict(cbc=5.0, burst=4.0)
 """Trials factor corresponding to trigger categories. For CBC and Burst, trials
-factor is the number of pipelines. CBC pipelines are gstlal, pycbc, mbtaonline
-and spiir. Burst searches are cwb.allsky, cwb.bbh and cwb.imbh."""
+factor is the number of pipelines. CBC pipelines are gstlal, pycbc, mbta and
+spiir. Burst searches are cwb.allsky, cwb.bbh and cwb.imbh."""
 
 early_warning_alert_far_threshold = 1 / (3600 * 24)
 """False alarm rate threshold for early warning alerts."""
@@ -148,7 +148,7 @@ case the preferred event is updated with high latency."""
 check_vector_prepost = {'gstlal': [2, 2],
                         'spiir': [2, 2],
                         'pycbc': [2, 2],
-                        'MBTAOnline': [2, 2],
+                        'MBTA': [2, 2],
                         'oLIB': [1.5, 1.5],
                         'LIB': [1.5, 1.5],
                         'CWB': [1.5, 1.5],
@@ -164,7 +164,7 @@ vector check will include in its check. Pipeline dependent."""
 uses_gatedhoft = {'gstlal': True,
                   'spiir': True,
                   'pycbc': True,
-                  'MBTAOnline': True,
+                  'MBTA': True,
                   'oLIB': False,
                   'LIB': False,
                   'CWB': True,
@@ -204,7 +204,7 @@ for the event.
 idq_veto = {'gstlal': False,
             'spiir': False,
             'pycbc': False,
-            'MBTAOnline': False,
+            'MBTA': False,
             'oLIB': False,
             'LIB': False,
             'CWB': False,

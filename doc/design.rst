@@ -330,7 +330,7 @@ IGWN Alert message handler tasks are declared using the
     @igwn_alert.handler('cbc_gstlal',
                         'cbc_spiir',
                         'cbc_pycbc',
-                        'cbc_mbtaonline')
+                        'cbc_mbta')
     def handle_cbc(alert):
         # do work here...
 

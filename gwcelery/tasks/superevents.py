@@ -36,7 +36,7 @@ has all data products required to make it ready for annotations."""
 @igwn_alert.handler('cbc_gstlal',
                     'cbc_spiir',
                     'cbc_pycbc',
-                    'cbc_mbtaonline',
+                    'cbc_mbta',
                     'burst_olib',
                     'burst_cwb',
                     shared=False)

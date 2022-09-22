@@ -164,7 +164,7 @@ def handle_superevent(alert):
 @igwn_alert.handler('cbc_gstlal',
                     'cbc_spiir',
                     'cbc_pycbc',
-                    'cbc_mbtaonline',
+                    'cbc_mbta',
                     shared=False)
 def handle_cbc_event(alert):
     """Perform annotations for CBC events that depend on pipeline-specific
