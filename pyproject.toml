@@ -47,7 +47,7 @@ include = [
 
 [tool.poetry.dependencies]
 python = "^3.8,<3.11"
-adc-streaming = { git = "https://github.com/astronomy-commons/adc-streaming.git" }
+adc-streaming = { git = "https://github.com/lpsinger/adc-streaming.git", branch = "pyproject.toml" }
 astropy = ">=4.3.1"  # https://github.com/astropy/astropy/issues/11879
 bilby-pipe = ">=1.0.6"
 celery = {version = ">=5.1", extras = ["redis"]}
@@ -81,6 +81,7 @@ pesummary = "*"
 pygcn = ">=1.0.1"
 python-ligo-lw = "^1.8.3"
 safe-netrc = "*"
+scitokens = { git = "https://github.com/lpsinger/scitokens.git", branch = "install-requires-setuptools" }  # FIXME: remove once https://github.com/scitokens/scitokens/pull/163 is fixed
 sentry-sdk = {version = "*", extras = ["flask", "tornado"]}
 service-identity = "*"  # We don't actually use this package, but it silences some annoying warnings from twistd.
 voeventlib = ">=1.2"
