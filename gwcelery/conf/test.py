@@ -4,7 +4,9 @@ Inherits all settings from :mod:`gwcelery.conf.playground`, with the exceptions
 below.
 """
 
-from hop.models import AvroBlob
+from base64 import b64encode
+
+from hop.models import JSONBlob, AvroBlob
 
 from . import *  # noqa: F401, F403
 
@@ -17,6 +19,8 @@ gracedb_host = 'gracedb-test.ligo.org'
 kafka_alert_config = {
     'scimma': {'url': 'kafka://kafka.scimma.org/igwn.gwalert-test',
                'serialization_model': AvroBlob, 'skymap_encoder': lambda _: _},
+    'gcn': {'url': 'kafka://kafka.dev.gcn.nasa.gov/igwn.gwalert',
+            'serialization_model': JSONBlob, 'skymap_encoder': b64encode}
 }
 """Kafka broker configuration details"""
 
