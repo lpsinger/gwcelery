@@ -79,7 +79,7 @@ version = Version(metadata['version']).public
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -205,18 +205,15 @@ texinfo_documents = [
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
-    # FIXME: Import sphinx refs from the old version of Celery that we are
-    # currently using. Change to 'latest' once we complete the upgrade to
-    # Celery 5.
-    'celery': ('https://docs.celeryq.dev/en/stable/', None),
+    'celery': ('https://docs.celeryq.dev/en/latest/', None),
     'comet': ('https://comet.transientskp.org/en/stable/', None),
     'data-quality-report': (
         'https://docs.ligo.org/detchar/data-quality-report/', None),
     'htcondor': ('https://htcondor.readthedocs.io/en/latest/', None),
     'gwpy': ('https://gwpy.github.io/docs/stable/', None),
     'ligo.skymap': ('https://lscsoft.docs.ligo.org/ligo.skymap/', None),
-    'requests': ('https://docs.python-requests.org/en/latest/', None),
-    'twisted': ('https://twistedmatrix.com/documents/current/api/', None),
+    'requests': ('https://requests.readthedocs.io/en/stable/', None),
+    'twisted': ('https://docs.twisted.org/en/stable/', None),
     'userguide': ('https://emfollow.docs.ligo.org/userguide/', None),
     'igwn-alert': ('https://igwn-alert.readthedocs.io/en/latest/', None)
 }
@@ -242,6 +239,6 @@ autosectionlabel_prefix_document = True
 # -- Options for extlinks extension ------------------------------------------
 
 extlinks = {
-    'arxiv': ('https://arxiv.org/abs/%s', 'arXiv:'),
-    'doi': ('https://doi.org/%s', 'doi:')
+    'arxiv': ('https://arxiv.org/abs/%s', 'arXiv:%s'),
+    'doi': ('https://doi.org/%s', 'doi:%s')
 }
