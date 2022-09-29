@@ -89,8 +89,9 @@ coverage. Modifications to existing code must not decrease test coverage. To
 run the unit tests and measure code coverage, run the following commands in the
 top directory of your local source checkout::
 
-    $ pip install pytest-cov
-    $ python setup.py test --addopts='--cov --cov-report html'
+    $ poetry install --extras=test
+    $ poetry shell
+    $ pytest --cov --cov-report html
 
 This will save a coverage report that you can view in a web browser as
 ``htmlcov/index.html``.
@@ -135,13 +136,18 @@ Documentation
 
 Documentation strings should be written in the `Numpydoc style`_.
 
-To build the documentation, run the following command in the top of your source
-directory::
+To build the documentation, first, install the extra test dependencies in the
+Poetry-managed virtual environment by running this command::
 
-    $ pip install -r docs-requirements.txt
-    $ python setup.py build_sphinx
+    $ poetry install --extras=doc
 
-Then to view the documentation, open the file ``build/sphinx/html/index.html``
-in your favorite web browser.
+Then, run these commands to build the docs::
+
+    $ poetry shell
+    $ cd doc
+    $ python -m sphinx -b html . _build/html
+
+Finally, open the file ``doc/_build/html/index.html`` in your favorite web
+browser.
 
 .. _`Numpydoc style`: http://numpydoc.readthedocs.io/
