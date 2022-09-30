@@ -567,7 +567,7 @@ def earlywarning_preliminary_alert(event, alert, annotation_prefix='',
     # Switch for disabling all but MDC alerts.
     if app.conf['only_alert_for_mdc']:
         if alert['object']['preferred_event_data'].get('search') != 'MDC':
-            canvas |= gracedb.upload.s(
+            canvas |= gracedb.upload.si(
                 None, None, superevent_id,
                 ("Skipping alert because gwcelery has been configured to only"
                  " send alerts for MDC events."))
