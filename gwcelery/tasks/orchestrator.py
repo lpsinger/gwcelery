@@ -499,33 +499,31 @@ def earlywarning_preliminary_alert(event, alert, annotation_prefix='',
                       alert['object']['preferred_event_data']['labels']))
 
     canvas = group(
-        (
-            gracedb.download.si(skymap_filename, preferred_event_id)
-            |
-            group(
-                gracedb.upload.s(
-                    annotation_prefix + skymap_filename,
-                    superevent_id,
-                    message='Localization copied from {}'.format(
-                        preferred_event_id),
-                    tags=['sky_loc'] if annotation_prefix else [
-                        'sky_loc', 'public']
-                )
-                |
-                _create_label_and_return_filename.s(
-                    'SKYMAP_READY', superevent_id
-                ),
-
-                skymaps.annotate_fits.s(
-                    annotation_prefix + skymap_filename,
-                    superevent_id,
-                    ['sky_loc'] if annotation_prefix else [
-                        'sky_loc', 'public']
-                )
+        gracedb.download.si(skymap_filename, preferred_event_id)
+        |
+        group(
+            gracedb.upload.s(
+                annotation_prefix + skymap_filename,
+                superevent_id,
+                message='Localization copied from {}'.format(
+                    preferred_event_id),
+                tags=['sky_loc'] if annotation_prefix else [
+                    'sky_loc', 'public']
             )
             |
-            get_first.s()
-        ) if skymap_filename is not None else identity.s(None),
+            _create_label_and_return_filename.s(
+                'SKYMAP_READY', superevent_id
+            ),
+
+            skymaps.annotate_fits.s(
+                annotation_prefix + skymap_filename,
+                superevent_id,
+                ['sky_loc'] if annotation_prefix else [
+                    'sky_loc', 'public']
+            )
+        )
+        |
+        get_first.s(),
 
         (
             gracedb.download.si('em_bright.json', preferred_event_id)
