@@ -54,6 +54,8 @@ Changelog
 -   Use multi-resolution GW sky maps when calculating the joint false alarm
     rate.
 
+-   Filter BBH/IMBH events from burst-GRB searches. 
+
 1.0.1 (2022-05-09)
 ------------------
 

@@ -255,7 +255,8 @@ def handle_grb_igwn_alert(alert):
                 return
 
             # launch standard Burst-GRB search
-            raven.coincidence_search(graceid, alert['object'], group='Burst')
+            raven.coincidence_search(graceid, alert['object'], group='Burst',
+                                     se_searches=['Allsky'])
 
             if alert['object']['search'] in ['SubGRB', 'SubGRBTargeted']:
                 # if sub-threshold GRB, launch search with that pipeline
@@ -277,9 +278,6 @@ def handle_grb_igwn_alert(alert):
                                          group=gw_group, searches=['MDC'])
                 return
 
-            # launch standard GRB search
-            raven.coincidence_search(graceid, alert['object'],
-                                     group=gw_group, searches=['GRB'])
             if gw_group == 'CBC':
                 # launch subthreshold searches if CBC
                 # for Fermi and Swift separately to use different time windows
@@ -288,7 +286,13 @@ def handle_grb_igwn_alert(alert):
                         graceid, alert['object'], group='CBC',
                         searches=['SubGRB', 'SubGRBTargeted'],
                         pipelines=[pipeline])
-
+                se_searches = []
+            else:
+                se_searches = ['Allsky']
+            # launch standard GRB search
+            raven.coincidence_search(graceid, alert['object'],
+                                     group=gw_group, searches=['GRB'],
+                                     se_searches=se_searches)
     # rerun raven pipeline or created combined sky map when sky maps are
     # available
     elif alert['alert_type'] == 'label_added' and \
