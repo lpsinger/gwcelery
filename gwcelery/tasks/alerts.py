@@ -158,6 +158,7 @@ def _create_skymap_classification_tuple(skymap, classification):
     return (skymap, *classification)
 
 
+@app.task(shared=False, ignore_result=True)
 def download_skymap_and_send_alert(classification, superevent, alert_type,
                                    skymap_filename=None, raven_coinc=False):
     """Wrapper for send function when caller has not already downloaded the
@@ -202,4 +203,4 @@ def download_skymap_and_send_alert(classification, superevent, alert_type,
             raven_coinc=raven_coinc
         )
 
-    return canvas
+    canvas.apply_async()

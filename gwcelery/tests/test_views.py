@@ -65,7 +65,8 @@ def test_send_preliminary_gcn_post(client, monkeypatch):
     mock_update_superevent.assert_called_once_with(
         'MS190208a', preferred_event='M12345')
     mock_get_event.assert_called_once_with('M12345')
-    mock_preliminary_alert.assert_called_once_with(mock_event, 'MS190208a')
+    mock_preliminary_alert.assert_called_once_with(mock_event, 'MS190208a',
+                                                   'preliminary')
 
 
 def test_change_prefered_event_post(client, monkeypatch):
@@ -94,7 +95,7 @@ def test_change_prefered_event_post(client, monkeypatch):
         'MS190208a', preferred_event='M12345')
     mock_get_event.assert_called_once_with('M12345')
     mock_preliminary_alert.assert_called_once_with(
-        mock_event, 'MS190208a', initiate_voevent=False)
+        mock_event, 'MS190208a', 'preliminary', initiate_voevent=False)
 
 
 def test_send_update_gcn_get(client):

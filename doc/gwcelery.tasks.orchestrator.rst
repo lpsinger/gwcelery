@@ -14,7 +14,7 @@ The orchestrator consists of two IGWN Alert message handlers:
   stabilize, then performs data quality checks. If the data quality checks
   pass, then it calls
   :meth:`~gwcelery.tasks.orchestrator.earlywarning_preliminary_alert` to copy
-  annotations from the preferred event and send the preliminary GCN notice.
+  annotations from the preferred event and send the preliminary notice.
 
 * :meth:`~gwcelery.tasks.orchestrator.handle_cbc_event` is called for each CBC
   event. It performs some CBC-specific annotations that depend closely on the
@@ -100,8 +100,8 @@ The flow chart below illustrates the operation of these two tasks.
                 label = "Make sky\nmap plots"
             ]
 
-            send_gcn [
-                label = "Send preliminary\nGCN notice"
+            send_notice [
+                label = "Send preliminary\nnotice"
             ]
 
             circular [
@@ -122,7 +122,7 @@ The flow chart below illustrates the operation of these two tasks.
     far_threshold -> dqv [label = Yes, lhead = prelim_gcn_checks]
 
     dqv -> copy_from_preferred_event [label = No, lhead = cluster_preliminary_alert]
-    copy_from_preferred_event -> annotate_skymaps -> send_gcn -> circular
+    copy_from_preferred_event -> annotate_skymaps -> send_notice -> circular
 
     cbc_event [
         label = "IGWN Alert for\nfile added\nto CBC event"
@@ -223,12 +223,12 @@ shown below; the flow chart for update alerts is the same.
             label = "If sky map provided,\nthen make sky map plots"
         ]
 
-        send_gcn [
-            label = "Send\nGCN notice"
+        send_notice [
+            label = "Send\nnotice"
         ]
     }
 
-    annotate_skymaps -> send_gcn
+    annotate_skymaps -> send_notice
 
 Retraction Alerts
 ~~~~~~~~~~~~~~~~~
@@ -259,8 +259,8 @@ alerts, and at the moment must be invoked manually. A flow chart is shown below.
         href = "../gwcelery.tasks.orchestrator.html#gwcelery.tasks.orchestrator.retraction_alert"
         label = <<B><FONT face="monospace">retraction_alert</FONT></B>>
 
-        send_gcn [
-            label = "Send\nGCN notice"
+        send_notice [
+            label = "Send\nnotice"
         ]
     }
 

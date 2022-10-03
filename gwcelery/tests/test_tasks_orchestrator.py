@@ -101,7 +101,8 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
     expose = Mock()
     plot_volume = Mock()
     plot_allsky = Mock()
-    send = Mock()
+    gcn_send = Mock()
+    alerts_send = Mock()
     query_data = Mock()
     prepare_ini = Mock()
     start_pe = Mock()
@@ -114,7 +115,9 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
     omegascan = Mock()
     check_vectors = Mock()
 
-    monkeypatch.setattr('gwcelery.tasks.gcn.send.run', send)
+    monkeypatch.setattr('gwcelery.tasks.gcn.send.run', gcn_send)
+    monkeypatch.setattr('gwcelery.tasks.alerts.send.run',
+                        alerts_send)
     monkeypatch.setattr('gwcelery.tasks.skymaps.plot_allsky.run', plot_allsky)
     monkeypatch.setattr('gwcelery.tasks.skymaps.plot_volume.run', plot_volume)
     monkeypatch.setattr('gwcelery.tasks.gracedb.create_tag._orig_run',
@@ -171,7 +174,8 @@ def test_handle_superevent(monkeypatch, toy_3d_fits_filecontents,  # noqa: F811
                 ProbHasNS=0.0, ProbHasRemnant=0.0, Terrestrial=0.01,
                 internal=False, open_alert=True,
                 skymap_filename='bayestar.fits.gz', skymap_type='bayestar')
-        send.assert_called_once()
+        gcn_send.assert_called_once()
+        alerts_send.assert_called_once()
         create_initial_circular.assert_called_once()
 
     if alert_type == 'new' and group == 'CBC':
@@ -221,6 +225,8 @@ def superevent_initial_alert_download(filename, graceid):
     elif filename == 'p_astro.json,0':
         return json.dumps(
             dict(BNS=0.94, NSBH=0.03, BBH=0.02, Terrestrial=0.01))
+    elif filename == 'foobar.multiorder.fits,0':
+        return 'contents of foobar.multiorder.fits,0'
     else:
         raise ValueError
 
@@ -245,11 +251,13 @@ def superevent_initial_alert_download(filename, graceid):
 @patch('gwcelery.tasks.gracedb.download._orig_run',
        superevent_initial_alert_download)
 @patch('gwcelery.tasks.gcn.send.run')
+@patch('gwcelery.tasks.alerts.send.run')
 @patch('gwcelery.tasks.circulars.create_emcoinc_circular.run')
 @patch('gwcelery.tasks.circulars.create_initial_circular.run')
 def test_handle_superevent_initial_alert(mock_create_initial_circular,
                                          mock_create_emcoinc_circular,
-                                         mock_send,
+                                         mock_alerts_send,
+                                         mock_gcn_send,
                                          mock_create_voevent,
                                          mock_create_tag, mock_get_log,
                                          mock_expose, labels):
@@ -272,7 +280,13 @@ def test_handle_superevent_initial_alert(mock_create_initial_circular,
         ProbHasRemnant=0.0, Terrestrial=0.01, internal=False, open_alert=True,
         skymap_filename='foobar.multiorder.fits,0', skymap_type='foobar',
         raven_coinc='RAVEN_ALERT' in labels)
-    mock_send.assert_called_once_with('contents of S1234-Initial-1.xml')
+    mock_alerts_send.assert_called_once_with((
+        superevent_initial_alert_download('foobar.multiorder.fits,0', 'S1234'),
+        superevent_initial_alert_download('em_bright.json,0', 'S1234'),
+        superevent_initial_alert_download('p_astro.json,0', 'S1234'),
+        None, None, None, None), alert['object'], 'initial',
+        raven_coinc='RAVEN_ALERT' in labels)
+    mock_gcn_send.assert_called_once_with('contents of S1234-Initial-1.xml')
     if 'RAVEN_ALERT' in labels:
         mock_create_emcoinc_circular.assert_called_once_with('S1234')
     else:
@@ -300,16 +314,22 @@ def superevent_retraction_alert_download(filename, graceid):
 @patch('gwcelery.tasks.gracedb.download._orig_run',
        superevent_retraction_alert_download)
 @patch('gwcelery.tasks.gcn.send.run')
+@patch('gwcelery.tasks.alerts.send.run')
 @patch('gwcelery.tasks.circulars.create_retraction_circular.run')
 def test_handle_superevent_retraction_alert(mock_create_retraction_circular,
-                                            mock_send,
+                                            mock_alerts_send,
+                                            mock_gcn_send,
                                             mock_create_voevent,
                                             mock_create_tag, mock_expose):
     """Test that the ``ADVNO`` label triggers a retraction alert."""
     alert = {
         'alert_type': 'label_added',
         'uid': 'S1234',
-        'data': {'name': 'ADVNO'}
+        'data': {'name': 'ADVNO'},
+        'object': {
+            'labels': [],
+            'superevent_id': 'S1234'
+        }
     }
 
     # Run function under test
@@ -317,7 +337,9 @@ def test_handle_superevent_retraction_alert(mock_create_retraction_circular,
 
     mock_create_voevent.assert_called_once_with(
         'S1234', 'retraction', internal=False, open_alert=True)
-    mock_send.assert_called_once_with('contents of S1234-Retraction-2.xml')
+    mock_gcn_send.assert_called_once_with('contents of S1234-Retraction-2.xml')
+    mock_alerts_send.assert_called_once_with(None, alert['object'],
+                                             'retraction')
     mock_create_retraction_circular.assert_called_once_with('S1234')
     mock_create_tag.assert_called_once_with(
         'S1234-Retraction-2.xml', 'public', 'S1234')
@@ -414,13 +436,15 @@ def test_handle_cbc_event_ignored(mock_localize,
 
 @pytest.mark.live_worker
 @patch('gwcelery.tasks.gcn.send')
-def test_alerts_skip_inj(mock_gcn_send):
-    orchestrator.earlywarning_preliminary_initial_update_alert.delay(
+@patch('gwcelery.tasks.alerts.send')
+def test_alerts_skip_inj(mock_gcn_send, mock_alerts_send):
+    orchestrator.earlywarning_preliminary_alert.delay(
         ('bayestar.fits.gz', 'em_bright.json', 'p_astro.json'),
         {'superevent_id': 'S1234', 'labels': ['INJ']},
         'preliminary'
     ).get()
     mock_gcn_send.assert_not_called()
+    mock_alerts_send.assert_not_called()
 
 
 @pytest.fixture
@@ -432,8 +456,7 @@ def only_mdc_alerts(monkeypatch):
 @patch('gwcelery.tasks.skymaps.flatten')
 @patch('gwcelery.tasks.gracedb.download')
 @patch('gwcelery.tasks.gracedb.upload')
-@patch('gwcelery.tasks.orchestrator.'
-       'earlywarning_preliminary_initial_update_alert')
+@patch('gwcelery.tasks.alerts.send')
 def test_only_mdc_alerts_switch(mock_alert, mock_upload, mock_download,
                                 mock_flatten, only_mdc_alerts):
     """Test to ensure that if the `only_alert_for_mdc` configuration variable
@@ -452,6 +475,7 @@ def test_only_mdc_alerts_switch(mock_alert, mock_upload, mock_download,
         superevent_id = 'S1234'
         orchestrator.earlywarning_preliminary_alert.delay(
             event_dictionary,
-            superevent_id
+            superevent_id,
+            'preliminary'
         ).get()
         mock_alert.assert_not_called()

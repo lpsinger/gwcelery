@@ -83,7 +83,7 @@ def test_validate_alert(mock_download, parsed_schema, monkeypatch):
         superevent,
         'initial',
         'MS220722v_bayestar.multiorder.fits'
-    ).delay()
+    )
     mock_download.assert_called_once()
     mock_stream_write.assert_called_once()
 

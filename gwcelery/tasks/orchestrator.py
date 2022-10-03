@@ -10,9 +10,10 @@ import re
 from celery import group
 
 from ..import app
+from . import alerts
 from . import bayestar
 from . import circulars
-from .core import identity, get_first
+from .core import identity, get_first, get_by_index, get_last
 from . import detchar
 from . import em_bright
 from . import gcn
@@ -35,7 +36,7 @@ def handle_superevent(alert):
     choice of preferred event to settle down, this task performs data quality
     checks with :meth:`gwcelery.tasks.detchar.check_vectors` and calls
     :meth:`~gwcelery.tasks.orchestrator.earlywarning_preliminary_alert` to send
-    a preliminary GCN notice.
+    a preliminary notice.
     """
     superevent_id = alert['uid']
     # launch PE and detchar based on new type superevents
@@ -415,12 +416,6 @@ def _create_voevent(classification, *args, **kwargs):
 
 
 @gracedb.task(shared=False)
-def _create_label_and_return_filename(filename, label, graceid):
-    gracedb.create_label.delay(label, graceid)
-    return filename
-
-
-@gracedb.task(shared=False)
 def _leave_log_message_and_return_event_dict(event, superevent_id,
                                              message, **kwargs):
     """Wrapper around :meth:`gracedb.update_superevent`
@@ -441,9 +436,9 @@ def _update_superevent_and_return_event_dict(event, superevent_id):
 
 
 @gracedb.task(shared=False)
-def _proceed_if_no_advocate_action(filenames, superevent_id):
-    """Return filenames in case the superevent does not have labels
-    indicating advocate action.
+def _proceed_if_no_advocate_action(files, superevent_id):
+    """Return files in case the superevent does not have labels indicating
+    advocate action.
     """
     superevent_labels = gracedb.get_labels(superevent_id)
     blocking_labels = {'ADVOK', 'ADVNO'}.intersection(
@@ -457,7 +452,7 @@ def _proceed_if_no_advocate_action(filenames, superevent_id):
     else:
         gracedb.upload.delay(None, None, superevent_id,
                              "Sending preliminary notice")
-        return filenames
+        return files
 
 
 @app.task(ignore_result=True, shared=False)
@@ -472,7 +467,7 @@ def earlywarning_preliminary_alert(event, alert, annotation_prefix='',
     2.   Create standard annotations for sky maps including all-sky plots by
          calling :meth:`gwcelery.tasks.skymaps.annotate_fits`.
     3.   Create a preliminary VOEvent.
-    4.   Send the VOEvent to GCN.
+    4.   Send the VOEvent to GCN and notices to SCiMMA and GCN.
     5.   Apply the GCN_PRELIM_SENT label to the superevent.
     6.   Create and upload a GCN Circular draft.
     """
@@ -498,10 +493,15 @@ def earlywarning_preliminary_alert(event, alert, annotation_prefix='',
                       {'DQV', 'INJ'}.isdisjoint(
                       alert['object']['preferred_event_data']['labels']))
 
+    # Download files from events and upload to superevent with relevant
+    # annotations. Pass file contents down the chain so alerts task doesn't
+    # need to download them again.
     canvas = group(
         gracedb.download.si(skymap_filename, preferred_event_id)
         |
         group(
+            identity.s(),
+
             gracedb.upload.s(
                 annotation_prefix + skymap_filename,
                 superevent_id,
@@ -511,9 +511,7 @@ def earlywarning_preliminary_alert(event, alert, annotation_prefix='',
                     'sky_loc', 'public']
             )
             |
-            _create_label_and_return_filename.s(
-                'SKYMAP_READY', superevent_id
-            ),
+            gracedb.create_label.si('SKYMAP_READY', superevent_id),
 
             skymaps.annotate_fits.s(
                 annotation_prefix + skymap_filename,
@@ -528,36 +526,44 @@ def earlywarning_preliminary_alert(event, alert, annotation_prefix='',
         (
             gracedb.download.si('em_bright.json', preferred_event_id)
             |
-            gracedb.upload.s(
-                annotation_prefix + 'em_bright.json',
-                superevent_id,
-                message='Source properties copied from {}'.format(
-                    preferred_event_id),
-                tags=['em_bright'] if annotation_prefix else [
-                    'em_bright', 'public']
+            group(
+                identity.s(),
+
+                gracedb.upload.s(
+                    annotation_prefix + 'em_bright.json',
+                    superevent_id,
+                    message='Source properties copied from {}'.format(
+                        preferred_event_id),
+                    tags=['em_bright'] if annotation_prefix else [
+                        'em_bright', 'public']
+                )
+                |
+                gracedb.create_label.si('EMBRIGHT_READY', superevent_id)
             )
             |
-            _create_label_and_return_filename.s(
-                'EMBRIGHT_READY', superevent_id
-            )
+            get_first.s()
         ) if alert['object']['preferred_event_data']['group'] == 'CBC' else
         identity.s(None),
 
         (
             gracedb.download.si('p_astro.json', preferred_event_id)
             |
-            gracedb.upload.s(
-                annotation_prefix + 'p_astro.json',
-                superevent_id,
-                message='Source classification copied from {}'.format(
-                    preferred_event_id),
-                tags=['p_astro'] if annotation_prefix else [
-                    'p_astro', 'public']
+            group(
+                identity.s(),
+
+                gracedb.upload.s(
+                    annotation_prefix + 'p_astro.json',
+                    superevent_id,
+                    message='Source classification copied from {}'.format(
+                        preferred_event_id),
+                    tags=['p_astro'] if annotation_prefix else [
+                        'p_astro', 'public']
+                )
+                |
+                gracedb.create_label.si('PASTRO_READY', superevent_id)
             )
             |
-            _create_label_and_return_filename.s(
-                'PASTRO_READY', superevent_id
-            )
+            get_first.s()
         ) if alert['object']['preferred_event_data']['group'] == 'CBC' else
         identity.s(None)
     )
@@ -572,16 +578,17 @@ def earlywarning_preliminary_alert(event, alert, annotation_prefix='',
             canvas.apply_async(priority=priority)
             return
 
-    # Send GCN notice and upload GCN circular draft for online events.
+    # Send notice and upload GCN circular draft for online events.
     if is_publishable and initiate_voevent:
-        canvas |= (
-            _proceed_if_no_advocate_action.s(superevent_id)
-            |
-            earlywarning_preliminary_initial_update_alert.s(
-                alert['object'],
-                ('earlywarning' if 'EARLY_WARNING' in event['labels']
-                 else 'preliminary')
-            )
+        canvas |= _proceed_if_no_advocate_action.s(superevent_id)
+        canvas = earlywarning_preliminary_initial_update_alert(
+            [skymap_filename, 'em_bright.json', 'p_astro.json'] if
+            alert['object']['preferred_event_data']['group'] == 'CBC' else
+            [skymap_filename, None, None],
+            alert['object'],
+            ('earlywarning' if 'EARLY_WARNING' in alert['object']['labels']
+             else 'preliminary'),
+            earlywarning_preliminary_canvas=canvas
         )
 
     canvas.apply_async(priority=priority)
@@ -627,11 +634,15 @@ def parameter_estimation(far_event, superevent_id):
     canvas.apply_async()
 
 
-@gracedb.task(ignore_result=True, shared=False)
-def earlywarning_preliminary_initial_update_alert(filenames, superevent,
-                                                  alert_type):
+def earlywarning_preliminary_initial_update_alert(
+    filenames,
+    superevent,
+    alert_type,
+    earlywarning_preliminary_canvas=None
+):
     """
-    Create and send a preliminary, initial, or update GCN notice.
+    Create a canvas that sends an earlywarning, preliminary, initial, or update
+    notice.
 
     Parameters
     ----------
@@ -645,10 +656,11 @@ def earlywarning_preliminary_initial_update_alert(filenames, superevent,
 
     Notes
     -----
-    This function is decorated with :obj:`gwcelery.tasks.gracedb.task` rather
-    than :obj:`gwcelery.app.task` so that a synchronous call to
-    :func:`gwcelery.tasks.gracedb.get_log` is retried in the event of GraceDB
-    API failures. If `EM_COINC` is in labels will create a RAVEN circular.
+    Tasks that call this function should be decorated with
+    :obj:`gwcelery.tasks.gracedb.task` rather than :obj:`gwcelery.app.task` so
+    that a synchronous call to :func:`gwcelery.tasks.gracedb.get_log` is
+    retried in the event of GraceDB API failures. If `EM_COINC` is in labels
+    will create a RAVEN circular.
 
     """
     if filenames is None:
@@ -659,6 +671,9 @@ def earlywarning_preliminary_initial_update_alert(filenames, superevent,
 
     if 'INJ' in labels:
         return
+
+    if earlywarning_preliminary_canvas:
+        assert alert_type == 'earlywarning' or alert_type == 'preliminary'
 
     skymap_filename, em_bright_filename, p_astro_filename = filenames
     skymap_needed = (skymap_filename is None)
@@ -705,23 +720,40 @@ def earlywarning_preliminary_initial_update_alert(filenames, superevent,
                 'Template for {} GCN Circular'.format(alert_type),
                 tags=tags)
         )
-    else:
-        circular_canvas = identity.s()
 
-    canvas = (
-        group(
+    if earlywarning_preliminary_canvas:
+        # The skymap, em bright, and p-astro files are downloaded as part of
+        # the earlywarning preliminary alert canvas. We need to pass them along
+        # to the next part of the canvas so we prepend them to this group
+        download_andor_expose_group = [identity.s()]
+    else:
+        download_andor_expose_group = [
             gracedb.download.si(em_bright_filename, superevent_id),
             gracedb.download.si(p_astro_filename, superevent_id),
-            gracedb.expose.s(superevent_id),
-            *(
-                gracedb.create_tag.s(filename, 'public', superevent_id)
-                for filename in [
-                    skymap_filename, em_bright_filename, p_astro_filename
-                ]
-                if filename is not None
-            )
+        ]
+
+    download_andor_expose_group += [
+        gracedb.expose.si(superevent_id),
+        *(
+            gracedb.create_tag.s(filename, 'public', superevent_id)
+            for filename in [
+                skymap_filename, em_bright_filename, p_astro_filename
+            ]
+            if filename is not None
         )
+    ]
+
+    download_andor_expose_group = group(download_andor_expose_group)
+
+    canvas_start = (
+        earlywarning_preliminary_canvas
         |
+        download_andor_expose_group
+        |
+        get_first.s()
+    ) if earlywarning_preliminary_canvas else download_andor_expose_group
+
+    voevent_canvas = (
         _create_voevent.s(
             superevent_id,
             alert_type,
@@ -734,8 +766,53 @@ def earlywarning_preliminary_initial_update_alert(filenames, superevent,
         group(
             gracedb.download.s(superevent_id)
             |
-            gcn.send.s()
+            gcn.send.s(),
+
+            gracedb.create_tag.s('public', superevent_id)
+        )
+    )
+
+    if earlywarning_preliminary_canvas:
+        # Need to only send classification and p-astro information to the
+        # voevent canvas, so strip this off of the (skymap, embright, p-astro)
+        # tuple we currently have
+        voevent_canvas = (
+            group(
+                get_by_index.s(1),
+                get_last.s()
+            )
             |
+            voevent_canvas
+        )
+
+        # The skymap is downloaded by the earlywarning preliminary canvas, so
+        # we can now assemble the kafka alerts and send them
+        kafka_alert_canvas = alerts.send.s(
+            superevent,
+            alert_type,
+            raven_coinc=('RAVEN_ALERT' in labels)
+        )
+
+    else:
+        # The skymap has not been downloaded at this point, so we need to
+        # download it before we can assemble the kafka alerts and send them
+        kafka_alert_canvas = alerts.download_skymap_and_send_alert.s(
+            superevent,
+            alert_type,
+            skymap_filename=skymap_filename,
+            raven_coinc=('RAVEN_ALERT' in labels)
+        )
+
+    canvas = (
+        canvas_start
+        |
+        group(
+                voevent_canvas,
+
+                kafka_alert_canvas
+        )
+        |
+        group(
             (
                 gracedb.create_label.si('GCN_PRELIM_SENT', superevent_id)
                 if alert_type in {'earlywarning', 'preliminary'}
@@ -743,12 +820,10 @@ def earlywarning_preliminary_initial_update_alert(filenames, superevent,
             ),
 
             circular_canvas,
-
-            gracedb.create_tag.s('public', superevent_id)
         )
     )
 
-    canvas.apply_async()
+    return canvas
 
 
 @gracedb.task(ignore_result=True, shared=False)
@@ -774,8 +849,11 @@ def initial_alert(filenames, alert):
     API failures.
 
     """
-    earlywarning_preliminary_initial_update_alert(filenames, alert['object'],
-                                                  'initial')
+    earlywarning_preliminary_initial_update_alert(
+        filenames,
+        alert['object'],
+        'initial'
+    ).apply_async()
 
 
 @gracedb.task(ignore_result=True, shared=False)
@@ -802,37 +880,48 @@ def update_alert(filenames, superevent_id):
 
     """
     superevent = gracedb.get_superevent._orig_run(superevent_id)
-    earlywarning_preliminary_initial_update_alert(filenames, superevent,
-                                                  'update')
+    earlywarning_preliminary_initial_update_alert(
+        filenames,
+        superevent,
+        'update'
+    ).apply_async()
 
 
 @app.task(ignore_result=True, shared=False)
 def retraction_alert(alert):
     """Produce a retraction alert."""
     superevent_id = alert['uid']
-    (
+    group(
         gracedb.expose.si(superevent_id)
         |
-        _create_voevent.si(
-            None, superevent_id, 'retraction',
-            internal=False,
-            open_alert=True
-        )
-        |
         group(
-            gracedb.download.s(superevent_id)
+            _create_voevent.si(
+                None, superevent_id, 'retraction',
+                internal=False,
+                open_alert=True
+            )
             |
-            gcn.send.s(),
+            group(
+                gracedb.download.s(superevent_id)
+                |
+                gcn.send.s(),
 
-            circulars.create_retraction_circular.si(superevent_id)
-            |
-            gracedb.upload.s(
-                'retraction-circular.txt',
-                superevent_id,
-                'Template for retraction GCN Circular',
-                tags=['em_follow']
+                gracedb.create_tag.s('public', superevent_id)
             ),
 
-            gracedb.create_tag.s('public', superevent_id)
+            alerts.send.si(
+                None,
+                alert['object'],
+                'retraction'
+            )
+        ),
+
+        circulars.create_retraction_circular.si(superevent_id)
+        |
+        gracedb.upload.s(
+            'retraction-circular.txt',
+            superevent_id,
+            'Template for retraction GCN Circular',
+            tags=['em_follow']
         )
     ).apply_async()
