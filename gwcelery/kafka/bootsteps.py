@@ -1,5 +1,6 @@
 from confluent_kafka.error import KafkaException
 from hop import stream
+from hop.io import list_topics
 from hop.models import AvroBlob
 
 from celery import bootsteps
@@ -28,13 +29,7 @@ class KafkaWriter:
         kafka_url = self._config['url']
         _, _, broker, topic = kafka_url.split('/')
         try:
-            # FIXME Replace with hop clients list_topics function once
-            # https://github.com/scimma/hop-client/pull/185 makes it into a
-            # release (scheduled for v0.7.0)
-            topics = self._open_hop_stream._producer._producer.list_topics(
-                topic,
-                timeout=5
-            ).topics
+            topics = list_topics(kafka_url, timeout=5)
             if topics[topic].error is None:
                 log.info(f'{kafka_url} appears to be functioning properly')
                 return True

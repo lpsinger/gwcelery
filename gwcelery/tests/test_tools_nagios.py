@@ -36,11 +36,14 @@ def test_nagios(capsys, monkeypatch, request, socket_enabled, starter,
     mock_hop_stream_object = Mock()
     mock_hop_stream_object.configure_mock(**{'close.return_value': None})
     mock_hop_stream = Mock(return_value=mock_hop_stream_object)
+    mock_list_topics = Mock()
     unix_socket = str(tmp_path / 'redis.sock')
     broker_url = f'redis+socket://{unix_socket}'
 
     monkeypatch.setattr('hop.io.Stream.open', mock_hop_stream)
     monkeypatch.setattr('igwn_alert.client', mock_igwn_alert_client)
+    monkeypatch.setattr('gwcelery.kafka.bootsteps.list_topics',
+                        mock_list_topics)
     monkeypatch.setitem(app.conf, 'broker_url', broker_url)
     monkeypatch.setitem(app.conf, 'result_backend', broker_url)
 
