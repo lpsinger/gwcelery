@@ -31,7 +31,7 @@ class KafkaWriter:
             # FIXME Replace with hop clients list_topics function once
             # https://github.com/scimma/hop-client/pull/185 makes it into a
             # release (scheduled for v0.7.0)
-            topics = self._open_hop_stream._producer.list_topics(
+            topics = self._open_hop_stream._producer._producer.list_topics(
                 topic,
                 timeout=5
             ).topics
