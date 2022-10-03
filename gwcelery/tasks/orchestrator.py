@@ -415,7 +415,7 @@ def _create_voevent(classification, *args, **kwargs):
     return gracedb.create_voevent._orig_run(*args, **kwargs)
 
 
-@gracedb.task(shared=False)
+@app.task(shared=False)
 def _leave_log_message_and_return_event_dict(event, superevent_id,
                                              message, **kwargs):
     """Wrapper around :meth:`gracedb.update_superevent`
