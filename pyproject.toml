@@ -81,7 +81,6 @@ pesummary = "*"
 pygcn = ">=1.0.1"
 python-ligo-lw = "^1.8.3"
 safe-netrc = "*"
-scitokens = { git = "https://github.com/scitokens/scitokens.git", branch = "master" }  # FIXME: remove once https://github.com/scitokens/scitokens/pull/163 is fixed
 sentry-sdk = {version = "*", extras = ["flask", "tornado"]}
 service-identity = "*"  # We don't actually use this package, but it silences some annoying warnings from twistd.
 voeventlib = ">=1.2"
