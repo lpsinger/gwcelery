@@ -233,9 +233,7 @@ release:
       curl -sSL https://install.python-poetry.org | python3 -
       # FIXME: It would be simpler to use `poetry install`, but it tries to
       # uninstall system site-packages even if they are not writable.
-      # FIXME: remove --without-hashes once unreleased dependencies, like
-      # adc-streaming, perform their next release
-      pip install --no-deps -r <(poetry export --with dev --without-hashes)
+      pip install --no-deps -r <(poetry export --with dev)
       pip install --no-deps .
 
       # FIXME: remove pip uninstall temporary directories left behind due to
