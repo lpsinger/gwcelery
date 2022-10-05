@@ -105,7 +105,7 @@ test = ["fastavro", "pytest-celery", "pytest-cov", "pytest-flask", "pytest-socke
 [tool.poetry.dev-dependencies]
 ipython = "*"  # Include IPython for a nicer ``gwcelery shell`` experience.
 ipykernel = "*"  # Include IPython kernel for Jupyter Lab support.
-flower = ">=1"
+flower = ">=1.2.0"
 
 [tool.poetry.scripts]
 gwcelery = "gwcelery:main"
