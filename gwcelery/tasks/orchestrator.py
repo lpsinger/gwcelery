@@ -735,7 +735,7 @@ def earlywarning_preliminary_initial_update_alert(
     download_andor_expose_group += [
         gracedb.expose.si(superevent_id),
         *(
-            gracedb.create_tag.s(filename, 'public', superevent_id)
+            gracedb.create_tag.si(filename, 'public', superevent_id)
             for filename in [
                 skymap_filename, em_bright_filename, p_astro_filename
             ]
