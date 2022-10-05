@@ -83,18 +83,26 @@ def _add_external_coinc_to_alert(alert_dict, superevent):
 @app.task(bind=True, ignore_result=True, queue='kafka', shared=False)
 def _send(self, alert_dict, skymap, brokerhost):
     """Write the alert to the Kafka topic"""
+    # Copy the alert dictionary so we dont modify the original
+    payload_dict = alert_dict.copy()
     # Add skymap to alert_dict
     config = self.app.conf['kafka_alert_config'][brokerhost]
     if alert_dict['event'] is not None:
+        # dict.copy is a shallow copy, so need to copy event dict as well since
+        # we plan to modify it
+        payload_dict['event'] = alert_dict['event'].copy()
+
+        # Encode the skymap
         encoder = config['skymap_encoder']
-        alert_dict['event']['skymap'] = encoder(skymap)
+        payload_dict['event']['skymap'] = encoder(skymap)
 
     # Write to kafka topic
     serialization_model = config['serialization_model']
-    # FIXME Drop logic that packs alert_dict in a list once
+    # FIXME Drop logic that packs payload_dict in a list once
     # https://github.com/scimma/hop-client/pull/190 is merged
     payload = serialization_model(
-            [alert_dict] if serialization_model is AvroBlob else alert_dict)
+            [payload_dict] if serialization_model is AvroBlob else
+            payload_dict)
     self.app.conf['kafka_streams'][brokerhost].write(payload)
 
 
