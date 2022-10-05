@@ -1,4 +1,5 @@
 import json
+
 from astropy import time
 from celery import group
 from celery.utils.log import get_logger
@@ -80,7 +81,30 @@ def _add_external_coinc_to_alert(alert_dict, superevent):
     return alert_dict
 
 
-@app.task(bind=True, ignore_result=True, queue='kafka', shared=False)
+@app.task(bind=True, shared=False, queue='kafka', ignore_result=True)
+def _upload_notice(self, payload, brokerhost, superevent_id):
+    '''
+    Upload serialized alert notice to GraceDB
+    '''
+    config = self.app.conf['kafka_alert_config'][brokerhost]
+    kafka_writer = self.app.conf['kafka_streams'][brokerhost]
+
+    # FIXME Drop get_payload_input method once
+    # https://github.com/scimma/hop-client/pull/190 is merged
+    alert_dict = kafka_writer.get_payload_input(payload)
+    message = 'Kafka alert notice sent to {}'.format(config['url'])
+
+    filename = '{}-{}.{}'.format(
+        alert_dict['superevent_id'],
+        alert_dict['alert_type'].lower(),
+        config['suffix']
+    )
+
+    gracedb.upload.delay(payload.serialize()['content'], filename,
+                         superevent_id, message)
+
+
+@app.task(bind=True, queue='kafka', shared=False)
 def _send(self, alert_dict, skymap, brokerhost):
     """Write the alert to the Kafka topic"""
     # Copy the alert dictionary so we dont modify the original
@@ -97,13 +121,16 @@ def _send(self, alert_dict, skymap, brokerhost):
         payload_dict['event']['skymap'] = encoder(skymap)
 
     # Write to kafka topic
-    serialization_model = config['serialization_model']
+    serialization_model = \
+        self.app.conf['kafka_streams'][brokerhost].serialization_model
     # FIXME Drop logic that packs payload_dict in a list once
     # https://github.com/scimma/hop-client/pull/190 is merged
     payload = serialization_model(
             [payload_dict] if serialization_model is AvroBlob else
             payload_dict)
     self.app.conf['kafka_streams'][brokerhost].write(payload)
+
+    return payload
 
 
 @app.task(bind=True, ignore_result=True, queue='kafka', shared=False)
@@ -148,14 +175,22 @@ def send(self, skymap_and_classification, superevent, alert_type,
             _add_external_coinc_to_alert.s(alert_dict, superevent)
             |
             group(
-                _send.s(skymap, brokerhost) for brokerhost in
-                self.app.conf['kafka_streams'].keys()
+                (
+                    _send.s(skymap, brokerhost)
+                    |
+                    _upload_notice.s(brokerhost, superevent['superevent_id'])
+                ) for brokerhost in self.app.conf['kafka_streams'].keys()
             )
         )
     else:
-        canvas = group(
-            _send.s(alert_dict, skymap, brokerhost) for brokerhost in
-            self.app.conf['kafka_streams'].keys()
+        canvas = (
+            group(
+                (
+                    _send.s(alert_dict, skymap, brokerhost)
+                    |
+                    _upload_notice.s(brokerhost, superevent['superevent_id'])
+                ) for brokerhost in self.app.conf['kafka_streams'].keys()
+            )
         )
 
     canvas.apply_async()

@@ -4,7 +4,7 @@ from adc.producer import ProducerConfig
 from confluent_kafka.error import KafkaError, KafkaException
 from hop import stream
 from hop.io import list_topics
-from hop.models import AvroBlob
+from hop.models import AvroBlob, JSONBlob
 
 from celery import bootsteps
 from celery.concurrency import solo
@@ -42,6 +42,19 @@ class KafkaWriter:
 
         # Set up flag for failed delivery of messages
         self.kafka_delivery_failures = False
+
+        # FIXME Drop get_payload_input method once
+        # https://github.com/scimma/hop-client/pull/190 is merged
+        if config['suffix'] == 'avro':
+            self.serialization_model = AvroBlob
+            self.get_payload_input = lambda payload: payload.content[0]
+        elif config['suffix'] == 'json':
+            self.serialization_model = JSONBlob
+            self.get_payload_input = lambda payload: payload.content
+        else:
+            raise NotImplementedError(
+                'Supported serialization method required for alert notices'
+            )
 
     def kafka_topic_up(self):
         '''Check for problems in broker and topic. Returns True is broker and

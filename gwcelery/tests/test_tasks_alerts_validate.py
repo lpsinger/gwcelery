@@ -1,8 +1,10 @@
 import fastavro
-import json
 from importlib import resources
+import json
 from unittest.mock import Mock, patch
+
 from astropy.utils.data import download_files_in_parallel
+from hop.models import AvroBlob
 import pytest
 
 from .. import app
@@ -48,12 +50,14 @@ def parsed_schema(socket_enabled):
     return schema
 
 
+@patch('gwcelery.tasks.alerts._upload_notice.run')
 @patch('gwcelery.tasks.gracedb.download._orig_run',
        return_value=resources.read_binary(
            data,
            'MS220722v_bayestar.multiorder.fits'
        ))
-def test_validate_alert(mock_download, parsed_schema, monkeypatch):
+def test_validate_alert(mock_download, mock_upload, parsed_schema,
+                        monkeypatch):
     """Validate public alerts against the schema from the userguide.
     """
 
@@ -67,6 +71,7 @@ def test_validate_alert(mock_download, parsed_schema, monkeypatch):
     mock_stream = Mock()
     mock_stream_write = Mock(side_effect=_validate_alert)
     mock_stream.write = mock_stream_write
+    mock_stream.serialization_model = AvroBlob
     monkeypatch.setitem(app.conf, 'kafka_streams', {'scimma': mock_stream})
 
     # Load superevent dictionary, and embright/pastro json tuple
@@ -85,13 +90,16 @@ def test_validate_alert(mock_download, parsed_schema, monkeypatch):
         'MS220722v_bayestar.multiorder.fits'
     )
     mock_download.assert_called_once()
+    mock_upload.assert_called_once()
     mock_stream_write.assert_called_once()
 
     # Reset mocks
     mock_stream_write.reset_mock()
     mock_download.reset_mock(return_value=True)
+    mock_upload.reset_mock()
 
     # Test retraction alerts.
     alerts.send(None, superevent, 'retraction', None)
     mock_download.assert_not_called()
+    mock_upload.assert_called_once()
     mock_stream_write.assert_called_once()

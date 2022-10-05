@@ -2,8 +2,6 @@
 
 from base64 import b64encode
 
-from hop.models import JSONBlob, AvroBlob
-
 from . import *  # noqa: F401, F403
 
 sentry_environment = 'playground'
@@ -20,9 +18,9 @@ random jitter in order to simulate multiple pipeline uploads."""
 
 kafka_alert_config = {
     'scimma': {'url': 'kafka://kafka.scimma.org/igwn.gwalert-playground',
-               'serialization_model': AvroBlob, 'skymap_encoder': lambda _: _},
+               'suffix': 'avro', 'skymap_encoder': lambda _: _},
     'gcn': {'url': 'kafka://kafka.test.gcn.nasa.gov/igwn.gwalert',
-            'serialization_model': JSONBlob, 'skymap_encoder': lambda b:
+            'suffix': 'json', 'skymap_encoder': lambda b:
             b64encode(b).decode('utf-8')}
 }
 """Kafka broker configuration details"""
