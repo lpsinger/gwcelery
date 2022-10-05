@@ -26,7 +26,8 @@ kafka_alert_config = {
     'scimma': {'url': 'kafka://kafka.scimma.org/igwn.gwalert-playground',
                'serialization_model': AvroBlob, 'skymap_encoder': lambda _: _},
     'gcn': {'url': 'kafka://kafka.test.gcn.nasa.gov/igwn.gwalert',
-            'serialization_model': JSONBlob, 'skymap_encoder': b64encode}
+            'serialization_model': JSONBlob, 'skymap_encoder': lambda b:
+            b64encode(b).decode('utf-8')}
 }
 """Kafka broker configuration details"""
 
