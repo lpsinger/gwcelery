@@ -262,12 +262,12 @@
                 <div class=form-row>
                     <div class=form-group>
                         <div class=form-text>Issue a mock event selected at random from <a href="https://www.ligo.org/scientists/first2years/">First Two Years</a>.</div>
-                        <small class="form-text text-muted">Mock events are created at fixed times of day by finding the event with the most recent sidereal time. If another mock event has recently been sent, then a manually issued mock event may be grouped with an existing superevent and not trigger any new GCNs.</small>
+                        <small class="form-text text-muted">Mock events are created at fixed times of day by finding the event with the most recent sidereal time. If another mock event has recently been sent, then a manually issued mock event may be grouped with an existing superevent and not trigger any new GCNs. Note: one of every {{joint_mdc_freq}} GW events will be coincident with one or more external events.</small>
                     </div>
                 </div>
                 <div class=form-row>
                     <div class=form-group>
-                        <button type=submit class="btn btn-primary">Submit GW only</button>
+                        <button type=submit class="btn btn-primary">Submit GW</button>
                     </div>
                 </div>
                 <div class="modal fade" tabindex=-1 role=dialog aria-labelledby=send-mock-event-confirm-label>
@@ -296,6 +296,7 @@
                 <div class=form-row>
                     <div class=form-group>
                         <div class=form-text>Issue a mock coincidence including a simulated GRB and a superevent selected at random from <a href="https://www.ligo.org/scientists/first2years/">First Two Years</a>.</div>
+                        <small class="form-text text-muted">Note: this is identical to submitting a GW event, except an external event is also submitted to guarantee a coincidence.</small>
                     </div>
                 </div>
                 <div class=form-row>

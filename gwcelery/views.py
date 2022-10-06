@@ -36,7 +36,8 @@ def index():
         distributions=distributions,
         platform=platform.platform(),
         versions=get_versions(),
-        python_version=sys.version)
+        python_version=sys.version,
+        joint_mdc_freq=celery_app.conf['joint_mdc_freq'])
 
 
 def take_n(n, iterable):
