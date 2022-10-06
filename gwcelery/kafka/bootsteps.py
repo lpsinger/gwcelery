@@ -1,3 +1,6 @@
+from unittest.mock import patch
+
+from adc.producer import ProducerConfig
 from confluent_kafka.error import KafkaError, KafkaException
 from hop import stream
 from hop.io import list_topics
@@ -13,13 +16,29 @@ __all__ = ('Producer',)
 log = get_logger(__name__)
 
 
+class PatchedProducerConfig(ProducerConfig):
+
+    def _to_confluent_kafka(self):
+        return {**super()._to_confluent_kafka(),
+                'compression.type': 'zstd',
+                'message.max.bytes': 1024 * 1024 * 2}
+
+
 class KafkaWriter:
     '''Class to write to kafka stream and monitor stream health.'''
 
     def __init__(self, config):
         self._config = config
-        self._open_hop_stream = stream.open(config['url'], 'w',
-                                            error_callback=self._error_cb)
+        # FIXME: replace with the following once
+        # https://github.com/astronomy-commons/adc-streaming/pull/62 is merged.
+        #
+        # self._open_hop_stream = stream.open(
+        #     config['url'], 'w',
+        #     message_max_bytes=1024 * 1024 * 2,
+        #     error_callback=self._error_cb)
+        with patch('adc.producer.ProducerConfig', PatchedProducerConfig):
+            self._open_hop_stream = stream.open(
+                config['url'], 'w', error_callback=self._error_cb)
 
         # Set up flag for failed delivery of messages
         self.kafka_delivery_failures = False
