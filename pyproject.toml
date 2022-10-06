@@ -47,7 +47,7 @@ include = [
 
 [tool.poetry.dependencies]
 python = "^3.8,<3.11"
-adc-streaming = ">=2.2.0"  # https://github.com/astronomy-commons/adc-streaming/pull/58
+adc-streaming = {git = "https://github.com/lpsinger/adc-streaming.git", branch = "zstd"}  # https://github.com/astronomy-commons/adc-streaming/pull/61
 astropy = ">=4.3.1"  # https://github.com/astropy/astropy/issues/11879
 bilby-pipe = ">=1.0.6"
 celery = {version = ">=5.1", extras = ["redis"]}

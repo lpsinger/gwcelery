@@ -5,6 +5,7 @@ description = "Astronomy Data Commons streaming client libraries"
 category = "main"
 optional = false
 python-versions = "*"
+develop = false
 
 [package.dependencies]
 authlib = "*"
@@ -14,7 +15,13 @@ requests = "*"
 tqdm = "*"
 
 [package.extras]
-dev = ["autopep8", "docker", "flake8", "isort", "pytest", "pytest-integration", "pytest-timeout", "sphinx", "sphinx-rtd-theme", "twine"]
+dev = ["autopep8", "docker", "flake8", "isort", "pytest", "pytest-integration", "pytest-timeout", "sphinx", "sphinx_rtd_theme", "twine"]
+
+[package.source]
+type = "git"
+url = "https://github.com/lpsinger/adc-streaming.git"
+reference = "zstd"
+resolved_reference = "08c2489d554999ec4ad183ec558ce6909ea4a04d"
 
 [[package]]
 name = "alabaster"
@@ -2579,13 +2586,10 @@ test = ["fastavro", "pytest-celery", "pytest-cov", "pytest-flask", "pytest-socke
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8,<3.11"
-content-hash = "a863dfa18a6270193ce9374e953b9cd0ff6ec21480c7791529ccbbc2bba57f5d"
+content-hash = "b768f18ebc62404d5bd62275cb3f3d20e0a9e18693a1cb83526facecb506192b"
 
 [metadata.files]
-adc-streaming = [
-    {file = "adc-streaming-2.2.0.tar.gz", hash = "sha256:4b9ca8257a8011ed0e947bae885eb233ae33061b3067fb2731d1ec0330c1f71e"},
-    {file = "adc_streaming-2.2.0-py3-none-any.whl", hash = "sha256:be073202c1c41eb904ce2bbfd2a2c654365a127b110a10992892961e96365f82"},
-]
+adc-streaming = []
 alabaster = [
     {file = "alabaster-0.7.12-py2.py3-none-any.whl", hash = "sha256:446438bdcca0e05bd45ea2de1668c1d9b032e1a9154c2c259092d77031ddd359"},
     {file = "alabaster-0.7.12.tar.gz", hash = "sha256:a661d72d58e6ea8a57f7a86e37d86716863ee5e92788398526d58b26a4e4dc02"},
