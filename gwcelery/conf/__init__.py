@@ -94,6 +94,12 @@ superevent_d_t_end = {'gstlal': 1.0,
 """Pipeline based upper extent of superevent segments
 For cwb and lib this is decided from extra attributes."""
 
+superevent_query_d_t_start = 100.
+"""Lower extent of superevents query"""
+
+superevent_query_d_t_end = 100.
+"""Upper extent of superevents query"""
+
 superevent_default_d_t_start = 1.0
 """Default lower extent of superevent segments"""
 

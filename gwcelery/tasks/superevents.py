@@ -91,6 +91,7 @@ def process(payload):
     """
     event_info = payload['object']
     gid = event_info['graceid']
+    category = get_category(event_info)
     t_0, t_start, t_end = get_ts(event_info)
 
     if event_info.get('superevent'):
@@ -109,11 +110,11 @@ def process(payload):
                            t_end=None)
     else:
         log.info('Event %s does not yet belong to a superevent', gid)
-        # note that superevent_neightbours contain nearby superevents
-        # in the same category
-        superevent_neighbors = event_info['superevent_neighbours']
-
-        for s in superevent_neighbors.values():
+        superevents = gracedb.get_superevents('category: {} {} .. {}'.format(
+            category,
+            event_info['gpstime'] - app.conf['superevent_query_d_t_start'],
+            event_info['gpstime'] + app.conf['superevent_query_d_t_end']))
+        for s in superevents:
             if gid in s['gw_events']:
                 sid = s['superevent_id']
                 log.info('Event %s found assigned to superevent %s', gid, sid)
@@ -138,7 +139,7 @@ def process(payload):
         else:  # s not in superevents
             event_segment = _Event(t_start, t_end, t_0, event_info['graceid'])
 
-            superevent = _partially_intersects(superevent_neighbors.values(),
+            superevent = _partially_intersects(superevents,
                                                event_segment)
 
             if superevent:
@@ -180,6 +181,28 @@ def process(payload):
                 ).delay()
             else:  # fast path if no countdown
                 gracedb.create_label(FROZEN_LABEL, sid)
+
+
+def get_category(event):
+    """Get the superevent category for an event.
+
+    Parameters
+    ----------
+    event : dict
+        Event dictionary (e.g., the return value from
+        :meth:`gwcelery.tasks.gracedb.get_event`).
+
+    Returns
+    -------
+    {'mdc', 'test', 'production'}
+
+    """
+    if event.get('search') == 'MDC':
+        return 'mdc'
+    elif event['group'] == 'Test':
+        return 'test'
+    else:
+        return 'production'
 
 
 def get_ts(event):

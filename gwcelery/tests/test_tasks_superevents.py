@@ -312,6 +312,8 @@ def _mock_event(event):
 
 @patch('gwcelery.tasks.gracedb.get_superevent',
        lambda _: _mock_superevent_data)
+@patch('gwcelery.tasks.gracedb.get_superevents',
+       lambda _: [_mock_superevent_data])
 def test_upload_same_event():
     """New event uploaded with the same coinc file as an
     existing event G000002. The second upload should be added to
@@ -442,15 +444,18 @@ def test_parse_trigger_cbc_1():
                    data=event_dictionary,
                    alert_type='new',
                    uid='G000000')
-    superevent_reponse = patch(
+    superevent_response = patch(
         'gwcelery.tasks.gracedb.get_superevent',
         return_value=SUPEREVENTS_NEIGHBOURS['S0039'])
-    with superevent_reponse, \
+    with superevent_response, \
             patch('gwcelery.tasks.gracedb.add_event_to_superevent') as p1, \
-            patch('gwcelery.tasks.gracedb.update_superevent') as p2:
+            patch('gwcelery.tasks.gracedb.update_superevent') as p2, \
+            patch('gwcelery.tasks.gracedb.get_superevents',
+                  return_value=SUPEREVENTS_NEIGHBOURS.values()) as p3:
         superevents.handle(payload)
         p1.assert_called_once()
         p2.assert_not_called()
+        p3.assert_called_once()
 
 
 def test_parse_trigger_cbc_2():
@@ -476,20 +481,23 @@ def test_parse_trigger_cbc_2():
                    data=event_dictionary,
                    alert_type='new',
                    uid='G000003')
-    superevent_reponse = patch(
+    superevent_response = patch(
         'gwcelery.tasks.gracedb.get_superevent',
         return_value=SUPEREVENTS_NEIGHBOURS['S0039'])
 
     # addEventToSuperevent should be called
     # preferred event should be updated, t_0 should change
-    with superevent_reponse, \
+    with superevent_response, \
             patch('gwcelery.tasks.gracedb.add_event_to_superevent') as p1, \
             patch('gwcelery.tasks.gracedb.update_superevent') as p2, \
+            patch('gwcelery.tasks.gracedb.get_superevents',
+                  return_value=SUPEREVENTS_NEIGHBOURS.values()) as p3, \
             patch('gwcelery.tasks.gracedb.create_label.run') as create_label:
         superevents.handle(payload)
         p1.assert_called_once()
         p2.assert_called_once_with('S0039', preferred_event='G000003',
                                    t_0=1163905224.4332082)
+        p3.assert_called_once()
         create_label.assert_called_once_with('ADVREQ', 'S0039')
         if superevents.is_complete(event_dictionary):
             create_label.assert_called_once_with('EM_READY', 'S0039')
@@ -522,10 +530,13 @@ def test_parse_trigger_cbc_3():
                    uid='G000001')
     # G000001 absent in any superevent window, new superevent created
     # createSuperevent should be called exactly once
-    with patch('gwcelery.tasks.gracedb.create_superevent') as p, \
+    with patch('gwcelery.tasks.gracedb.create_superevent') as p1, \
+            patch('gwcelery.tasks.gracedb.get_superevents',
+                  return_value=SUPEREVENTS_NEIGHBOURS.values()) as p2, \
             patch('gwcelery.tasks.gracedb.create_label'):
         superevents.handle(payload)
-        p.assert_called_once()
+        p1.assert_called_once()
+        p2.assert_called_once()
 
 
 def test_parse_trigger_cbc_4():
@@ -589,12 +600,15 @@ def test_parse_trigger_burst_1():
     # superevent window should change
     with superevent_response, \
             patch('gwcelery.tasks.gracedb.add_event_to_superevent') as p1, \
-            patch('gwcelery.tasks.gracedb.update_superevent') as p2:
+            patch('gwcelery.tasks.gracedb.update_superevent') as p2, \
+            patch('gwcelery.tasks.gracedb.get_superevents',
+                  return_value=SUPEREVENTS_NEIGHBOURS.values()) as p3:
         superevents.handle(payload)
         p1.assert_called_once()
         p2.assert_called_once_with('S0039',
                                    t_end=pytest.approx(1163905239, abs=1),
                                    t_start=pytest.approx(1163905214, abs=1))
+        p3.assert_called_once()
 
 
 def test_parse_trigger_burst_2():
@@ -629,12 +643,15 @@ def test_parse_trigger_burst_2():
 
     with superevent_response, \
             patch('gwcelery.tasks.gracedb.add_event_to_superevent') as p1, \
-            patch('gwcelery.tasks.gracedb.update_superevent') as p2:
+            patch('gwcelery.tasks.gracedb.update_superevent') as p2, \
+            patch('gwcelery.tasks.gracedb.get_superevents',
+                  return_value=SUPEREVENTS_NEIGHBOURS.values()) as p3:
         superevents.handle(payload)
         p1.assert_called_once()
         p2.assert_called_once_with('S0039',
                                    t_end=pytest.approx(1163905239, abs=1),
                                    t_start=pytest.approx(1163905214, abs=1))
+        p3.assert_called_once()
 
 
 def test_parse_trigger_burst_3():
@@ -734,10 +751,13 @@ def test_S190421ar_spiir_scenario():    # noqa: N802
 
     with superevent_response, \
             patch('gwcelery.tasks.gracedb.add_event_to_superevent') as p1, \
-            patch('gwcelery.tasks.gracedb.update_superevent') as p2:
+            patch('gwcelery.tasks.gracedb.update_superevent') as p2, \
+            patch('gwcelery.tasks.gracedb.get_superevents',
+                  return_value=SUPEREVENTS_NEIGHBOURS.values()) as p3:
         superevents.handle(payload)
         p1.assert_called_once()
         p2.assert_not_called()
+        p3.assert_called_once()
 
 
 def test_inj_means_should_not_publish():
