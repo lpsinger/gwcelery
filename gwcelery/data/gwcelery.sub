@@ -6,6 +6,7 @@ executable = /usr/bin/env
 log = gwcelery-condor.log
 on_exit_remove = false
 request_disk = 7GB
+request_memory = 16GB
 JobBatchName = gwcelery
 # FIXME: the gwcelery-worker job does not always stop when condor_rm'd.
 # Give all jobs 20 seconds to stop gracefully, then forcefully kill them.
