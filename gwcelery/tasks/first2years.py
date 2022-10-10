@@ -3,6 +3,7 @@ from importlib import resources
 import io
 import random
 
+from celery import group
 from celery.utils.log import get_task_logger
 from ligo.lw.table import Table
 from ligo.lw import utils
@@ -11,6 +12,7 @@ import lal
 from ligo.skymap.io.events.ligolw import ContentHandler
 import numpy as np
 
+from .core import get_last
 from ..data import first2years as data_first2years
 from ..import app
 from . import gracedb
@@ -137,6 +139,13 @@ def _vet_event(superevents):
         ).apply_async()
 
 
+@app.task(shared=False)
+def _log_event_and_return_query(event):
+    graceid = event['graceid']
+    log.info('uploaded as %s', graceid)
+    return 'MDC event: {}'.format(graceid)
+
+
 @app.on_after_finalize.connect
 def setup_periodic_tasks(sender, **kwargs):
     """Register periodic tasks.
@@ -155,23 +164,20 @@ def upload_event():
     retraction or initial notice respectively.
     """
     coinc = pick_coinc()
-
-    graceid = gracedb.create_event(coinc, 'MDC', 'gstlal', 'CBC')['graceid']
-    log.info('uploaded as %s', graceid)
-
-    if app.conf['mock_events_simulate_multiple_uploads']:
-        num = 15
-        for _ in range(num):
-            gracedb.create_event.s(
-                 _jitter_snr(coinc), 'MDC', 'gstlal', 'CBC'
-            ).apply_async()
+    num = 16 if app.conf['mock_events_simulate_multiple_uploads'] else 1
 
     (
-        gracedb.get_superevents.si(
-            'MDC event: {}'.format(graceid)
-        ).set(countdown=600)
+        group(
+            gracedb.create_event.si(
+                 _jitter_snr(coinc), 'MDC', 'gstlal', 'CBC'
+            ) for _ in range(num)
+        )
+        |
+        get_last.s()
+        |
+        _log_event_and_return_query.s()
+        |
+        gracedb.get_superevents.s().set(countdown=600)
         |
         _vet_event.s()
     ).apply_async()
-
-    return graceid
