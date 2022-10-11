@@ -286,24 +286,26 @@ def test_preferred_superevent(raven_search_results, testnum):
 
 
 @pytest.mark.parametrize(
-    'new_time_far,new_space_far,old_time_far,old_space_far,result',
-    [[1e-4, None, None, None, True],
-     [1e-4, 1e-3, None, None, True],
-     [1e-4, None, 1e-5, None, False],
-     [1e-4, 1e-3, 1e-4, None, True],
-     [1e-4, 1e-3, 1e-5, 1e-6, False],
-     [1e-8, None, 1e-5, 1e-6, False],
-     [1e-4, 1e-8, 1e-4, 1e-6, True]])
+    'new_time_far,new_space_far,old_time_far,old_space_far,pipeline,result',
+    [[1e-4, None, None, None, 'Fermi', True],
+     [1e-4, 1e-3, None, None, 'Swift', True],
+     [1e-4, None, 1e-5, None, 'AGILE', False],
+     [1e-4, 1e-3, 1e-4, None, 'Fermi', True],
+     [1e-4, 1e-3, 1e-5, 1e-6, 'Fermi', False],
+     [1e-8, None, 1e-5, 1e-6, 'Swift', False],
+     [1e-4, 1e-8, 1e-4, 1e-6, 'AGILE', True],
+     [None, None, None, None, 'SNEWS', True]])
 @patch('gwcelery.tasks.gracedb.update_superevent')
 def test_update_superevent(mock_update_superevent,
                            new_time_far, new_space_far,
                            old_time_far, old_space_far,
-                           result):
+                           pipeline, result):
 
     superevent = {'time_coinc_far': old_time_far,
                   'space_coinc_far': old_space_far,
                   'superevent_id': 'S100'}
-    ext_event = {'graceid': 'E100'}
+    ext_event = {'graceid': 'E100',
+                 'pipeline': pipeline}
     coinc_far_dict = {'temporal_coinc_far': new_time_far,
                       'spatiotemporal_coinc_far': new_space_far}
     raven.update_coinc_far(coinc_far_dict, superevent, ext_event)

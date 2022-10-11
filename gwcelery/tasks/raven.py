@@ -33,7 +33,7 @@ def calculate_coincidence_far(superevent, exttrig, tl, th):
 
     #  Don't compute coinc FAR for SNEWS coincidences
     if exttrig['pipeline'] == 'SNEWS':
-        return
+        return {}
 
     if {'EXT_SKYMAP_READY', 'SKYMAP_READY'}.issubset(exttrig['labels']):
         #  if both sky maps available, calculate spatial coinc far
@@ -238,6 +238,30 @@ def preferred_superevent(raven_search_results):
 
 @app.task(shared=False)
 def update_coinc_far(coinc_far_dict, superevent, ext_event):
+    """Update joint info in superevent based on the current preferred
+    coincidence. This prefers a spacetime joint FAR over a time-only joint
+    FAR. A SNEWS coincidence is preferred over either.
+
+      Parameters
+    ----------
+    coinc_far_dict : dict
+        Dictionary containing coincidence false alarm rate results from
+        RAVEN
+    superevent : dict
+        superevent dictionary
+    ext_event: dict
+        external event dictionary
+
+    """
+    #  Joint FAR isn't computed for SNEWS coincidence
+    #  Choose SNEWS coincidence over any other type of coincidence
+    if ext_event['pipeline'] == 'SNEWS':
+        superevent_id = superevent['superevent_id']
+        ext_id = ext_event['graceid']
+        gracedb.update_superevent(superevent_id, em_type=ext_id,
+                                  time_coinc_far=None,
+                                  space_coinc_far=None)
+        return coinc_far_dict
 
     #  Load needed variables
     infty = float('inf')
