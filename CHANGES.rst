@@ -49,6 +49,8 @@ Changelog
     For example, the latency of ``gwcelery.tasks.gracedb.upload`` tasks is
     decreased by a median of about 0.5 s.
 
+-   Set the preliminary alert timeout to 0 s.
+
 1.0.1 (2022-05-09)
 ------------------
 
