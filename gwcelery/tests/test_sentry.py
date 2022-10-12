@@ -48,6 +48,7 @@ def test_sentry_configure(mock_tornado_integration, mock_redis_integration,
     mock_celery_integration.assert_called_once_with()
     mock_sdk_init.assert_called_once_with(
         dsn, environment=environment, release=release,
+        before_send=sentry._before_send,
         integrations=[
             mock_celery_integration.return_value,
             mock_condor_integration.return_value,
