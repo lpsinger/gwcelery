@@ -24,7 +24,7 @@ def _before_send(event, *args):
     FIXME: Remove once https://git.ligo.org/emfollow/gwcelery/-/issues/457
     is fixed.
     """
-    if 'internal kafka error: KafkaError{code=_TIMED_OUT,val=-185,str="GroupCoordinator: kb-1.prod.hop.scimma.org:9092' in event.get('logentry', {}).get('message'):  # noqa: E501
+    if 'internal kafka error: KafkaError{code=_TIMED_OUT,val=-185,str="GroupCoordinator: kb-' in event.get('logentry', {}).get('message'):  # noqa: E501
         return None
     return event
 
