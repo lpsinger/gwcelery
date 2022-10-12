@@ -24,12 +24,6 @@ def get_first(args):
 
 
 @app.task(shared=False)
-def get_by_index(args, idx):
-    """Get the result of a group at a specific index. Identity for scalar."""
-    return args[idx]
-
-
-@app.task(shared=False)
 def get_last(args):
     """Get the last result of a group. Identity for scalar"""
     try:
