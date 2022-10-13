@@ -34,17 +34,10 @@
     - [ ] `p_astro.png`
     - [ ] `em_bright.json`
     - [ ] `em_bright.png`
-    - [ ] `LALInference.posterior_samples.hdf5`
-    - [ ] `LALInference.multiorder.fits`
-    - [ ] `LALInference.fits.gz`
-    - [ ] `LALInference.png`
-    - [ ] `LALInference.volume.png`
-    - [ ] `LALInference.html`
 12. [ ] The MDC superevent has the following labels.
     - [ ] `EMBRIGHT_READY`
     - [ ] `GCN_PRELIM_SENT`
     - [ ] `PASTRO_READY`
-    - [ ] `PE_READY`
     - [ ] `SKYMAP_READY`
 13. [ ] The MDC superevent has two automatic preliminary VOEvents, JSON packets, and Avro packets if `GCN_PRELIM_SENT` is applied.
     - [ ] 2 preliminary VOEvents
@@ -69,5 +62,16 @@
 22. [ ] The joint MDC superevent is sending alerts with coincidence information.
     - [ ] At least one VOEvent with `<Group name="External Coincidence">`.
     - [ ] At least one circular w/ `-emcoinc-` in filename.
+23. [ ] [A Production superevent labeled `GCN_PRELIM_SENT`](https://gracedb-playground.ligo.org/latest/?query=Production+GCN_PRELIM_SENT&query_type=S&get_neighbors=&results_format=) has the following parameter estimation annotations and the `PE_READY` label.
+    - [ ] `online_bilby_pe.ini`
+    - [ ] `Bilby.posterior_samples.hdf5`
+    - [ ] `Bilby.multiorder.fits`
+    - [ ] `Bilby.html`
+    - [ ] `Bilby.fits.gz`
+    - [ ] `Bilby.png`
+    - [ ] `Bilby.volume.png`
+    - [ ] `Bilby.extrinsic.png`
+    - [ ] `Bilby.intrinsic.png`
+    - [ ] `PE_READY`
 
 /label ~Release
