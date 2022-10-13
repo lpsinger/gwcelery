@@ -6,6 +6,7 @@ gwcelery.tasks module
 .. toctree::
     :maxdepth: 1
 
+    gwcelery.tasks.alerts
     gwcelery.tasks.bayestar
     gwcelery.tasks.circulars
     gwcelery.tasks.condor
