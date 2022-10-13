@@ -50,7 +50,7 @@ queue
 +Online_EMFollow = True
 Requirements = (TARGET.Online_EMFollow =?= True)
 request_cpus = TARGET.Cpus
-request_memory = 16GB
+request_memory = 8GB
 universe = vanilla
 # FIXME: workaround for https://www-auth.cs.wisc.edu/lists/htcondor-users/2019-October/msg00051.shtml
 executable = /bin/env
