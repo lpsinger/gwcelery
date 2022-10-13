@@ -20,13 +20,9 @@ def _create_base_alert_dict(classification, superevent, alert_type,
     # GraceDB-playground and GraceDB-test.
     # Re time_created: Dont need better than second precision for alert times
     alert_dict = {
-        'author': 'LIGO Scientific Collaboration and Virgo Collaboration',
         'alert_type': alert_type.upper(),
         'time_created': time.Time.now().utc.iso.split('.')[0],
         'superevent_id': superevent['superevent_id'],
-        'is_public': True,
-        'is_injection': True if 'INJ' in
-        superevent['preferred_event_data']['labels'] else False,
         'urls': {'gracedb': superevent['links']['self'].replace('api/', '') +
                  'view/'},
         'event': None,
