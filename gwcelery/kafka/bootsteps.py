@@ -91,12 +91,14 @@ class KafkaWriter:
     def _delivery_cb(self, kafka_error, message):
         # FIXME Get rid of if-else logic once
         # https://github.com/scimma/hop-client/pull/190 is merged
-        if self._config['serialization_model'] == AvroBlob:
-            record = self._config['serialization_model']\
-                .deserialize(message.value()).content[0]
+        if self.serialization_model == AvroBlob:
+            record = self.serialization_model.deserialize(
+                message.value()
+            ).content[0]
         else:
-            record = self._config['serialization_model']\
-                .deserialize(message.value()).content
+            record = self.serialization_model.deserialize(
+                message.value()
+            ).content
         kafka_url = self._config['url']
         if kafka_error is None:
             self.kafka_delivery_failures = False
