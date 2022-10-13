@@ -46,7 +46,10 @@
     - [ ] `PASTRO_READY`
     - [ ] `PE_READY`
     - [ ] `SKYMAP_READY`
-13. [ ] The MDC superevent has two automatic preliminary VOEvent if `GCN_PRELIM_SENT` is applied.
+13. [ ] The MDC superevent has two automatic preliminary VOEvents, JSON packets, and avro packets if `GCN_PRELIM_SENT` is applied.
+    - [ ] 2 preliminary VOEvents
+    - [ ] 2 preliminary JSON packets
+    - [ ] 2 preliminary avro packets
 14. [ ] Issuing a manual preliminary alert from the [Flask dashboard](https://emfollow-playground.ligo.caltech.edu/gwcelery) sends another preliminary alert.
     - [ ] The alert **is sent** successfully if `ADVOK` or an `ADVNO` label is **not applied** this time.
     - [ ] Alternatively, a preliminary alert is **blocked** due to presence of `ADVOK` or `ADVNO`.
