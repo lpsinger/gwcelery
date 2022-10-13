@@ -101,7 +101,7 @@ def _upload_notice(self, payload, brokerhost, superevent_id):
     )
 
     gracedb.upload.delay(payload.serialize()['content'], filename,
-                         superevent_id, message)
+                         superevent_id, message, tags=['public', 'em_follow'])
 
 
 @app.task(bind=True, queue='kafka', shared=False)
