@@ -5,7 +5,7 @@
     "comment": "BAYESTAR localization copied from T12345",
     "created": "2018-07-10 14:54:06 UTC",
     "issuer": "min-a.cho@LIGO.ORG",
-    "filename": "bayestar.fits.gz",
+    "filename": "bayestar.multiorder.fits",
     "file_version": 0,
     "tag_names": ["sky_loc", "public"],
     "file": "https://gracedb-dev1.ligo.org/api/superevents/S170817/files/bayestar.fits.gz,0"

@@ -69,7 +69,7 @@ def get_skymap_filename(graceid):
     if 'S' in graceid:
         for message in reversed(gracedb_log):
             filename = message['filename']
-            if filename.endswith('.fits.gz'):
+            if filename.endswith('.multiorder.fits'):
                 return filename
     else:
         for message in reversed(gracedb_log):

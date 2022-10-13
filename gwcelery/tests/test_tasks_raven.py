@@ -120,6 +120,7 @@ def test_calculate_spacetime_coincidence_far(
         se_dict=se, ext_dict=ext,
         se_fitsfile='fermi_skymap.fits.gz',
         ext_fitsfile='fermi_skymap.fits.gz',
+        se_moc=True, ext_moc=False,
         gracedb=gracedb.client, far_grb=None)
 
 

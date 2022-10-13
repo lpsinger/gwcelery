@@ -51,6 +51,9 @@ Changelog
 
 -   Set the preliminary alert timeout to 0 s.
 
+-   Use multi-resolution GW sky maps when calculating the joint false alarm
+    rate.
+
 1.0.1 (2022-05-09)
 ------------------
 

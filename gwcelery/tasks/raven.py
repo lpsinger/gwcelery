@@ -47,6 +47,7 @@ def calculate_coincidence_far(superevent, exttrig, tl, th):
                    se_dict=superevent, ext_dict=exttrig,
                    grb_search=exttrig['search'],
                    se_fitsfile=se_skymap, ext_fitsfile=ext_skymap,
+                   se_moc=True, ext_moc=False,
                    incl_sky=True, gracedb=gracedb.client,
                    far_grb=exttrig['far'])
     else:
