@@ -48,6 +48,7 @@ def calculate_coincidence_far(superevent, exttrig, tl, th):
                    grb_search=exttrig['search'],
                    se_fitsfile=se_skymap, ext_fitsfile=ext_skymap,
                    se_moc=True, ext_moc=False,
+                   use_radec=True if exttrig['pipeline'] == 'Swift' else False,
                    incl_sky=True, gracedb=gracedb.client,
                    far_grb=exttrig['far'])
     else:

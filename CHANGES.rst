@@ -52,7 +52,7 @@ Changelog
 -   Set the preliminary alert timeout to 0 s.
 
 -   Use multi-resolution GW sky maps when calculating the joint false alarm
-    rate.
+    rate. Use single pixel RA/dec when evaluating for Swift coincidences.
 
 -   Filter BBH/IMBH events from burst-GRB searches. 
 
