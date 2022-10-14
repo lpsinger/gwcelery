@@ -4,6 +4,11 @@ Changelog
 1.0.2 (unreleased)
 ------------------
 
+-   This release establishes the practice of naming GWCelery releases after
+    `cryptids`__.
+
+    __ https://en.wikipedia.org/wiki/List_of_cryptids
+
 -   Replace instances of "MBTAOnline" with "MBTA".
 
 -   Remove gstlal from list of pipelines that upload PSDs in separate
