@@ -32,7 +32,7 @@ Changelog
     ``psd.xml.gz`` file. Update mock event uploads to include PSD in
     ``coinc.xml`` upload.
 
--   Disable lalinference parameter estimation and switch to bilby as a main
+-   Disable LALInference parameter estimation and switch to Bilby as the main
     parameter estimation software.
 
 -   Add bilby-pipe>=1.0.6 and gwdatafind>=1.1.1 dependency, and unpin pesummary
@@ -50,26 +50,22 @@ Changelog
 
 -   Embed PSDs in first2years event uploads, matching the O4 configuration of most CBC pipelines.
 
--   Create external MDC events to consistency test the RAVEN alert system.
-    These now include from Fermi, Swift, INTEGRAL, and AGILE-MCAL.
-    Add acceptance tests for the RAVEN alert system. Add options to use
-    the superevent search field in coincident searches. Update preferred
-    external event based on best available.
+-   Create external MDC events to test the RAVEN alert system. Test alerts
+    include Fermi, Swift, INTEGRAL, and AGILE-MCAL. Add acceptance tests for
+    the RAVEN alert system. Add options to use the superevent search field in
+    coincident searches. Update the preferred external event based on the best
+    available.
 
 -   Report the URL of multi-resolution FITS files in GCN Notices and create
     flat-resolution files asynchronously.
 
--   Move functions in handle_grb_gcn to asynchronous group to prevent detchar
-    errors from interupting sky map generation.
+-   Move functions in handle_grb_gcn to an asynchronous group to prevent
+    detchar errors from interupting sky map generation.
 
 -   Prevent sub-threhsold GRBs from overwriting high-threshold GRBs.
 
 -   Listen to initial GBM alerts for earlier warning. Prevent these events
     from triggering alerts unless later updated.
-
--   Reduce GraceDB REST API GET requests in superevents by taking advantage of
-    ``superevent_neighbours`` and ``preferred_event_data`` fields in
-    the new igwn-alert packets.
 
 -   Adjust Celery working concurrency settings: turn off autoscaling, turn
     on prefetching. This is seen to decrease the latency of most tasks.
