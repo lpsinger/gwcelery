@@ -144,8 +144,7 @@ Poetry-managed virtual environment by running this command::
 Then, run these commands to build the docs::
 
     $ poetry shell
-    $ cd doc
-    $ python -m sphinx -b html . _build/html
+    $ make -C doc html
 
 Finally, open the file ``doc/_build/html/index.html`` in your favorite web
 browser.
