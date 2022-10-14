@@ -11,7 +11,7 @@ Changelog
 
     __ https://en.wikipedia.org/wiki/List_of_cryptids
 
--   Send SIGKILL to vacate condor jobs.
+-   Send SIGKILL to vacate condor jobs that do not die promptly when condor_rm'ed.
 
 -   Preferentially pick coincident SNEWS events over coincident GRB events.
 
@@ -21,16 +21,12 @@ Changelog
 
 -   Perform first2years MDC uploads asynchronously.
 
--   Add ````request_memory`` specification for condor submission of sky map jobs.
+-   Adjust ``request_memory`` specification for condor submission of OpenMP workers.
 
--   Ignore noisy adc-streaming logger that raised frequency recoverable timeout
-    errors in the IGWN-Alert thread.
-
--   Fix various sphinx warnings/ errors.
+-   Ignore noisy adc-streaming log messages due to frequent but harmless
+    errors in the IGWN Alert listener.
 
 -   Replace instances of "MBTAOnline" with "MBTA".
-
--   Update CI with new poetry installation instructions.
 
 -   Remove gstlal from list of pipelines that upload PSDs in separate
     ``psd.xml.gz`` file. Update mock event uploads to include PSD in
