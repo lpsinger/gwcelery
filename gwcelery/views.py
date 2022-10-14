@@ -12,6 +12,7 @@ except ImportError:
     import importlib_metadata as metadata
 
 from astropy.time import Time
+from celery import group
 from flask import flash, jsonify, redirect, render_template, request, url_for
 from flask import make_response
 from requests.exceptions import HTTPError
@@ -188,6 +189,19 @@ def typeahead_p_astro_filename():
     ))
 
 
+@celery_app.task(shared=False, ignore_result=True)
+def _construct_igwn_alert_and_send_prelim_alert(superevent_event_list,
+                                                superevent_id,
+                                                initiate_voevent=True):
+    superevent, event = superevent_event_list
+    alert = {
+        'uid': superevent_id,
+        'object': superevent
+    }
+
+    orchestrator.earlywarning_preliminary_alert(event, alert, superevent_id)
+
+
 @app.route('/send_preliminary_gcn', methods=['POST'])
 def send_preliminary_gcn():
     """Handle submission of preliminary alert form."""
@@ -204,10 +218,13 @@ def send_preliminary_gcn():
             gracedb.update_superevent.si(
                 superevent_id, preferred_event=event_id)
             |
-            gracedb.get_event.si(event_id)
+            group(
+                gracedb.get_superevent.si(superevent_id),
+
+                gracedb.get_event.si(event_id)
+            )
             |
-            orchestrator.earlywarning_preliminary_alert.s(superevent_id,
-                                                          'preliminary')
+            _construct_igwn_alert_and_send_prelim_alert.s(superevent_id)
         ).delay()
         flash('Queued preliminary alert for {}.'.format(superevent_id),
               'success')
@@ -232,10 +249,16 @@ def change_prefered_event():
             gracedb.update_superevent.si(
                 superevent_id, preferred_event=event_id)
             |
-            gracedb.get_event.si(event_id)
+            group(
+                gracedb.get_superevent.si(superevent_id),
+
+                gracedb.get_event.si(event_id)
+            )
             |
-            orchestrator.earlywarning_preliminary_alert.s(
-                superevent_id, 'preliminary', initiate_voevent=False)
+            _construct_igwn_alert_and_send_prelim_alert.s(
+                superevent_id,
+                initiate_voevent=False
+            )
         ).delay()
         flash('Changed prefered event for {}.'.format(superevent_id),
               'success')
