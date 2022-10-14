@@ -26,8 +26,6 @@ Changelog
 -   Ignore noisy adc-streaming logger that raised frequency recoverable timeout
     errors in the IGWN-Alert thread.
 
--   Set preliminary alert timeout to 0 seconds.
-
 -   Fix various sphinx warnings/ errors.
 
 -   Replace instances of "MBTAOnline" with "MBTA".
@@ -49,14 +47,12 @@ Changelog
 
 -   Enable ingestion and processing of test SNEWS external events.
 
--   Add python 3.10 testing.
+-   Run unit tests under Python 3.10.
 
 -   Add ``DQR_REQUEST`` label to superevent after sending first preliminary
     alert.
 
--   Add PSD to first2years coincidence file.
-
--   Add a Celery bootstep for external Kafka brokers.
+-   Embed PSDs in first2years event uploads, matching the O4 configuration of most CBC pipelines.
 
 -   Create external MDC events to consistency test the RAVEN alert system.
     These now include from Fermi, Swift, INTEGRAL, and AGILE-MCAL.
