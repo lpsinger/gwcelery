@@ -10,6 +10,7 @@ JobBatchName = gwcelery
 # FIXME: the gwcelery-worker job does not always stop when condor_rm'd.
 # Give all jobs 20 seconds to stop gracefully, then forcefully kill them.
 job_max_vacate_time = 20
+kill_sig = SIGKILL
 
 arguments = "gwcelery beat -f gwcelery-beat.log"
 description = gwcelery-beat
