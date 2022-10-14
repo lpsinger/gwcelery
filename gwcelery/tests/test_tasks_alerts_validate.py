@@ -76,26 +76,25 @@ def test_validate_alert(mock_download, mock_upload, parsed_schema,
 
     # Load superevent dictionary, and embright/pastro json tuple
     superevent = json.loads(resources.read_binary(data, 'MS220722v.xml'))
+    classification = (
+        '{"HasNS": 1.0, "HasRemnant": 1.0}',
+        '{"BNS": 0.9999976592278448, "NSBH": 0.0, "BBH": 0.0,'
+        '"Terrestrial": 2.3407721552252815e-06}'
+    )
+    skymap_fname = 'MS220722v_bayestar.multiorder.fits'
 
     # Test preliminary, initial, and update alerts. All three are generated
     # using the same code path, so we only need to test 1
-    alerts.download_skymap_and_send_alert(
-        (
-            '{"HasNS": 1.0, "HasRemnant": 1.0}',
-            '{"BNS": 0.9999976592278448, "NSBH": 0.0, "BBH": 0.0,'
-            '"Terrestrial": 2.3407721552252815e-06}'
-        ),
-        superevent,
-        'initial',
-        'MS220722v_bayestar.multiorder.fits'
-    )
+    alerts.download_skymap_and_send_alert(classification, superevent,
+                                          'initial', skymap_fname)
+
     mock_download.assert_called_once()
     mock_upload.assert_called_once()
     mock_stream_write.assert_called_once()
 
     # Reset mocks
     mock_stream_write.reset_mock()
-    mock_download.reset_mock(return_value=True)
+    mock_download.reset_mock()
     mock_upload.reset_mock()
 
     # Test retraction alerts.
@@ -103,3 +102,20 @@ def test_validate_alert(mock_download, mock_upload, parsed_schema,
     mock_download.assert_not_called()
     mock_upload.assert_called_once()
     mock_stream_write.assert_called_once()
+
+    # Reset mocks
+    mock_stream_write.reset_mock()
+    mock_download.reset_mock()
+    mock_upload.reset_mock()
+
+    # Test that missing fields trigger validation failure
+    alerts.download_skymap_and_send_alert(classification, superevent,
+                                          'initial', skymap_fname)
+
+    with pytest.raises(fastavro._validate_common.ValidationError):
+        # Change the superevent_id field of the superevent to None because the
+        # schema does not allow None, so we know this should make the
+        # validation fail
+        superevent['superevent_id'] = None
+        alerts.download_skymap_and_send_alert(classification, superevent,
+                                              'initial', skymap_fname)
