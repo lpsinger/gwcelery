@@ -1,15 +1,38 @@
 Changelog
 =========
 
-1.0.2 (unreleased)
-------------------
+2.0.0 "Akkorokamui" (2022-10-14)
+--------------------------------
+
+-   Introduce public alerts over Kafka via SCiMMA and the new GCN.
 
 -   This release establishes the practice of naming GWCelery releases after
     `cryptids`__.
 
     __ https://en.wikipedia.org/wiki/List_of_cryptids
 
+-   Send SIGKILL to vacate condor jobs.
+
+-   Preferentially pick coincident SNEWS events over coincident GRB events.
+
+-   Add HTTP 408 Request Timeout errors to list of errors that trigger a retry.
+
+-   Ignore BBH/IMBH specific searches for GW-GRB burst searches.
+
+-   Perform first2years MDC uploads asynchronously.
+
+-   Add ````request_memory`` specification for condor submission of sky map jobs.
+
+-   Ignore noisy adc-streaming logger that raised frequency recoverable timeout
+    errors in the IGWN-Alert thread.
+
+-   Set preliminary alert timeout to 0 seconds.
+
+-   Fix various sphinx warnings/ errors.
+
 -   Replace instances of "MBTAOnline" with "MBTA".
+
+-   Update CI with new poetry installation instructions.
 
 -   Remove gstlal from list of pipelines that upload PSDs in separate
     ``psd.xml.gz`` file. Update mock event uploads to include PSD in
@@ -26,7 +49,14 @@ Changelog
 
 -   Enable ingestion and processing of test SNEWS external events.
 
--   Add a Celery bootstep for external Kafka brokers
+-   Add python 3.10 testing.
+
+-   Add ``DQR_REQUEST`` label to superevent after sending first preliminary
+    alert.
+
+-   Add PSD to first2years coincidence file.
+
+-   Add a Celery bootstep for external Kafka brokers.
 
 -   Create external MDC events to consistency test the RAVEN alert system.
     These now include from Fermi, Swift, INTEGRAL, and AGILE-MCAL.
