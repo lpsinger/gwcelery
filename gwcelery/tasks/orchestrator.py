@@ -789,6 +789,9 @@ def earlywarning_preliminary_initial_update_alert(
                 tags=tags)
         )
 
+    else:
+        circular_canvas = identity.si()
+
     if filecontents:
         skymap, em_bright, p_astro = filecontents
 
