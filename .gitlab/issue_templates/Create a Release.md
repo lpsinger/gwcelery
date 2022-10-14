@@ -62,6 +62,9 @@
 22. [ ] The joint MDC superevent is sending alerts with coincidence information.
     - [ ] At least one VOEvent with `<Group name="External Coincidence">`.
     - [ ] At least one circular w/ `-emcoinc-` in filename.
+
+## Replay events
+
 23. [ ] [A Production superevent labeled `GCN_PRELIM_SENT`](https://gracedb-playground.ligo.org/latest/?query=Production+GCN_PRELIM_SENT&query_type=S&get_neighbors=&results_format=) has the following parameter estimation annotations and the `PE_READY` label.
     - [ ] `online_bilby_pe.ini`
     - [ ] `Bilby.posterior_samples.hdf5`
