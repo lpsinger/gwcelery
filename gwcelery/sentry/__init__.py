@@ -18,17 +18,6 @@ DSN = 'https://sentry.io/1425216'
 """Sentry data source name (DSN)."""
 
 
-def _before_send(event, *args):
-    """Ignore noisy log but harmless messsages from adc-streaming.
-
-    FIXME: Remove once https://git.ligo.org/emfollow/gwcelery/-/issues/457
-    is fixed.
-    """
-    if 'internal kafka error: KafkaError{code=_TIMED_OUT,val=-185,str="GroupCoordinator: kb-' in event.get('logentry', {}).get('message'):  # noqa: E501
-        return None
-    return event
-
-
 def configure():
     """Configure Sentry logging integration for Celery.
 
@@ -68,7 +57,6 @@ def configure():
     version = 'gwcelery-{}'.format(_version.get_versions()['version'])
     environment = app.conf['sentry_environment']
     sentry_sdk.init(dsn, environment=environment, release=version,
-                    before_send=_before_send,
                     integrations=[celery.CeleryIntegration(),
                                   condor.CondorIntegration(),
                                   flask.FlaskIntegration(),
