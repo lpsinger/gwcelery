@@ -4,7 +4,7 @@ from urllib.parse import urlparse, urlunparse
 from celery.utils.log import get_logger
 from safe_netrc import netrc, NetrcParseError
 import sentry_sdk
-from sentry_sdk.integrations import celery, flask, redis, tornado
+from sentry_sdk.integrations import celery, flask, logging, redis, tornado
 
 from .. import _version
 from ..util import SPHINX
@@ -47,6 +47,12 @@ def configure():
                       'the username and password for %s from the netrc file',
                       netloc)
         return
+
+    # Ignore noisy log but harmless messsages from adc-streaming.
+    #
+    # FIXME: Remove once https://git.ligo.org/emfollow/gwcelery/-/issues/457
+    # is fixed.
+    logging.ignore_logger('adc-streaming')
 
     # The "legacy" Sentry DSN requires a "public key" and a "private key",
     # which are transmitted as the username and password in the URL.
