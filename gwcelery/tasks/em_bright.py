@@ -88,7 +88,7 @@ def plot(contents):
 @app.task(shared=False)
 def em_bright_posterior_samples(posterior_file_content):
     """Returns the probability of having a NS component and remnant
-    using LALInference posterior samples.
+    using Bilby posterior samples.
 
     Parameters
     ----------
@@ -103,7 +103,7 @@ def em_bright_posterior_samples(posterior_file_content):
     Examples
     --------
     >>> em_bright_posterior_samples(GraceDb().files('S190930s',
-    ... 'LALInference.posterior_samples.hdf5').read())
+    ... 'Bilby.posterior_samples.hdf5').read())
     {"HasNS": 0.014904901243599122, "HasRemnant": 0.0}
 
     """

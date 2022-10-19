@@ -52,12 +52,12 @@ def test_posterior_samples(posterior_samples, embright):
         with h5py.File(f, 'r+') as tmp_h5:
             data = np.array(
                     posterior_samples,
-                    dtype=[('mc', '<f8'), ('q', '<f8'),
-                           ('a1', '<f8'), ('a2', '<f8'),
-                           ('dist', '<f8'), ('tilt1', '<f8'),
-                           ('tilt2', '<f8')])
+                    dtype=[('chirp_mass', '<f8'), ('mass_ratio', '<f8'),
+                           ('a_1', '<f8'), ('a_2', '<f8'),
+                           ('luminosity_distance', '<f8'), ('tilt_1', '<f8'),
+                           ('tilt_2', '<f8')])
             tmp_h5.create_dataset(
-                'lalinference/lalinference_mcmc/posterior_samples',
+                'posterior_samples',
                 data=data)
         content = open(filename, 'rb').read()
     r = json.loads(em_bright.em_bright_posterior_samples(content))
