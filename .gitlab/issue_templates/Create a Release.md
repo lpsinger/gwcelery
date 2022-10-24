@@ -46,26 +46,27 @@
 14. [ ] Issuing a manual preliminary alert from the [Flask dashboard](https://emfollow-playground.ligo.caltech.edu/gwcelery) sends another preliminary alert.
     - [ ] The alert **is sent** successfully if `ADVOK` or an `ADVNO` label is **not applied** this time.
     - [ ] Alternatively, a preliminary alert is **blocked** due to presence of `ADVOK` or `ADVNO`.
-15. [ ] The MDC superevent has either an `ADVOK` or an `ADVNO` label.
-16. [ ] Issuing an `ADVOK` signoff through GraceDB results in an initial VOEvent.
-17. [ ] Issuing an `ADVNO` signoff through GraceDB results in a retraction VOEvent.
-18. [ ] Requesting an update alert through the [Flask dashboard](https://emfollow-playground.ligo.caltech.edu/gwcelery) results in an update VOEvent.
-19. [ ] Playground has recently [produced an MDC superevent with an external coincidence](https://gracedb-playground.ligo.org/latest/?query=MDC+EM_COINC&query_type=S), i.e. with a `EM_COINC` label. Use the [Flask dashboard](https://emfollow-playground.ligo.caltech.edu/gwcelery) to do this manually (note that joint events with Swift may not pass publishing conditions).
-20. [ ] The joint MDC superevent has the following annotations.
+15. [ ] `DQR_REQUEST` label is applied to the superevent. The application happens at the time of launching the second preliminary alert.
+16. [ ] The MDC superevent has either an `ADVOK` or an `ADVNO` label.
+17. [ ] Issuing an `ADVOK` signoff through GraceDB results in an initial VOEvent.
+18. [ ] Issuing an `ADVNO` signoff through GraceDB results in a retraction VOEvent.
+19. [ ] Requesting an update alert through the [Flask dashboard](https://emfollow-playground.ligo.caltech.edu/gwcelery) results in an update VOEvent.
+20. [ ] Playground has recently [produced an MDC superevent with an external coincidence](https://gracedb-playground.ligo.org/latest/?query=MDC+EM_COINC&query_type=S), i.e. with a `EM_COINC` label. Use the [Flask dashboard](https://emfollow-playground.ligo.caltech.edu/gwcelery) to do this manually (note that joint events with Swift may not pass publishing conditions).
+21. [ ] The joint MDC superevent has the following annotations.
     - [ ] `coincidence_far.json`
     - [ ] `bayestar-ext.fits.gz` or `subthreshold.bayestar-ext.fits.gz`
     - [ ] `bayestar-ext.png` or `subthreshold.bayestar-ext.png`
-21. [ ] The joint MDC superevent has the following labels.
+22. [ ] The joint MDC superevent has the following labels.
     - [ ] `EM_COINC`
     - [ ] `RAVEN_ALERT`
     - [ ] `GCN_PRELIM_SENT`
-22. [ ] The joint MDC superevent is sending alerts with coincidence information.
+23. [ ] The joint MDC superevent is sending alerts with coincidence information.
     - [ ] At least one VOEvent with `<Group name="External Coincidence">`.
     - [ ] At least one circular w/ `-emcoinc-` in filename.
 
 ## Replay events
 
-23. [ ] [A Production superevent labeled `GCN_PRELIM_SENT`](https://gracedb-playground.ligo.org/latest/?query=Production+GCN_PRELIM_SENT&query_type=S&get_neighbors=&results_format=) has the following parameter estimation annotations and the `PE_READY` label.
+24. [ ] [A Production superevent labeled `GCN_PRELIM_SENT`](https://gracedb-playground.ligo.org/latest/?query=Production+GCN_PRELIM_SENT&query_type=S&get_neighbors=&results_format=) has the following parameter estimation annotations and the `PE_READY` label.
     - [ ] `online_bilby_pe.ini`
     - [ ] `Bilby.posterior_samples.hdf5`
     - [ ] `Bilby.multiorder.fits`
