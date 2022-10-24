@@ -113,7 +113,9 @@ def handle_superevent(alert):
                 query += ' Test'
 
             (
-                identity.si().set(  # https://git.ligo.org/emfollow/gwcelery/-/issues/478  # noqa: E501
+                identity.si().set(
+                    # https://git.ligo.org/emfollow/gwcelery/-/issues/478
+                    # FIXME: remove this task once https://github.com/celery/celery/issues/7851 is resolved  # noqa: E501
                     countdown=app.conf['superevent_clean_up_timeout']
                 )
                 |
@@ -551,7 +553,7 @@ def earlywarning_preliminary_alert(event, alert, annotation_prefix='',
     """
     priority = 0 if superevents.should_publish(
         alert['object']['preferred_event_data']) else 1
-    preferred_event_id = alert['object']['preferred_event']
+    preferred_event_id = event['graceid']
     superevent_id = alert['uid']
 
     if alert['object']['preferred_event_data']['group'] == 'CBC':
@@ -567,9 +569,9 @@ def earlywarning_preliminary_alert(event, alert, annotation_prefix='',
 
     # Determine if the event should be made public.
     is_publishable = (superevents.should_publish(
-                      alert['object']['preferred_event_data']) and
+                      event) and
                       {'DQV', 'INJ'}.isdisjoint(
-                      alert['object']['preferred_event_data']['labels']))
+                      event['labels']))
 
     # Download files from events and upload to superevent with relevant
     # annotations. Pass file contents down the chain so alerts task doesn't
@@ -613,7 +615,7 @@ def earlywarning_preliminary_alert(event, alert, annotation_prefix='',
                     _create_label_and_return_filename.s('EMBRIGHT_READY',
                                                         superevent_id)
                 )
-            ) if alert['object']['preferred_event_data']['group'] == 'CBC' else
+            ) if event['group'] == 'CBC' else
             identity.s([None, None]),
 
             (
@@ -634,7 +636,7 @@ def earlywarning_preliminary_alert(event, alert, annotation_prefix='',
                     _create_label_and_return_filename.s('PASTRO_READY',
                                                         superevent_id)
                 )
-            ) if alert['object']['preferred_event_data']['group'] == 'CBC' else
+            ) if event['group'] == 'CBC' else
             identity.s([None, None])
         )
         |
@@ -647,7 +649,7 @@ def earlywarning_preliminary_alert(event, alert, annotation_prefix='',
 
     # Switch for disabling all but MDC alerts.
     if app.conf['only_alert_for_mdc']:
-        if alert['object']['preferred_event_data'].get('search') != 'MDC':
+        if event.get('search') != 'MDC':
             canvas |= gracedb.upload.si(
                 None, None, superevent_id,
                 ("Skipping alert because gwcelery has been configured to only"
