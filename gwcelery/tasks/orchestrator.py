@@ -113,6 +113,10 @@ def handle_superevent(alert):
                 query += ' Test'
 
             (
+                identity.si().set(  # https://git.ligo.org/emfollow/gwcelery/-/issues/478  # noqa: E501
+                    countdown=app.conf['superevent_clean_up_timeout']
+                )
+                |
                 group(
                     gracedb.get_events.si(query),
                     gracedb.create_label.si('DQR_REQUEST', superevent_id)
@@ -130,7 +134,7 @@ def handle_superevent(alert):
                 )
                 |
                 earlywarning_preliminary_alert.s(alert)
-            ).apply_async(countdown=app.conf['superevent_clean_up_timeout'])
+            ).apply_async()
         # launch initial/retraction alert on ADVOK/ADVNO
         elif label_name == 'ADVOK':
             initial_alert((None, None, None), alert)
