@@ -1,10 +1,14 @@
 Changelog
 =========
 
-2.0.1 (unreleased)
-------------------
+2.0.1 "Alien Big Cat" (2022-10-26)
+----------------------------------
 
--   No changes yet
+-   Restrict ligo.em_bright to >=1.0.4 to accept new posterior samples format
+
+-   Fix regression in superevent clean-up
+
+-   Fix regression where subthreshold annotations could use stale data
 
 2.0.0 "Akkorokamui" (2022-10-14)
 --------------------------------
