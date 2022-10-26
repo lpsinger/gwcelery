@@ -4,7 +4,7 @@ Changelog
 2.0.2 (unreleased)
 ------------------
 
--   No changes yet.
+-   Update messages from RAVEN alert pipeline to be more informative.
 
 2.0.1 "Alien Big Cat" (2022-10-26)
 ----------------------------------

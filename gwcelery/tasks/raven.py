@@ -373,11 +373,11 @@ def trigger_raven_alert(coinc_far_dict, superevent, gracedb_id,
     if pass_far_threshold and not is_ext_subthreshold and \
             likely_real_ext_event and not missing_skymap and \
             not is_test_event:
-        messages.append('RAVEN: publishing criteria met for %s' % (
-            preferred_gwevent_id))
+        messages.append('RAVEN: publishing criteria met for {0}-{1}'.format(
+            preferred_gwevent_id, ext_id))
         if no_previous_alert:
-            messages.append('Triggering RAVEN alert for %s' % (
-                preferred_gwevent_id))
+            messages.append('Triggering RAVEN alert for {0}-{1}'.format(
+                preferred_gwevent_id, ext_id))
             (
                 gracedb.create_label.si('RAVEN_ALERT', superevent_id)
                 |
@@ -386,29 +386,31 @@ def trigger_raven_alert(coinc_far_dict, superevent, gracedb_id,
                 gracedb.create_label.si('RAVEN_ALERT', preferred_gwevent_id)
             ).delay()
     if not pass_far_threshold:
-        messages.append(('RAVEN: publishing criteria not met for %s,'
-                         ' %s FAR (w/ trials) too large (%s>%s)' % (
-                             preferred_gwevent_id, far_type,
+        messages.append(('RAVEN: publishing criteria not met for {0}-{1},'
+                         ' {2} FAR (w/ trials) too large '
+                         '({3:.4g} > {4:.4g})'.format(
+                             preferred_gwevent_id, ext_id, far_type,
                              coinc_far_f, far_threshold)))
     if is_ext_subthreshold:
-        messages.append(('RAVEN: publishing criteria not met for %s,'
-                         ' %s is subthreshold' % (preferred_gwevent_id,
-                                                  ext_id)))
+        messages.append(('RAVEN: publishing criteria not met for {0}-{1},'
+                         ' {1} is subthreshold'.format(preferred_gwevent_id,
+                                                       ext_id)))
     if not likely_real_ext_event:
-        messages.append(('RAVEN: %s is likely non-astrophysical.'
-                         % (ext_id)))
+        messages.append(('RAVEN: publishing criteria not met for {0}-{1},'
+                         ' {1} is likely non-astrophysical.'.format(
+                             preferred_gwevent_id, ext_id)))
     if is_test_event:
-        messages.append('RAVEN: Coincidence is non-astrophysical, '
-                        'at least one event is a Test event')
+        messages.append('RAVEN: {0}-{1} is non-astrophysical, '
+                        'at least one event is a Test event'.format(
+                            preferred_gwevent_id, ext_id))
     if not no_previous_alert:
-        messages.append(('RAVEN: Alert already triggered for  %s'
-                         % (ext_id)))
+        messages.append(('RAVEN: Alert already triggered for {}'.format(
+                            ext_id)))
     if missing_skymap:
         messages.append('RAVEN: Will only publish Swift coincidence '
                         'event if spatial-temporal FAR is present. '
                         'Waiting for both sky maps to be available '
                         'first.')
     for message in messages:
-        gracedb.upload(None, None, superevent_id,
-                       message,
-                       tags=['ext_coinc'])
+        gracedb.upload.si(None, None, superevent_id, message,
+                          tags=['ext_coinc']).delay()
