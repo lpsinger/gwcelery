@@ -10,6 +10,8 @@ Changelog
 
 -   Fix regression where subthreshold annotations could use stale data
 
+-   Silence Sentry for adc-streaming log messages
+
 2.0.0 "Akkorokamui" (2022-10-14)
 --------------------------------
 
