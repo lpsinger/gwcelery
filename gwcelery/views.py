@@ -308,6 +308,27 @@ def create_update_gcn_circular():
     return redirect(url_for('index'))
 
 
+@app.route('/apply_raven_labels', methods=['POST'])
+def apply_raven_labels():
+    """Applying RAVEN alert label for the missed coincident alerts."""
+    keys = ('superevent_id', 'ext_id', 'event_id')
+    superevent_id, ext_id, event_id, *_ = tuple(request.form.get(key)
+                                                for key in keys)
+    if superevent_id and ext_id and event_id:
+        (
+                gracedb.create_label.si('RAVEN_ALERT', superevent_id)
+                |
+                gracedb.create_label.si('RAVEN_ALERT', ext_id)
+                |
+                gracedb.create_label.si('RAVEN_ALERT', event_id)
+        ).delay()
+        flash('Applied RAVEN alert label for {}.'.format(superevent_id),
+              'success')
+    else:
+        flash('No alert sent. Please fill in all fields.', 'danger')
+    return redirect(url_for('index'))
+
+
 @app.route('/send_mock_event', methods=['POST'])
 def send_mock_event():
     """Handle submission of mock alert form."""

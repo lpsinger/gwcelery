@@ -4,6 +4,9 @@ Changelog
 2.0.2 (unreleased)
 ------------------
 
+-   Add button to apply RAVEN alert labels to flask app. This will manually
+    trigger a RAVEN alert. 
+
 -   Update messages from RAVEN alert pipeline to be more informative.
 
 -   Fix bug where updated GRB events couldn't create sky maps.
