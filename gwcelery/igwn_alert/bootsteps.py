@@ -106,8 +106,9 @@ class Receiver(IGWNAlertBootStep):
 
     def stop(self, consumer):
         super().stop(consumer)
-        self._client.running = False
-        self._client.stream_obj._consumer.stop()
+        if self._client.running:
+            self._client.running = False
+            self._client.stream_obj._consumer.stop()
         self.thread.join()
 
     def info(self, consumer):
