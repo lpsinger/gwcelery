@@ -233,7 +233,7 @@ release:
       curl -sSL https://install.python-poetry.org | python3 -
       # FIXME: It would be simpler to use `poetry install`, but it tries to
       # uninstall system site-packages even if they are not writable.
-      pip install --no-deps -r <(poetry export --with dev --without-hashes)  # FIXME remove when bilby-pipe release is done
+      pip install --no-deps -r <(poetry export --with dev)
       pip install --no-deps .
 
       # FIXME: remove pip uninstall temporary directories left behind due to

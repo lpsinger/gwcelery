@@ -183,7 +183,7 @@ python-versions = "*"
 
 [[package]]
 name = "bilby"
-version = "1.2.1"
+version = "1.3.0"
 description = "A user-friendly Bayesian inference library"
 category = "main"
 optional = false
@@ -192,6 +192,7 @@ python-versions = ">=3.8"
 [package.dependencies]
 astropy = {version = ">=5", optional = true, markers = "extra == \"gw\""}
 attrs = "*"
+"bilby.cython" = ">=0.3.0"
 corner = "*"
 dill = "*"
 dynesty = "<1.1"
@@ -208,22 +209,32 @@ tables = {version = "*", optional = true, markers = "extra == \"gw\""}
 tqdm = "*"
 
 [package.extras]
-all = ["astropy (>=5)", "celerite", "cpnest (>=0.9.4)", "dnest4", "dynesty", "emcee", "george", "gwpy", "kombine", "lalsuite", "nessai (>=0.2.3)", "nestle", "nflows", "plotly", "ptemcee", "pyfftw", "pymc3 (>=3.6)", "pymultinest", "schwimmbad", "scikit-learn", "tables", "ultranest (>=3.0.0)", "zeus-mcmc (>=2.3.0)"]
+all = ["astropy (>=5)", "celerite", "cpnest (>=0.9.4)", "dnest4", "dynesty", "emcee", "george", "gwpy", "kombine", "lalsuite", "nessai (>=0.2.3)", "nestle", "nflows", "plotly", "ptemcee", "pyfftw", "pymc (>=4.0.0)", "pymultinest", "schwimmbad", "scikit-learn", "tables", "ultranest (>=3.0.0)", "zeus-mcmc (>=2.3.0)"]
 gw = ["astropy (>=5)", "gwpy", "lalsuite", "pyfftw", "tables"]
 mcmc = ["nflows", "scikit-learn"]
 
 [[package]]
+name = "bilby-cython"
+version = "0.4.0"
+description = "Optimized functionality for Bilby"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+
+[package.dependencies]
+numpy = "*"
+
+[[package]]
 name = "bilby-pipe"
-version = "1.0.7.dev69+g2df6366"
+version = "1.0.7"
 description = "Automating the running of bilby for gravitational wave signals"
 category = "main"
 optional = false
 python-versions = ">=3.8"
-develop = false
 
 [package.dependencies]
 astropy = "*"
-bilby = {version = ">=1.2.1", extras = ["gw"]}
+bilby = {version = ">=1.3.0", extras = ["gw"]}
 configargparse = "*"
 corner = "*"
 dynesty = ">=1.0.0"
@@ -234,18 +245,12 @@ jinja2 = "*"
 ligo-gracedb = "*"
 matplotlib = "*"
 numpy = "*"
-pesummary = ">=0.13.0"
+pesummary = ">=0.13.10"
 pycondor = ">=0.6"
 python-ligo-lw = ">=1.8.0"
 scipy = ">=1.2.0"
 seaborn = "*"
 tqdm = "*"
-
-[package.source]
-type = "git"
-url = "https://git.ligo.org/lscsoft/bilby_pipe"
-reference = "master"
-resolved_reference = "2df6366cd9fc22d8587ff83b2d21306c1cf7a1b4"
 
 [[package]]
 name = "billiard"
@@ -1521,7 +1526,7 @@ tomli = {version = ">=1.1.0", markers = "python_version < \"3.11\""}
 
 [[package]]
 name = "pesummary"
-version = "0.13.9"
+version = "0.13.10"
 description = "Python package to produce summary pages for Parameter estimation codes"
 category = "main"
 optional = false
@@ -2597,7 +2602,7 @@ test = ["fastavro", "pytest-celery", "pytest-cov", "pytest-flask", "pytest-socke
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8,<3.11"
-content-hash = "96ce96672531db27a976a7eabe9ca956b89bd837bef31153f6437488f015a1e5"
+content-hash = "4b4f0f6ac4cb4e0d0240e79ba9f0efcdf5d6919c984590b26ff3735c08f4c809"
 
 [metadata.files]
 adc-streaming = [
@@ -2705,9 +2710,21 @@ backcall = [
     {file = "backcall-0.2.0.tar.gz", hash = "sha256:5cbdbf27be5e7cfadb448baf0aa95508f91f2bbc6c6437cd9cd06e2a4c215e1e"},
 ]
 bilby = [
-    {file = "bilby-1.2.1.tar.gz", hash = "sha256:0c498226440c590aa003ce215fa97eeba72e8961c4e229c300415e525d3350f4"},
+    {file = "bilby-1.3.0.tar.gz", hash = "sha256:6e639be0be316aaac672d38e5ca35a512df74f25fce02cebcbb9d96a99a2e98b"},
 ]
-bilby-pipe = []
+bilby-cython = [
+    {file = "bilby.cython-0.4.0-cp310-cp310-macosx_10_15_x86_64.whl", hash = "sha256:cdae969eeebea3937eaed4bd7e98b80a61d116fc23956acb03a1f3d4f8320f0e"},
+    {file = "bilby.cython-0.4.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:31520fe94ef6c69ceb9aa7243eec31e33cc29387f98f1572887162e5df4e2010"},
+    {file = "bilby.cython-0.4.0-cp38-cp38-macosx_10_15_x86_64.whl", hash = "sha256:56756faf8a4fb0e689ea7647ec651032409d222c79bbe0747154b76a4beec0ab"},
+    {file = "bilby.cython-0.4.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e3c1e76f12cc41631523c22a47dca172da2a9e175f50432cd5e14439f4eda47a"},
+    {file = "bilby.cython-0.4.0-cp39-cp39-macosx_10_15_x86_64.whl", hash = "sha256:baa7c1fbb6a5261cf2608b56b5982cf39f425be6a66502487cf6cc4aa5e90894"},
+    {file = "bilby.cython-0.4.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:79f514f8d80f17861bb3cba0be9c5dad7d136a26a3eb6446f02d2a7d8ca055f2"},
+    {file = "bilby.cython-0.4.0.tar.gz", hash = "sha256:765f6fc9e47c887599960a7c385fd6862a51fb88306a7594d0808233daa6f7d8"},
+]
+bilby-pipe = [
+    {file = "bilby_pipe-1.0.7-py3-none-any.whl", hash = "sha256:23d6149c20c252ea74f454c7f5ba46ad2d9ac0558c786d437926be1e39234f3a"},
+    {file = "bilby_pipe-1.0.7.tar.gz", hash = "sha256:c5c855e0bd2122f8aaf28a77ab9da9cdb188f78f0d918394e58d58ced21e34ac"},
+]
 billiard = [
     {file = "billiard-3.6.4.0-py3-none-any.whl", hash = "sha256:87103ea78fa6ab4d5c751c4909bcff74617d985de7fa8b672cf8618afd5a875b"},
     {file = "billiard-3.6.4.0.tar.gz", hash = "sha256:299de5a8da28a783d51b197d496bef4f1595dd023a93a4f59dde1886ae905547"},
@@ -3624,8 +3641,8 @@ pep517 = [
     {file = "pep517-0.13.0.tar.gz", hash = "sha256:ae69927c5c172be1add9203726d4b84cf3ebad1edcd5f71fcdc746e66e829f59"},
 ]
 pesummary = [
-    {file = "pesummary-0.13.9-py3-none-any.whl", hash = "sha256:005c41ff1e04c26a0558841c3e7a707bfe25b0e7ad0691607b9a08b891926b0a"},
-    {file = "pesummary-0.13.9.tar.gz", hash = "sha256:2ee092d0e510b380f7dae765e460610a370e6e31dad9daf8979c1fb6883defac"},
+    {file = "pesummary-0.13.10-py3-none-any.whl", hash = "sha256:8bf4b45fac3d33f17ea8cc459259f9ff5386f6a55716c9d37882c113fe5e2773"},
+    {file = "pesummary-0.13.10.tar.gz", hash = "sha256:ad72d27b0c4739417554ac309843bf11a44c3ba92a5d429b737556501ff2691f"},
 ]
 pexpect = [
     {file = "pexpect-4.8.0-py2.py3-none-any.whl", hash = "sha256:0b48a55dcb3c05f3329815901ea4fc1537514d6ba867a152b581d69ae3710937"},
