@@ -301,13 +301,19 @@ def _setup_dag_for_bilby(
     with open(path_to_coinc, 'wb') as f:
         f.write(coinc)
 
+    path_to_settings = os.path.join(rundir, 'settings.json')
+    settings = {'summarypages_arguments': {'gracedb': preferred_event_id,
+                                           'no_ligo_skymap': True}}
+    with open(path_to_json, 'w') as f:
+        json.dump(settings, f, indent=2)
+
     path_to_webdir = os.path.join(
         app.conf['pe_results_path'], preferred_event_id, 'bilby'
     )
 
     setup_arg = ['bilby_pipe_gracedb', '--webdir', path_to_webdir,
                  '--outdir', rundir, '--json', path_to_json,
-                 '--psd-file', path_to_coinc, '--online-pe']
+                 '--psd-file', path_to_coinc, '--settings', path_to_settings]
 
     if not app.conf['gracedb_host'] == 'gracedb.ligo.org':
         setup_arg += ['--channel-dict', 'o3replay',
