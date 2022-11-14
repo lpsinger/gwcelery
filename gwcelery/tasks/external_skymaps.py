@@ -161,13 +161,6 @@ def get_upload_external_skymap(event, skymap_link=None):
     graceid = event['graceid']
     search = event['search']
 
-    try:
-        filename = get_skymap_filename(graceid)
-        if 'glg_healpix_all_bn_v00.fit' in filename:
-            return
-    except ValueError:
-        pass
-
     if search == 'GRB':
         external_skymap_canvas = (
             external_trigger_heasarc.si(graceid)
