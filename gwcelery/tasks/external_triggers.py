@@ -333,7 +333,8 @@ def handle_grb_igwn_alert(alert):
         ).delay()
     elif alert['alert_type'] == 'label_removed' and \
             alert['object'].get('group') == 'External':
-        if alert['data']['name'] == 'NOT_GRB':
+        if alert['data']['name'] == 'NOT_GRB' and \
+                'EM_COINC' in alert['object']['labels']:
             # if NOT_GRB is removed, re-check publishing conditions
             superevent_id = alert['object']['superevent']
             superevent = gracedb.get_superevent(superevent_id)
