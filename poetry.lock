@@ -1477,8 +1477,8 @@ python-versions = ">=3.8"
 
 [package.dependencies]
 numpy = [
-    {version = ">=1.21.0", markers = "python_version >= \"3.10\""},
     {version = ">=1.20.3", markers = "python_version < \"3.10\""},
+    {version = ">=1.21.0", markers = "python_version >= \"3.10\""},
 ]
 python-dateutil = ">=2.8.1"
 pytz = ">=2020.1"
@@ -2437,7 +2437,7 @@ test = ["pre-commit", "pytest"]
 
 [[package]]
 name = "twisted"
-version = "22.8.0"
+version = "22.10.0"
 description = "An asynchronous networking framework written in Python"
 category = "main"
 optional = false
@@ -2454,21 +2454,21 @@ typing-extensions = ">=3.6.5"
 "zope.interface" = ">=4.4.2"
 
 [package.extras]
-all-non-platform = ["PyHamcrest (>=1.9.0)", "appdirs (>=1.4.0)", "bcrypt (>=3.0.0)", "contextvars (>=2.4,<3)", "cryptography (>=2.6)", "cython-test-exception-raiser (>=1.0.2,<2)", "h2 (>=3.0,<5.0)", "idna (>=2.4)", "priority (>=1.1.0,<2.0)", "pyasn1", "pyopenssl (>=21.0.0)", "pyserial (>=3.0)", "pywin32 (!=226)", "service-identity (>=18.1.0)"]
+all-non-platform = ["PyHamcrest (>=1.9.0)", "appdirs (>=1.4.0)", "bcrypt (>=3.0.0)", "contextvars (>=2.4,<3)", "cryptography (>=2.6)", "cython-test-exception-raiser (>=1.0.2,<2)", "h2 (>=3.0,<5.0)", "hypothesis (>=6.0,<7.0)", "idna (>=2.4)", "priority (>=1.1.0,<2.0)", "pyasn1", "pyopenssl (>=21.0.0)", "pyserial (>=3.0)", "pywin32 (!=226)", "service-identity (>=18.1.0)"]
 conch = ["appdirs (>=1.4.0)", "bcrypt (>=3.0.0)", "cryptography (>=2.6)", "pyasn1"]
 conch-nacl = ["PyNaCl", "appdirs (>=1.4.0)", "bcrypt (>=3.0.0)", "cryptography (>=2.6)", "pyasn1"]
 contextvars = ["contextvars (>=2.4,<3)"]
-dev = ["coverage (>=6b1,<7)", "pydoctor (>=22.7.0,<22.8.0)", "pyflakes (>=2.2,<3.0)", "python-subunit (>=1.4,<2.0)", "readthedocs-sphinx-ext (>=2.1,<3.0)", "sphinx (>=4.1.2,<6)", "sphinx-rtd-theme (>=0.5,<1.0)", "towncrier (>=19.2,<20.0)", "twistedchecker (>=0.7,<1.0)"]
-dev-release = ["pydoctor (>=22.7.0,<22.8.0)", "readthedocs-sphinx-ext (>=2.1,<3.0)", "sphinx (>=4.1.2,<6)", "sphinx-rtd-theme (>=0.5,<1.0)", "towncrier (>=19.2,<20.0)"]
-gtk-platform = ["PyHamcrest (>=1.9.0)", "appdirs (>=1.4.0)", "bcrypt (>=3.0.0)", "contextvars (>=2.4,<3)", "cryptography (>=2.6)", "cython-test-exception-raiser (>=1.0.2,<2)", "h2 (>=3.0,<5.0)", "idna (>=2.4)", "priority (>=1.1.0,<2.0)", "pyasn1", "pygobject", "pyopenssl (>=21.0.0)", "pyserial (>=3.0)", "pywin32 (!=226)", "service-identity (>=18.1.0)"]
+dev = ["coverage (>=6b1,<7)", "pydoctor (>=22.9.0,<22.10.0)", "pyflakes (>=2.2,<3.0)", "python-subunit (>=1.4,<2.0)", "readthedocs-sphinx-ext (>=2.1,<3.0)", "sphinx (>=5.0,<6)", "sphinx-rtd-theme (>=1.0,<2.0)", "towncrier (>=22.8,<23.0)", "twistedchecker (>=0.7,<1.0)"]
+dev-release = ["pydoctor (>=22.9.0,<22.10.0)", "readthedocs-sphinx-ext (>=2.1,<3.0)", "sphinx (>=5.0,<6)", "sphinx-rtd-theme (>=1.0,<2.0)", "towncrier (>=22.8,<23.0)"]
+gtk-platform = ["PyHamcrest (>=1.9.0)", "appdirs (>=1.4.0)", "bcrypt (>=3.0.0)", "contextvars (>=2.4,<3)", "cryptography (>=2.6)", "cython-test-exception-raiser (>=1.0.2,<2)", "h2 (>=3.0,<5.0)", "hypothesis (>=6.0,<7.0)", "idna (>=2.4)", "priority (>=1.1.0,<2.0)", "pyasn1", "pygobject", "pyopenssl (>=21.0.0)", "pyserial (>=3.0)", "pywin32 (!=226)", "service-identity (>=18.1.0)"]
 http2 = ["h2 (>=3.0,<5.0)", "priority (>=1.1.0,<2.0)"]
-macos-platform = ["PyHamcrest (>=1.9.0)", "appdirs (>=1.4.0)", "bcrypt (>=3.0.0)", "contextvars (>=2.4,<3)", "cryptography (>=2.6)", "cython-test-exception-raiser (>=1.0.2,<2)", "h2 (>=3.0,<5.0)", "idna (>=2.4)", "priority (>=1.1.0,<2.0)", "pyasn1", "pyobjc-core", "pyobjc-framework-CFNetwork", "pyobjc-framework-Cocoa", "pyopenssl (>=21.0.0)", "pyserial (>=3.0)", "pywin32 (!=226)", "service-identity (>=18.1.0)"]
-mypy = ["PyHamcrest (>=1.9.0)", "PyNaCl", "appdirs (>=1.4.0)", "bcrypt (>=3.0.0)", "contextvars (>=2.4,<3)", "coverage (>=6b1,<7)", "cryptography (>=2.6)", "cython-test-exception-raiser (>=1.0.2,<2)", "h2 (>=3.0,<5.0)", "idna (>=2.4)", "mypy (==0.930)", "mypy-zope (==0.3.4)", "priority (>=1.1.0,<2.0)", "pyasn1", "pydoctor (>=22.7.0,<22.8.0)", "pyflakes (>=2.2,<3.0)", "pyopenssl (>=21.0.0)", "pyserial (>=3.0)", "python-subunit (>=1.4,<2.0)", "pywin32 (!=226)", "readthedocs-sphinx-ext (>=2.1,<3.0)", "service-identity (>=18.1.0)", "sphinx (>=4.1.2,<6)", "sphinx-rtd-theme (>=0.5,<1.0)", "towncrier (>=19.2,<20.0)", "twistedchecker (>=0.7,<1.0)", "types-pyOpenSSL", "types-setuptools"]
-osx-platform = ["PyHamcrest (>=1.9.0)", "appdirs (>=1.4.0)", "bcrypt (>=3.0.0)", "contextvars (>=2.4,<3)", "cryptography (>=2.6)", "cython-test-exception-raiser (>=1.0.2,<2)", "h2 (>=3.0,<5.0)", "idna (>=2.4)", "priority (>=1.1.0,<2.0)", "pyasn1", "pyobjc-core", "pyobjc-framework-CFNetwork", "pyobjc-framework-Cocoa", "pyopenssl (>=21.0.0)", "pyserial (>=3.0)", "pywin32 (!=226)", "service-identity (>=18.1.0)"]
+macos-platform = ["PyHamcrest (>=1.9.0)", "appdirs (>=1.4.0)", "bcrypt (>=3.0.0)", "contextvars (>=2.4,<3)", "cryptography (>=2.6)", "cython-test-exception-raiser (>=1.0.2,<2)", "h2 (>=3.0,<5.0)", "hypothesis (>=6.0,<7.0)", "idna (>=2.4)", "priority (>=1.1.0,<2.0)", "pyasn1", "pyobjc-core", "pyobjc-framework-CFNetwork", "pyobjc-framework-Cocoa", "pyopenssl (>=21.0.0)", "pyserial (>=3.0)", "pywin32 (!=226)", "service-identity (>=18.1.0)"]
+mypy = ["PyHamcrest (>=1.9.0)", "PyNaCl", "appdirs (>=1.4.0)", "bcrypt (>=3.0.0)", "contextvars (>=2.4,<3)", "coverage (>=6b1,<7)", "cryptography (>=2.6)", "cython-test-exception-raiser (>=1.0.2,<2)", "h2 (>=3.0,<5.0)", "hypothesis (>=6.0,<7.0)", "idna (>=2.4)", "mypy (==0.930)", "mypy-zope (==0.3.4)", "priority (>=1.1.0,<2.0)", "pyasn1", "pydoctor (>=22.9.0,<22.10.0)", "pyflakes (>=2.2,<3.0)", "pyopenssl (>=21.0.0)", "pyserial (>=3.0)", "python-subunit (>=1.4,<2.0)", "pywin32 (!=226)", "readthedocs-sphinx-ext (>=2.1,<3.0)", "service-identity (>=18.1.0)", "sphinx (>=5.0,<6)", "sphinx-rtd-theme (>=1.0,<2.0)", "towncrier (>=22.8,<23.0)", "twistedchecker (>=0.7,<1.0)", "types-pyOpenSSL", "types-setuptools"]
+osx-platform = ["PyHamcrest (>=1.9.0)", "appdirs (>=1.4.0)", "bcrypt (>=3.0.0)", "contextvars (>=2.4,<3)", "cryptography (>=2.6)", "cython-test-exception-raiser (>=1.0.2,<2)", "h2 (>=3.0,<5.0)", "hypothesis (>=6.0,<7.0)", "idna (>=2.4)", "priority (>=1.1.0,<2.0)", "pyasn1", "pyobjc-core", "pyobjc-framework-CFNetwork", "pyobjc-framework-Cocoa", "pyopenssl (>=21.0.0)", "pyserial (>=3.0)", "pywin32 (!=226)", "service-identity (>=18.1.0)"]
 serial = ["pyserial (>=3.0)", "pywin32 (!=226)"]
-test = ["PyHamcrest (>=1.9.0)", "cython-test-exception-raiser (>=1.0.2,<2)"]
+test = ["PyHamcrest (>=1.9.0)", "cython-test-exception-raiser (>=1.0.2,<2)", "hypothesis (>=6.0,<7.0)"]
 tls = ["idna (>=2.4)", "pyopenssl (>=21.0.0)", "service-identity (>=18.1.0)"]
-windows-platform = ["PyHamcrest (>=1.9.0)", "appdirs (>=1.4.0)", "bcrypt (>=3.0.0)", "contextvars (>=2.4,<3)", "cryptography (>=2.6)", "cython-test-exception-raiser (>=1.0.2,<2)", "h2 (>=3.0,<5.0)", "idna (>=2.4)", "priority (>=1.1.0,<2.0)", "pyasn1", "pyopenssl (>=21.0.0)", "pyserial (>=3.0)", "pywin32 (!=226)", "pywin32 (!=226)", "service-identity (>=18.1.0)"]
+windows-platform = ["PyHamcrest (>=1.9.0)", "appdirs (>=1.4.0)", "bcrypt (>=3.0.0)", "contextvars (>=2.4,<3)", "cryptography (>=2.6)", "cython-test-exception-raiser (>=1.0.2,<2)", "h2 (>=3.0,<5.0)", "hypothesis (>=6.0,<7.0)", "idna (>=2.4)", "priority (>=1.1.0,<2.0)", "pyasn1", "pyopenssl (>=21.0.0)", "pyserial (>=3.0)", "pywin32 (!=226)", "pywin32 (!=226)", "service-identity (>=18.1.0)"]
 
 [[package]]
 name = "twisted-iocpsupport"
@@ -3353,6 +3353,12 @@ ligo-raven = [
 ]
 ligo-segments = [
     {file = "ligo-segments-1.4.0.tar.gz", hash = "sha256:e072a844713c5b02efdcaf5bfe4c3a8cd9ef225b08cfd3202a4e185e0f71f5dc"},
+    {file = "ligo_segments-1.4.0-cp310-cp310-win_amd64.whl", hash = "sha256:f8a0fb3ec6bef7effb80fb2f4f4ffaac02afa77db41a0c42fce5e969201e621b"},
+    {file = "ligo_segments-1.4.0-cp311-cp311-win_amd64.whl", hash = "sha256:da82ae2b839bad0027e0a492b3673344e62360747d41194a265563e6c2903c7d"},
+    {file = "ligo_segments-1.4.0-cp36-cp36m-win_amd64.whl", hash = "sha256:cde0aa9a6cf9d1b66b00d64623a026ed9d37dbc028a9769492c635cfa726fdb9"},
+    {file = "ligo_segments-1.4.0-cp37-cp37m-win_amd64.whl", hash = "sha256:5ce03d6c0d07a14cde9e3a47ecc44bd0efa07a7d58e75a8899be8d35a437b254"},
+    {file = "ligo_segments-1.4.0-cp38-cp38-win_amd64.whl", hash = "sha256:1ec7b6dae3e7dbe2e96dc7dba39a843aab9a4df202ad6b80ce708d7439b7480e"},
+    {file = "ligo_segments-1.4.0-cp39-cp39-win_amd64.whl", hash = "sha256:f66dc8eff12bed2c66fff956150fc6039c16f9a2e63337861cdd3070ced0468d"},
 ]
 ligo-skymap = [
     {file = "ligo.skymap-1.0.3-cp38-abi3-macosx_10_15_x86_64.whl", hash = "sha256:7d9aa0f1e21fe0f614636389b4cd69b449ce229a86055e82bc2c5b80a036675a"},
@@ -4315,8 +4321,8 @@ traitlets = [
     {file = "traitlets-5.5.0.tar.gz", hash = "sha256:b122f9ff2f2f6c1709dab289a05555be011c87828e911c0cf4074b85cb780a79"},
 ]
 twisted = [
-    {file = "Twisted-22.8.0-py3-none-any.whl", hash = "sha256:8d4718d1e48dcc28933f8beb48dc71cfe77a125e37ad1eb7a3d0acc49baf6c99"},
-    {file = "Twisted-22.8.0.tar.gz", hash = "sha256:e5b60de39f2d1da153fbe1874d885fe3fcbdb21fcc446fa759a53e8fc3513bed"},
+    {file = "Twisted-22.10.0-py3-none-any.whl", hash = "sha256:86c55f712cc5ab6f6d64e02503352464f0400f66d4f079096d744080afcccbd0"},
+    {file = "Twisted-22.10.0.tar.gz", hash = "sha256:32acbd40a94f5f46e7b42c109bfae2b302250945561783a8b7a059048f2d4d31"},
 ]
 twisted-iocpsupport = [
     {file = "twisted-iocpsupport-1.0.2.tar.gz", hash = "sha256:72068b206ee809c9c596b57b5287259ea41ddb4774d86725b19f35bf56aa32a9"},
