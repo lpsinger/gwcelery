@@ -21,7 +21,7 @@ def _create_base_alert_dict(classification, superevent, alert_type,
     # Re time_created: Dont need better than second precision for alert times
     alert_dict = {
         'alert_type': alert_type.upper(),
-        'time_created': time.Time.now().utc.iso.split('.')[0],
+        'time_created': time.Time.now().utc.isot.split('.')[0] + 'Z',
         'superevent_id': superevent['superevent_id'],
         'urls': {'gracedb': superevent['links']['self'].replace('api/', '') +
                  'view/'},
@@ -43,7 +43,7 @@ def _create_base_alert_dict(classification, superevent, alert_type,
         classification = {}
 
     alert_dict['event'] = {
-        'time': time.Time(superevent['t_0'], format='gps').utc.iso,
+        'time': time.Time(superevent['t_0'], format='gps').utc.isot + 'Z',
         'far': superevent['far'],
         'instruments': sorted(
             superevent['preferred_event_data']['instruments'].split(',')

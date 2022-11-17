@@ -80,7 +80,7 @@
         <AstroCoords coord_system_id="UTC-FK5-GEO">
           <Time unit="s">
             <TimeInstant>
-              <ISOTime>2019-12-14T16:14:31.55</ISOTime>
+              <ISOTime>2019-12-14T16:14:31.55Z</ISOTime>
             </TimeInstant>
           </Time>
           <Position2D unit="deg">

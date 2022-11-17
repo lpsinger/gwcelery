@@ -15,7 +15,7 @@ from . import igwn_alert
 
 def create_grb_event(gpstime, pipeline):
 
-    new_date = str(Time(gpstime, format='gps', scale='utc').isot)
+    new_date = str(Time(gpstime, format='gps', scale='utc').isot) + 'Z'
     new_TrigID = str(int(gpstime))
 
     fname = str(Path(__file__).parent /

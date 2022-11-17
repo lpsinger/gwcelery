@@ -63,7 +63,7 @@
         <AstroCoords coord_system_id="UTC-FK5-GEO">
           <Time unit="s">
             <TimeInstant>
-              <ISOTime>2017-05-23T12:03:23.68</ISOTime>
+              <ISOTime>2017-05-23T12:03:23.68Z</ISOTime>
             </TimeInstant>
           </Time>
           <Position2D unit="deg">

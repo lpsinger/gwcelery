@@ -88,7 +88,7 @@ xsi:schemaLocation="http://www.ivoa.net/xml/VOEvent/v2.0 http://www.ivoa.net/xml
                 <AstroCoords coord_system_id="UTC-FK5-GEO">
                     <Time>
                         <TimeInstant>
-                            <ISOTime>2017-08-17T12:41:04.445710</ISOTime>
+                            <ISOTime>2017-08-17T12:41:04.445710Z</ISOTime>
                         </TimeInstant>
                     </Time>
                 </AstroCoords>

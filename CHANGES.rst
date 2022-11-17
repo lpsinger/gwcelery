@@ -6,6 +6,10 @@ Changelog
 
 -   Update messages from RAVEN alert pipeline to be more informative.
 
+-   Fix datetime format in Avro and JSON notices so that they conform to
+    ISO 8601. They were missing the ``T`` separating the date from the time
+    and the final ``Z`` denoting the UTC time zone.
+
 2.0.1 "Alien Big Cat" (2022-10-26)
 ----------------------------------
 

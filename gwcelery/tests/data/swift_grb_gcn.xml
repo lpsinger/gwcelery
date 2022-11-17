@@ -117,7 +117,7 @@
         <AstroCoords coord_system_id="UTC-FK5-GEO">
           <Time unit="s">
             <TimeInstant>
-              <ISOTime>2022-09-07T14:05:25.76</ISOTime>
+              <ISOTime>2022-09-07T14:05:25.76Z</ISOTime>
             </TimeInstant>
           </Time>
           <Position2D unit="deg">
