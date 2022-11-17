@@ -1,9 +1,14 @@
 [tool.poetry]
 name = "gwcelery"
 version = "0.0.0"
-description = "Hipster pipeline for annotating LIGO events"
+description = "Low-latency pipeline for annotating IGWN events"
 readme = "README.rst"
-authors = ["Leo Singer <leo.singer@ligo.org>"]
+authors = [
+    "Deep Chatterjee <deep.chatterjee@ligo.org>",
+    "Cody Messick <cody.messick@ligo.org>",
+    "Geoffrey Mo <geoffrey.mo@ligo.org>",
+    "Leo Singer <leo.singer@ligo.org>"
+]
 license = "GPL-2.0+"
 classifiers = [
     "Development Status :: 4 - Beta",
